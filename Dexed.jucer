@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="1.0.0"
+              bundleIdentifier="com.digitalsuburban.Dexed" includeBinaryInAppConfig="1"
+              buildVST="1" buildAU="0" pluginName="Dexed" pluginDesc="Dexed"
+              pluginManufacturer="Digital Suburban" pluginManufacturerCode="Manu"
+              pluginCode="Plug" pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="1"
+              pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"
+              pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
+              aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="AAX_ePlugInCategory_Dynamics"
+              jucerVersion="3.1.0" companyName="Digital Suburban">
+  <MAINGROUP id="kHXTgw" name="Dexed">
+    <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
+      <FILE id="CGMSPp" name="startup.syx" compile="0" resource="1" file="Resources/startup.syx"/>
+    </GROUP>
+    <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">
+      <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
+            file="Source/GlobalEditor.cpp"/>
+      <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
+      <FILE id="oUObPG" name="OperatorEditor.cpp" compile="1" resource="0"
+            file="Source/OperatorEditor.cpp"/>
+      <FILE id="ChJDca" name="OperatorEditor.h" compile="0" resource="0"
+            file="Source/OperatorEditor.h"/>
+      <GROUP id="{CEBA9AF6-1C73-85F6-A187-56A246098441}" name="msfa">
+        <FILE id="wvG22S" name="freqlut.cc" compile="1" resource="0" file="Source/msfa/freqlut.cc"/>
+        <FILE id="dulZMd" name="freqlut.h" compile="0" resource="0" file="Source/msfa/freqlut.h"/>
+        <FILE id="BfOVi6" name="lfo.cc" compile="1" resource="0" file="Source/msfa/lfo.cc"/>
+        <FILE id="dKoqx3" name="lfo.h" compile="0" resource="0" file="Source/msfa/lfo.h"/>
+        <FILE id="aF0JXv" name="aligned_buf.h" compile="0" resource="0" file="Source/msfa/aligned_buf.h"/>
+        <FILE id="iz2SFe" name="controllers.h" compile="0" resource="0" file="Source/msfa/controllers.h"/>
+        <FILE id="RuUFNI" name="dx7note.cc" compile="1" resource="0" file="Source/msfa/dx7note.cc"/>
+        <FILE id="BtBx4i" name="dx7note.h" compile="0" resource="0" file="Source/msfa/dx7note.h"/>
+        <FILE id="zXxFAq" name="env.cc" compile="1" resource="0" file="Source/msfa/env.cc"/>
+        <FILE id="jxtMqi" name="env.h" compile="0" resource="0" file="Source/msfa/env.h"/>
+        <FILE id="DsSBXO" name="exp2.cc" compile="1" resource="0" file="Source/msfa/exp2.cc"/>
+        <FILE id="ZOk50T" name="exp2.h" compile="0" resource="0" file="Source/msfa/exp2.h"/>
+        <FILE id="U8mKoJ" name="fm_core.cc" compile="1" resource="0" file="Source/msfa/fm_core.cc"/>
+        <FILE id="pR7RSB" name="fm_core.h" compile="0" resource="0" file="Source/msfa/fm_core.h"/>
+        <FILE id="USTZRs" name="fm_op_kernel.cc" compile="1" resource="0" file="Source/msfa/fm_op_kernel.cc"/>
+        <FILE id="BSgkNU" name="fm_op_kernel.h" compile="0" resource="0" file="Source/msfa/fm_op_kernel.h"/>
+        <FILE id="qdGaN5" name="module.h" compile="0" resource="0" file="Source/msfa/module.h"/>
+        <FILE id="yQIN5Y" name="pitchenv.cc" compile="1" resource="0" file="Source/msfa/pitchenv.cc"/>
+        <FILE id="Hfa2Et" name="pitchenv.h" compile="0" resource="0" file="Source/msfa/pitchenv.h"/>
+        <FILE id="eMP01b" name="sin.cc" compile="1" resource="0" file="Source/msfa/sin.cc"/>
+        <FILE id="TGO2sW" name="sin.h" compile="0" resource="0" file="Source/msfa/sin.h"/>
+        <FILE id="SqG02X" name="synth.h" compile="0" resource="0" file="Source/msfa/synth.h"/>
+      </GROUP>
+      <FILE id="TgCdkS" name="DXLookNFeel.cpp" compile="1" resource="0" file="Source/DXLookNFeel.cpp"/>
+      <FILE id="V4bLcd" name="DXLookNFeel.h" compile="0" resource="0" file="Source/DXLookNFeel.h"/>
+      <FILE id="Yp2cX4" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="ob0Eek" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="Ec211k" name="PluginEditor.cpp" compile="1" resource="0"
+            file="Source/PluginEditor.cpp"/>
+      <FILE id="lZFsG0" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="ZRipB1" name="PluginParam.cpp" compile="1" resource="0" file="Source/PluginParam.cpp"/>
+      <FILE id="uqNUvy" name="PluginParam.h" compile="0" resource="0" file="Source/PluginParam.h"/>
+    </GROUP>
+  </MAINGROUP>
+  <EXPORTFORMATS>
+    <XCODE_MAC targetFolder="Builds/MacOSX" vstFolder="~/Documents/src/vstsdk2.4"
+               postbuildCommand="&#13;&#10;# This script takes the build product and copies it to the AU, VST, and RTAS folders, depending on &#13;&#10;# which plugin types you've built&#13;&#10;&#13;&#10;original=$CONFIGURATION_BUILD_DIR/$FULL_PRODUCT_NAME&#13;&#10;&#13;&#10;# this looks inside the binary to detect which platforms are needed.. &#13;&#10;copyAU=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'AudioUnit' | wc -l&#96;&#13;&#10;copyVST=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'VSTPlugin' | wc -l&#96;&#13;&#10;copyRTAS=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'CProcess' | wc -l&#96;&#13;&#10;copyAAX=&#96;nm -g &quot;$CONFIGURATION_BUILD_DIR/$EXECUTABLE_PATH&quot; | grep -i 'ACFStartup' | wc -l&#96;&#13;&#10;&#13;&#10;if [ $copyAU -gt 0 ]; then&#13;&#10;  echo &quot;Copying to AudioUnit folder...&quot;&#13;&#10;  AU=~/Library/Audio/Plug-Ins/Components/$PRODUCT_NAME.component&#13;&#10;  if [ -d &quot;$AU&quot; ]; then &#13;&#10;    rm -r &quot;$AU&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  cp -r &quot;$original&quot; &quot;$AU&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMwPTul/BNDLPTul/g' &quot;$AU/Contents/PkgInfo&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMw/BNDL/g' &quot;$AU/Contents/$INFOPLIST_FILE&quot;&#13;&#10;&#13;&#10;  # Fix info.plist for AUs built with Xcode 3&#13;&#10;  if [ -f &quot;$DEVELOPER_DIR/Library/Developer/CoreAudio/AudioUnits/AUPublic/AUBase/AUPlugInDispatch.cpp&quot; ]; then&#13;&#10;    echo&#13;&#10;  else&#13;&#10;    echo &quot;Removing AudioComponents entry from Info.plist because this is not a new-format AU&quot;&#13;&#10;    /usr/libexec/PlistBuddy -c &quot;Delete AudioComponents&quot; &quot;$AU/Contents/Info.plist&quot;&#13;&#10;  fi&#13;&#10;fi&#13;&#10;&#13;&#10;if [ $copyVST -gt 0 ]; then&#13;&#10;  echo &quot;Copying to VST folder...&quot;&#13;&#10;  VST=~/Library/Audio/Plug-Ins/VST/$PRODUCT_NAME.vst&#13;&#10;  if [ -d &quot;$VST&quot; ]; then &#13;&#10;    rm -r &quot;$VST&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  cp -r &quot;$original&quot; &quot;$VST&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMwPTul/BNDLPTul/g' &quot;$VST/Contents/PkgInfo&quot;&#13;&#10;  sed -i &quot;&quot; -e 's/TDMw/BNDL/g' &quot;$VST/Contents/$INFOPLIST_FILE&quot;&#13;&#10;fi&#13;&#10;&#13;&#10;if [ $copyRTAS -gt 0 ]; then&#13;&#10;  echo &quot;Copying to RTAS folder...&quot;&#13;&#10;  RTAS=/Library/Application\ Support/Digidesign/Plug-Ins/$PRODUCT_NAME.dpm&#13;&#10;  if [ -d &quot;$RTAS&quot; ]; then&#13;&#10;    rm -r &quot;$RTAS&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  cp -r &quot;$original&quot; &quot;$RTAS&quot;&#13;&#10;fi&#13;&#10;&#13;&#10;if [ $copyAAX -gt 0 ]; then&#13;&#10;  echo &quot;Copying to AAX folder...&quot;&#13;&#10;&#13;&#10;  if [ -d &quot;/Applications/ProTools_3PDev/Plug-Ins&quot; ]; then&#13;&#10;    AAX1=&quot;/Applications/ProTools_3PDev/Plug-Ins/$PRODUCT_NAME.aaxplugin&quot;&#13;&#10;&#13;&#10;    if [ -d &quot;$AAX1&quot; ]; then&#13;&#10;      rm -r &quot;$AAX1&quot;&#13;&#10;    fi&#13;&#10;&#13;&#10;    cp -r &quot;$original&quot; &quot;$AAX1&quot;&#13;&#10;  fi&#13;&#10;&#13;&#10;  if [ -d &quot;/Library/Application Support/Avid/Audio/Plug-Ins&quot; ]; then&#13;&#10;    AAX2=&quot;/Library/Application Support/Avid/Audio/Plug-Ins/$PRODUCT_NAME.aaxplugin&quot;&#13;&#10;&#13;&#10;    if [ -d &quot;$AAX2&quot; ]; then&#13;&#10;      rm -r &quot;$AAX2&quot;&#13;&#10;    fi&#13;&#10;&#13;&#10;    cp -r &quot;$original&quot; &quot;$AAX2&quot;&#13;&#10;  fi&#13;&#10;fi&#13;&#10;">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="1" optimisation="1" targetName="Dexed"/>
+        <CONFIGURATION name="Release" osxSDK="default" osxCompatibility="default" osxArchitecture="default"
+                       isDebug="0" optimisation="2" targetName="Dexed"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_core" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../JUCE/modules"/>
+      </MODULEPATHS>
+    </XCODE_MAC>
+  </EXPORTFORMATS>
+  <MODULES>
+    <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_devices" showAllCode="0" useLocalCopy="1"/>
+    <MODULES id="juce_audio_formats" showAllCode="0" useLocalCopy="1"/>
+    <MODULES id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_processors" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_audio_utils" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_core" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_data_structures" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_events" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_graphics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
+    <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
+  </MODULES>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+</JUCERPROJECT>
