@@ -92,12 +92,14 @@ float CtrlInt::getValuePlugin() {
 }
 
 void CtrlInt::setValuePlugin(float f) {
-	if ( f >= 1 )
-		f -= 0.00000001;
 	setValue((f * steps));
 }
 
 void CtrlInt::setValue(int v) {
+	if ( v >= steps ) {
+		TRACE("WARNING: value too big %s : %d", label.toRawUTF8(), v);
+		v = steps-1;
+	}
 	value = v;
 	if ( dxOffset >= 0 ) {
 		if ( parent != NULL )
@@ -212,11 +214,11 @@ void DexedAudioProcessor::initCtrl() {
     lfoDelay = new CtrlInt("LFO-Delay", 100, 138);
     ctrl.add(lfoDelay);
 
-    lfoAmpDepth = new CtrlInt("LFO-AmpDepth", 100, 139);
-    ctrl.add(lfoAmpDepth);
-
-	lfoPitchDepth = new CtrlInt("LFO-PitchDepth", 100, 140);
+	lfoPitchDepth = new CtrlInt("LFO-PitchDepth", 100, 139);
 	ctrl.add(lfoPitchDepth);
+
+    lfoAmpDepth = new CtrlInt("LFO-AmpDepth", 100, 140);
+    ctrl.add(lfoAmpDepth);
 
     lfoSync = new CtrlInt("LFO-Sync", 2, 141);
     ctrl.add(lfoSync);
@@ -236,8 +238,16 @@ int DexedAudioProcessor::importSysex(const char *imported) {
         memcpy(patchNames[i], sysex + ((i*128)+118), 11);
         
         for(int j=0;j<10;j++) {
-            if ( patchNames[i][j] > 127 || patchNames[i][j] < 32 )
-                patchNames[i][j] = ' ';
+            char c = (unsigned char)patchNames[i][j];
+            switch (c) {
+            case  92:  c = 'Y';  break;  /* yen */
+            case 126:  c = '>';  break;  /* >> */
+            case 127:  c = '<';  break;  /* << */
+            default:
+               if (c < 32 || c > 127) c = 32;
+               break;
+            }
+        	patchNames[i][j] = c;
         }
         patchNames[i][11] = 0;
     }
@@ -281,8 +291,6 @@ void DexedAudioProcessor::unpackSysex(int idx) {
 	data[158] = 1;
 	data[159] = 1;
 	data[160] = 1;
-    
-    TRACE("The LFO is at %d", data[142]);
 }
 
 
@@ -381,7 +389,6 @@ void DexedAudioProcessor::getStateInformation (MemoryBlock& destData) {
     // as intermediaries to make it easy to save and load complex data.*/
     
     TRACE("getting state with %d", currentProgram);
-    
 	destData.insert(data, 161, 0);
 }
 

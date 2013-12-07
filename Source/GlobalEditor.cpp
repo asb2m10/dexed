@@ -66,6 +66,12 @@ GlobalEditor::GlobalEditor ()
     lfoPitchDepth->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     lfoPitchDepth->addListener (this);
 
+    addAndMakeVisible (lfoDelay = new Slider ("lfoDelay"));
+    lfoDelay->setRange (0, 99, 1);
+    lfoDelay->setSliderStyle (Slider::LinearVertical);
+    lfoDelay->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    lfoDelay->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -87,6 +93,7 @@ GlobalEditor::~GlobalEditor()
     lfoSpeed = nullptr;
     lfoAmDepth = nullptr;
     lfoPitchDepth = nullptr;
+    lfoDelay = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -110,6 +117,7 @@ void GlobalEditor::resized()
     lfoSpeed->setBounds (80, 8, 23, 56);
     lfoAmDepth->setBounds (208, 8, 32, 24);
     lfoPitchDepth->setBounds (176, 8, 32, 24);
+    lfoDelay->setBounds (104, 8, 23, 56);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -139,6 +147,11 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_lfoPitchDepth] -- add your slider handling code here..
         //[/UserSliderCode_lfoPitchDepth]
     }
+    else if (sliderThatWasMoved == lfoDelay)
+    {
+        //[UserSliderCode_lfoDelay] -- add your slider handling code here..
+        //[/UserSliderCode_lfoDelay]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
@@ -166,6 +179,7 @@ void GlobalEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 void GlobalEditor::bind(DexedAudioProcessor *parent) {
 	parent->algo->bind(algo);
 	parent->lfoRate->bind(lfoSpeed);
+	parent->lfoDelay->bind(lfoDelay);
 	parent->lfoWaveform->bind(lfoType);
 	parent->lfoAmpDepth->bind(lfoAmDepth);
 	parent->lfoPitchDepth->bind(lfoPitchDepth);
@@ -207,6 +221,10 @@ BEGIN_JUCER_METADATA
   <SLIDER name="new slider" id="6ead769ca786c813" memberName="lfoPitchDepth"
           virtualName="" explicitFocusOrder="0" pos="176 8 32 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="lfoDelay" id="1fce68dc81619ef5" memberName="lfoDelay" virtualName=""
+          explicitFocusOrder="0" pos="104 8 23 56" min="0" max="99" int="1"
+          style="LinearVertical" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
 </JUCER_COMPONENT>
 

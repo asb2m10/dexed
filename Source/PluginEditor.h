@@ -25,6 +25,7 @@
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
 #include "GlobalEditor.h"
+#include "DXLookNFeel.h"
 
 //==============================================================================
 /**
@@ -40,6 +41,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
 
     MidiKeyboardComponent midiKeyboard;
 
+    DXLookNFeel dx_lnf;
+            
 public:
 
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);

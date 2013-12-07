@@ -21,5 +21,4 @@
 #include "DXLookNFeel.h"
 
 DXLookNFeel::DXLookNFeel() {
-    
 }

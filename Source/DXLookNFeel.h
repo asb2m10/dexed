@@ -24,7 +24,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 
-class DXLookNFeel : LookAndFeel_V3 {
+class DXLookNFeel : public LookAndFeel_V3 {
+public:
     DXLookNFeel();
 };
 

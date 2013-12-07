@@ -31,8 +31,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     : AudioProcessorEditor (ownerFilter),
     midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
+    LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
     // This is where our plugin's editor size is set.
-    setSize (800, 400);
+    setSize (765, 380);
 
     processor = ownerFilter;
     
@@ -55,37 +56,40 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
     // OPERATORS
     addAndMakeVisible(&(ops[0]));
-    ops[0].setBounds(20, 40, 250, 80);
+    ops[0].setBounds(5, 40, 250, 80);
     ops[0].bind(processor, 0);
     
     addAndMakeVisible(&(ops[1]));
-    ops[1].setBounds(270, 40, 250, 80);
+    ops[1].setBounds(255, 40, 250, 80);
     ops[1].bind(processor, 1);
     
     addAndMakeVisible(&(ops[2]));
-    ops[2].setBounds(520, 40, 250, 80);
+    ops[2].setBounds(505, 40, 250, 80);
     ops[2].bind(processor, 2);
     
     addAndMakeVisible(&(ops[3]));
-    ops[3].setBounds(20, 120, 250, 80);
+    ops[3].setBounds(5, 120, 250, 80);
     ops[3].bind(processor, 3);
     
     addAndMakeVisible(&(ops[4]));
-    ops[4].setBounds(270, 120, 250, 80);
+    ops[4].setBounds(255, 120, 250, 80);
     ops[4].bind(processor, 4);
     
     addAndMakeVisible(&(ops[5]));
-    ops[5].setBounds(520, 120, 250, 80);
+    ops[5].setBounds(505, 120, 250, 80);
     ops[5].bind(processor, 5);
 
     // add the midi keyboard component..
     addAndMakeVisible (&midiKeyboard);
     
+    // The DX7 is a badass on the bass, keep it that way
+    midiKeyboard.setLowestVisibleKey(24);
+
     const int keyboardHeight = 90;
     midiKeyboard.setBounds (4, getHeight() - keyboardHeight - 4, getWidth() - 8, keyboardHeight);
 
     addAndMakeVisible(&global);
-    global.setBounds(520,200,250,80);
+    global.setBounds(505,200,250,80);
     global.bind(processor);
 
    startTimer(100);
@@ -120,10 +124,9 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         ifstream fp_in;
         fp_in.open(f.toRawUTF8(), ifstream::in);
         if (fp_in.fail()) {
-            AlertWindow::showMessageBoxAsync (AlertWindow::InfoIcon,
+            AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                               "Error",
                                               "Unable to open: " + f);
-            std::cerr << "error opening file" << std::endl;
             return;
         }
         fp_in.read((char *)syx_data, 4104);

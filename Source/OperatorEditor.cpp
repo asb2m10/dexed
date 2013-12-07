@@ -30,7 +30,7 @@
 OperatorEditor::OperatorEditor ()
 {
     addAndMakeVisible (s_egl1 = new Slider ("egl1"));
-    s_egl1->setRange (0, 10, 0);
+    s_egl1->setRange (0, 99, 0);
     s_egl1->setSliderStyle (Slider::Rotary);
     s_egl1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl1->addListener (this);
@@ -40,43 +40,43 @@ OperatorEditor::OperatorEditor ()
     toggleButton->addListener (this);
 
     addAndMakeVisible (s_egl2 = new Slider ("egl2"));
-    s_egl2->setRange (0, 10, 0);
+    s_egl2->setRange (0, 99, 0);
     s_egl2->setSliderStyle (Slider::Rotary);
     s_egl2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl2->addListener (this);
 
     addAndMakeVisible (s_egl3 = new Slider ("egl3"));
-    s_egl3->setRange (0, 10, 0);
+    s_egl3->setRange (0, 99, 0);
     s_egl3->setSliderStyle (Slider::Rotary);
     s_egl3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl3->addListener (this);
 
     addAndMakeVisible (s_egl4 = new Slider ("egl4"));
-    s_egl4->setRange (0, 10, 0);
+    s_egl4->setRange (0, 99, 0);
     s_egl4->setSliderStyle (Slider::Rotary);
     s_egl4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl4->addListener (this);
 
     addAndMakeVisible (s_egv1 = new Slider ("egr1"));
-    s_egv1->setRange (0, 10, 0);
+    s_egv1->setRange (0, 99, 0);
     s_egv1->setSliderStyle (Slider::Rotary);
     s_egv1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv1->addListener (this);
 
     addAndMakeVisible (s_egv2 = new Slider ("egr3"));
-    s_egv2->setRange (0, 10, 0);
+    s_egv2->setRange (0, 99, 0);
     s_egv2->setSliderStyle (Slider::Rotary);
     s_egv2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv2->addListener (this);
 
     addAndMakeVisible (s_egv3 = new Slider ("egr3"));
-    s_egv3->setRange (0, 10, 0);
+    s_egv3->setRange (0, 99, 0);
     s_egv3->setSliderStyle (Slider::Rotary);
     s_egv3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv3->addListener (this);
 
     addAndMakeVisible (s_egv4 = new Slider ("egr4"));
-    s_egv4->setRange (0, 10, 0);
+    s_egv4->setRange (0, 99, 0);
     s_egv4->setSliderStyle (Slider::Rotary);
     s_egv4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv4->addListener (this);
@@ -99,19 +99,19 @@ OperatorEditor::OperatorEditor ()
     opId->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (opLevel = new Slider ("opLevel"));
-    opLevel->setRange (0, 10, 0);
+    opLevel->setRange (0, 99, 0);
     opLevel->setSliderStyle (Slider::Rotary);
     opLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     opLevel->addListener (this);
 
     addAndMakeVisible (opFine = new Slider ("opFine"));
-    opFine->setRange (0, 10, 0);
+    opFine->setRange (0, 99, 0);
     opFine->setSliderStyle (Slider::Rotary);
     opFine->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     opFine->addListener (this);
 
     addAndMakeVisible (opCoarse = new Slider ("opCoarse"));
-    opCoarse->setRange (0, 10, 0);
+    opCoarse->setRange (0, 32, 0);
     opCoarse->setSliderStyle (Slider::Rotary);
     opCoarse->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     opCoarse->addListener (this);
@@ -345,38 +345,38 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="250" initialHeight="70">
   <BACKGROUND backgroundColour="ffffff"/>
   <SLIDER name="egl1" id="dc070cc41347df47" memberName="s_egl1" virtualName=""
-          explicitFocusOrder="0" pos="128 8 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="128 8 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="new toggle button" id="fcdf1076330e4ef6" memberName="toggleButton"
                 virtualName="" explicitFocusOrder="0" pos="0 0 24 24" buttonText=""
                 connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
   <SLIDER name="egl2" id="66f5195e9c374029" memberName="s_egl2" virtualName=""
-          explicitFocusOrder="0" pos="152 8 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="152 8 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egl3" id="9d57bd53203dcdb4" memberName="s_egl3" virtualName=""
-          explicitFocusOrder="0" pos="176 8 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="176 8 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egl4" id="4f7c3ece3ea2cf9c" memberName="s_egl4" virtualName=""
-          explicitFocusOrder="0" pos="200 8 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="200 8 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr1" id="2ca8137d80da46fb" memberName="s_egv1" virtualName=""
-          explicitFocusOrder="0" pos="128 40 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="128 40 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr3" id="4ad6d0c532d15973" memberName="s_egv2" virtualName=""
-          explicitFocusOrder="0" pos="152 40 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="152 40 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr3" id="8a2027f9ede16b4f" memberName="s_egv3" virtualName=""
-          explicitFocusOrder="0" pos="176 40 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="176 40 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr4" id="8c04f1c943d837e8" memberName="s_egv4" virtualName=""
-          explicitFocusOrder="0" pos="200 40 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="200 40 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="opMode" id="2cf8156bb94cdc40" memberName="opMode" virtualName=""
@@ -388,15 +388,15 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="19.600000000000001421"
          bold="0" italic="0" justification="33"/>
   <SLIDER name="opLevel" id="f8521c8214fb8993" memberName="opLevel" virtualName=""
-          explicitFocusOrder="0" pos="8 40 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="8 40 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="opFine" id="e445aa61bd6cddcb" memberName="opFine" virtualName=""
-          explicitFocusOrder="0" pos="96 40 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="96 40 24 24" min="0" max="99" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="opCoarse" id="4eec63d30d7488d2" memberName="opCoarse" virtualName=""
-          explicitFocusOrder="0" pos="72 40 24 24" min="0" max="10" int="0"
+          explicitFocusOrder="0" pos="72 40 24 24" min="0" max="32" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="new slider" id="21f21cc5fae8e54b" memberName="gain" virtualName=""

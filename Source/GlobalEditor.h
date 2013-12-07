@@ -67,6 +67,7 @@ private:
     ScopedPointer<Slider> lfoSpeed;
     ScopedPointer<Slider> lfoAmDepth;
     ScopedPointer<Slider> lfoPitchDepth;
+    ScopedPointer<Slider> lfoDelay;
 
 
     //==============================================================================

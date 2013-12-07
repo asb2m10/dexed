@@ -94,7 +94,12 @@ public :
 
     void unbindUI();
     void updateUI();
-
+    
+    void processMidiMessage(const uint8_t *buf, int buf_size);
+    void keydown(uint8_t pitch, uint8_t velo);
+    void keyup(uint8_t pitch);
+    void processSamples(int n_samples, int16_t *buffer);
+    
 public:
     //==============================================================================
     DexedAudioProcessor();
@@ -158,10 +163,6 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
 
-    void processMidiMessage(const uint8_t *buf, int buf_size);
-    void keydown(uint8_t pitch, uint8_t velo);
-    void keyup(uint8_t pitch);
-    void processSamples(int n_samples, int16_t *buffer);
 };
 
 #define TRACE(fmt, ...) DexedAudioProcessor::log(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)

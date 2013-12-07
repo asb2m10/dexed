@@ -30,10 +30,10 @@
 
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
-    Logger *tmp = Logger::getCurrentLogger();
+    /*Logger *tmp = Logger::getCurrentLogger();
     if ( tmp == NULL ) {
         Logger::setCurrentLogger(FileLogger::createDateStampedLogger("Dexed", "DebugSession-", "log", "DexedAudioProcessor Created"));
-    }
+    }*/
     TRACE("Hi");
 
     currentNote = -1;
