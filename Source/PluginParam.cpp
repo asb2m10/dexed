@@ -31,29 +31,18 @@ Ctrl::Ctrl(String name) {
 }
 
 void Ctrl::bind(Slider *s) {
-	/*if ( slider != NULL ) {
-     slider->removeListener(this);
-     }*/
 	slider = s;
 	updateComponent();
 	s->addListener(this);
 }
 
 void Ctrl::bind(Button *b) {
-	/*if ( button != NULL ) {
-     button->removeListener(this);
-     button = NULL;
-     }*/
 	button = b;
 	updateComponent();
 	b->addListener(this);
 }
 
 void Ctrl::bind(ComboBox *c) {
-	/*if ( comboBox != NULL ) {
-     comboBox->removeListener(this);
-     comboBox = NULL;
-     }*/
 	comboBox = c;
 	updateComponent();
 	c->addListener(this);
@@ -172,7 +161,6 @@ void DexedAudioProcessor::initCtrl() {
     	// In the Sysex, OP6 comes first, then OP5...
     	int opTarget = i * 21;
 
-
     	for(int j=0;j<4;j++) {
     		String opRate;
     		opRate << "OP" << (i+1) << "-EGR" << (j+1);
@@ -203,6 +191,11 @@ void DexedAudioProcessor::initCtrl() {
     	fine << "OP" << (i+1) << "-FINE";
     	opCtrl[i].fine = new CtrlInt(fine, 100, opTarget+19);
     	ctrl.add(opCtrl[i].fine);
+
+    	String detune;
+    	detune << "OP" << (i+1) << "-DETUNE";
+    	opCtrl[i].detune = new CtrlInt(detune, 15, opTarget+20);
+    	ctrl.add(opCtrl[i].detune);
     }
     
     algo = new CtrlInt("Algorithm", 32, 134, true);
@@ -307,13 +300,6 @@ void DexedAudioProcessor::unbindUI() {
     }
 }
 
-void DexedAudioProcessor::updateUI() {
-	for(int i=0;i<ctrl.size();i++) {
-		ctrl[i]->updateComponent();
-	}
-}
-
-
 //==============================================================================
 int DexedAudioProcessor::getNumParameters() {
     return ctrl.size();
@@ -325,25 +311,18 @@ float DexedAudioProcessor::getParameter (int index) {
 
 void DexedAudioProcessor::setParameter (int index, float newValue) {
     ctrl[index]->setValuePlugin(newValue);
-    /*for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
-     if ( active_note[i].live )
-     active_note[i].dx7_note->update(patcher.data);
-     }*/
 }
 
 int DexedAudioProcessor::getNumPrograms() {
-	// there is 16 program, the 17th one is a ghost for saving "unsaved" preset.
+	// there is 32 program, the 33th one is a ghost for saving "unsaved" preset.
     return 32;
 }
 
 int DexedAudioProcessor::getCurrentProgram() {
-    TRACE("%d", currentProgram);    
 	return currentProgram;
 }
 
 void DexedAudioProcessor::setCurrentProgram (int index) {
-    TRACE("%d", index);
-    
 	/*// VST has a naughty problem of calling setCurrentProgram after a host has loaded
 	// an edited preset. We ignore the 16th value, since we want to keep the user values
 	if ( index == 32 ) {
@@ -358,10 +337,8 @@ void DexedAudioProcessor::setCurrentProgram (int index) {
     index = index > 31 ? 31 : index;
 	unpackSysex(index);
 	currentProgram = index;
-	for(int i=0;i<ctrl.size();i++) {
-		ctrl[i]->updateComponent();
-	}
     lfo.reset(data + 137);
+	updateUI();
 }
 
 const String DexedAudioProcessor::getProgramName (int index) {
@@ -387,29 +364,23 @@ void DexedAudioProcessor::getStateInformation (MemoryBlock& destData) {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.*/
-    
-    TRACE("getting state with %d", currentProgram);
 	destData.insert(data, 161, 0);
 }
 
 void DexedAudioProcessor::setStateInformation (const void* source, int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    TRACE("setting state with %d", currentProgram);
 	memcpy((void *)data, source, sizeInBytes);
+	updateUI();
 }
 
 
 //==============================================================================
 void DexedAudioProcessor::getCurrentProgramStateInformation (MemoryBlock& destData) {
-    
-    TRACE("getting state with %d", currentProgram);
-    
 	destData.insert(data, 161, 0);
 }
 
 void DexedAudioProcessor::setCurrentProgramStateInformation (const void* source, int sizeInBytes) {
-    TRACE("setting state with %d", currentProgram);
 	memcpy((void *)data, source, sizeInBytes);
 	updateUI();
 }

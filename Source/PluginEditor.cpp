@@ -92,6 +92,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     global.setBounds(505,200,250,80);
     global.bind(processor);
 
+   updateUI();
    startTimer(100);
 }
 
@@ -101,8 +102,7 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 }
 
 //==============================================================================
-void DexedAudioProcessorEditor::paint (Graphics& g)
-{
+void DexedAudioProcessorEditor::paint (Graphics& g) {
     g.fillAll (Colours::white);
     g.setColour (Colours::black);
     g.setColour (Colour (0xb3898989));
@@ -157,11 +157,18 @@ void DexedAudioProcessorEditor::timerCallback() {
 
     if ( processor->peekEnvStatus(env) == false ) 
         return;
-    
-    //TRACE("out %ld %ld %ld %ld %ld %ld", env[0], env[1], env[2], env[3], env[4], env[5]);
 
     for(int i=0;i<6;i++) {
         ops[i].updateGain(sqrt(env[i]) / 8000);
     }
 }   
 
+void DexedAudioProcessorEditor::updateUI() {
+	TRACE("update UI called");
+	for(int i=0;i<processor->ctrl.size();i++) {
+		processor->ctrl[i]->updateComponent();
+	}
+	for(int i=0;i<6;i++) {
+		ops[i].updateFreqDisplay();
+	}
+}

@@ -37,7 +37,6 @@
 */
 class OperatorEditor  : public Component,
                         public SliderListener,
-                        public ButtonListener,
                         public ComboBoxListener
 {
 public:
@@ -50,13 +49,12 @@ public:
 
     void bind(DexedAudioProcessor *processor, int num);
     void updateGain(float v);
-
+    void updateFreqDisplay();
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
-    void buttonClicked (Button* buttonThatWasClicked);
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
 
 
@@ -81,6 +79,8 @@ private:
     ScopedPointer<Slider> opFine;
     ScopedPointer<Slider> opCoarse;
     ScopedPointer<Slider> gain;
+    ScopedPointer<Label> khzDisplay;
+    ScopedPointer<Slider> detune;
 
 
     //==============================================================================

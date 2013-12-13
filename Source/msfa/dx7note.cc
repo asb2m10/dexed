@@ -176,6 +176,7 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
   fb_shift_ = feedback != 0 ? 8 - feedback : 16;
   pitchmoddepth_ = (patch[139] * 165) >> 6;
   pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
+  ampmoddepth_ = (patch[140] * 165) >> 6;
 }
 
 void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
@@ -186,6 +187,9 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
   int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
   pitchmod += (((int64_t)pmd) * (int64_t)senslfo) >> 39;
 
+  uint32_t amd = ampmoddepth_ * lfo_delay;  // should be Q32
+
+
   // hardcodes a pitchbend range of 3 semitones, TODO make configurable
   int pitchbend = ctrls->values_[kControllerPitch];
   int32_t pb = (pitchbend - 0x2000) << 9;
@@ -193,6 +197,9 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
   for (int op = 0; op < 6; op++) {
     params_[op].gain[0] = params_[op].gain[1];
     int32_t level = env_[op].getsample();
+
+
+
     int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
     //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
     params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
@@ -209,13 +216,14 @@ void Dx7Note::keyup() {
 }
 
 void Dx7Note::update(const char patch[156], int midinote) {
-/*  for (int op = 0; op < 6; op++) {
-    /*int mode = patch[off + 17];
+  for (int op = 0; op < 6; op++) {
+	    int off = op * 21;
+    int mode = patch[off + 17];
     int coarse = patch[off + 18];
     int fine = patch[off + 19];
     int detune = patch[off + 20];
     basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
-  }
+  }/*
   for (int i = 0; i < 4; i++) {
     rates[i] = patch[126 + i];
     levels[i] = patch[130 + i];

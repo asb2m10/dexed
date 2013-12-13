@@ -86,6 +86,7 @@ struct OperatorCtrl {
     ScopedPointer<CtrlInt> opMode;
     ScopedPointer<CtrlInt> coarse;
     ScopedPointer<CtrlInt> fine;
+    ScopedPointer<CtrlInt> detune;
 };
 
 

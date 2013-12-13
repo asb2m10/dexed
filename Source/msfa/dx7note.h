@@ -58,6 +58,7 @@ class Dx7Note {
   int32_t fb_buf_[2];
   int32_t fb_shift_;
 
+  int ampmoddepth_;
   int algorithm_;
   int pitchmoddepth_;
   int pitchmodsens_;

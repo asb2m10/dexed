@@ -59,6 +59,8 @@ public:
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
     OperatorEditor ops[6];
     GlobalEditor global;
+
+    void updateUI();
 };
 
 

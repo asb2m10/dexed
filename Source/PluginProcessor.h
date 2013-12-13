@@ -93,7 +93,7 @@ public :
     char data[161];
 
     void unbindUI();
-    void updateUI();
+
     
     void processMidiMessage(const uint8_t *buf, int buf_size);
     void keydown(uint8_t pitch, uint8_t velo);
@@ -113,17 +113,14 @@ public:
     //==============================================================================
     AudioProcessorEditor* createEditor();
     bool hasEditor() const;
-
+    void updateUI();
     bool peekEnvStatus(int32_t *values);
 
     //==============================================================================
     const String getName() const;
-
     int getNumParameters();
-    
     float getParameter (int index);
     void setParameter (int index, float newValue);
-
     const String getParameterName (int index);
     const String getParameterText (int index);
 
@@ -149,9 +146,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes);
     void getCurrentProgramStateInformation (MemoryBlock& destData);
     void setCurrentProgramStateInformation (const void* data, int sizeInBytes);
-
     //==============================================================================
-
     
     // this is kept up to date with the midi messages that arrive, and the UI component
     // registers with it so it can represent the incoming messages
@@ -166,4 +161,5 @@ private:
 };
 
 #define TRACE(fmt, ...) DexedAudioProcessor::log(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+
 #endif  // PLUGINPROCESSOR_H_INCLUDED

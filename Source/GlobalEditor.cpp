@@ -113,10 +113,10 @@ void GlobalEditor::paint (Graphics& g)
 void GlobalEditor::resized()
 {
     algo->setBounds (8, 8, 64, 24);
-    lfoType->setBounds (144, 40, 96, 24);
+    lfoType->setBounds (168, 24, 72, 16);
     lfoSpeed->setBounds (80, 8, 23, 56);
-    lfoAmDepth->setBounds (208, 8, 32, 24);
-    lfoPitchDepth->setBounds (176, 8, 32, 24);
+    lfoAmDepth->setBounds (216, 40, 32, 24);
+    lfoPitchDepth->setBounds (184, 40, 32, 24);
     lfoDelay->setBounds (104, 8, 23, 56);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -207,7 +207,7 @@ BEGIN_JUCER_METADATA
           style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="0" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="new combo box" id="31018596af3b34e9" memberName="lfoType"
-            virtualName="" explicitFocusOrder="0" pos="144 40 96 24" editable="0"
+            virtualName="" explicitFocusOrder="0" pos="168 24 72 16" editable="0"
             layout="33" items="TRIANGLE&#10;SAW DOWN&#10;SAW UP&#10;SQUARE&#10;SINE&#10;S&amp;HOLD"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="lfoSpeed" id="b10eaf327ab3bff5" memberName="lfoSpeed" virtualName=""
@@ -215,11 +215,11 @@ BEGIN_JUCER_METADATA
           style="LinearVertical" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="new slider" id="3e95a6206fa4a891" memberName="lfoAmDepth"
-          virtualName="" explicitFocusOrder="0" pos="208 8 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="216 40 32 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="new slider" id="6ead769ca786c813" memberName="lfoPitchDepth"
-          virtualName="" explicitFocusOrder="0" pos="176 8 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="184 40 32 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="lfoDelay" id="1fce68dc81619ef5" memberName="lfoDelay" virtualName=""

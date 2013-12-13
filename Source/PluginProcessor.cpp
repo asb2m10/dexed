@@ -30,11 +30,15 @@
 
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
-    /*Logger *tmp = Logger::getCurrentLogger();
+    Logger *tmp = Logger::getCurrentLogger();
     if ( tmp == NULL ) {
         Logger::setCurrentLogger(FileLogger::createDateStampedLogger("Dexed", "DebugSession-", "log", "DexedAudioProcessor Created"));
-    }*/
+    }
     TRACE("Hi");
+
+    Exp2::init();
+    Tanh::init();
+    Sin::init();
 
     currentNote = -1;
     workBlock = NULL;
@@ -49,9 +53,6 @@ DexedAudioProcessor::~DexedAudioProcessor() {
 //==============================================================================
 void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     Freqlut::init(sampleRate);
-    Exp2::init();
-    Tanh::init();
-    Sin::init();
     Lfo::init(sampleRate);
     PitchEnv::init(sampleRate);
 
@@ -352,6 +353,16 @@ const String DexedAudioProcessor::getName() const {
 //==============================================================================
 bool DexedAudioProcessor::hasEditor() const {
     return true; // (change this to false if you choose to not supply an editor)
+}
+
+void DexedAudioProcessor::updateUI() {
+	AudioProcessorEditor *editor = getActiveEditor();
+	if ( editor == NULL ) {
+		TRACE("no editor found");
+		return;
+	}
+	DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
+	dexedEditor->updateUI();
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
