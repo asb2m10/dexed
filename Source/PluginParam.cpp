@@ -157,45 +157,47 @@ void DexedAudioProcessor::initCtrl() {
     // fill operator values;
     for(int i=0;i<6;i++) {
         // In the Sysex, OP6 comes first, then OP5...
-        //int opTarget = (5-i) * 21;
+        int opTarget = (5-i) * 21;
         // In the Sysex, OP6 comes first, then OP5...
-        int opTarget = i * 21;
-
+        //int opTarget = i * 21;
+        
+        int opVal = 5-i;
+        
         for(int j=0;j<4;j++) {
             String opRate;
             opRate << "OP" << (i+1) << "-EGR" << (j+1);
-            opCtrl[i].egRate[j] = new CtrlInt(opRate, 100, opTarget+j);
-            ctrl.add(opCtrl[i].egRate[j]);
+            opCtrl[opVal].egRate[j] = new CtrlInt(opRate, 100, opTarget+j);
+            ctrl.add(opCtrl[opVal].egRate[j]);
             
             String opLevel;
             opLevel << "OP" << (i+1) << "-EGL" << (j+1);
-            opCtrl[i].egLevel[j] = new CtrlInt(opLevel, 100, opTarget+j+4);
-            ctrl.add(opCtrl[i].egLevel[j]);
+            opCtrl[opVal].egLevel[j] = new CtrlInt(opLevel, 100, opTarget+j+4);
+            ctrl.add(opCtrl[opVal].egLevel[j]);
         }
         String opVol;
         opVol << "OP" << (i+1) << "-LEVEL";
-        opCtrl[i].level = new CtrlInt(opVol, 100, opTarget+16);
-        ctrl.add(opCtrl[i].level);
+        opCtrl[opVal].level = new CtrlInt(opVol, 100, opTarget+16);
+        ctrl.add(opCtrl[opVal].level);
         
         String opMode;
         opMode << "OP" << (i+1) << "-MODE";
-        opCtrl[i].opMode = new CtrlInt(opMode, 1, opTarget+17);
-        ctrl.add(opCtrl[i].opMode);
+        opCtrl[opVal].opMode = new CtrlInt(opMode, 1, opTarget+17);
+        ctrl.add(opCtrl[opVal].opMode);
         
         String coarse;
         coarse << "OP" << (i+1) << "-COARSE";
-        opCtrl[i].coarse = new CtrlInt(coarse, 32, opTarget+18, true);
-        ctrl.add(opCtrl[i].coarse);
+        opCtrl[opVal].coarse = new CtrlInt(coarse, 32, opTarget+18);
+        ctrl.add(opCtrl[opVal].coarse);
         
         String fine;
         fine << "OP" << (i+1) << "-FINE";
-        opCtrl[i].fine = new CtrlInt(fine, 100, opTarget+19);
-        ctrl.add(opCtrl[i].fine);
+        opCtrl[opVal].fine = new CtrlInt(fine, 100, opTarget+19);
+        ctrl.add(opCtrl[opVal].fine);
 
         String detune;
         detune << "OP" << (i+1) << "-DETUNE";
-        opCtrl[i].detune = new CtrlInt(detune, 15, opTarget+20);
-        ctrl.add(opCtrl[i].detune);
+        opCtrl[opVal].detune = new CtrlInt(detune, 15, opTarget+20);
+        ctrl.add(opCtrl[opVal].detune);
     }
     
     algo = new CtrlInt("Algorithm", 32, 134, true);

@@ -307,7 +307,8 @@ void OperatorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
 	int targetNum = op+1;
-
+   
+    op=5-op;
     String text = "op";
     text << "OP";
     text << targetNum;
