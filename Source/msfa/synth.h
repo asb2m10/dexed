@@ -17,9 +17,14 @@
 #ifndef __SYNTH_H
 #define __SYNTH_H
 
-// This may not be present on MSVC.
+// This IS not be present on MSVC.
 // See http://stackoverflow.com/questions/126279/c99-stdint-h-header-and-ms-visual-studio
 #include <stdint.h>
+#ifdef _MSC_VER
+typedef __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+typedef __int16 SInt16;
+#endif
 
 #define LG_N 6
 #define N (1 << LG_N)
@@ -33,10 +38,12 @@
 #endif
 #endif
 
+
 // #undef SynthMemoryBarrier()
 
 #ifndef SynthMemoryBarrier
-#warning Memory barrier is not enabled
+// need to understand why this must be defined
+// #warning Memory barrier is not enabled
 #define SynthMemoryBarrier()
 #endif
 

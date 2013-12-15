@@ -160,6 +160,10 @@ private:
 
 };
 
+#ifdef _MSC_VER
+#define TRACE(fmt, ...) DexedAudioProcessor::log(__FUNCTION__,fmt,##__VA_ARGS__)
+#else
 #define TRACE(fmt, ...) DexedAudioProcessor::log(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+#endif
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED

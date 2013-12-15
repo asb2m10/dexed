@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 #include "synth.h"
 #include "exp2.h"
 
 #include <stdio.h>
+
+#ifdef _MSC_VER
+#define exp2(arg) pow(2.0, arg)
+#endif
+
+
 
 int32_t exp2tab[EXP2_N_SAMPLES << 1];
 

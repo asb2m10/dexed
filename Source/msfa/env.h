@@ -17,6 +17,8 @@
 #ifndef __ENV_H
 #define __ENV_H
 
+#include "synth.h"
+
 // DX7 envelope generation
 
 class Env {

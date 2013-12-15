@@ -21,12 +21,12 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-#include "synth.h"
-#include "freqlut.h"
-#include "sin.h"
-#include "exp2.h"
-#include "pitchenv.h"
-#include "aligned_buf.h"
+#include "msfa/synth.h"
+#include "msfa/freqlut.h"
+#include "msfa/sin.h"
+#include "msfa/exp2.h"
+#include "msfa/pitchenv.h"
+#include "msfa/aligned_buf.h"
 
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
