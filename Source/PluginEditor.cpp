@@ -49,7 +49,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     presets.setBounds(200, 5, 150, 24);
 
     for(int i=0;i<processor->getNumPrograms();i++) {
-    	presets.addItem( processor->getProgramName(i), i+1);
+        presets.addItem( processor->getProgramName(i), i+1);
     }
     presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
     presets.addListener(this);
@@ -98,7 +98,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
 DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
     stopTimer();
-	processor->unbindUI();
+    processor->unbindUI();
 }
 
 //==============================================================================
@@ -134,7 +134,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
 
         presets.clear(NotificationType::dontSendNotification);
         for(int i=0;i<processor->getNumPrograms();i++) {
-        	presets.addItem(processor->getProgramName(i), i+1);
+            presets.addItem(processor->getProgramName(i), i+1);
         }
         TRACE("selecting id %d", processor->getCurrentProgram());
         presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
@@ -148,12 +148,12 @@ void DexedAudioProcessorEditor::sliderValueChanged (Slider* slider) {
 }
 
 void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged) {
-	processor->setCurrentProgram(comboBoxThatHasChanged->getSelectedId()-1);
+    processor->setCurrentProgram(comboBoxThatHasChanged->getSelectedId()-1);
     processor->updateHostDisplay();    
 }
 
 void DexedAudioProcessorEditor::timerCallback() {
-	int32_t env[6];
+    int32_t env[6];
 
     if ( processor->peekEnvStatus(env) == false ) 
         return;
@@ -164,11 +164,11 @@ void DexedAudioProcessorEditor::timerCallback() {
 }   
 
 void DexedAudioProcessorEditor::updateUI() {
-	TRACE("update UI called");
-	for(int i=0;i<processor->ctrl.size();i++) {
-		processor->ctrl[i]->updateComponent();
-	}
-	for(int i=0;i<6;i++) {
-		ops[i].updateFreqDisplay();
-	}
+    TRACE("update UI called");
+    for(int i=0;i<processor->ctrl.size();i++) {
+        processor->ctrl[i]->updateComponent();
+    }
+    for(int i=0;i<6;i++) {
+        ops[i].updateFreqDisplay();
+    }
 }

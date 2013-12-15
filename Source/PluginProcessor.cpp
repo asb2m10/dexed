@@ -47,7 +47,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
-	TRACE("Bye");
+    TRACE("Bye");
 }
 
 //==============================================================================
@@ -356,13 +356,13 @@ bool DexedAudioProcessor::hasEditor() const {
 }
 
 void DexedAudioProcessor::updateUI() {
-	AudioProcessorEditor *editor = getActiveEditor();
-	if ( editor == NULL ) {
-		TRACE("no editor found");
-		return;
-	}
-	DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
-	dexedEditor->updateUI();
+    AudioProcessorEditor *editor = getActiveEditor();
+    if ( editor == NULL ) {
+        TRACE("no editor found");
+        return;
+    }
+    DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
+    dexedEditor->updateUI();
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
@@ -370,7 +370,7 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
 }
 
 void DexedAudioProcessor::log(const char *source, const char *fmt, ...) {
-	char output[4096];
+    char output[4096];
     va_list argptr;
     va_start(argptr, fmt);
     vsnprintf(output, 4095, fmt, argptr);

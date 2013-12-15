@@ -35,42 +35,42 @@ protected:
     ComboBox *comboBox;
 
 public:
-	String label;
+    String label;
 
-	Ctrl(String name);
+    Ctrl(String name);
     
     void bind(Slider *s);
     void bind(Button *b);
     void bind(ComboBox *c);
     void unbind();
     
-	virtual void setValuePlugin(float f) = 0;
-	virtual float getValuePlugin() = 0;
-	virtual String getValueDisplay() = 0;
+    virtual void setValuePlugin(float f) = 0;
+    virtual float getValuePlugin() = 0;
+    virtual String getValueDisplay() = 0;
     virtual void updateComponent() = 0;
 
-	/**
-	 * Index of this parameter
-	 */
-	int idx;
+    /**
+     * Index of this parameter
+     */
+    int idx;
     DexedAudioProcessor *parent;
 };
 
 // CtrlInt
 class CtrlInt : public Ctrl {
-	int value;
-	int steps;
-	int add1;
-	int dxOffset;
+    int value;
+    int steps;
+    int add1;
+    int dxOffset;
 
 public:
-	CtrlInt(String name, int steps, int offset = -1, bool starts1 = false);
+    CtrlInt(String name, int steps, int offset = -1, bool starts1 = false);
     void setValuePlugin(float f);
     float getValuePlugin();
     void publishValue(int value);
     
-	void setValue(int value);
-	int getValue();
+    void setValue(int value);
+    int getValue();
     String getValueDisplay();
     void sliderValueChanged (Slider* moved);
     void buttonClicked (Button* buttonThatWasClicked);
@@ -80,8 +80,8 @@ public:
 
 
 struct OperatorCtrl {
-	ScopedPointer<CtrlInt> egRate[4];
-	ScopedPointer<CtrlInt> egLevel[4];
+    ScopedPointer<CtrlInt> egRate[4];
+    ScopedPointer<CtrlInt> egLevel[4];
     ScopedPointer<CtrlInt> level;
     ScopedPointer<CtrlInt> opMode;
     ScopedPointer<CtrlInt> coarse;
