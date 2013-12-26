@@ -6,6 +6,9 @@
 
 namespace BinaryData
 {
+    extern const char*   background_png;
+    const int            background_pngSize = 12012;
+
     extern const char*   startup_syx;
     const int            startup_syxSize = 4104;
 

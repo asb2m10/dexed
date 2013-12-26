@@ -2594,6 +2594,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resources\background.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
     <None Include="..\..\Resources\startup.syx">
       <Filter>Dexed\Resources</Filter>
     </None>
@@ -2609,12 +2612,6 @@
     <None Include="..\..\..\JUCE\modules\juce_audio_utils\juce_module_info">
       <Filter>Juce Modules\juce_audio_utils</Filter>
     </None>
-    <None Include="..\..\JuceLibraryCode\modules\juce_core\zip\.DS_Store">
-      <Filter>Juce Modules\juce_core\zip</Filter>
-    </None>
-    <None Include="..\..\JuceLibraryCode\modules\juce_core\native\.DS_Store">
-      <Filter>Juce Modules\juce_core\native</Filter>
-    </None>
     <None Include="..\..\..\JUCE\modules\juce_core\juce_module_info">
       <Filter>Juce Modules\juce_core</Filter>
     </None>
@@ -2623,9 +2620,6 @@
     </None>
     <None Include="..\..\..\JUCE\modules\juce_events\juce_module_info">
       <Filter>Juce Modules\juce_events</Filter>
-    </None>
-    <None Include="..\..\JuceLibraryCode\modules\juce_graphics\image_formats\.DS_Store">
-      <Filter>Juce Modules\juce_graphics\image_formats</Filter>
     </None>
     <None Include="..\..\..\JUCE\modules\juce_graphics\juce_module_info">
       <Filter>Juce Modules\juce_graphics</Filter>

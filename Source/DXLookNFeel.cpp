@@ -19,6 +19,46 @@
  */
 
 #include "DXLookNFeel.h"
+#include "PluginProcessor.h"
+
+void EnvDisplay::paint(Graphics &g) {
+	int rate[4];
+	int level[4];
+
+	for(int i=0;i<4;i++) {
+		rate[i] = s_rate[i]->getValue();
+		level[i] = s_level[i]->getValue();
+	}
+
+	env.init(rate, level, 99 << 5, 0);
+    env.keydown(true);
+	for (int i=0;i<72;i++) {
+		int32_t pos = env.getsample();
+		for(int j=0;j<16;j++) {
+			env.getsample();
+		}
+		g.setPixel(i, 32 - (sqrt(pos) / 512));
+	}
+    env.keydown(false);
+	for (int i=0;i<24;i++) {
+		int32_t pos = env.getsample();
+		for(int j=0;j<16;j++) {
+			env.getsample();
+		}
+		g.setPixel(i+72,  32 - (sqrt(pos) / 512));
+	}
+}
+
+void AlgoDisplay::updateUI() {
+
+}
+
+void AlgoDisplay::paint(Graphics &g) {
+
+}
 
 DXLookNFeel::DXLookNFeel() {
+	setColour(TextButton::buttonColourId,Colour(0xFF0FC00F));
+	setColour(Slider::rotarySliderOutlineColourId,Colour(0xFF0FC00F));
+	setColour(Slider::rotarySliderFillColourId,Colour(0xFFFFFFFF));
 }

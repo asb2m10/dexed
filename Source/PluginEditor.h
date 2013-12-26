@@ -32,35 +32,36 @@
 */
 class DexedAudioProcessorEditor  : public AudioProcessorEditor,
         public ButtonListener,
-        public SliderListener,
         public ComboBoxListener,
         public Timer {
     DexedAudioProcessor *processor;
-    
     ComboBox presets;
-
     MidiKeyboardComponent midiKeyboard;
-
     DXLookNFeel dx_lnf;
             
+    ScopedPointer<TextButton> loadButton;
+    ScopedPointer<TextButton> saveButton;
+    ScopedPointer<TextButton> storeButton;
+    ScopedPointer<TextButton> aboutButton;
+
 public:
 
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
-    ScopedPointer<TextButton> textButton;
-    ScopedPointer<Slider> algo;
+
     void timerCallback();
             
     //==============================================================================
     // This is just a standard Juce paint method...
     void paint (Graphics& g);
     void buttonClicked (Button* buttonThatWasClicked);
-    void sliderValueChanged (Slider*) override;
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
-    OperatorEditor ops[6];
+    OperatorEditor operators[6];
     GlobalEditor global;
 
     void updateUI();
+
+    Image cachedImage_background_png;
 };
 
 

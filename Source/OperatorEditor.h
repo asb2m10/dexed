@@ -23,6 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
+#include "DXLookNFeel.h"
 //[/Headers]
 
 
@@ -49,7 +50,8 @@ public:
 
     void bind(DexedAudioProcessor *processor, int num);
     void updateGain(float v);
-    void updateFreqDisplay();
+    void updateDisplay();
+    void updateEnv();
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -65,7 +67,6 @@ private:
 
     //==============================================================================
     ScopedPointer<Slider> s_egl1;
-    ScopedPointer<ToggleButton> toggleButton;
     ScopedPointer<Slider> s_egl2;
     ScopedPointer<Slider> s_egl3;
     ScopedPointer<Slider> s_egl4;
@@ -81,6 +82,15 @@ private:
     ScopedPointer<Slider> gain;
     ScopedPointer<Label> khzDisplay;
     ScopedPointer<Slider> detune;
+    ScopedPointer<EnvDisplay> envDisplay;
+    ScopedPointer<Slider> sclLeftLevel;
+    ScopedPointer<Slider> sclRightLevel;
+    ScopedPointer<ComboBox> kbdLeftCurve;
+    ScopedPointer<ComboBox> kbdRightCurve;
+    ScopedPointer<Slider> sclLvlBrkPt;
+    ScopedPointer<Slider> sclRateScaling;
+    ScopedPointer<Slider> keyVelSens;
+    ScopedPointer<Slider> ampModSens;
 
 
     //==============================================================================

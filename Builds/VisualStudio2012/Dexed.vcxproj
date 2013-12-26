@@ -1516,17 +1516,15 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resources\background.png"/>
     <None Include="..\..\Resources\startup.syx"/>
     <None Include="..\..\..\JUCE\modules\juce_audio_basics\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_audio_plugin_client\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_audio_processors\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_audio_utils\juce_module_info"/>
-    <None Include="..\..\JuceLibraryCode\modules\juce_core\zip\.DS_Store"/>
-    <None Include="..\..\JuceLibraryCode\modules\juce_core\native\.DS_Store"/>
     <None Include="..\..\..\JUCE\modules\juce_core\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_data_structures\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_events\juce_module_info"/>
-    <None Include="..\..\JuceLibraryCode\modules\juce_graphics\image_formats\.DS_Store"/>
     <None Include="..\..\..\JUCE\modules\juce_graphics\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_gui_basics\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_gui_extra\juce_module_info"/>

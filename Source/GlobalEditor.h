@@ -23,6 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
+#include "DXLookNFeel.h"
 //[/Headers]
 
 
@@ -59,6 +60,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    DexedAudioProcessor *processor;
     //[/UserVariables]
 
     //==============================================================================
@@ -68,6 +70,9 @@ private:
     ScopedPointer<Slider> lfoAmDepth;
     ScopedPointer<Slider> lfoPitchDepth;
     ScopedPointer<Slider> lfoDelay;
+    ScopedPointer<Slider> cutoff;
+    ScopedPointer<Slider> reso;
+    ScopedPointer<AlgoDisplay> algoDisplay;
 
 
     //==============================================================================

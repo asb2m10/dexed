@@ -22,7 +22,23 @@
 #define DXLOOKNFEEL_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "msfa/env.h"
 
+class EnvDisplay : public Component {
+	Env env;
+public:
+	Slider *s_rate[4];
+	Slider *s_level[4];
+
+	void paint(Graphics &g);
+};
+
+class AlgoDisplay : public Component {
+	int algo;
+public:
+	void paint(Graphics &g);
+	void updateUI();
+};
 
 class DXLookNFeel : public LookAndFeel_V3 {
 public:

@@ -142,6 +142,7 @@
 		1D31136D1C9D959792023095 = { isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_RelativeTime.cpp"; path = "../../JuceLibraryCode/modules/juce_core/time/juce_RelativeTime.cpp"; sourceTree = "SOURCE_ROOT"; };
 		1D798858682A27299589F4E5 = { isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_ComponentListener.cpp"; path = "../../JuceLibraryCode/modules/juce_gui_basics/components/juce_ComponentListener.cpp"; sourceTree = "SOURCE_ROOT"; };
 		1D95A78059DCCC7B58782F07 = { isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_AudioSampleBuffer.h"; path = "../../JuceLibraryCode/modules/juce_audio_basics/buffers/juce_AudioSampleBuffer.h"; sourceTree = "SOURCE_ROOT"; };
+		1DC9D8AC8B4311052BC86115 = { isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = ../../Resources/background.png; sourceTree = "SOURCE_ROOT"; };
 		1E1A0627C2977D5FCB8440CC = { isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_LookAndFeel.h"; path = "../../JuceLibraryCode/modules/juce_gui_basics/lookandfeel/juce_LookAndFeel.h"; sourceTree = "SOURCE_ROOT"; };
 		1EB6398B6F537A4302092240 = { isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_TextEditorKeyMapper.h"; path = "../../JuceLibraryCode/modules/juce_gui_basics/keyboard/juce_TextEditorKeyMapper.h"; sourceTree = "SOURCE_ROOT"; };
 		1F51658DEF590741920719FF = { isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_MACAddress.cpp"; path = "../../JuceLibraryCode/modules/juce_core/network/juce_MACAddress.cpp"; sourceTree = "SOURCE_ROOT"; };
@@ -850,6 +851,7 @@
 		FF5B77AA3517B4637F862BD3 = { isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_RelativeCoordinatePositioner.cpp"; path = "../../JuceLibraryCode/modules/juce_gui_basics/positioning/juce_RelativeCoordinatePositioner.cpp"; sourceTree = "SOURCE_ROOT"; };
 		FF6607118B29435E76806DFA = { isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dexed.component; sourceTree = "BUILT_PRODUCTS_DIR"; };
 		F472964B0FFEE5615B72CE3D = { isa = PBXGroup; children = (
+				1DC9D8AC8B4311052BC86115,
 				E93431088B4E40AC9A48D817 ); name = Resources; sourceTree = "<group>"; };
 		BDC5059F1563FD8DD69AD324 = { isa = PBXGroup; children = (
 				3715DFDD7A1B12083F051F5A,

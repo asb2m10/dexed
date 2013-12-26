@@ -94,13 +94,13 @@ void DexedAudioProcessor::releaseResources() {
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
     int numSamples = buffer.getNumSamples();
     
-    if ( isDirty ) {
+    if ( refreshVoice ) {
         for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
                 voices[i].dx7_note->update(data, voices[i].midi_note);
         }
         lfo.reset(data + 137);
-        isDirty = false;
+        refreshVoice = false;
     }
 
     // check buffer size
@@ -120,8 +120,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     int pos;
     
     while(it.getNextEvent(msg, pos)) {
-        processMidiMessage(msg.getRawData(), msg.getRawDataSize());
+        processMidiMessage(&msg);
     }
+    midiMessages.clear();
 
     processSamples(numSamples, workBlock);
     float *channelData = buffer.getSampleData(0);
@@ -143,6 +144,10 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
         buffer.clear (i, 0, buffer.getNumSamples());
     }
+
+    if ( ! midiOut.isEmpty() ) {
+    	midiMessages.swapWith(midiOut);
+    }
 }
 
 
@@ -152,7 +157,31 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
     return new DexedAudioProcessor();
 }
 
-void DexedAudioProcessor::processMidiMessage(const uint8_t *buf, int buf_size) {
+void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
+	if ( msg->isSysEx() ) {
+        TRACE("SYSEX RECEIVED");
+		const uint8 *buf = msg->getSysExData();
+		int sz = msg->getSysExDataSize();
+		if ( sz < 3 )
+			return;
+
+		// test if it is a Yamaha Sysex
+		if ( buf[0] != 0x43 )
+			return;
+
+		// single voice dump
+		if ( buf[2] == 0 ) {
+			if ( sz < 155 ) {
+				TRACE("wrong single voice datasize %d", buf[2]);
+				return;
+			}
+			updateProgramFromSysex(buf+5);
+		}
+
+		return;
+	}
+
+    const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];
 
     switch(cmd & 0xf0) {
@@ -358,7 +387,7 @@ bool DexedAudioProcessor::hasEditor() const {
 void DexedAudioProcessor::updateUI() {
     AudioProcessorEditor *editor = getActiveEditor();
     if ( editor == NULL ) {
-        TRACE("no editor found");
+        TRACE("no editor found!?");
         return;
     }
     DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;

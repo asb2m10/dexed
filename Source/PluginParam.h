@@ -38,7 +38,6 @@ public:
     String label;
 
     Ctrl(String name);
-    
     void bind(Slider *s);
     void bind(Button *b);
     void bind(ComboBox *c);
@@ -56,15 +55,15 @@ public:
     DexedAudioProcessor *parent;
 };
 
-// CtrlInt
-class CtrlInt : public Ctrl {
+// CtrlDX is a controller that is related to DX parameters
+class CtrlDX : public Ctrl {
     int value;
     int steps;
     int add1;
     int dxOffset;
 
 public:
-    CtrlInt(String name, int steps, int offset = -1, bool starts1 = false);
+    CtrlDX(String name, int steps, int offset = -1, bool starts1 = false);
     void setValuePlugin(float f);
     float getValuePlugin();
     void publishValue(int value);
@@ -80,15 +79,21 @@ public:
 
 
 struct OperatorCtrl {
-    ScopedPointer<CtrlInt> egRate[4];
-    ScopedPointer<CtrlInt> egLevel[4];
-    ScopedPointer<CtrlInt> level;
-    ScopedPointer<CtrlInt> opMode;
-    ScopedPointer<CtrlInt> coarse;
-    ScopedPointer<CtrlInt> fine;
-    ScopedPointer<CtrlInt> detune;
+    ScopedPointer<CtrlDX> egRate[4];
+    ScopedPointer<CtrlDX> egLevel[4];
+    ScopedPointer<CtrlDX> level;
+    ScopedPointer<CtrlDX> opMode;
+    ScopedPointer<CtrlDX> coarse;
+    ScopedPointer<CtrlDX> fine;
+    ScopedPointer<CtrlDX> detune;
+    ScopedPointer<CtrlDX> sclBrkPt;
+    ScopedPointer<CtrlDX> sclLeftDepth;
+    ScopedPointer<CtrlDX> sclRightDepth;
+    ScopedPointer<CtrlDX> sclLeftCurve;
+    ScopedPointer<CtrlDX> sclRightCurve;
+    ScopedPointer<CtrlDX> sclRate;
+    ScopedPointer<CtrlDX> ampModSens;
+    ScopedPointer<CtrlDX> velModSens;
 };
-
-
 
 #endif  // PLUGINPARAM_H_INCLUDED

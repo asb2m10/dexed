@@ -51,7 +51,6 @@ class DexedAudioProcessor  : public AudioProcessor
 
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
-
     bool sustain;
 
     // Extra buffering for when GetSamples wants a buffer not a multiple of N
@@ -60,47 +59,51 @@ class DexedAudioProcessor  : public AudioProcessor
 
     SInt16 *workBlock;
     int workBlockSize;
-
     int currentProgram;
-
     char sysex[4096];
     char patchNames[32][13];
-    void unpackSysex(int idx);
 
-public :
-    bool isDirty;
-    Array<Ctrl*> ctrl;
+    void packProgram(int idx);
+    void unpackProgram(int idx);
+    void updateProgramFromSysex(const uint8 *rawdata);
 
-    // PARAMETER CONTAINER
-    OperatorCtrl opCtrl[6];
-    ScopedPointer<CtrlInt> pitchEgRate[4];
-    ScopedPointer<CtrlInt> pitchEgLevel[4];
+    /**
+     * This flag is usd in the audio thread to know if the voice has changed
+     * and needs to be updated.
+     */
+    bool refreshVoice;
 
-    ScopedPointer<CtrlInt> algo;
-    ScopedPointer<CtrlInt> lfoRate;
-    ScopedPointer<CtrlInt> lfoDelay;
-    ScopedPointer<CtrlInt> lfoAmpDepth;
-    ScopedPointer<CtrlInt> lfoPitchDepth;
-    ScopedPointer<CtrlInt> lfoWaveform;
-    ScopedPointer<CtrlInt> lfoSync;
+    MidiBuffer midiOut;
 
-    void initCtrl();
-
-    int importSysex(const char *imported);
-
-    String getPatchName(int idx);
-    void setDxValue(int offset, int v);
-    char data[161];
-
-    void unbindUI();
-
-    
-    void processMidiMessage(const uint8_t *buf, int buf_size);
+    void processMidiMessage(MidiMessage *msg);
     void keydown(uint8_t pitch, uint8_t velo);
     void keyup(uint8_t pitch);
     void processSamples(int n_samples, int16_t *buffer);
-    
-public:
+
+    void initCtrl();
+
+
+public :
+    bool refreshUI;
+    bool sendSysexChange;
+    char data[161];
+
+    Array<Ctrl*> ctrl;
+
+    OperatorCtrl opCtrl[6];
+    ScopedPointer<CtrlDX> pitchEgRate[4];
+    ScopedPointer<CtrlDX> pitchEgLevel[4];
+    ScopedPointer<CtrlDX> algo;
+    ScopedPointer<CtrlDX> lfoRate;
+    ScopedPointer<CtrlDX> lfoDelay;
+    ScopedPointer<CtrlDX> lfoAmpDepth;
+    ScopedPointer<CtrlDX> lfoPitchDepth;
+    ScopedPointer<CtrlDX> lfoWaveform;
+    ScopedPointer<CtrlDX> lfoSync;
+
+    int importSysex(const char *imported);
+    void setDxValue(int offset, int v);
+
     //==============================================================================
     DexedAudioProcessor();
     ~DexedAudioProcessor();
@@ -151,6 +154,7 @@ public:
     // this is kept up to date with the midi messages that arrive, and the UI component
     // registers with it so it can represent the incoming messages
     MidiKeyboardState keyboardState;
+    void unbindUI();
 
     static void log(const char *source, const char *fmt, ...);
 
