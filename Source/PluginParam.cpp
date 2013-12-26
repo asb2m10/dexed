@@ -49,27 +49,26 @@ void Ctrl::bind(ComboBox *c) {
 }
 
 void Ctrl::unbind() {
-    if ( slider != NULL ) {
+    if (slider != NULL) {
         slider->removeListener(this);
         slider = NULL;
     }
-    
-    if ( button != NULL ) {
+
+    if (button != NULL) {
         button->removeListener(this);
         button = NULL;
     }
-    
-    if ( comboBox != NULL ) {
+
+    if (comboBox != NULL) {
         comboBox->removeListener(this);
         comboBox = NULL;
     }
 }
 
-
 // ************************************************************************
 // CtrlInt ================================================================
 CtrlDX::CtrlDX(String name, int steps, int offset, bool starts1) :
-Ctrl(name) {
+        Ctrl(name) {
     add1 = starts1 == 1;
     this->steps = steps;
     value = 0;
@@ -85,19 +84,19 @@ void CtrlDX::setValuePlugin(float f) {
 }
 
 void CtrlDX::setValue(int v) {
-    if ( v >= steps ) {
+    if (v >= steps) {
         TRACE("WARNING: value too big %s : %d", label.toRawUTF8(), v);
-        v = steps-1;
+        v = steps - 1;
     }
     value = v;
-    if ( dxOffset >= 0 ) {
-        if ( parent != NULL )
+    if (dxOffset >= 0) {
+        if (parent != NULL)
             parent->setDxValue(dxOffset, v);
     }
 }
 
 int CtrlDX::getValue() {
-    if ( dxOffset >= 0 )
+    if (dxOffset >= 0)
         value = parent->data[dxOffset];
     return value;
 }
@@ -110,39 +109,42 @@ String CtrlDX::getValueDisplay() {
 
 void CtrlDX::publishValue(int value) {
     parent->beginParameterChangeGesture(idx);
-    parent->setParameterNotifyingHost(idx, (((float)value) / steps));
+    parent->setParameterNotifyingHost(idx, (((float) value) / steps));
     parent->endParameterChangeGesture(idx);
 }
 
 void CtrlDX::sliderValueChanged(Slider* moved) {
-    publishValue(((int)moved->getValue() - add1));
+    publishValue(((int) moved->getValue() - add1));
 }
 
-void CtrlDX::buttonClicked (Button* clicked) {
+void CtrlDX::buttonClicked(Button* clicked) {
     publishValue(clicked->getToggleStateValue() == 1 ? 1 : 0);
 }
 
-void CtrlDX::comboBoxChanged (ComboBox* combo) {
-    publishValue(combo->getSelectedId()-1);
+void CtrlDX::comboBoxChanged(ComboBox* combo) {
+    publishValue(combo->getSelectedId() - 1);
 }
 
 void CtrlDX::updateComponent() {
     //TRACE("setting for %s %d", label.toRawUTF8(), getValue());
-    if ( slider != NULL ) {
-        slider->setValue(getValue() + add1, NotificationType::dontSendNotification);
+    if (slider != NULL) {
+        slider->setValue(getValue() + add1,
+                NotificationType::dontSendNotification);
     }
-    
-    if ( button != NULL ) {
-        if ( getValue() == 0 ) {
-            button->setToggleState(false, NotificationType::dontSendNotification);
+
+    if (button != NULL) {
+        if (getValue() == 0) {
+            button->setToggleState(false,
+                    NotificationType::dontSendNotification);
         } else {
-            button->setToggleState(true, NotificationType::dontSendNotification);
+            button->setToggleState(true,
+                    NotificationType::dontSendNotification);
         }
     }
-    
-    if ( comboBox != NULL ) {
+
+    if (comboBox != NULL) {
         int cvalue = getValue() + 1;
-        if ( comboBox->getNumItems() <= cvalue ) {
+        if (comboBox->getNumItems() <= cvalue) {
             cvalue = comboBox->getNumItems();
         }
         comboBox->setSelectedId(cvalue, NotificationType::dontSendNotification);
@@ -153,97 +155,101 @@ void CtrlDX::updateComponent() {
 // Patcher ================================================================
 void DexedAudioProcessor::initCtrl() {
     importSysex(BinaryData::startup_syx);
-    
+
     // fill operator values;
-    for(int i=0;i<6;i++) {
+    for (int i = 0; i < 6; i++) {
         //// In the Sysex, OP6 comes first, then OP5...
         //int opTarget = (5-i) * 21;
         int opTarget = i * 21;
-        int opVal = 5-i;
+        int opVal = 5 - i;
         String opName;
-        opName << "OP" << (opVal+1);
-        
-        for(int j=0;j<4;j++) {
+        opName << "OP" << (opVal + 1);
+
+        for (int j = 0; j < 4; j++) {
             String opRate;
-            opRate << opName << "-EGR" << (j+1);
-            opCtrl[opVal].egRate[j] = new CtrlDX(opRate, 100, opTarget+j);
+            opRate << opName << "-EGR" << (j + 1);
+            opCtrl[opVal].egRate[j] = new CtrlDX(opRate, 100, opTarget + j);
             ctrl.add(opCtrl[opVal].egRate[j]);
-            
+
             String opLevel;
-            opLevel << opName << "-EGL" << (j+1);
-            opCtrl[opVal].egLevel[j] = new CtrlDX(opLevel, 100, opTarget+j+4);
+            opLevel << opName << "-EGL" << (j + 1);
+            opCtrl[opVal].egLevel[j] = new CtrlDX(opLevel, 100,
+                    opTarget + j + 4);
             ctrl.add(opCtrl[opVal].egLevel[j]);
         }
         String opVol;
         opVol << opName << "-LEVEL";
-        opCtrl[opVal].level = new CtrlDX(opVol, 100, opTarget+16);
+        opCtrl[opVal].level = new CtrlDX(opVol, 100, opTarget + 16);
         ctrl.add(opCtrl[opVal].level);
-        
+
         String opMode;
         opMode << opName << "-MODE";
-        opCtrl[opVal].opMode = new CtrlDX(opMode, 1, opTarget+17);
+        opCtrl[opVal].opMode = new CtrlDX(opMode, 1, opTarget + 17);
         ctrl.add(opCtrl[opVal].opMode);
-        
+
         String coarse;
         coarse << opName << "-COARSE";
-        opCtrl[opVal].coarse = new CtrlDX(coarse, 32, opTarget+18);
+        opCtrl[opVal].coarse = new CtrlDX(coarse, 32, opTarget + 18);
         ctrl.add(opCtrl[opVal].coarse);
-        
+
         String fine;
         fine << opName << "-FINE";
-        opCtrl[opVal].fine = new CtrlDX(fine, 100, opTarget+19);
+        opCtrl[opVal].fine = new CtrlDX(fine, 100, opTarget + 19);
         ctrl.add(opCtrl[opVal].fine);
 
         String detune;
         detune << opName << "-DETUNE";
-        opCtrl[opVal].detune = new CtrlDX(detune, 15, opTarget+20);
+        opCtrl[opVal].detune = new CtrlDX(detune, 15, opTarget + 20);
         ctrl.add(opCtrl[opVal].detune);
 
         String sclBrkPt;
         sclBrkPt << opName << "-SCL_BRK_PNT";
-        opCtrl[opVal].sclBrkPt = new CtrlDX(sclBrkPt, 100, opTarget+8);
+        opCtrl[opVal].sclBrkPt = new CtrlDX(sclBrkPt, 100, opTarget + 8);
         ctrl.add(opCtrl[opVal].sclBrkPt);
 
         String sclLeftDepth;
         sclLeftDepth << opName << "-SCL_LFT_DEPTH";
-        opCtrl[opVal].sclLeftDepth = new CtrlDX(sclLeftDepth, 100, opTarget+9);
+        opCtrl[opVal].sclLeftDepth = new CtrlDX(sclLeftDepth, 100,
+                opTarget + 9);
         ctrl.add(opCtrl[opVal].sclLeftDepth);
 
         String sclRightDepth;
         sclRightDepth << opName << "-SCL_RHT_DEPTH";
-        opCtrl[opVal].sclRightDepth = new CtrlDX(sclRightDepth, 100, opTarget+10);
+        opCtrl[opVal].sclRightDepth = new CtrlDX(sclRightDepth, 100,
+                opTarget + 10);
         ctrl.add(opCtrl[opVal].sclRightDepth);
 
         String sclLeftCurve;
         sclLeftCurve << opName << "-SCL_LFT_CURVE";
-        opCtrl[opVal].sclLeftCurve = new CtrlDX(sclLeftCurve, 4, opTarget+11);
+        opCtrl[opVal].sclLeftCurve = new CtrlDX(sclLeftCurve, 4, opTarget + 11);
         ctrl.add(opCtrl[opVal].sclLeftCurve);
 
         String sclRightCurve;
         sclRightCurve << opName << "-SCL_RHT_CURVE";
-        opCtrl[opVal].sclRightCurve = new CtrlDX(sclRightCurve, 4, opTarget+12);
+        opCtrl[opVal].sclRightCurve = new CtrlDX(sclRightCurve, 4,
+                opTarget + 12);
         ctrl.add(opCtrl[opVal].sclRightCurve);
 
         String sclRate;
         sclRate << opName << "-SCL_RATE";
-        opCtrl[opVal].sclRate = new CtrlDX(sclRate, 7, opTarget+13);
+        opCtrl[opVal].sclRate = new CtrlDX(sclRate, 7, opTarget + 13);
         ctrl.add(opCtrl[opVal].sclRate);
 
         String ampModSens;
         ampModSens << opName << "-AMP_MODSENS";
-        opCtrl[opVal].ampModSens = new CtrlDX(ampModSens, 3, opTarget+14);
+        opCtrl[opVal].ampModSens = new CtrlDX(ampModSens, 3, opTarget + 14);
         ctrl.add(opCtrl[opVal].ampModSens);
 
         String velModSens;
         velModSens << opName << "-VEL_MODSENS";
-        opCtrl[opVal].velModSens = new CtrlDX(velModSens, 8, opTarget+15);
+        opCtrl[opVal].velModSens = new CtrlDX(velModSens, 8, opTarget + 15);
         ctrl.add(opCtrl[opVal].velModSens);
     }
-    
+
     algo = new CtrlDX("Algorithm", 32, 134, true);
     ctrl.add(algo);
 
-    lfoRate  = new CtrlDX("LFO-Rate", 100, 137);
+    lfoRate = new CtrlDX("LFO-Rate", 100, 137);
     ctrl.add(lfoRate);
 
     lfoDelay = new CtrlDX("LFO-Delay", 100, 138);
@@ -260,27 +266,34 @@ void DexedAudioProcessor::initCtrl() {
 
     lfoWaveform = new CtrlDX("LFO-Waveform", 5, 142);
     ctrl.add(lfoWaveform);
-    
-    for(int i=0;i<ctrl.size();i++) {
+
+    for (int i = 0; i < ctrl.size(); i++) {
         ctrl[i]->idx = i;
         ctrl[i]->parent = this;
     }
 }
 
 int DexedAudioProcessor::importSysex(const char *imported) {
-    memcpy(sysex, imported+6, 4104);
-    for(int i=0;i<32;i++) {
-        memcpy(patchNames[i], sysex + ((i*128)+118), 11);
-        
-        for(int j=0;j<10;j++) {
-            char c = (unsigned char)patchNames[i][j];
+    memcpy(sysex, imported + 6, 4104);
+    for (int i = 0; i < 32; i++) {
+        memcpy(patchNames[i], sysex + ((i * 128) + 118), 11);
+
+        for (int j = 0; j < 10; j++) {
+            char c = (unsigned char) patchNames[i][j];
             switch (c) {
-            case  92:  c = 'Y';  break;  /* yen */
-            case 126:  c = '>';  break;  /* >> */
-            case 127:  c = '<';  break;  /* << */
+            case 92:
+                c = 'Y';
+                break; /* yen */
+            case 126:
+                c = '>';
+                break; /* >> */
+            case 127:
+                c = '<';
+                break; /* << */
             default:
-               if (c < 32 || c > 127) c = 32;
-               break;
+                if (c < 32 || c > 127)
+                    c = 32;
+                break;
             }
             patchNames[i][j] = c;
         }
@@ -291,7 +304,7 @@ int DexedAudioProcessor::importSysex(const char *imported) {
 
 void DexedAudioProcessor::unpackProgram(int idx) {
     char *bulk = sysex + (idx * 128);
-    
+
     for (int op = 0; op < 6; op++) {
         // eg rate and level, brk pt, depth, scaling
         memcpy(data + op * 21, bulk + op * 17, 11);
@@ -308,7 +321,7 @@ void DexedAudioProcessor::unpackProgram(int idx) {
         data[op * 21 + 17] = fcoarse_mode & 1;
         data[op * 21 + 18] = fcoarse_mode >> 1;
         data[op * 21 + 19] = bulk[op * 17 + 16];  // fine freq
-        data[op * 21 + 20] = detune_rs >> 3;        
+        data[op * 21 + 20] = detune_rs >> 3;
     }
     memcpy(data + 126, bulk + 102, 9);  // pitch env, algo
     char oks_fb = bulk[111];
@@ -328,7 +341,6 @@ void DexedAudioProcessor::unpackProgram(int idx) {
     data[160] = 1;
 }
 
-
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
 
 }
@@ -336,18 +348,18 @@ void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
 void DexedAudioProcessor::setDxValue(int offset, int v) {
     TRACE("setting dx %d %d", offset, v);
     refreshVoice = true;
-    if ( offset >= 0 )
+    if (offset >= 0)
         data[offset] = v;
 
-	if ( !sendSysexChange )
-		return;
-	uint8 msg[7] = { 0xF0, 0x43, 0x10, offset > 127, 0, (uint8) v, 0xF7 };
+    if (!sendSysexChange)
+        return;
+    uint8 msg[7] = { 0xF0, 0x43, 0x10, offset > 127, 0, (uint8) v, 0xF7 };
     msg[4] = offset & 0x7F;
-	midiOut.addEvent(msg, 7, 0);
+    midiOut.addEvent(msg, 7, 0);
 }
 
 void DexedAudioProcessor::unbindUI() {
-    for(int i=0;i<ctrl.size();i++) {
+    for (int i = 0; i < ctrl.size(); i++) {
         ctrl[i]->unbind();
     }
 }
@@ -357,11 +369,11 @@ int DexedAudioProcessor::getNumParameters() {
     return ctrl.size();
 }
 
-float DexedAudioProcessor::getParameter (int index) {
+float DexedAudioProcessor::getParameter(int index) {
     return ctrl[index]->getValuePlugin();
 }
 
-void DexedAudioProcessor::setParameter (int index, float newValue) {
+void DexedAudioProcessor::setParameter(int index, float newValue) {
     ctrl[index]->setValuePlugin(newValue);
 }
 
@@ -373,15 +385,15 @@ int DexedAudioProcessor::getCurrentProgram() {
     return currentProgram;
 }
 
-void DexedAudioProcessor::setCurrentProgram (int index) {
+void DexedAudioProcessor::setCurrentProgram(int index) {
     /*// VST has a naughty problem of calling setCurrentProgram after a host has loaded
-    // an edited preset. We ignore the 16th value, since we want to keep the user values
-    if ( index == 32 ) {
-        return;
-    }*/
+     // an edited preset. We ignore the 16th value, since we want to keep the user values
+     if ( index == 32 ) {
+     return;
+     }*/
 
-    for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
-        if ( voices[i].keydown == false && voices[i].live == true ) {
+    for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
+        if (voices[i].keydown == false && voices[i].live == true) {
             voices[i].live = false;
         }
     }
@@ -392,50 +404,48 @@ void DexedAudioProcessor::setCurrentProgram (int index) {
     updateUI();
 }
 
-const String DexedAudioProcessor::getProgramName (int index) {
-    if ( index >= 32 )
+const String DexedAudioProcessor::getProgramName(int index) {
+    if (index >= 32)
         index = 31;
     return String(patchNames[index]);
 }
 
-void DexedAudioProcessor::changeProgramName (int index, const String& newName) {
+void DexedAudioProcessor::changeProgramName(int index, const String& newName) {
 }
 
-
-const String DexedAudioProcessor::getParameterName (int index) {
+const String DexedAudioProcessor::getParameterName(int index) {
     return ctrl[index]->label;
 }
 
-const String DexedAudioProcessor::getParameterText (int index) {
+const String DexedAudioProcessor::getParameterText(int index) {
     return ctrl[index]->getValueDisplay();
 }
 
 //==============================================================================
-void DexedAudioProcessor::getStateInformation (MemoryBlock& destData) {
+void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.*/
     destData.insert(data, 161, 0);
 }
 
-void DexedAudioProcessor::setStateInformation (const void* source, int sizeInBytes) {
+void DexedAudioProcessor::setStateInformation(const void* source,
+        int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    memcpy((void *)data, source, sizeInBytes);
+    memcpy((void *) data, source, sizeInBytes);
     updateUI();
 }
 
-
 //==============================================================================
-void DexedAudioProcessor::getCurrentProgramStateInformation (MemoryBlock& destData) {
+void DexedAudioProcessor::getCurrentProgramStateInformation(
+        MemoryBlock& destData) {
     destData.insert(data, 161, 0);
 }
 
-void DexedAudioProcessor::setCurrentProgramStateInformation (const void* source, int sizeInBytes) {
-    memcpy((void *)data, source, sizeInBytes);
+void DexedAudioProcessor::setCurrentProgramStateInformation(const void* source,
+        int sizeInBytes) {
+    memcpy((void *) data, source, sizeInBytes);
     updateUI();
 }
-
-
-
 

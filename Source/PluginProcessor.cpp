@@ -146,7 +146,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     if ( ! midiOut.isEmpty() ) {
-    	midiMessages.swapWith(midiOut);
+        midiMessages.swapWith(midiOut);
     }
 }
 
@@ -158,28 +158,28 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
 }
 
 void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
-	if ( msg->isSysEx() ) {
+    if ( msg->isSysEx() ) {
         TRACE("SYSEX RECEIVED");
-		const uint8 *buf = msg->getSysExData();
-		int sz = msg->getSysExDataSize();
-		if ( sz < 3 )
-			return;
+        const uint8 *buf = msg->getSysExData();
+        int sz = msg->getSysExDataSize();
+        if ( sz < 3 )
+            return;
 
-		// test if it is a Yamaha Sysex
-		if ( buf[0] != 0x43 )
-			return;
+        // test if it is a Yamaha Sysex
+        if ( buf[0] != 0x43 )
+            return;
 
-		// single voice dump
-		if ( buf[2] == 0 ) {
-			if ( sz < 155 ) {
-				TRACE("wrong single voice datasize %d", buf[2]);
-				return;
-			}
-			updateProgramFromSysex(buf+5);
-		}
+        // single voice dump
+        if ( buf[2] == 0 ) {
+            if ( sz < 155 ) {
+                TRACE("wrong single voice datasize %d", buf[2]);
+                return;
+            }
+            updateProgramFromSysex(buf+5);
+        }
 
-		return;
-	}
+        return;
+    }
 
     const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];

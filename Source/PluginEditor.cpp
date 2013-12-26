@@ -129,45 +129,45 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
 
-	if (buttonThatWasClicked == loadButton) {
-		FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX", 1);
+    if (buttonThatWasClicked == loadButton) {
+        FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX", 1);
 
-		if ( fc.browseForFileToOpen()) {
-			String f = fc.getResults().getReference(0).getFullPathName();
-			uint8_t syx_data[4104];
-			ifstream fp_in;
-			fp_in.open(f.toRawUTF8(), ifstream::in);
-			if (fp_in.fail()) {
-				AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-												  "Error",
-												  "Unable to open: " + f);
-				return;
-			}
-			fp_in.read((char *)syx_data, 4104);
-			processor->importSysex((char *) &syx_data);
+        if ( fc.browseForFileToOpen()) {
+            String f = fc.getResults().getReference(0).getFullPathName();
+            uint8_t syx_data[4104];
+            ifstream fp_in;
+            fp_in.open(f.toRawUTF8(), ifstream::in);
+            if (fp_in.fail()) {
+                AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                                  "Error",
+                                                  "Unable to open: " + f);
+                return;
+            }
+            fp_in.read((char *)syx_data, 4104);
+            processor->importSysex((char *) &syx_data);
 
-			presets.clear(NotificationType::dontSendNotification);
-			for(int i=0;i<processor->getNumPrograms();i++) {
-				String id;
-				id << (i+1) << ". " << processor->getProgramName(i);
-				presets.addItem(id, i+1);
-			}
+            presets.clear(NotificationType::dontSendNotification);
+            for(int i=0;i<processor->getNumPrograms();i++) {
+                String id;
+                id << (i+1) << ". " << processor->getProgramName(i);
+                presets.addItem(id, i+1);
+            }
 
-			presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
-			processor->setCurrentProgram(0);
-			processor->updateHostDisplay();
-		}
+            presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+            processor->setCurrentProgram(0);
+            processor->updateHostDisplay();
+        }
 
-		return;
-	}
+        return;
+    }
 
-	if (buttonThatWasClicked == aboutButton) {
-		AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator", "(c) 2013 Pascal Gauthier\nUnder the GPL v2"
-				"\nBased on Music Synthesizer for Android\n");
-		return;
-	}
+    if (buttonThatWasClicked == aboutButton) {
+        AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator", "(c) 2013 Pascal Gauthier\nUnder the GPL v2"
+                "\nBased on Music Synthesizer for Android\n");
+        return;
+    }
 
-	AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Sorry", "Soon !");
+    AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Sorry", "Soon !");
 }
 
 void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged) {
@@ -182,7 +182,7 @@ void DexedAudioProcessorEditor::timerCallback() {
         return;
 
     for(int i=0;i<6;i++) {
-        operators[i].updateGain(sqrt(env[5-i]) / 8196);
+        operators[i].updateGain(sqrt(env[5 - i]) / 8196);
     }
 }   
 
