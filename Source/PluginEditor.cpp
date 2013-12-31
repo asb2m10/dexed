@@ -193,4 +193,7 @@ void DexedAudioProcessorEditor::updateUI() {
     for(int i=0;i<6;i++) {
         operators[i].updateDisplay();
     }
+    
+    int id = processor->getCurrentProgram() + 1;
+    presets.setSelectedId(id, NotificationType::dontSendNotification);
 }

@@ -207,26 +207,75 @@ void DexedAudioProcessor::initCtrl() {
     fxReso = new CtrlFloat("Resonance", &fx.uiReso);
     ctrl.add(fxReso);
     
+    algo = new CtrlDX("ALGORITHM", 32, 134, true);
+    ctrl.add(algo);
+    
+    feedback = new CtrlDX("FEEDBACK", 8, 135);
+    ctrl.add(feedback);
+    
+    oscSync = new CtrlDX("OSC KEY SYNC", 2, 136);
+    ctrl.add(oscSync);
+    
+    lfoRate = new CtrlDX("LFO SPEED", 100, 137);
+    ctrl.add(lfoRate);
+    
+    lfoDelay = new CtrlDX("LFO DELAY", 100, 138);
+    ctrl.add(lfoDelay);
+    
+    lfoPitchDepth = new CtrlDX("LFO PM DEPTH", 100, 139);
+    ctrl.add(lfoPitchDepth);
+    
+    lfoAmpDepth = new CtrlDX("LFO AM DEPTH", 100, 140);
+    ctrl.add(lfoAmpDepth);
+    
+    lfoSync = new CtrlDX("LFO KEY SYNC", 2, 141);
+    ctrl.add(lfoSync);
+    
+    lfoWaveform = new CtrlDX("LFO WAVE", 5, 142);
+    ctrl.add(lfoWaveform);
+    
+    transpose = new CtrlDX("MIDDLE C", 49, 144);
+    ctrl.add(transpose);
+    
+    pitchModSens = new CtrlDX("P MODE SENS.", 8, 143);
+    ctrl.add(pitchModSens);
+    
+    for (int i=0;i<4;i++) {
+        String rate;
+        rate << "PITCH EG RATE " << (i+1);
+        pitchEgRate[i] = new CtrlDX(rate, 99, 126+i);
+        ctrl.add(pitchEgRate[i]);
+    }
+
+    for (int i=0;i<4;i++) {
+        String level;
+        level << "PITCH EG LEVEL " << (i+1);
+        pitchEgLevel[i] = new CtrlDX(level, 99, 130+i);
+        ctrl.add(pitchEgLevel[i]);
+    }
+    
     // fill operator values;
     for (int i = 0; i < 6; i++) {
         //// In the Sysex, OP6 comes first, then OP5...
-        //int opTarget = (5-i) * 21;
-        int opTarget = i * 21;
-        int opVal = 5 - i;
+        int opTarget = (5-i) * 21;
+        int opVal = i;
         String opName;
         opName << "OP" << (opVal + 1);
 
-        for (int j = 0; j < 4; j++) {
+        for (int j = 0; j < 4; j++) {     
             String opRate;
-            opRate << opName << " EGR" << (j + 1);
+            opRate << opName << " EG RATE " << (j + 1);
             opCtrl[opVal].egRate[j] = new CtrlDX(opRate, 100, opTarget + j);
             ctrl.add(opCtrl[opVal].egRate[j]);
-
+        }
+    
+        for (int j = 0; j < 4; j++) {        
             String opLevel;
-            opLevel << opName << " EGL" << (j + 1);
+            opLevel << opName << " EG LEVEL " << (j + 1);
             opCtrl[opVal].egLevel[j] = new CtrlDX(opLevel, 100, opTarget + j + 4);
             ctrl.add(opCtrl[opVal].egLevel[j]);
         }
+    
         String opVol;
         opVol << opName << " OUTPUT LEVEL";
         opCtrl[opVal].level = new CtrlDX(opVol, 100, opTarget + 16);
@@ -294,50 +343,6 @@ void DexedAudioProcessor::initCtrl() {
         velModSens << opName << " KEY VELOCITY";
         opCtrl[opVal].velModSens = new CtrlDX(velModSens, 8, opTarget + 15);
         ctrl.add(opCtrl[opVal].velModSens);
-    }
-
-    algo = new CtrlDX("ALGORITHM", 32, 134, true);
-    ctrl.add(algo);
-
-    feedback = new CtrlDX("FEEDBACK", 8, 135);
-    ctrl.add(feedback);
-    
-    oscSync = new CtrlDX("OSC KEY SYNC", 2, 136);
-    ctrl.add(oscSync);
-    
-    lfoRate = new CtrlDX("LFO SPEED", 100, 137);
-    ctrl.add(lfoRate);
-
-    lfoDelay = new CtrlDX("LFO DELAY", 100, 138);
-    ctrl.add(lfoDelay);
-
-    lfoPitchDepth = new CtrlDX("LFO PM DEPTH", 100, 139);
-    ctrl.add(lfoPitchDepth);
-
-    lfoAmpDepth = new CtrlDX("LFO AM DEPTH", 100, 140);
-    ctrl.add(lfoAmpDepth);
-
-    lfoSync = new CtrlDX("LFO KEY SYNC", 2, 141);
-    ctrl.add(lfoSync);
-
-    lfoWaveform = new CtrlDX("LFO WAVE", 5, 142);
-    ctrl.add(lfoWaveform);
-    
-    transpose = new CtrlDX("MIDDLE C", 49, 144);
-    ctrl.add(transpose);
-
-    pitchModSens = new CtrlDX("P MODE SENS.", 8, 143);
-    ctrl.add(pitchModSens);
-    
-    for (int i=0;i<4;i++) {
-        String rate;
-        rate << "PITCH EGR" << (i+1);
-        String level;
-        level << "PITCH EGL" << (i+1);
-        pitchEgRate[i] = new CtrlDX(rate, 99, 126+i);
-        ctrl.add(pitchEgRate[i]);
-        pitchEgLevel[i] = new CtrlDX(level, 99, 130+i);
-        ctrl.add(pitchEgLevel[i]);
     }
     
     for (int i=0; i < ctrl.size(); i++) {
