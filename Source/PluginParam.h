@@ -42,11 +42,21 @@ public:
     void bind(Button *b);
     void bind(ComboBox *c);
     void unbind();
+
+    // use this to signal a parameter change to the host
+    void publishValue(float value);
     
-    virtual void setValuePlugin(float f) = 0;
-    virtual float getValuePlugin() = 0;
+    /**
+     * Host value is related 0.0 to 1.0 values
+     */
+    virtual void setValueHost(float f) = 0;
+    virtual float getValueHost() = 0;
     virtual String getValueDisplay() = 0;
     virtual void updateComponent() = 0;
+
+    void comboBoxChanged (ComboBox* combo);
+    void sliderValueChanged (Slider* moved);
+    void buttonClicked (Button* buttonThatWasClicked);
 
     /**
      * Index of this parameter
@@ -55,24 +65,35 @@ public:
     DexedAudioProcessor *parent;
 };
 
+class CtrlFloat : public Ctrl {
+	float *vPointer;
+public:
+
+	CtrlFloat(String name, float *storageValue);
+	void setValueHost(float f);
+	float getValueHost();
+	String getValueDisplay();
+	void updateComponent();
+};
+
 // CtrlDX is a controller that is related to DX parameters
 class CtrlDX : public Ctrl {
-    int value;
+    int dxValue;
     int steps;
     int add1;
     int dxOffset;
 
 public:
     CtrlDX(String name, int steps, int offset = -1, bool starts1 = false);
-    void setValuePlugin(float f);
-    float getValuePlugin();
-    void publishValue(int value);
+    void setValueHost(float f);
+    float getValueHost();
+    void publishValue(float value);
     
     void setValue(int value);
     int getValue();
     String getValueDisplay();
+
     void sliderValueChanged (Slider* moved);
-    void buttonClicked (Button* buttonThatWasClicked);
     void comboBoxChanged (ComboBox* combo);
     void updateComponent();
 };

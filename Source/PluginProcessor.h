@@ -28,6 +28,7 @@
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "PluginParam.h"
+#include "PluginFx.h"
 
 struct ProcessorVoice {
     int midi_note;
@@ -68,7 +69,12 @@ class DexedAudioProcessor  : public AudioProcessor
     void updateProgramFromSysex(const uint8 *rawdata);
 
     /**
-     * This flag is usd in the audio thread to know if the voice has changed
+     * PlugFX
+     */
+    PluginFx fx;
+
+    /**
+     * This flag is used in the audio thread to know if the voice has changed
      * and needs to be updated.
      */
     bool refreshVoice;
@@ -93,13 +99,20 @@ public :
     OperatorCtrl opCtrl[6];
     ScopedPointer<CtrlDX> pitchEgRate[4];
     ScopedPointer<CtrlDX> pitchEgLevel[4];
+    ScopedPointer<CtrlDX> pitchModSens;
     ScopedPointer<CtrlDX> algo;
+    ScopedPointer<CtrlDX> oscSync;
+    ScopedPointer<CtrlDX> feedback;
     ScopedPointer<CtrlDX> lfoRate;
     ScopedPointer<CtrlDX> lfoDelay;
     ScopedPointer<CtrlDX> lfoAmpDepth;
     ScopedPointer<CtrlDX> lfoPitchDepth;
     ScopedPointer<CtrlDX> lfoWaveform;
     ScopedPointer<CtrlDX> lfoSync;
+    ScopedPointer<CtrlDX> transpose;
+
+    ScopedPointer<CtrlFloat> fxCutoff;
+    ScopedPointer<CtrlFloat> fxReso;
 
     int importSysex(const char *imported);
     void setDxValue(int offset, int v);

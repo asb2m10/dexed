@@ -20,6 +20,7 @@
 
 #include "PluginParam.h"
 #include "PluginProcessor.h"
+#include "PluginEditor.h"
 
 // ************************************************************************
 //
@@ -65,21 +66,64 @@ void Ctrl::unbind() {
     }
 }
 
+void Ctrl::publishValue(float value) {
+    parent->beginParameterChangeGesture(idx);
+    parent->setParameterNotifyingHost(idx, value);
+    parent->endParameterChangeGesture(idx);
+}
+
+void Ctrl::sliderValueChanged(Slider* moved) {
+    publishValue(moved->getValue());
+}
+
+void Ctrl::buttonClicked(Button* clicked) {
+    publishValue(clicked->getToggleStateValue() == 1 ? 1 : 0);
+}
+
+void Ctrl::comboBoxChanged(ComboBox* combo) {
+    publishValue((combo->getSelectedId() - 1) / combo->getNumItems());
+}
+
 // ************************************************************************
-// CtrlInt ================================================================
-CtrlDX::CtrlDX(String name, int steps, int offset, bool starts1) :
-        Ctrl(name) {
+// CtrlDX - control DX mapping
+CtrlFloat::CtrlFloat(String name, float *storageValue) : Ctrl(name) {
+	vPointer = storageValue;
+}
+
+float CtrlFloat::getValueHost() {
+	return *vPointer;
+}
+
+void CtrlFloat::setValueHost(float v) {
+	*vPointer = v;
+}
+
+String CtrlFloat::getValueDisplay() {
+	String display;
+	display << *vPointer;
+	return display;
+}
+
+void CtrlFloat::updateComponent() {
+    if (slider != NULL) {
+        slider->setValue(*vPointer, NotificationType::dontSendNotification);
+    }
+}
+
+// ************************************************************************
+// CtrlDX - control DX mapping
+CtrlDX::CtrlDX(String name, int steps, int offset, bool starts1) : Ctrl(name) {
     add1 = starts1 == 1;
     this->steps = steps;
-    value = 0;
+    dxValue = 0;
     dxOffset = offset;
 }
 
-float CtrlDX::getValuePlugin() {
-    return value / steps;
+float CtrlDX::getValueHost() {
+    return dxValue / steps;
 }
 
-void CtrlDX::setValuePlugin(float f) {
+void CtrlDX::setValueHost(float f) {
     setValue((f * steps));
 }
 
@@ -88,7 +132,7 @@ void CtrlDX::setValue(int v) {
         TRACE("WARNING: value too big %s : %d", label.toRawUTF8(), v);
         v = steps - 1;
     }
-    value = v;
+    dxValue = v;
     if (dxOffset >= 0) {
         if (parent != NULL)
             parent->setDxValue(dxOffset, v);
@@ -97,28 +141,29 @@ void CtrlDX::setValue(int v) {
 
 int CtrlDX::getValue() {
     if (dxOffset >= 0)
-        value = parent->data[dxOffset];
-    return value;
+        dxValue = parent->data[dxOffset];
+    return dxValue;
 }
 
 String CtrlDX::getValueDisplay() {
     String ret;
-    ret << getValue();
+    ret << ( getValue() + add1 );
     return ret;
 }
 
-void CtrlDX::publishValue(int value) {
-    parent->beginParameterChangeGesture(idx);
-    parent->setParameterNotifyingHost(idx, (((float) value) / steps));
-    parent->endParameterChangeGesture(idx);
+void CtrlDX::publishValue(float value) {
+	Ctrl::publishValue(value / steps);
+
+	DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
+    if ( editor == NULL )
+    	return;
+    String msg;
+    msg << label << " = " << getValueDisplay();
+    editor->global.setParamMessage(msg);
 }
 
 void CtrlDX::sliderValueChanged(Slider* moved) {
     publishValue(((int) moved->getValue() - add1));
-}
-
-void CtrlDX::buttonClicked(Button* clicked) {
-    publishValue(clicked->getToggleStateValue() == 1 ? 1 : 0);
 }
 
 void CtrlDX::comboBoxChanged(ComboBox* combo) {
@@ -126,7 +171,6 @@ void CtrlDX::comboBoxChanged(ComboBox* combo) {
 }
 
 void CtrlDX::updateComponent() {
-    //TRACE("setting for %s %d", label.toRawUTF8(), getValue());
     if (slider != NULL) {
         slider->setValue(getValue() + add1,
                 NotificationType::dontSendNotification);
@@ -151,11 +195,18 @@ void CtrlDX::updateComponent() {
     }
 }
 
-// ************************************************************************
-// Patcher ================================================================
+/***************************************************************
+ *
+ */
 void DexedAudioProcessor::initCtrl() {
     importSysex(BinaryData::startup_syx);
 
+    fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);
+    ctrl.add(fxCutoff);
+    
+    fxReso = new CtrlFloat("Resonance", &fx.uiReso);
+    ctrl.add(fxReso);
+    
     // fill operator values;
     for (int i = 0; i < 6; i++) {
         //// In the Sysex, OP6 comes first, then OP5...
@@ -167,107 +218,129 @@ void DexedAudioProcessor::initCtrl() {
 
         for (int j = 0; j < 4; j++) {
             String opRate;
-            opRate << opName << "-EGR" << (j + 1);
+            opRate << opName << " EGR" << (j + 1);
             opCtrl[opVal].egRate[j] = new CtrlDX(opRate, 100, opTarget + j);
             ctrl.add(opCtrl[opVal].egRate[j]);
 
             String opLevel;
-            opLevel << opName << "-EGL" << (j + 1);
-            opCtrl[opVal].egLevel[j] = new CtrlDX(opLevel, 100,
-                    opTarget + j + 4);
+            opLevel << opName << " EGL" << (j + 1);
+            opCtrl[opVal].egLevel[j] = new CtrlDX(opLevel, 100, opTarget + j + 4);
             ctrl.add(opCtrl[opVal].egLevel[j]);
         }
         String opVol;
-        opVol << opName << "-LEVEL";
+        opVol << opName << " OUTPUT LEVEL";
         opCtrl[opVal].level = new CtrlDX(opVol, 100, opTarget + 16);
         ctrl.add(opCtrl[opVal].level);
 
         String opMode;
-        opMode << opName << "-MODE";
+        opMode << opName << " MODE";
         opCtrl[opVal].opMode = new CtrlDX(opMode, 1, opTarget + 17);
         ctrl.add(opCtrl[opVal].opMode);
 
         String coarse;
-        coarse << opName << "-COARSE";
+        coarse << opName << " F COARSE";
         opCtrl[opVal].coarse = new CtrlDX(coarse, 32, opTarget + 18);
         ctrl.add(opCtrl[opVal].coarse);
 
         String fine;
-        fine << opName << "-FINE";
+        fine << opName << " F FINE";
         opCtrl[opVal].fine = new CtrlDX(fine, 100, opTarget + 19);
         ctrl.add(opCtrl[opVal].fine);
 
         String detune;
-        detune << opName << "-DETUNE";
+        detune << opName << " OSC DETUNE";
         opCtrl[opVal].detune = new CtrlDX(detune, 15, opTarget + 20);
         ctrl.add(opCtrl[opVal].detune);
 
         String sclBrkPt;
-        sclBrkPt << opName << "-SCL_BRK_PNT";
+        sclBrkPt << opName << " BREAK POINT";
         opCtrl[opVal].sclBrkPt = new CtrlDX(sclBrkPt, 100, opTarget + 8);
         ctrl.add(opCtrl[opVal].sclBrkPt);
 
         String sclLeftDepth;
-        sclLeftDepth << opName << "-SCL_LFT_DEPTH";
+        sclLeftDepth << opName << " L SCALE DEPTH";
         opCtrl[opVal].sclLeftDepth = new CtrlDX(sclLeftDepth, 100,
                 opTarget + 9);
         ctrl.add(opCtrl[opVal].sclLeftDepth);
 
         String sclRightDepth;
-        sclRightDepth << opName << "-SCL_RHT_DEPTH";
+        sclRightDepth << opName << " R SCALE DEPTH";
         opCtrl[opVal].sclRightDepth = new CtrlDX(sclRightDepth, 100,
                 opTarget + 10);
         ctrl.add(opCtrl[opVal].sclRightDepth);
 
         String sclLeftCurve;
-        sclLeftCurve << opName << "-SCL_LFT_CURVE";
+        sclLeftCurve << opName << " L KEY SCALE";
         opCtrl[opVal].sclLeftCurve = new CtrlDX(sclLeftCurve, 4, opTarget + 11);
         ctrl.add(opCtrl[opVal].sclLeftCurve);
 
         String sclRightCurve;
-        sclRightCurve << opName << "-SCL_RHT_CURVE";
+        sclRightCurve << opName << " R KEY SCALE";
         opCtrl[opVal].sclRightCurve = new CtrlDX(sclRightCurve, 4,
                 opTarget + 12);
         ctrl.add(opCtrl[opVal].sclRightCurve);
 
         String sclRate;
-        sclRate << opName << "-SCL_RATE";
+        sclRate << opName << " RATE SCALING";
         opCtrl[opVal].sclRate = new CtrlDX(sclRate, 7, opTarget + 13);
         ctrl.add(opCtrl[opVal].sclRate);
 
         String ampModSens;
-        ampModSens << opName << "-AMP_MODSENS";
+        ampModSens << opName << " A MOD SENS.";
         opCtrl[opVal].ampModSens = new CtrlDX(ampModSens, 3, opTarget + 14);
         ctrl.add(opCtrl[opVal].ampModSens);
 
         String velModSens;
-        velModSens << opName << "-VEL_MODSENS";
+        velModSens << opName << " KEY VELOCITY";
         opCtrl[opVal].velModSens = new CtrlDX(velModSens, 8, opTarget + 15);
         ctrl.add(opCtrl[opVal].velModSens);
     }
 
-    algo = new CtrlDX("Algorithm", 32, 134, true);
+    algo = new CtrlDX("ALGORITHM", 32, 134, true);
     ctrl.add(algo);
 
-    lfoRate = new CtrlDX("LFO-Rate", 100, 137);
+    feedback = new CtrlDX("FEEDBACK", 8, 135);
+    ctrl.add(feedback);
+    
+    oscSync = new CtrlDX("OSC KEY SYNC", 2, 136);
+    ctrl.add(oscSync);
+    
+    lfoRate = new CtrlDX("LFO SPEED", 100, 137);
     ctrl.add(lfoRate);
 
-    lfoDelay = new CtrlDX("LFO-Delay", 100, 138);
+    lfoDelay = new CtrlDX("LFO DELAY", 100, 138);
     ctrl.add(lfoDelay);
 
-    lfoPitchDepth = new CtrlDX("LFO-PitchDepth", 100, 139);
+    lfoPitchDepth = new CtrlDX("LFO PM DEPTH", 100, 139);
     ctrl.add(lfoPitchDepth);
 
-    lfoAmpDepth = new CtrlDX("LFO-AmpDepth", 100, 140);
+    lfoAmpDepth = new CtrlDX("LFO AM DEPTH", 100, 140);
     ctrl.add(lfoAmpDepth);
 
-    lfoSync = new CtrlDX("LFO-Sync", 2, 141);
+    lfoSync = new CtrlDX("LFO KEY SYNC", 2, 141);
     ctrl.add(lfoSync);
 
-    lfoWaveform = new CtrlDX("LFO-Waveform", 5, 142);
+    lfoWaveform = new CtrlDX("LFO WAVE", 5, 142);
     ctrl.add(lfoWaveform);
+    
+    transpose = new CtrlDX("MIDDLE C", 49, 144);
+    ctrl.add(transpose);
 
-    for (int i = 0; i < ctrl.size(); i++) {
+    pitchModSens = new CtrlDX("P MODE SENS.", 8, 143);
+    ctrl.add(pitchModSens);
+    
+    for (int i=0;i<4;i++) {
+        String rate;
+        rate << "PITCH EGR" << (i+1);
+        String level;
+        level << "PITCH EGL" << (i+1);
+        pitchEgRate[i] = new CtrlDX(rate, 99, 126+i);
+        ctrl.add(pitchEgRate[i]);
+        pitchEgLevel[i] = new CtrlDX(level, 99, 130+i);
+        ctrl.add(pitchEgLevel[i]);
+    }
+    
+    for (int i=0; i < ctrl.size(); i++) {
         ctrl[i]->idx = i;
         ctrl[i]->parent = this;
     }
@@ -370,11 +443,11 @@ int DexedAudioProcessor::getNumParameters() {
 }
 
 float DexedAudioProcessor::getParameter(int index) {
-    return ctrl[index]->getValuePlugin();
+    return ctrl[index]->getValueHost();
 }
 
 void DexedAudioProcessor::setParameter(int index, float newValue) {
-    ctrl[index]->setValuePlugin(newValue);
+    ctrl[index]->setValueHost(newValue);
 }
 
 int DexedAudioProcessor::getNumPrograms() {

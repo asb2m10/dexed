@@ -57,6 +57,8 @@
       <FILE id="lZFsG0" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <FILE id="ZRipB1" name="PluginParam.cpp" compile="1" resource="0" file="Source/PluginParam.cpp"/>
       <FILE id="uqNUvy" name="PluginParam.h" compile="0" resource="0" file="Source/PluginParam.h"/>
+      <FILE id="bvvgdq" name="PluginFx.cpp" compile="1" resource="0" file="Source/PluginFx.cpp"/>
+      <FILE id="E4gace" name="PluginFx.h" compile="0" resource="0" file="Source/PluginFx.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

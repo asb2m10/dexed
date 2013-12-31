@@ -47,8 +47,9 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-
     void bind(DexedAudioProcessor *processor);
+    void setSystemMessage(String msg);
+    void setParamMessage(String msg);
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -61,6 +62,8 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     DexedAudioProcessor *processor;
+    String systemMsg;
+    String paramMsg;
     //[/UserVariables]
 
     //==============================================================================
@@ -73,6 +76,19 @@ private:
     ScopedPointer<Slider> cutoff;
     ScopedPointer<Slider> reso;
     ScopedPointer<AlgoDisplay> algoDisplay;
+    ScopedPointer<Slider> pitchRate2;
+    ScopedPointer<Slider> pitchRate3;
+    ScopedPointer<Slider> pitchRate4;
+    ScopedPointer<Slider> pitchRate1;
+    ScopedPointer<Slider> pitchLevel2;
+    ScopedPointer<Slider> pitchLevel3;
+    ScopedPointer<Slider> pitchLevel4;
+    ScopedPointer<Slider> pitchLevel1;
+    ScopedPointer<Slider> feedback;
+    ScopedPointer<Slider> transpose;
+    ScopedPointer<ToggleButton> oscSync;
+    ScopedPointer<Slider> pitchModSens;
+    ScopedPointer<ToggleButton> lfoSync;
 
 
     //==============================================================================

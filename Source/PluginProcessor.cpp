@@ -133,6 +133,8 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         channelData[i] = (double) f;
    }
 
+    //fx.process(channelData, numSamples);
+    
     // DX7 is a mono synth
     for (int channel = 1; channel < getNumInputChannels(); ++channel) {
         buffer.copyFrom(channel, 0, channelData, numSamples, 1);
@@ -384,13 +386,14 @@ bool DexedAudioProcessor::hasEditor() const {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
+
 void DexedAudioProcessor::updateUI() {
     AudioProcessorEditor *editor = getActiveEditor();
     if ( editor == NULL ) {
         TRACE("no editor found!?");
         return;
     }
-    DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
+	DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
     dexedEditor->updateUI();
 }
 

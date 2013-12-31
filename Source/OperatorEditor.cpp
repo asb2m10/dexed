@@ -462,6 +462,7 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
 	parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve);
 	parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel);
 	parent->opCtrl[op].sclRightDepth->bind(sclRightLevel);
+    parent->opCtrl[op].sclRate->bind(sclRateScaling);
 }
 
 
