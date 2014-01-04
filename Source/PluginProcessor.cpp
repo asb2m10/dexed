@@ -46,6 +46,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     workBlock = NULL;
     initCtrl();
     setCurrentProgram(0);
+    sendSysexChange = true;
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {

@@ -94,7 +94,7 @@ public :
     static const int REFRESH_COMP = 1 << 1;
     
     int refreshUI;
-    bool sendSysexChange = true;
+    bool sendSysexChange;
     char data[161];
 
     Array<Ctrl*> ctrl;

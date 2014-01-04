@@ -45,7 +45,9 @@ static inline float crossfade(float amount, float a, float b) {
 }
 
 void PluginFx::init(int sampleRate) {
-	srate = sampleRate;
+    uiCutoff = 0;
+    uiReso = 0;
+    srate = sampleRate;
 	output = 0;
 	for(int i=0;i<4;i++)
 		state[i] = 0;

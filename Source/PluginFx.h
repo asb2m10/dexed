@@ -21,11 +21,11 @@ class PluginFx {
     float p, Q;
     int srate;
     float state[4];
-    float output = 0;
+    float output;
 public:
     
-    float uiCutoff = 0;
-    float uiReso = 0;
+    float uiCutoff;
+    float uiReso;
     
     void init(int sampleRate);
     void process(float *work, int sampleSize);
