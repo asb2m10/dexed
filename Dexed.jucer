@@ -5,7 +5,7 @@
               buildVST="1" buildAU="0" pluginName="Dexed" pluginDesc="Dexed"
               pluginManufacturer="Digital Suburban" pluginManufacturerCode="Manu"
               pluginCode="Plug" pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="1"
-              pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"
+              pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
               aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="AAX_ePlugInCategory_Dynamics"
               jucerVersion="3.1.0" companyName="Digital Suburban">

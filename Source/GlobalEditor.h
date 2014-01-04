@@ -50,6 +50,9 @@ public:
     void bind(DexedAudioProcessor *processor);
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
+    
+    String systemMsg;
+    String paramMsg;
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -62,8 +65,6 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     DexedAudioProcessor *processor;
-    String systemMsg;
-    String paramMsg;
     //[/UserVariables]
 
     //==============================================================================

@@ -302,47 +302,54 @@ void OperatorEditor::resized()
 void OperatorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]
-	envDisplay->repaint();
     //[/UsersliderValueChanged_Pre]
 
     if (sliderThatWasMoved == s_egl1)
     {
         //[UserSliderCode_s_egl1] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egl1]
     }
     else if (sliderThatWasMoved == s_egl2)
     {
         //[UserSliderCode_s_egl2] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egl2]
     }
     else if (sliderThatWasMoved == s_egl3)
     {
         //[UserSliderCode_s_egl3] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egl3]
     }
     else if (sliderThatWasMoved == s_egl4)
     {
         //[UserSliderCode_s_egl4] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egl4]
     }
     else if (sliderThatWasMoved == s_egv1)
     {
         //[UserSliderCode_s_egv1] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egv1]
     }
     else if (sliderThatWasMoved == s_egv2)
     {
         //[UserSliderCode_s_egv2] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egv2]
     }
     else if (sliderThatWasMoved == s_egv3)
     {
         //[UserSliderCode_s_egv3] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egv3]
     }
     else if (sliderThatWasMoved == s_egv4)
     {
         //[UserSliderCode_s_egv4] -- add your slider handling code here..
+        envDisplay->repaint();
         //[/UserSliderCode_s_egv4]
     }
     else if (sliderThatWasMoved == opLevel)

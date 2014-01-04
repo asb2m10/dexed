@@ -30,11 +30,13 @@
 
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
+#ifdef DEBUG
     Logger *tmp = Logger::getCurrentLogger();
     if ( tmp == NULL ) {
         Logger::setCurrentLogger(FileLogger::createDateStampedLogger("Dexed", "DebugSession-", "log", "DexedAudioProcessor Created"));
     }
     TRACE("Hi");
+#endif
 
     Exp2::init();
     Tanh::init();
@@ -174,12 +176,23 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
         // single voice dump
         if ( buf[2] == 0 ) {
             if ( sz < 155 ) {
-                TRACE("wrong single voice datasize %d", buf[2]);
+                TRACE("wrong single voice datasize %d", sz);
                 return;
             }
             updateProgramFromSysex(buf+5);
+            refreshUI |= REFRESH_COMP;
+            return;
         }
 
+        // 32 voice dump
+        if ( buf[2] == 9 ) {
+            if ( sz < 4016 ) {
+                TRACE("wrong 32 voice datasize %d", sz);
+                return;
+            }
+            importSysex((const char *)buf+5);
+            refreshUI |= REFRESH_COMP;
+        }
         return;
     }
 

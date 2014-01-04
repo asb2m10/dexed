@@ -177,10 +177,18 @@ void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChange
 
 void DexedAudioProcessorEditor::timerCallback() {
     int32_t env[6];
-
-    if ( processor->peekEnvStatus(env) == false ) 
+    
+    if ( processor->refreshUI ) {
+        if ( processor->refreshUI & DexedAudioProcessor::REFRESH_COMP )
+            updateUI();
+        if ( processor->refreshUI & DexedAudioProcessor::REFRESH_MSG )
+            global.repaint();
+        processor->refreshUI = 0;
+    }
+    
+    if ( processor->peekEnvStatus(env) == false )
         return;
-
+    
     for(int i=0;i<6;i++) {
         operators[i].updateGain(sqrt(env[5 - i]) / 8196);
     }

@@ -90,8 +90,11 @@ class DexedAudioProcessor  : public AudioProcessor
 
 
 public :
-    bool refreshUI;
-    bool sendSysexChange;
+    static const int REFRESH_MSG = 1;
+    static const int REFRESH_COMP = 1 << 1;
+    
+    int refreshUI;
+    bool sendSysexChange = true;
     char data[161];
 
     Array<Ctrl*> ctrl;

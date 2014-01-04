@@ -420,7 +420,8 @@ void DexedAudioProcessor::unpackProgram(int idx) {
 }
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
-
+    memcpy(data, rawdata, 160);
+    refreshUI = true;
 }
 
 void DexedAudioProcessor::setDxValue(int offset, int v) {

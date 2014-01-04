@@ -374,6 +374,7 @@ void GlobalEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 void GlobalEditor::bind(DexedAudioProcessor *parent) {
+    repaint();
 	parent->algo->bind(algo);
 	parent->lfoRate->bind(lfoSpeed);
 	parent->lfoDelay->bind(lfoDelay);
