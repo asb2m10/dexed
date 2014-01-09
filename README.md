@@ -11,7 +11,14 @@ folder) stays on the Apache 2.0 license to able to collaborate between projects.
 Binary downloads
 ----------------
 It is far from finish but for those who want to try the "music-synthesizer-for-android" project
-on a PC/Mac, you can download it [here](http://le-son666.com/software/dexed)
+on a PC/Mac, you can download it [here](http://le-son666.com/software/dexed).
+
+Using has a DX7 editor
+----------------------
+This plugin can process original DX7 messages. If you change a parameter, it will send the 
+corresponding DX7 sysex to midi out. Not all DAW supports sysex; for example
+Ableton Live simply discard any sysex data. Reaper does process midi out, but doesn't pass any
+midi in sysex data to the plugin. 
 
 (New) Features 
 --------------
@@ -20,16 +27,17 @@ on a PC/Mac, you can download it [here](http://le-son666.com/software/dexed)
 * All of the 144 DX7 parameters are available from one single panel
 * Fully supports DX7 input and output Sysex messages; including controller change. This means that you can use this with a native DX7/TX7 as a patch editor
 * Each operator have a realtime VU meter to know wich one is active
-* Can load any DX7/TX7 sysex programs. [See this](http://www.synprez.com/SynprezFM/) for great collection of DX7 patches (SynprezFM-II-builtins.tgz)
+* Can load any DX7/TX7 sysex programs. [See this (SynprezFM-II-builtins.tgz)](http://www.synprez.com/SynprezFM/) for great collection of DX7 patches 
 
 TODO - Dexed 
 ------------
 * Implement a better DX look and feel
 * Better implementation of the LPF filter
 * Better display of the amplitude envelope
-* Implement a display of the algo
+* Better display of the algo
 
 TODO - msfa
 -----------
 * LFO Amplitude
 * MOD Wheel action
+* Algo 4 & 6 feedback

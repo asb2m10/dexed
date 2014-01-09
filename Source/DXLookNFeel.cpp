@@ -17,9 +17,51 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301 USA.
  */
-
+ 
 #include "DXLookNFeel.h"
 #include "PluginProcessor.h"
+
+/**
+ * Algorithm arrangements, based on the DX1 display.
+ * Feedop 7 == custom draw
+ */
+const char algoArr[][14] = {
+    // 1  2  3  4  5  6  7  8  9  A  B  C  D  F
+    {  0, 0, 1, 3, 0, 0, 0, 2, 4, 0, 0, 5, 6, 6 },  // 1
+    {  0, 0, 1, 3, 0, 0, 0, 2, 4, 0, 0, 5, 6, 2 },  // 2
+    {  0, 0, 1, 4, 0, 0, 0, 2, 5, 0, 3, 6, 0, 6 },  // 3
+    {  0, 0, 1, 4, 0, 0, 0, 2, 5, 0, 3, 6, 0, 7 },  // 4
+    {  0, 1, 3, 5, 0, 0, 0, 2, 4, 6, 0, 0, 0, 6 },  // 5
+    {  0, 1, 3, 5, 0, 0, 0, 2, 4, 6, 0, 0, 0, 7 },  // 6
+    {  0, 1, 3, 0, 0, 0, 2, 4, 5, 0, 0, 6, 0, 2 },  // 7
+    {  0, 1, 3, 0, 0, 0, 2, 4, 5, 0, 0, 6, 0, 4 },  // 8
+    {  0, 1, 3, 0, 0, 0, 2, 4, 5, 0, 0, 0, 0, 2 },  // 9
+    {  0, 0, 0, 4, 1, 0, 5, 6, 2, 0, 0, 3, 0, 3 },  // 10
+    {  0, 0, 0, 4, 1, 0, 5, 6, 2, 0, 0, 3, 0, 6 },  // 11
+    {  0, 0, 3, 0, 1, 0, 4, 5, 6, 2, 0, 0, 0, 2 },  // 12
+    {  0, 0, 3, 0, 1, 0, 4, 5, 6, 2, 0, 0, 0, 6 },  // 13
+    // 1  2  3  4  5  6  7  8  9  A  B  C  D  F
+    {  0, 0, 1, 3, 0, 0, 0, 2, 4, 0, 5, 6, 0, 6 },  // 14
+    {  0, 0, 1, 3, 0, 0, 0, 2, 4, 0, 5, 6, 0, 2 },  // 15
+    {  0, 0, 1, 0, 0, 0, 2, 3, 5, 0, 4, 6, 0, 6 },  // 16
+    {  0, 0, 1, 0, 0, 0, 2, 3, 5, 0, 4, 6, 0, 2 },  // 17
+    {  0, 0, 1, 0, 0, 0, 2, 3, 4, 0, 0, 5, 6, 3 },  // 18
+    {  0, 0, 1, 4, 5, 0, 0, 2, 6, 0, 3, 0, 0, 6 },  // 19
+    {  0, 1, 2, 0, 4, 0, 3, 0, 5, 6, 0, 0, 0, 3 },  // 20
+    {  0, 1, 2, 4, 5, 0, 3, 0, 6, 0, 0, 0, 0, 3 },  // 21
+    {  0, 1, 3, 4, 5, 0, 2, 0, 6, 0, 0, 0, 0, 6 },  // 22
+    {  0, 1, 2, 4, 5, 0, 0, 3, 6, 0, 0, 0, 0, 6 },  // 23
+    {  1, 2, 3, 4, 5, 0, 0, 0, 6, 0, 0, 0, 0, 6 },  // 24
+    {  1, 2, 3, 4, 5, 0, 0, 0, 6, 0, 0, 0, 0, 6 },  // 25
+    {  0, 1, 2, 0, 4, 0, 0, 3, 5, 6, 0, 0, 0, 6 },  // 26
+    // 1  2  3  4  5  6  7  8  9  A  B  C  D   F
+    {  0, 1, 2, 0, 4, 0, 0, 3, 5, 6, 0, 0, 0, 3 },  // 27
+    {  0, 1, 3, 6, 0, 0, 2, 4, 0, 0, 5, 0, 0, 5 },  // 28
+    {  0, 1, 2, 3, 5, 0, 0, 0, 4, 6, 0, 0, 0, 6 },  // 29
+    {  0, 1, 2, 3, 6, 0, 0, 0, 4, 0, 0, 5, 0, 5 },  // 30
+    {  1, 2, 3, 4, 5, 0, 0, 0, 0, 6, 0, 0, 0, 6 },  // 31
+    {  1, 2, 3, 4, 5, 6, 0, 0, 0, 0, 0, 0, 0, 6 }   // 32
+};
 
 void EnvDisplay::paint(Graphics &g) {
     int rate[4];
@@ -49,11 +91,67 @@ void EnvDisplay::paint(Graphics &g) {
     }
 }
 
-void AlgoDisplay::updateUI() {
+AlgoDisplay::AlgoDisplay() {
+    algo = NULL;
+}
+
+/**
+ * For now, this is hardcoded 126x56 (21x14 each)
+ */
+void AlgoDisplay::paint(Graphics &g) {
+    int alg;
+
+    if ( algo == NULL ) {
+        return;
+    }
+    
+    if ( *algo <= 31 ) { 
+        alg = *algo;
+    } else {
+        alg = 31;
+    }
+    const char *arr = algoArr[alg];
+    
+    for(int i=0;i<13;i++) {
+        char target = arr[i];
+        bool feedback = target == arr[13];
+        if ( target == 0 )
+            continue;
+        
+        if ( i < 6 ) {
+            drawOp(g, i, 3, target, feedback);
+            continue;
+        }
+        
+        if ( i < 10 ){
+            drawOp(g, (i-6)+1, 2, target, feedback);
+            continue;
+        }
+        
+        if ( i < 12 ) {
+            drawOp(g, (i-10)+2, 1, target, feedback);
+            continue;
+        }
+    
+        // last one
+        drawOp(g, (i-12)+3, 0, target, feedback);
+    }
 
 }
 
-void AlgoDisplay::paint(Graphics &g) {
+void AlgoDisplay::drawOp(Graphics &g, int x, int y, int num, bool feedback) {
+    String txt;
+    txt << num;
+
+    g.setColour(Colour(0xFF0FC00F));
+    g.fillRect(x*21+1, y*14+1, 19, 13);
+    g.setColour(Colour(0xFFFFFFFF));
+    g.drawText(txt, x*21, y*14, 21, 14, Justification::centred, true);
+    if ( feedback ) {
+        g.setColour(Colour(0xFFFFFFFF));
+        int x1 = (x*21) + 19;
+        g.drawLine(x1, y*14+1, x1, y*14+14, 3);
+    }
 
 }
 
@@ -61,4 +159,5 @@ DXLookNFeel::DXLookNFeel() {
     setColour(TextButton::buttonColourId,Colour(0xFF0FC00F));
     setColour(Slider::rotarySliderOutlineColourId,Colour(0xFF0FC00F));
     setColour(Slider::rotarySliderFillColourId,Colour(0xFFFFFFFF));
+
 }

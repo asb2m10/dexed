@@ -168,7 +168,7 @@ GlobalEditor::GlobalEditor ()
 
     //[Constructor] You can add your own custom stuff here..
     systemMsg << "* DEXED DX synthesizer *";
-    
+
     //[/Constructor]
 }
 
@@ -217,7 +217,7 @@ void GlobalEditor::paint (Graphics& g)
     g.drawText (systemMsg,
                 11, 8, 300, 8,
                 Justification::centredLeft, true);
-    
+
     g.setColour (Colours::black);
     g.setFont (Font (Font::getDefaultMonospacedFontName(), 15.00f, Font::plain));
     g.drawText (paramMsg,
@@ -396,6 +396,7 @@ void GlobalEditor::bind(DexedAudioProcessor *parent) {
     parent->pitchEgRate[3]->bind(pitchRate4);
     parent->fxCutoff->bind(cutoff);
     parent->fxReso->bind(reso);
+    algoDisplay->algo = &(parent->data[134]);
     processor = parent;
 }
 

@@ -34,14 +34,20 @@ public:
 };
 
 class AlgoDisplay : public Component {
-    int algo;
+    void drawOp(Graphics &g, int x, int y, int num, bool feedback);
+
 public:
-    void paint(Graphics &g);
-    void updateUI();
+	AlgoDisplay();
+    char *algo;
+
+	void paint(Graphics &g);
 };
 
 class DXLookNFeel : public LookAndFeel_V3 {
+    
 public:
+    const Colour white;
+    
     DXLookNFeel();
 };
 

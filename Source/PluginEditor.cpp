@@ -191,7 +191,7 @@ void DexedAudioProcessorEditor::timerCallback() {
     
     for(int i=0;i<6;i++) {
         operators[i].updateGain(sqrt(env[5 - i]) / 8196);
-    }
+    } 
 }   
 
 void DexedAudioProcessorEditor::updateUI() {
@@ -204,4 +204,6 @@ void DexedAudioProcessorEditor::updateUI() {
     
     int id = processor->getCurrentProgram() + 1;
     presets.setSelectedId(id, NotificationType::dontSendNotification);
+    
+    global.repaint();
 }

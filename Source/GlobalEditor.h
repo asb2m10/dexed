@@ -50,7 +50,7 @@ public:
     void bind(DexedAudioProcessor *processor);
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
-    
+
     String systemMsg;
     String paramMsg;
     //[/UserMethods]

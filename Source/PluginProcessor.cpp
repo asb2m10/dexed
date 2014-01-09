@@ -164,23 +164,29 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
 
 void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
     if ( msg->isSysEx() ) {
-        TRACE("SYSEX RECEIVED");
+
         const uint8 *buf = msg->getSysExData();
         int sz = msg->getSysExDataSize();
+        TRACE("SYSEX RECEIVED %d", sz);
         if ( sz < 3 )
             return;
 
         // test if it is a Yamaha Sysex
-        if ( buf[0] != 0x43 )
+        if ( buf[0] != 0x43 ) {
+            TRACE("not a yamaha sysex %d", buf[0]);
             return;
+        }
 
+        TRACE("buf 2 %d", buf[2]);
+        
         // single voice dump
         if ( buf[2] == 0 ) {
             if ( sz < 155 ) {
                 TRACE("wrong single voice datasize %d", sz);
                 return;
             }
-            updateProgramFromSysex(buf+5);
+            TRACE("program update sysex");
+            updateProgramFromSysex(buf+4);
             refreshUI |= REFRESH_COMP;
             return;
         }
@@ -191,7 +197,8 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
                 TRACE("wrong 32 voice datasize %d", sz);
                 return;
             }
-            importSysex((const char *)buf+5);
+            TRACE("update 32bulk voice)");
+            importSysex((const char *)buf+4);
             refreshUI |= REFRESH_COMP;
         }
         return;
