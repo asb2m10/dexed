@@ -13,6 +13,7 @@
 
 #include "math.h"
 #include "PluginFx.h"
+#include "PluginProcessor.h"
 
 static float gaintable[199] = {
     0.999969, 0.990082, 0.980347, 0.970764, 0.961304, 0.951996, 0.94281, 0.933777, 0.924866, 0.916077, 0.90741, 0.898865, 0.890442,
@@ -45,7 +46,7 @@ static inline float crossfade(float amount, float a, float b) {
 }
 
 void PluginFx::init(int sampleRate) {
-    uiCutoff = 0;
+    uiCutoff = 1;
     uiReso = 0;
     srate = sampleRate;
 	output = 0;
@@ -54,10 +55,16 @@ void PluginFx::init(int sampleRate) {
 }
 
 void PluginFx::process(float *work, int sampleSize) {
+
+    // don't apply the LPF if the cutoff is to maximum
+    if ( uiCutoff == 1 )
+        return;
+    
 	// the UI values haved changed
 	if ( uiCutoff != pCutoff || uiReso != pReso) {
 		// calc cutoff
-		float freqCutoff = uiCutoff * 22000;
+        // mel scale freq : http://www.speech.kth.se/~giampi/auditoryscales/
+		float freqCutoff = 700 * (pow(M_E,(uiCutoff*4000/1127)-1)) + 20;
     	float fc = 2 * freqCutoff / srate;
     	float x2 = fc*fc;
 		float x3 = fc*x2;
@@ -74,7 +81,7 @@ void PluginFx::process(float *work, int sampleSize) {
 	}
   
   	for (int i=0; i < sampleSize; i++ ) {
-		output = 0.25 * ( work[i] - output ); //negative feedback
+		output = 0.10 * ( work[i] - output ); //negative feedback
 		for(int pole=0; pole < 4; pole++) {
 			float temp = state[pole];
 			output = saturate( output + p * (output - temp));

@@ -58,7 +58,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     Freqlut::init(sampleRate);
     Lfo::init(sampleRate);
     PitchEnv::init(sampleRate);
-
+    fx.init(sampleRate);
+    
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = new Dx7Note;
         voices[note].keydown = false;
@@ -136,7 +137,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         channelData[i] = (double) f;
    }
 
-    //fx.process(channelData, numSamples);
+    fx.process(channelData, numSamples);
     
     // DX7 is a mono synth
     for (int channel = 1; channel < getNumInputChannels(); ++channel) {
@@ -176,8 +177,6 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
             TRACE("not a yamaha sysex %d", buf[0]);
             return;
         }
-
-        TRACE("buf 2 %d", buf[2]);
         
         // single voice dump
         if ( buf[2] == 0 ) {
@@ -313,6 +312,7 @@ void DexedAudioProcessor::processSamples(int n_samples, int16_t *buffer) {
             int32_t val = audiobuf.get()[j] >> 4;
             int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff :
             val >> 9;
+            val = val & 0x0FFF7000;
             // TODO: maybe some dithering?
             if (j < jmax) {
                 buffer[i + j] = clip_val;

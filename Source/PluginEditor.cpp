@@ -135,8 +135,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         if ( fc.browseForFileToOpen()) {
             String f = fc.getResults().getReference(0).getFullPathName();
             uint8_t syx_data[4104];
-            ifstream fp_in;
-            fp_in.open(f.toRawUTF8(), ifstream::in);
+            ifstream fp_in(f.toRawUTF8(), ios::binary);
             if (fp_in.fail()) {
                 AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                                   "Error",
