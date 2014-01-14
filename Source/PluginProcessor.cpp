@@ -312,7 +312,7 @@ void DexedAudioProcessor::processSamples(int n_samples, int16_t *buffer) {
             int32_t val = audiobuf.get()[j] >> 4;
             int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff :
             val >> 9;
-            val = val & 0x0FFF7000;
+            // val = val & 0x0FFF7000;
             // TODO: maybe some dithering?
             if (j < jmax) {
                 buffer[i + j] = clip_val;
