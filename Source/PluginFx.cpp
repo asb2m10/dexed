@@ -36,22 +36,22 @@ static float gaintable[199] = {
 
 static inline float saturate(float input) { //clamp without branching
 #define _limit 0.95
-	float x1 = fabsf( input + _limit );
-	float x2 = fabsf( input - _limit );
-	return 0.5 * (x1 - x2);
+    float x1 = fabsf( input + _limit );
+    float x2 = fabsf( input - _limit );
+    return 0.5 * (x1 - x2);
 }
 
 static inline float crossfade(float amount, float a, float b) {
-	return (1-amount) * a + amount * b;
+    return (1-amount) * a + amount * b;
 }
 
 void PluginFx::init(int sampleRate) {
     uiCutoff = 1;
     uiReso = 0;
     srate = sampleRate;
-	output = 0;
-	for(int i=0;i<4;i++)
-		state[i] = 0;
+    output = 0;
+    for(int i=0;i<4;i++)
+        state[i] = 0;
 }
 
 void PluginFx::process(float *work, int sampleSize) {
@@ -60,36 +60,36 @@ void PluginFx::process(float *work, int sampleSize) {
     if ( uiCutoff == 1 )
         return;
     
-	// the UI values haved changed
-	if ( uiCutoff != pCutoff || uiReso != pReso) {
-		// calc cutoff
+    // the UI values haved changed
+    if ( uiCutoff != pCutoff || uiReso != pReso) {
+        // calc cutoff
         // mel scale freq : http://www.speech.kth.se/~giampi/auditoryscales/
-		float freqCutoff = 700 * (pow(M_E,(uiCutoff*4000/1127)-1)) + 20;
-    	float fc = 2 * freqCutoff / srate;
-    	float x2 = fc*fc;
-		float x3 = fc*x2;
-    	p = -0.69346 * x3 - 0.59515 * x2 + 3.2937 * fc - 1.0072; //cubic fit
+        float freqCutoff = 700 * (pow(M_E,(uiCutoff*4000/1127)-1)) + 20;
+        float fc = 2 * freqCutoff / srate;
+        float x2 = fc*fc;
+        float x3 = fc*x2;
+        p = -0.69346 * x3 - 0.59515 * x2 + 3.2937 * fc - 1.0072; //cubic fit
 
-    	// calc reso
-		float ix = p * 99;
-		int ixint = floor( ix );
-		float ixfrac = ix - ixint;
-    	Q = uiReso * crossfade( ixfrac, gaintable[ ixint + 99 ], gaintable[ ixint + 100 ] );
+        // calc reso
+        float ix = p * 99;
+        int ixint = floor( ix );
+        float ixfrac = ix - ixint;
+        Q = uiReso * crossfade( ixfrac, gaintable[ ixint + 99 ], gaintable[ ixint + 100 ] );
 
-		pCutoff = uiCutoff;
-		pReso = uiReso;
-	}
+        pCutoff = uiCutoff;
+        pReso = uiReso;
+    }
   
-  	for (int i=0; i < sampleSize; i++ ) {
-		output = 0.10 * ( work[i] - output ); //negative feedback
-		for(int pole=0; pole < 4; pole++) {
-			float temp = state[pole];
-			output = saturate( output + p * (output - temp));
-			state[pole] = output;
-			output = saturate( output + temp );
-		}
-		work[i] = output;
-		output *= Q;  //scale the feedback
-  	}
+    for (int i=0; i < sampleSize; i++ ) {
+        output = 0.10 * ( work[i] - output ); //negative feedback
+        for(int pole=0; pole < 4; pole++) {
+            float temp = state[pole];
+            output = saturate( output + p * (output - temp));
+            state[pole] = output;
+            output = saturate( output + temp );
+        }
+        work[i] = output;
+        output *= Q;  //scale the feedback
+    }
 }
 

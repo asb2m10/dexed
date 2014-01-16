@@ -87,21 +87,21 @@ void Ctrl::comboBoxChanged(ComboBox* combo) {
 // ************************************************************************
 // CtrlDX - control DX mapping
 CtrlFloat::CtrlFloat(String name, float *storageValue) : Ctrl(name) {
-	vPointer = storageValue;
+    vPointer = storageValue;
 }
 
 float CtrlFloat::getValueHost() {
-	return *vPointer;
+    return *vPointer;
 }
 
 void CtrlFloat::setValueHost(float v) {
-	*vPointer = v;
+    *vPointer = v;
 }
 
 String CtrlFloat::getValueDisplay() {
-	String display;
-	display << *vPointer;
-	return display;
+    String display;
+    display << *vPointer;
+    return display;
 }
 
 void CtrlFloat::updateComponent() {
@@ -152,11 +152,11 @@ String CtrlDX::getValueDisplay() {
 }
 
 void CtrlDX::publishValue(float value) {
-	Ctrl::publishValue(value / steps);
+    Ctrl::publishValue(value / steps);
 
-	DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
+    DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
     if ( editor == NULL )
-    	return;
+        return;
     String msg;
     msg << label << " = " << getValueDisplay();
     editor->global.setParamMessage(msg);
@@ -352,7 +352,10 @@ void DexedAudioProcessor::initCtrl() {
 }
 
 int DexedAudioProcessor::importSysex(const char *imported) {
-    memcpy(sysex, imported + 6, 4104);
+    // reset current program
+    currentProgram = 0;
+    
+    memcpy(sysex, imported + 6, 4096);
     for (int i = 0; i < 32; i++) {
         memcpy(patchNames[i], sysex + ((i * 128) + 118), 11);
 
@@ -380,6 +383,26 @@ int DexedAudioProcessor::importSysex(const char *imported) {
     return 0;
 }
 
+void DexedAudioProcessor::exportSysex(char *dest) {
+    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 };
+    memcpy(dest, header, 6);
+
+    // copy 32 voices
+    memcpy(dest+6, sysex, 4096);
+
+    // make checksum for dump
+    uint8_t footer[] = { 0x00, 0xF7 };
+    uint8_t sum = 0;
+    for (int i=0; i<4096; i++)
+        sum = (sum + sysex[i]) % (1 << 8);
+    footer[0] = ((1 << 8) - sum);
+
+    memcpy(dest+4102, footer, 2);
+}
+/*
+
+ */
+ 
 void DexedAudioProcessor::unpackProgram(int idx) {
     char *bulk = sysex + (idx * 128);
 
@@ -416,7 +439,43 @@ void DexedAudioProcessor::unpackProgram(int idx) {
     data[157] = 1;
     data[158] = 1;
     data[159] = 1;
-    data[160] = 1;
+    data[160] = 1;    
+}
+
+void DexedAudioProcessor::packProgram(int idx, const char *name) {
+    char *bulk = sysex + (idx * 128);
+    
+    for(int op = 0; op < 6; op++) {
+        // eg rate and level, brk pt, depth, scaling        
+        memcpy(bulk + op * 17, data + op * 21, 11);
+        int pp = op*17;
+        int up = op*21;
+        
+        bulk[pp+11] = (data[up+11]&0x03) | ((data[up+12]&0x03) << 2);
+        bulk[pp+12] = (data[up+13]&0x07) | ((data[up+20]*0x0f) << 3);
+        bulk[pp+13] = (data[up+14]&0x03) | ((data[up+15]*0x07) << 2);
+        bulk[pp+14] = data[up+16];
+    }
+    memcpy(bulk + 102, data + 126, 9);      // pitch env, algo
+    bulk[111] = (data[135]&0x07) | ((data[136]&0x01) << 3);
+    memcpy(bulk + 112, data + 137, 4);      // lfo
+    bulk[116] = (data[141]&0x01) | (((data[142]&0x07) << 1) | ((data[143]&0x07) << 4));
+    int eos = 0;
+    for(int i=0; i < 10; i++) {
+        char c = name[i];
+        if ( c == 0 )
+            eos = 1;
+        if ( eos ) {
+            bulk[117+i] = ' ';
+            continue;
+        }
+        c = c < 32 ? ' ' : c;
+        c = c > 127 ? ' ' : c;
+        bulk[117+i] = c;
+    }
+    
+    memcpy(patchNames[idx], bulk+117, 10);
+    patchNames[idx][10] = 0;
 }
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {

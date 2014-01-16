@@ -360,13 +360,13 @@ void OperatorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == opFine)
     {
         //[UserSliderCode_opFine] -- add your slider handling code here..
-    	updateDisplay();
+        updateDisplay();
         //[/UserSliderCode_opFine]
     }
     else if (sliderThatWasMoved == opCoarse)
     {
         //[UserSliderCode_opCoarse] -- add your slider handling code here..
-    	updateDisplay();
+        updateDisplay();
         //[/UserSliderCode_opCoarse]
     }
     else if (sliderThatWasMoved == gain)
@@ -377,7 +377,7 @@ void OperatorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == detune)
     {
         //[UserSliderCode_detune] -- add your slider handling code here..
-    	updateDisplay();
+        updateDisplay();
         //[/UserSliderCode_detune]
     }
     else if (sliderThatWasMoved == sclLeftLevel)
@@ -423,7 +423,7 @@ void OperatorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     if (comboBoxThatHasChanged == opMode)
     {
         //[UserComboBoxCode_opMode] -- add your combo box handling code here..
-    	updateDisplay();
+        updateDisplay();
         //[/UserComboBoxCode_opMode]
     }
     else if (comboBoxThatHasChanged == kbdLeftCurve)
@@ -445,30 +445,30 @@ void OperatorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
-	int targetNum = op+1;
+    int targetNum = op+1;
     String opName;
     opName << "OP" << targetNum;
 
-	opId->setText(opName, NotificationType::dontSendNotification);
+    opId->setText(opName, NotificationType::dontSendNotification);
 
-	parent->opCtrl[op].egLevel[0]->bind(s_egl1);
-	parent->opCtrl[op].egLevel[1]->bind(s_egl2);
-	parent->opCtrl[op].egLevel[2]->bind(s_egl3);
-	parent->opCtrl[op].egLevel[3]->bind(s_egl4);
-	parent->opCtrl[op].egRate[0]->bind(s_egv1);
-	parent->opCtrl[op].egRate[1]->bind(s_egv2);
-	parent->opCtrl[op].egRate[2]->bind(s_egv3);
-	parent->opCtrl[op].egRate[3]->bind(s_egv4);
-	parent->opCtrl[op].level->bind(opLevel);
-	parent->opCtrl[op].opMode->bind(opMode);
-	parent->opCtrl[op].fine->bind(opFine);
-	parent->opCtrl[op].coarse->bind(opCoarse);
-	parent->opCtrl[op].detune->bind(detune);
-	parent->opCtrl[op].sclBrkPt->bind(sclLvlBrkPt);
-	parent->opCtrl[op].sclLeftCurve->bind(kbdLeftCurve);
-	parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve);
-	parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel);
-	parent->opCtrl[op].sclRightDepth->bind(sclRightLevel);
+    parent->opCtrl[op].egLevel[0]->bind(s_egl1);
+    parent->opCtrl[op].egLevel[1]->bind(s_egl2);
+    parent->opCtrl[op].egLevel[2]->bind(s_egl3);
+    parent->opCtrl[op].egLevel[3]->bind(s_egl4);
+    parent->opCtrl[op].egRate[0]->bind(s_egv1);
+    parent->opCtrl[op].egRate[1]->bind(s_egv2);
+    parent->opCtrl[op].egRate[2]->bind(s_egv3);
+    parent->opCtrl[op].egRate[3]->bind(s_egv4);
+    parent->opCtrl[op].level->bind(opLevel);
+    parent->opCtrl[op].opMode->bind(opMode);
+    parent->opCtrl[op].fine->bind(opFine);
+    parent->opCtrl[op].coarse->bind(opCoarse);
+    parent->opCtrl[op].detune->bind(detune);
+    parent->opCtrl[op].sclBrkPt->bind(sclLvlBrkPt);
+    parent->opCtrl[op].sclLeftCurve->bind(kbdLeftCurve);
+    parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve);
+    parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel);
+    parent->opCtrl[op].sclRightDepth->bind(sclRightLevel);
     parent->opCtrl[op].sclRate->bind(sclRateScaling);
 }
 
@@ -481,32 +481,32 @@ void OperatorEditor::updateGain(float v) {
 void OperatorEditor::updateDisplay() {
     float freq = opCoarse->getValue();
     float fine = opFine->getValue();
-	String txtFreq;
+    String txtFreq;
 
-	if (opMode->getSelectedItemIndex() == 0) {
-		if ( freq == 0 )
-			freq = 0.5;
-		txtFreq << "f = " << (freq + ((freq*2) * (fine/100)));
-	} else {
-		freq = pow(10,((int)freq)&3);
-		freq = freq + ((freq*10) * (fine/100));
-		txtFreq << freq << " Hz";
-	}
+    if (opMode->getSelectedItemIndex() == 0) {
+        if ( freq == 0 )
+            freq = 0.5;
+        txtFreq << "f = " << (freq + ((freq*2) * (fine/100)));
+    } else {
+        freq = pow(10,((int)freq)&3);
+        freq = freq + ((freq*10) * (fine/100));
+        txtFreq << freq << " Hz";
+    }
 
-	int det = detune->getValue() - 7;
-	if ( det != 0 ) {
-		if ( det > 0 )
-			txtFreq << " +" << det;
-		else
-			txtFreq << " " << det;
-	}
-	khzDisplay->setText(txtFreq, NotificationType::dontSendNotification);
+    int det = detune->getValue() - 7;
+    if ( det != 0 ) {
+        if ( det > 0 )
+            txtFreq << " +" << det;
+        else
+            txtFreq << " " << det;
+    }
+    khzDisplay->setText(txtFreq, NotificationType::dontSendNotification);
 
-	envDisplay->repaint();
+    envDisplay->repaint();
 }
 
 void OperatorEditor::updateEnv() {
-	//envDisplay->update(s_)
+    //envDisplay->update(s_)
 }
 //[/MiscUserCode]
 

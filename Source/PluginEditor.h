@@ -60,6 +60,8 @@ public:
     GlobalEditor global;
 
     void updateUI();
+    void rebuildPresetCombobox();
+            
 
     Image cachedImage_background_png;
 };

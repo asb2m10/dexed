@@ -64,10 +64,6 @@ class DexedAudioProcessor  : public AudioProcessor
     char sysex[4096];
     char patchNames[32][13];
 
-    void packProgram(int idx);
-    void unpackProgram(int idx);
-    void updateProgramFromSysex(const uint8 *rawdata);
-
     /**
      * PlugFX
      */
@@ -87,7 +83,6 @@ class DexedAudioProcessor  : public AudioProcessor
     void processSamples(int n_samples, int16_t *buffer);
 
     void initCtrl();
-
 
 public :
     static const int REFRESH_MSG = 1;
@@ -118,6 +113,7 @@ public :
     ScopedPointer<CtrlFloat> fxReso;
 
     int importSysex(const char *imported);
+    void exportSysex(char *dest);
     void setDxValue(int offset, int v);
 
     //==============================================================================
@@ -134,6 +130,9 @@ public :
     bool hasEditor() const;
     void updateUI();
     bool peekEnvStatus(int32_t *values);
+    void packProgram(int idx, const char *name);
+    void unpackProgram(int idx);
+    void updateProgramFromSysex(const uint8 *rawdata);
 
     //==============================================================================
     const String getName() const;

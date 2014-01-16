@@ -31,19 +31,20 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     : AudioProcessorEditor (ownerFilter),
     midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
+
     LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
 
     // This is where our plugin's editor size is set.
     setSize (865, 420);
 
     processor = ownerFilter;
-    
+
+    cachedImage_background_png = ImageCache::getFromMemory (BinaryData::background_png, BinaryData::background_pngSize);
+        
     addAndMakeVisible (loadButton = new TextButton("LOAD"));
     loadButton->setButtonText ("LOAD");
     loadButton->addListener (this);
-    loadButton->setBounds (5, 5, 50, 18);
-
-    cachedImage_background_png = ImageCache::getFromMemory (BinaryData::background_png, BinaryData::background_pngSize);
+    loadButton->setBounds(5, 5, 50, 18);
 
     addAndMakeVisible( saveButton = new TextButton("SAVE"));
     saveButton->setButtonText ("SAVE");
@@ -66,12 +67,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     presets.setTextWhenNothingSelected (String::empty);
     presets.setBounds(115, 5, 180, 18);
 
-    for(int i=0;i<processor->getNumPrograms();i++) {
-        String id;
-        id << (i+1) << ". " << processor->getProgramName(i);
-        presets.addItem(id, i+1);
-    }
-    presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+    rebuildPresetCombobox();
     presets.addListener(this);
 
     // OPERATORS
@@ -130,7 +126,7 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
 
     if (buttonThatWasClicked == loadButton) {
-        FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX", 1);
+        FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX;*.*", 1);
 
         if ( fc.browseForFileToOpen()) {
             String f = fc.getResults().getReference(0).getFullPathName();
@@ -143,14 +139,10 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
                 return;
             }
             fp_in.read((char *)syx_data, 4104);
+            fp_in.close();
             processor->importSysex((char *) &syx_data);
 
-            presets.clear(NotificationType::dontSendNotification);
-            for(int i=0;i<processor->getNumPrograms();i++) {
-                String id;
-                id << (i+1) << ". " << processor->getProgramName(i);
-                presets.addItem(id, i+1);
-            }
+            rebuildPresetCombobox();
 
             presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
             processor->setCurrentProgram(0);
@@ -160,9 +152,62 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         return;
     }
 
+    if (buttonThatWasClicked == saveButton) {
+        FileChooser fc ("Export DX sysex...", File::nonexistent, "*.syx", 1);
+        if ( fc.browseForFileToSave(true) ) {
+            String f = fc.getResults().getReference(0).getFullPathName();
+            uint8_t syx_data[4104];
+
+            processor->exportSysex((char *) syx_data);
+
+            ofstream fp_out(f.toRawUTF8(), ios::binary);
+            fp_out.write((char *)syx_data, 4104);
+            fp_out.close();
+
+            if (fp_out.fail()) {
+                AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                                  "Error",
+                                                  "Unable to write: " + f);
+                return;
+            }
+        }
+        return;
+    }
+    
+    if (buttonThatWasClicked == storeButton) {
+        AlertWindow dialog(String("Store Program Destination"), "", AlertWindow::NoIcon, this);
+        dialog.addTextEditor(String("Name"), processor->getProgramName(processor->getCurrentProgram()), String("Name"), false);
+        
+        StringArray programs;
+        
+        for(int i=0;i<32;i++) {
+            programs.add(presets.getItemText(i));
+        }
+        
+        dialog.addComboBox(String("Dest"), programs);
+        dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
+        dialog.addButton("Cancel", 1, KeyPress(KeyPress::escapeKey));
+        if ( dialog.runModalLoop() == 0 ) {
+            TextEditor *name = dialog.getTextEditor(String("Name"));
+            ComboBox *dest = dialog.getComboBoxComponent(String("Dest"));
+            
+            int programNum = dest->getSelectedItemIndex();
+            const char *programName = name->getText().toRawUTF8();
+            
+            processor->packProgram(programNum, programName);
+            
+            rebuildPresetCombobox();
+            
+            processor->setCurrentProgram(programNum);
+            processor->updateHostDisplay();
+        }
+        return;
+    }
+
     if (buttonThatWasClicked == aboutButton) {
-        AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator", "(c) 2013 Pascal Gauthier\nUnder the GPL v2"
-                "\nBased on Music Synthesizer for Android\n");
+        AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.3", "https://github.com/asb2m10/dexed\n"
+                "(c) 2013 Pascal Gauthier\nUnder the GPL v2\n\n"
+                "Based on Music Synthesizer for Android\nhttps://code.google.com/p/music-synthesizer-for-android");
         return;
     }
 
@@ -206,3 +251,14 @@ void DexedAudioProcessorEditor::updateUI() {
     
     global.repaint();
 }
+
+void DexedAudioProcessorEditor::rebuildPresetCombobox() {
+    presets.clear(NotificationType::dontSendNotification);
+    for(int i=0;i<processor->getNumPrograms();i++) {
+        String id;
+        id << (i+1) << ". " << processor->getProgramName(i);
+        presets.addItem(id, i+1);
+    }
+    presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+}
+
