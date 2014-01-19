@@ -72,27 +72,27 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
-    operators[0].setBounds(5, 40, 280, 90);
+    operators[0].setBounds(5, 39, 280, 90);
     operators[0].bind(processor, 0);
     
     addAndMakeVisible(&(operators[1]));
-    operators[1].setBounds(290, 40, 280, 90);
+    operators[1].setBounds(290, 39, 280, 90);
     operators[1].bind(processor, 1);
     
     addAndMakeVisible(&(operators[2]));
-    operators[2].setBounds(575, 40, 280, 90);
+    operators[2].setBounds(575, 39, 280, 90);
     operators[2].bind(processor, 2);
     
     addAndMakeVisible(&(operators[3]));
-    operators[3].setBounds(5, 130, 280, 90);
+    operators[3].setBounds(5, 133, 280, 90);
     operators[3].bind(processor, 3);
     
     addAndMakeVisible(&(operators[4]));
-    operators[4].setBounds(290, 130, 280, 90);
+    operators[4].setBounds(290, 133, 280, 90);
     operators[4].bind(processor, 4);
     
     addAndMakeVisible(&(operators[5]));
-    operators[5].setBounds(575, 130, 280, 90);
+    operators[5].setBounds(575, 133, 280, 90);
     operators[5].bind(processor, 5);
 
     // add the midi keyboard component..
@@ -141,7 +141,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
             fp_in.read((char *)syx_data, 4104);
             fp_in.close();
             processor->importSysex((char *) &syx_data);
-
+            processor->setCurrentProgram(0);
             rebuildPresetCombobox();
 
             presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
@@ -175,7 +175,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     }
     
     if (buttonThatWasClicked == storeButton) {
-        AlertWindow dialog(String("Store Program Destination"), "", AlertWindow::NoIcon, this);
+        AlertWindow dialog(String("Store Program"), "", AlertWindow::NoIcon, this);
         dialog.addTextEditor(String("Name"), processor->getProgramName(processor->getCurrentProgram()), String("Name"), false);
         
         StringArray programs;

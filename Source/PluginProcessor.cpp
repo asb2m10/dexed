@@ -47,6 +47,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     initCtrl();
     setCurrentProgram(0);
     sendSysexChange = true;
+    bypassVstChangeProgram = 1;
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -198,6 +199,7 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
             }
             TRACE("update 32bulk voice)");
             importSysex((const char *)buf+4);
+            currentProgram = 0;
             refreshUI |= REFRESH_COMP;
         }
         return;
@@ -411,7 +413,6 @@ bool DexedAudioProcessor::hasEditor() const {
 void DexedAudioProcessor::updateUI() {
     AudioProcessorEditor *editor = getActiveEditor();
     if ( editor == NULL ) {
-        TRACE("no editor found!?");
         return;
     }
 	DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;

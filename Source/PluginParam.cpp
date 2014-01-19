@@ -112,8 +112,8 @@ void CtrlFloat::updateComponent() {
 
 // ************************************************************************
 // CtrlDX - control DX mapping
-CtrlDX::CtrlDX(String name, int steps, int offset, bool starts1) : Ctrl(name) {
-    add1 = starts1 == 1;
+CtrlDX::CtrlDX(String name, int steps, int offset, int displayValue) : Ctrl(name) {
+    this->displayValue = displayValue;
     this->steps = steps;
     dxValue = 0;
     dxOffset = offset;
@@ -147,7 +147,7 @@ int CtrlDX::getValue() {
 
 String CtrlDX::getValueDisplay() {
     String ret;
-    ret << ( getValue() + add1 );
+    ret << ( getValue() + displayValue );
     return ret;
 }
 
@@ -163,7 +163,7 @@ void CtrlDX::publishValue(float value) {
 }
 
 void CtrlDX::sliderValueChanged(Slider* moved) {
-    publishValue(((int) moved->getValue() - add1));
+    publishValue(((int) moved->getValue() - displayValue));
 }
 
 void CtrlDX::comboBoxChanged(ComboBox* combo) {
@@ -172,7 +172,7 @@ void CtrlDX::comboBoxChanged(ComboBox* combo) {
 
 void CtrlDX::updateComponent() {
     if (slider != NULL) {
-        slider->setValue(getValue() + add1,
+        slider->setValue(getValue() + displayValue,
                 NotificationType::dontSendNotification);
     }
 
@@ -200,14 +200,15 @@ void CtrlDX::updateComponent() {
  */
 void DexedAudioProcessor::initCtrl() {
     importSysex(BinaryData::startup_syx);
-
+    currentProgram = 0;
+    
     fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);
     ctrl.add(fxCutoff);
     
     fxReso = new CtrlFloat("Resonance", &fx.uiReso);
     ctrl.add(fxReso);
     
-    algo = new CtrlDX("ALGORITHM", 32, 134, true);
+    algo = new CtrlDX("ALGORITHM", 32, 134, 1);
     ctrl.add(algo);
     
     feedback = new CtrlDX("FEEDBACK", 8, 135);
@@ -298,7 +299,7 @@ void DexedAudioProcessor::initCtrl() {
 
         String detune;
         detune << opName << " OSC DETUNE";
-        opCtrl[opVal].detune = new CtrlDX(detune, 15, opTarget + 20);
+        opCtrl[opVal].detune = new CtrlDX(detune, 15, opTarget + 20, -7);
         ctrl.add(opCtrl[opVal].detune);
 
         String sclBrkPt;
@@ -351,10 +352,7 @@ void DexedAudioProcessor::initCtrl() {
     }
 }
 
-int DexedAudioProcessor::importSysex(const char *imported) {
-    // reset current program
-    currentProgram = 0;
-    
+int DexedAudioProcessor::importSysex(const char *imported) {    
     memcpy(sysex, imported + 6, 4096);
     for (int i = 0; i < 32; i++) {
         memcpy(patchNames[i], sysex + ((i * 128) + 118), 11);
@@ -524,21 +522,19 @@ int DexedAudioProcessor::getCurrentProgram() {
 }
 
 void DexedAudioProcessor::setCurrentProgram(int index) {
-    /*// VST has a naughty problem of calling setCurrentProgram after a host has loaded
-     // an edited preset. We ignore the 16th value, since we want to keep the user values
-     if ( index == 32 ) {
-     return;
-     }*/
-
-    for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
-        if (voices[i].keydown == false && voices[i].live == true) {
-            voices[i].live = false;
+    TRACE("setting program %d state %d", index, bypassVstChangeProgram);
+    if ( bypassVstChangeProgram ) {
+        for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
+            if (voices[i].keydown == false && voices[i].live == true) {
+                voices[i].live = false;
+            }
         }
+        index = index > 31 ? 31 : index;
+        unpackProgram(index);
+        lfo.reset(data + 137);
     }
-    index = index > 31 ? 31 : index;
-    unpackProgram(index);
+    bypassVstChangeProgram = 1;
     currentProgram = index;
-    lfo.reset(data + 137);
     updateUI();
 }
 
@@ -559,24 +555,65 @@ const String DexedAudioProcessor::getParameterText(int index) {
     return ctrl[index]->getValueDisplay();
 }
 
+
+struct PluginState {
+    uint8_t sysex[4011];
+    uint8_t program[161];
+    float cutoff;
+    float reso;
+};
+
 //==============================================================================
 void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.*/
-    destData.insert(data, 161, 0);
+    // as intermediaries to make it easy to save and load complex data.
+    
+    // used to SAVE plugin state
+    
+    PluginState state;
+    
+    exportSysex((char *)(&state.sysex));
+    memcpy(state.program, data, 161);
+    state.cutoff = fx.uiCutoff;
+    state.reso = fx.uiReso;
+    
+    destData.insert(&state, sizeof(PluginState), 0);
 }
 
-void DexedAudioProcessor::setStateInformation(const void* source,
-        int sizeInBytes) {
+void DexedAudioProcessor::setStateInformation(const void* source, int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    memcpy((void *) data, source, sizeInBytes);
+    
+    // used to LOAD plugin state
+    
+    PluginState state;
+    bypassVstChangeProgram = 0;
+    
+    if ( sizeInBytes < sizeof(PluginState) ) {
+        TRACE("too small plugin state size %d", sizeInBytes);
+        return;
+    }
+    
+    if ( sizeInBytes > sizeof(PluginState) ) {
+        TRACE("hmmm, too big plugin state size %d", sizeInBytes);
+        sizeInBytes = sizeof(PluginState);
+    }
+    
+    memcpy((void *) &state, source, sizeInBytes);
+
+    importSysex((char *) state.sysex);
+    memcpy(data, state.program, 161);
+    
+    fx.uiCutoff = state.cutoff;
+    fx.uiReso = state.reso;
+    // TODO:  this should only be set if it is a VST
+    TRACE("setting VST STATE");
     updateUI();
 }
 
 //==============================================================================
-void DexedAudioProcessor::getCurrentProgramStateInformation(
+/*void DexedAudioProcessor::getCurrentProgramStateInformation(
         MemoryBlock& destData) {
     destData.insert(data, 161, 0);
 }
@@ -585,5 +622,5 @@ void DexedAudioProcessor::setCurrentProgramStateInformation(const void* source,
         int sizeInBytes) {
     memcpy((void *) data, source, sizeInBytes);
     updateUI();
-}
+}*/
 

@@ -51,5 +51,9 @@ public:
     DXLookNFeel();
 };
 
-
+class VuMeter: public Component {
+    void paint(Graphics &g);
+public :
+    float v;
+};
 #endif  // DXLOOKNFEEL_H_INCLUDED

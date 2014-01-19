@@ -65,6 +65,14 @@ class DexedAudioProcessor  : public AudioProcessor
     char patchNames[32][13];
 
     /**
+     * This flag is used to ignore change program when a VST chunk has been loaded.
+     * This is because the VST host will set the chunk value THEN change the program
+     * number. By doing this, it erase the current state of the program to the
+     * original one in the cartrige.
+     */
+    bool bypassVstChangeProgram;
+    
+    /**
      * PlugFX
      */
     PluginFx fx;
@@ -162,8 +170,9 @@ public :
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
-    void getCurrentProgramStateInformation (MemoryBlock& destData);
-    void setCurrentProgramStateInformation (const void* data, int sizeInBytes);
+    
+    //void getCurrentProgramStateInformation (MemoryBlock& destData);
+    //void setCurrentProgramStateInformation (const void* data, int sizeInBytes);
     //==============================================================================
     
     // this is kept up to date with the midi messages that arrive, and the UI component

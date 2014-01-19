@@ -86,14 +86,6 @@ OperatorEditor::OperatorEditor ()
     opMode->addItem ("FIXED", 2);
     opMode->addListener (this);
 
-    addAndMakeVisible (opId = new Label ("new label",
-                                         "OP1"));
-    opId->setFont (Font (9.30f, Font::plain));
-    opId->setJustificationType (Justification::centredLeft);
-    opId->setEditable (false, false, false);
-    opId->setColour (TextEditor::textColourId, Colours::black);
-    opId->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
-
     addAndMakeVisible (opLevel = new Slider ("opLevel"));
     opLevel->setRange (0, 99, 1);
     opLevel->setSliderStyle (Slider::Rotary);
@@ -112,16 +104,6 @@ OperatorEditor::OperatorEditor ()
     opCoarse->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     opCoarse->addListener (this);
 
-    addAndMakeVisible (gain = new Slider ("new slider"));
-    gain->setRange (0, 1, 0);
-    gain->setSliderStyle (Slider::LinearVertical);
-    gain->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
-    gain->setColour (Slider::thumbColourId, Colours::black);
-    gain->setColour (Slider::trackColourId, Colour (0x00ffffff));
-    gain->setColour (Slider::rotarySliderFillColourId, Colour (0x000000ff));
-    gain->setColour (Slider::textBoxBackgroundColourId, Colours::white);
-    gain->addListener (this);
-
     addAndMakeVisible (khzDisplay = new Label ("khz",
                                                "1,000 kHz"));
     khzDisplay->setFont (Font (11.00f, Font::plain));
@@ -133,7 +115,7 @@ OperatorEditor::OperatorEditor ()
     khzDisplay->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (detune = new Slider ("detune"));
-    detune->setRange (0, 14, 1);
+    detune->setRange (-7, 7, 1);
     detune->setSliderStyle (Slider::LinearHorizontal);
     detune->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     detune->addListener (this);
@@ -203,6 +185,9 @@ OperatorEditor::OperatorEditor ()
     ampModSens->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     ampModSens->addListener (this);
 
+    addAndMakeVisible (vu = new VuMeter());
+    vu->setName ("vu");
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -236,11 +221,9 @@ OperatorEditor::~OperatorEditor()
     s_egv3 = nullptr;
     s_egv4 = nullptr;
     opMode = nullptr;
-    opId = nullptr;
     opLevel = nullptr;
     opFine = nullptr;
     opCoarse = nullptr;
-    gain = nullptr;
     khzDisplay = nullptr;
     detune = nullptr;
     envDisplay = nullptr;
@@ -252,6 +235,7 @@ OperatorEditor::~OperatorEditor()
     sclRateScaling = nullptr;
     keyVelSens = nullptr;
     ampModSens = nullptr;
+    vu = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -263,6 +247,9 @@ void OperatorEditor::paint (Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
+
+    g.setColour (Colour (0x41000000));
+    g.fillRect (-5, -8, 293, 100);
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -279,11 +266,9 @@ void OperatorEditor::resized()
     s_egv3->setBounds (184, 64, 24, 24);
     s_egv4->setBounds (208, 64, 24, 24);
     opMode->setBounds (24, 48, 104, 16);
-    opId->setBounds (0, 0, 24, 16);
     opLevel->setBounds (232, 56, 32, 32);
     opFine->setBounds (104, 24, 24, 24);
     opCoarse->setBounds (80, 24, 24, 24);
-    gain->setBounds (260, 0, 24, 88);
     khzDisplay->setBounds (32, 8, 88, 16);
     detune->setBounds (24, 24, 56, 24);
     envDisplay->setBounds (136, 5, 96, 32);
@@ -295,6 +280,7 @@ void OperatorEditor::resized()
     sclRateScaling->setBounds (0, 16, 24, 24);
     keyVelSens->setBounds (240, 24, 24, 24);
     ampModSens->setBounds (240, 0, 24, 24);
+    vu->setBounds (268, 0, 12, 88);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -369,11 +355,6 @@ void OperatorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         updateDisplay();
         //[/UserSliderCode_opCoarse]
     }
-    else if (sliderThatWasMoved == gain)
-    {
-        //[UserSliderCode_gain] -- add your slider handling code here..
-        //[/UserSliderCode_gain]
-    }
     else if (sliderThatWasMoved == detune)
     {
         //[UserSliderCode_detune] -- add your slider handling code here..
@@ -445,12 +426,6 @@ void OperatorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
-    int targetNum = op+1;
-    String opName;
-    opName << "OP" << targetNum;
-
-    opId->setText(opName, NotificationType::dontSendNotification);
-
     parent->opCtrl[op].egLevel[0]->bind(s_egl1);
     parent->opCtrl[op].egLevel[1]->bind(s_egl2);
     parent->opCtrl[op].egLevel[2]->bind(s_egl3);
@@ -474,7 +449,8 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
 
 
 void OperatorEditor::updateGain(float v) {
-    gain->setValue(v);
+    vu->v = v;
+    vu->repaint();
 }
 
 
@@ -493,7 +469,7 @@ void OperatorEditor::updateDisplay() {
         txtFreq << freq << " Hz";
     }
 
-    int det = detune->getValue() - 7;
+    int det = detune->getValue();
     if ( det != 0 ) {
         if ( det > 0 )
             txtFreq << " +" << det;
@@ -524,7 +500,9 @@ BEGIN_JUCER_METADATA
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="280" initialHeight="90">
-  <BACKGROUND backgroundColour="ffffff"/>
+  <BACKGROUND backgroundColour="ffffff">
+    <RECT pos="-5 -8 293 100" fill="solid: 41000000" hasStroke="0"/>
+  </BACKGROUND>
   <SLIDER name="egl1" id="dc070cc41347df47" memberName="s_egl1" virtualName=""
           explicitFocusOrder="0" pos="136 40 24 24" min="0" max="99" int="1"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
@@ -560,11 +538,6 @@ BEGIN_JUCER_METADATA
   <COMBOBOX name="opMode" id="2cf8156bb94cdc40" memberName="opMode" virtualName=""
             explicitFocusOrder="0" pos="24 48 104 16" editable="0" layout="33"
             items="RATIO&#10;FIXED" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
-  <LABEL name="new label" id="75765097f6c5c142" memberName="opId" virtualName=""
-         explicitFocusOrder="0" pos="0 0 24 16" edTextCol="ff000000" edBkgCol="0"
-         labelText="OP1" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="9.3000000000000007105"
-         bold="0" italic="0" justification="33"/>
   <SLIDER name="opLevel" id="f8521c8214fb8993" memberName="opLevel" virtualName=""
           explicitFocusOrder="0" pos="232 56 32 32" min="0" max="99" int="1"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
@@ -577,18 +550,13 @@ BEGIN_JUCER_METADATA
           explicitFocusOrder="0" pos="80 24 24 24" min="0" max="31" int="1"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="new slider" id="21f21cc5fae8e54b" memberName="gain" virtualName=""
-          explicitFocusOrder="0" pos="260 0 24 88" thumbcol="ff000000"
-          trackcol="ffffff" rotarysliderfill="ff" textboxbkgd="ffffffff"
-          min="0" max="1" int="0" style="LinearVertical" textBoxPos="NoTextBox"
-          textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <LABEL name="khz" id="eb961eed8902a6fc" memberName="khzDisplay" virtualName=""
          explicitFocusOrder="0" pos="32 8 88 16" bkgCol="6a000000" outlineCol="0"
          edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="11" bold="0" italic="0" justification="36"/>
   <SLIDER name="detune" id="f093ec8defca2fc2" memberName="detune" virtualName=""
-          explicitFocusOrder="0" pos="24 24 56 24" min="0" max="14" int="1"
+          explicitFocusOrder="0" pos="24 24 56 24" min="-7" max="7" int="1"
           style="LinearHorizontal" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="envDisplay" id="b18856de924c6340" memberName="envDisplay"
@@ -626,6 +594,8 @@ BEGIN_JUCER_METADATA
           virtualName="" explicitFocusOrder="0" pos="240 0 24 24" min="0"
           max="4" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <GENERICCOMPONENT name="vu" id="6f952594ea99dc1e" memberName="vu" virtualName=""
+                    explicitFocusOrder="0" pos="268 0 12 88" class="VuMeter" params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

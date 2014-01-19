@@ -75,11 +75,9 @@ private:
     ScopedPointer<Slider> s_egv3;
     ScopedPointer<Slider> s_egv4;
     ScopedPointer<ComboBox> opMode;
-    ScopedPointer<Label> opId;
     ScopedPointer<Slider> opLevel;
     ScopedPointer<Slider> opFine;
     ScopedPointer<Slider> opCoarse;
-    ScopedPointer<Slider> gain;
     ScopedPointer<Label> khzDisplay;
     ScopedPointer<Slider> detune;
     ScopedPointer<EnvDisplay> envDisplay;
@@ -91,6 +89,7 @@ private:
     ScopedPointer<Slider> sclRateScaling;
     ScopedPointer<Slider> keyVelSens;
     ScopedPointer<Slider> ampModSens;
+    ScopedPointer<VuMeter> vu;
 
 
     //==============================================================================

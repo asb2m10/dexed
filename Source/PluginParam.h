@@ -80,11 +80,11 @@ public:
 class CtrlDX : public Ctrl {
     int dxValue;
     int steps;
-    int add1;
     int dxOffset;
-
+    int displayValue;
+    
 public:
-    CtrlDX(String name, int steps, int offset = -1, bool starts1 = false);
+    CtrlDX(String name, int steps, int offset = -1, int displayValue = 0);
     void setValueHost(float f);
     float getValueHost();
     void publishValue(float value);
