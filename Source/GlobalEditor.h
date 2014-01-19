@@ -90,6 +90,7 @@ private:
     ScopedPointer<ToggleButton> oscSync;
     ScopedPointer<Slider> pitchModSens;
     ScopedPointer<ToggleButton> lfoSync;
+    ScopedPointer<Component> component;
 
 
     //==============================================================================

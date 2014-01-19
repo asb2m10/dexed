@@ -2600,10 +2600,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resources\background.png">
-      <Filter>Dexed\Resources</Filter>
-    </None>
-    <None Include="..\..\Resources\startup.syx">
+    <None Include="..\..\Resources\builtin_pgm.zip">
       <Filter>Dexed\Resources</Filter>
     </None>
     <None Include="..\..\..\JUCE\modules\juce_audio_basics\juce_module_info">

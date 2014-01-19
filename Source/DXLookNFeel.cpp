@@ -67,6 +67,10 @@ void EnvDisplay::paint(Graphics &g) {
     int rate[4];
     int level[4];
 
+    g.setColour(Colours::black.withAlpha(0.5f));
+    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
+    g.setColour(Colours::white);
+    
     for (int i = 0; i < 4; i++) {
         rate[i] = s_rate[i]->getValue();
         level[i] = s_level[i]->getValue();
@@ -111,6 +115,9 @@ void AlgoDisplay::paint(Graphics &g) {
         alg = 31;
     }
     const char *arr = algoArr[alg];
+
+    g.setColour (Colours::black.withAlpha(0.5f));
+    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
     
     for(int i=0;i<13;i++) {
         char target = arr[i];
@@ -137,20 +144,26 @@ void AlgoDisplay::paint(Graphics &g) {
         drawOp(g, (i-12)+3, 0, target, feedback);
     }
 
+    String algoTxt;
+    algoTxt << (alg+1);
+    g.drawText(algoTxt, 0, 0, 21, 14, Justification::left, true);
 }
 
 void AlgoDisplay::drawOp(Graphics &g, int x, int y, int num, bool feedback) {
     String txt;
     txt << num;
 
+    int offx = 25;
+    int offy = 18;
+    
     g.setColour(Colour(0xFF0FC00F));
-    g.fillRect(x*21+1, y*14+1, 19, 13);
+    g.fillRect(x*offx+1, y*offy+1, offx-2, offy-1);
     g.setColour(Colour(0xFFFFFFFF));
-    g.drawText(txt, x*21, y*14, 21, 14, Justification::centred, true);
+    g.drawText(txt, x*offx, y*offy, offx, offy, Justification::centred, true);
     if ( feedback ) {
         g.setColour(Colour(0xFFFFFFFF));
-        int x1 = (x*21) + 19;
-        g.drawLine(x1, y*14+1, x1, y*14+14, 3);
+        int x1 = (x*offx) + 23;
+        g.drawLine(x1, y*offy+1, x1, y*offy+offy, 3);
     }
 }
 

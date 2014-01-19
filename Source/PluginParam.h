@@ -92,7 +92,8 @@ public:
     void setValue(int value);
     int getValue();
     String getValueDisplay();
-
+    int getOffset();
+    
     void sliderValueChanged (Slider* moved);
     void comboBoxChanged (ComboBox* combo);
     void updateComponent();

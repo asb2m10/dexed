@@ -65,12 +65,9 @@ class DexedAudioProcessor  : public AudioProcessor
     char patchNames[32][13];
 
     /**
-     * This flag is used to ignore change program when a VST chunk has been loaded.
-     * This is because the VST host will set the chunk value THEN change the program
-     * number. By doing this, it erase the current state of the program to the
-     * original one in the cartrige.
+     * The last time the state was save, to be able to bypass a VST host bug.
      */
-    bool bypassVstChangeProgram;
+    long lastStateSave;
     
     /**
      * PlugFX
@@ -99,7 +96,8 @@ public :
     int refreshUI;
     bool sendSysexChange;
     char data[161];
-
+    
+    ScopedPointer<ZipFile> builtin_pgm;
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];
@@ -141,7 +139,7 @@ public :
     void packProgram(int idx, const char *name);
     void unpackProgram(int idx);
     void updateProgramFromSysex(const uint8 *rawdata);
-
+    void loadBuiltin(int idx);
     //==============================================================================
     const String getName() const;
     int getNumParameters();

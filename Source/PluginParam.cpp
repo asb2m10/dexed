@@ -18,9 +18,13 @@
  * Boston, MA 02110-1301 USA.
  */
 
+#include <time.h>
+
 #include "PluginParam.h"
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+
+
 
 // ************************************************************************
 //
@@ -145,6 +149,10 @@ int CtrlDX::getValue() {
     return dxValue;
 }
 
+int CtrlDX::getOffset() {
+    return dxOffset;
+}
+
 String CtrlDX::getValueDisplay() {
     String ret;
     ret << ( getValue() + displayValue );
@@ -199,7 +207,12 @@ void CtrlDX::updateComponent() {
  *
  */
 void DexedAudioProcessor::initCtrl() {
-    importSysex(BinaryData::startup_syx);
+    MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
+    builtin_pgm = new ZipFile(mis, true);
+    builtin_pgm->sortEntriesByFilename();
+    
+    loadBuiltin(0);
+    
     currentProgram = 0;
     
     fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);
@@ -397,10 +410,7 @@ void DexedAudioProcessor::exportSysex(char *dest) {
 
     memcpy(dest+4102, footer, 2);
 }
-/*
 
- */
- 
 void DexedAudioProcessor::unpackProgram(int idx) {
     char *bulk = sysex + (idx * 128);
 
@@ -494,6 +504,21 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
     midiOut.addEvent(msg, 7, 0);
 }
 
+void DexedAudioProcessor::loadBuiltin(int idx) {
+    InputStream *is = builtin_pgm->createStreamForEntry(idx);
+    
+    if ( is == NULL ) {
+        TRACE("ENTRY IN ZIP NOT FOUND");
+        return;
+    }
+    
+    uint8_t syx_data[4104];
+    is->read(&syx_data, 4104);
+    delete is;
+    
+    importSysex((char *) &syx_data);
+}
+
 void DexedAudioProcessor::unbindUI() {
     for (int i = 0; i < ctrl.size(); i++) {
         ctrl[i]->unbind();
@@ -522,8 +547,8 @@ int DexedAudioProcessor::getCurrentProgram() {
 }
 
 void DexedAudioProcessor::setCurrentProgram(int index) {
-    TRACE("setting program %d state %d", index, bypassVstChangeProgram);
-    if ( bypassVstChangeProgram ) {
+    TRACE("setting program %d state", index);
+    if ( lastStateSave + 2 < time(NULL) ) {
         for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
             if (voices[i].keydown == false && voices[i].live == true) {
                 voices[i].live = false;
@@ -533,7 +558,6 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
         unpackProgram(index);
         lfo.reset(data + 137);
     }
-    bypassVstChangeProgram = 1;
     currentProgram = index;
     updateUI();
 }
@@ -588,7 +612,6 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     // used to LOAD plugin state
     
     PluginState state;
-    bypassVstChangeProgram = 0;
     
     if ( sizeInBytes < sizeof(PluginState) ) {
         TRACE("too small plugin state size %d", sizeInBytes);
@@ -607,7 +630,8 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     fx.uiCutoff = state.cutoff;
     fx.uiReso = state.reso;
-    // TODO:  this should only be set if it is a VST
+
+    lastStateSave = (long) time(NULL);
     TRACE("setting VST STATE");
     updateUI();
 }

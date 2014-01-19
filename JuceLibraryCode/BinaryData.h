@@ -6,11 +6,8 @@
 
 namespace BinaryData
 {
-    extern const char*   background_png;
-    const int            background_pngSize = 12012;
-
-    extern const char*   startup_syx;
-    const int            startup_syxSize = 4104;
+    extern const char*   builtin_pgm_zip;
+    const int            builtin_pgm_zipSize = 88890;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

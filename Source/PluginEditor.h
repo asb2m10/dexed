@@ -38,7 +38,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     ComboBox presets;
     MidiKeyboardComponent midiKeyboard;
     DXLookNFeel dx_lnf;
-            
+           
+    ScopedPointer<TextButton> cartButton;
     ScopedPointer<TextButton> loadButton;
     ScopedPointer<TextButton> saveButton;
     ScopedPointer<TextButton> storeButton;
@@ -61,9 +62,6 @@ public:
 
     void updateUI();
     void rebuildPresetCombobox();
-            
-
-    Image cachedImage_background_png;
 };
 
 

@@ -1518,8 +1518,7 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resources\background.png"/>
-    <None Include="..\..\Resources\startup.syx"/>
+    <None Include="..\..\Resources\builtin_pgm.zip"/>
     <None Include="..\..\..\JUCE\modules\juce_audio_basics\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_audio_plugin_client\juce_module_info"/>
     <None Include="..\..\..\JUCE\modules\juce_audio_processors\juce_module_info"/>

@@ -42,12 +42,13 @@ DexedAudioProcessor::DexedAudioProcessor() {
     Tanh::init();
     Sin::init();
 
+    lastStateSave = 0;
+    
     currentNote = -1;
     workBlock = NULL;
     initCtrl();
     setCurrentProgram(0);
     sendSysexChange = true;
-    bypassVstChangeProgram = 1;
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {

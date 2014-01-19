@@ -34,41 +34,43 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
     LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
 
-    // This is where our plugin's editor size is set.
     setSize (865, 420);
 
     processor = ownerFilter;
 
-    cachedImage_background_png = ImageCache::getFromMemory (BinaryData::background_png, BinaryData::background_pngSize);
-        
+    addAndMakeVisible (cartButton = new TextButton("CART"));
+    cartButton->setButtonText ("CART");
+    cartButton->addListener (this);
+    cartButton->setBounds(5, 5, 50, 18);
+    
     addAndMakeVisible (loadButton = new TextButton("LOAD"));
     loadButton->setButtonText ("LOAD");
     loadButton->addListener (this);
-    loadButton->setBounds(5, 5, 50, 18);
+    loadButton->setBounds(57, 5, 50, 18);
 
-    addAndMakeVisible( saveButton = new TextButton("SAVE"));
+    addAndMakeVisible(saveButton = new TextButton("SAVE"));
     saveButton->setButtonText ("SAVE");
     saveButton->addListener (this);
-    saveButton->setBounds (57, 5, 50, 18);
-
-    addAndMakeVisible( storeButton = new TextButton("STORE"));
-    storeButton->setButtonText ("STORE");
-    storeButton->addListener (this);
-    storeButton->setBounds (300, 5, 50, 18);
-
-    addAndMakeVisible( aboutButton = new TextButton("ABOUT"));
-    aboutButton->setButtonText ("ABOUT");
-    aboutButton->addListener (this);
-    aboutButton->setBounds (805, 5, 50, 18);
-
+    saveButton->setBounds (109, 5, 50, 18);
+    
     addAndMakeVisible (&presets);
     presets.setEditableText (false);
     presets.setJustificationType (Justification::centredLeft);
     presets.setTextWhenNothingSelected (String::empty);
-    presets.setBounds(115, 5, 180, 18);
-
+    presets.setBounds(163, 5, 180, 18);
     rebuildPresetCombobox();
     presets.addListener(this);
+    
+    addAndMakeVisible(storeButton = new TextButton("STORE"));
+    storeButton->setButtonText ("STORE");
+    storeButton->addListener (this);
+    storeButton->setBounds (347, 5, 50, 18);
+
+    addAndMakeVisible(aboutButton = new TextButton("ABOUT"));
+    aboutButton->setButtonText ("ABOUT");
+    aboutButton->addListener (this);
+    aboutButton->setBounds (805, 5, 50, 18);
+
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
@@ -107,9 +109,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     addAndMakeVisible(&global);
     global.setBounds(5,235,855,90);
     global.bind(processor);
-
-   updateUI();
-   startTimer(100);
+    
+    updateUI();
+    startTimer(100);
 }
 
 DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
@@ -118,9 +120,12 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 }
 
 //==============================================================================
-void DexedAudioProcessorEditor::paint (Graphics& g) {
-    g.drawImage (cachedImage_background_png, 0, 0, 865, 420,
-                 0, 0, cachedImage_background_png.getWidth(), cachedImage_background_png.getHeight());
+void DexedAudioProcessorEditor::paint (Graphics& g) {    
+    g.setColour(Colour(0xFF744420));
+    g.fillRoundedRectangle(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 0);
+    
+    g.setColour(Colour(0xFFA87B67));
+    g.fillRoundedRectangle(0.0f, 30, (float) getWidth(), 200, 0);
 }
 
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
@@ -143,9 +148,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
             processor->importSysex((char *) &syx_data);
             processor->setCurrentProgram(0);
             rebuildPresetCombobox();
-
             presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
-            processor->setCurrentProgram(0);
             processor->updateHostDisplay();
         }
 
@@ -204,6 +207,31 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         return;
     }
 
+    if (buttonThatWasClicked == cartButton) {
+        StringArray cart;
+        
+        for(int i=0;i<processor->builtin_pgm->getNumEntries();i++) {
+            const ZipFile::ZipEntry *e = processor->builtin_pgm->getEntry(i);
+            
+            cart.add(e->filename.dropLastCharacters(4));
+
+        }
+        AlertWindow dialog(String("Builtin cartridges"), "", AlertWindow::NoIcon, this);
+        dialog.addComboBox(String("cart"), cart);
+        dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
+        dialog.addButton("Cancel", 1, KeyPress(KeyPress::escapeKey));
+        if ( dialog.runModalLoop() == 0 ) {
+            ComboBox *select = dialog.getComboBoxComponent(String("cart"));
+            int idx = select->getSelectedItemIndex();
+            processor->loadBuiltin(idx);
+            processor->setCurrentProgram(0);
+            rebuildPresetCombobox();
+            presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+            processor->updateHostDisplay();
+        }
+        return;
+    }
+    
     if (buttonThatWasClicked == aboutButton) {
         AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.3", "https://github.com/asb2m10/dexed\n"
                 "(c) 2013 Pascal Gauthier\nUnder the GPL v2\n\n"

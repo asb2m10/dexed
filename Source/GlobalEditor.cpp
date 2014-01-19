@@ -32,7 +32,7 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (algo = new Slider ("algo"));
     algo->setRange (1, 32, 1);
     algo->setSliderStyle (Slider::Rotary);
-    algo->setTextBoxStyle (Slider::TextBoxLeft, true, 80, 20);
+    algo->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     algo->addListener (this);
 
     addAndMakeVisible (lfoType = new ComboBox ("new combo box"));
@@ -159,6 +159,9 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (lfoSync = new ToggleButton ("lfoSync"));
     lfoSync->setButtonText (String::empty);
 
+    addAndMakeVisible (component = new Component());
+    component->setName ("new component");
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -199,6 +202,7 @@ GlobalEditor::~GlobalEditor()
     oscSync = nullptr;
     pitchModSens = nullptr;
     lfoSync = nullptr;
+    component = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -228,7 +232,7 @@ void GlobalEditor::paint (Graphics& g)
 
 void GlobalEditor::resized()
 {
-    algo->setBounds (480, 64, 80, 24);
+    algo->setBounds (568, 32, 24, 24);
     lfoType->setBounds (624, 40, 96, 16);
     lfoSpeed->setBounds (624, 16, 96, 16);
     lfoAmDepth->setBounds (696, 64, 24, 24);
@@ -236,7 +240,7 @@ void GlobalEditor::resized()
     lfoDelay->setBounds (672, 64, 24, 24);
     cutoff->setBounds (8, 40, 48, 48);
     reso->setBounds (64, 40, 48, 48);
-    algoDisplay->setBounds (480, 8, 126, 56);
+    algoDisplay->setBounds (416, 8, 150, 72);
     pitchRate2->setBounds (776, 64, 32, 24);
     pitchRate3->setBounds (800, 64, 32, 24);
     pitchRate4->setBounds (824, 64, 32, 24);
@@ -245,11 +249,12 @@ void GlobalEditor::resized()
     pitchLevel3->setBounds (800, 40, 32, 24);
     pitchLevel4->setBounds (824, 40, 32, 24);
     pitchLevel1->setBounds (752, 40, 32, 24);
-    feedback->setBounds (560, 64, 24, 24);
+    feedback->setBounds (568, 56, 24, 24);
     transpose->setBounds (728, 0, 24, 56);
-    oscSync->setBounds (584, 64, 24, 24);
+    oscSync->setBounds (600, 64, 24, 24);
     pitchModSens->setBounds (728, 64, 24, 24);
     lfoSync->setBounds (624, 64, 24, 24);
+    component->setBounds (752, 8, 96, 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -428,8 +433,8 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="855" initialHeight="90">
   <BACKGROUND backgroundColour="ffffff"/>
   <SLIDER name="algo" id="8a226ddf9bbff752" memberName="algo" virtualName=""
-          explicitFocusOrder="0" pos="480 64 80 24" min="1" max="32" int="1"
-          style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="0" textBoxWidth="80"
+          explicitFocusOrder="0" pos="568 32 24 24" min="1" max="32" int="1"
+          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="0" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="new combo box" id="31018596af3b34e9" memberName="lfoType"
             virtualName="" explicitFocusOrder="0" pos="624 40 96 16" editable="0"
@@ -460,7 +465,7 @@ BEGIN_JUCER_METADATA
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="algoDisplay" id="b26fb9e3b5f0bc37" memberName="algoDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="480 8 126 56" class="AlgoDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="416 8 150 72" class="AlgoDisplay"
                     params=""/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
           virtualName="" explicitFocusOrder="0" pos="776 64 32 24" min="0"
@@ -495,7 +500,7 @@ BEGIN_JUCER_METADATA
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
-          explicitFocusOrder="0" pos="560 64 24 24" min="0" max="7" int="1"
+          explicitFocusOrder="0" pos="568 56 24 24" min="0" max="7" int="1"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
@@ -503,7 +508,7 @@ BEGIN_JUCER_METADATA
           max="49" int="0" style="LinearVertical" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="oscSync" id="8f3fe641537cd00" memberName="oscSync" virtualName=""
-                explicitFocusOrder="0" pos="584 64 24 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="0" pos="600 64 24 24" buttonText="" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="0"/>
   <SLIDER name="pitchModSens" id="904f73df85a9f886" memberName="pitchModSens"
           virtualName="" explicitFocusOrder="0" pos="728 64 24 24" min="0"
@@ -512,6 +517,9 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
                 explicitFocusOrder="0" pos="624 64 24 24" buttonText="" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="0"/>
+  <GENERICCOMPONENT name="new component" id="9ddaae8ef924a038" memberName="component"
+                    virtualName="" explicitFocusOrder="0" pos="752 8 96 32" class="Component"
+                    params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

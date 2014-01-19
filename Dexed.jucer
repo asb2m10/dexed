@@ -11,8 +11,7 @@
               jucerVersion="3.1.0" companyName="Digital Suburban">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
-      <FILE id="oUNugM" name="background.png" compile="0" resource="1" file="Resources/background.png"/>
-      <FILE id="CGMSPp" name="startup.syx" compile="0" resource="1" file="Resources/startup.syx"/>
+      <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
     </GROUP>
     <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">
       <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
