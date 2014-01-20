@@ -33,6 +33,14 @@ public:
     void paint(Graphics &g);
 };
 
+class PitchEnvDisplay : public Component {
+    Env env;
+public:
+    char *pvalues;
+    
+    void paint(Graphics &g);
+};
+
 class AlgoDisplay : public Component {
     void drawOp(Graphics &g, int x, int y, int num, bool feedback);
 
@@ -44,10 +52,7 @@ public:
 };
 
 class DXLookNFeel : public LookAndFeel_V3 {
-    
 public:
-    const Colour white;
-    
     DXLookNFeel();
 };
 

@@ -240,7 +240,7 @@ void GlobalEditor::resized()
     lfoDelay->setBounds (672, 64, 24, 24);
     cutoff->setBounds (8, 40, 48, 48);
     reso->setBounds (64, 40, 48, 48);
-    algoDisplay->setBounds (416, 8, 150, 72);
+    algoDisplay->setBounds (408, 8, 152, 74);
     pitchRate2->setBounds (776, 64, 32, 24);
     pitchRate3->setBounds (800, 64, 32, 24);
     pitchRate4->setBounds (824, 64, 32, 24);
@@ -465,7 +465,7 @@ BEGIN_JUCER_METADATA
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="algoDisplay" id="b26fb9e3b5f0bc37" memberName="algoDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="416 8 150 72" class="AlgoDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="408 8 152 74" class="AlgoDisplay"
                     params=""/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
           virtualName="" explicitFocusOrder="0" pos="776 64 32 24" min="0"

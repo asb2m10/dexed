@@ -146,24 +146,24 @@ void AlgoDisplay::paint(Graphics &g) {
 
     String algoTxt;
     algoTxt << (alg+1);
-    g.drawText(algoTxt, 0, 0, 21, 14, Justification::left, true);
+    g.drawText(algoTxt, 5, 1, 21, 14, Justification::left, true);
 }
 
 void AlgoDisplay::drawOp(Graphics &g, int x, int y, int num, bool feedback) {
     String txt;
     txt << num;
 
-    int offx = 25;
-    int offy = 18;
+    int offx = 24;
+    int offy = 17;
     
     g.setColour(Colour(0xFF0FC00F));
-    g.fillRect(x*offx+1, y*offy+1, offx-2, offy-1);
+    g.fillRect(x*offx+4, y*offy+3, offx-2, offy-1);
     g.setColour(Colour(0xFFFFFFFF));
-    g.drawText(txt, x*offx, y*offy, offx, offy, Justification::centred, true);
+    g.drawText(txt, x*offx+3, y*offy+2, offx+2, offy+2, Justification::centred, true);
     if ( feedback ) {
         g.setColour(Colour(0xFFFFFFFF));
-        int x1 = (x*offx) + 23;
-        g.drawLine(x1, y*offy+1, x1, y*offy+offy, 3);
+        int x1 = (x*offx) + 24;
+        g.drawLine(x1+1, y*offy+3, x1+1, y*offy+offy+2, 3);
     }
 }
 

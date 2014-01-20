@@ -459,15 +459,23 @@ void DexedAudioProcessor::packProgram(int idx, const char *name) {
         int pp = op*17;
         int up = op*21;
         
+        // left curves
         bulk[pp+11] = (data[up+11]&0x03) | ((data[up+12]&0x03) << 2);
-        bulk[pp+12] = (data[up+13]&0x07) | ((data[up+20]*0x0f) << 3);
-        bulk[pp+13] = (data[up+14]&0x03) | ((data[up+15]*0x07) << 2);
+        bulk[pp+12] = (data[up+13]&0x07) | ((data[up+20]&0x0f) << 3);
+        // kvs_ams
+        bulk[pp+13] = (data[up+14]&0x03) | ((data[up+15]&0x07) << 2);
+        // output lvl
         bulk[pp+14] = data[up+16];
+        // fcoarse_mode
+        bulk[pp+15] = (data[up+17]&0x01) | ((data[up+18]&0x1f) << 1);
+        // fine freq
+        bulk[pp+16] = data[up+19];      
     }
     memcpy(bulk + 102, data + 126, 9);      // pitch env, algo
     bulk[111] = (data[135]&0x07) | ((data[136]&0x01) << 3);
     memcpy(bulk + 112, data + 137, 4);      // lfo
     bulk[116] = (data[141]&0x01) | (((data[142]&0x07) << 1) | ((data[143]&0x07) << 4));
+    bulk[117] = data[144];
     int eos = 0;
     for(int i=0; i < 10; i++) {
         char c = name[i];
