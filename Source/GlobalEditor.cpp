@@ -159,8 +159,8 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (lfoSync = new ToggleButton ("lfoSync"));
     lfoSync->setButtonText (String::empty);
 
-    addAndMakeVisible (component = new Component());
-    component->setName ("new component");
+    addAndMakeVisible (pitchEnvDisplay = new PitchEnvDisplay());
+    pitchEnvDisplay->setName ("pitchEnvDisplay");
 
 
     //[UserPreSize]
@@ -202,7 +202,7 @@ GlobalEditor::~GlobalEditor()
     oscSync = nullptr;
     pitchModSens = nullptr;
     lfoSync = nullptr;
-    component = nullptr;
+    pitchEnvDisplay = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -254,7 +254,7 @@ void GlobalEditor::resized()
     oscSync->setBounds (600, 64, 24, 24);
     pitchModSens->setBounds (728, 64, 24, 24);
     lfoSync->setBounds (624, 64, 24, 24);
-    component->setBounds (752, 8, 96, 32);
+    pitchEnvDisplay->setBounds (752, 8, 96, 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -302,41 +302,49 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == pitchRate2)
     {
         //[UserSliderCode_pitchRate2] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate2]
     }
     else if (sliderThatWasMoved == pitchRate3)
     {
         //[UserSliderCode_pitchRate3] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate3]
     }
     else if (sliderThatWasMoved == pitchRate4)
     {
         //[UserSliderCode_pitchRate4] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();        
         //[/UserSliderCode_pitchRate4]
     }
     else if (sliderThatWasMoved == pitchRate1)
     {
         //[UserSliderCode_pitchRate1] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate1]
     }
     else if (sliderThatWasMoved == pitchLevel2)
     {
         //[UserSliderCode_pitchLevel2] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel2]
     }
     else if (sliderThatWasMoved == pitchLevel3)
     {
         //[UserSliderCode_pitchLevel3] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel3]
     }
     else if (sliderThatWasMoved == pitchLevel4)
     {
         //[UserSliderCode_pitchLevel4] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel4]
     }
     else if (sliderThatWasMoved == pitchLevel1)
     {
         //[UserSliderCode_pitchLevel1] -- add your slider handling code here..
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel1]
     }
     else if (sliderThatWasMoved == feedback)
@@ -402,6 +410,7 @@ void GlobalEditor::bind(DexedAudioProcessor *parent) {
     parent->fxCutoff->bind(cutoff);
     parent->fxReso->bind(reso);
     algoDisplay->algo = &(parent->data[134]);
+    pitchEnvDisplay->pvalues = &(parent->data[126]);
     processor = parent;
 }
 
@@ -517,8 +526,8 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
                 explicitFocusOrder="0" pos="624 64 24 24" buttonText="" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="0"/>
-  <GENERICCOMPONENT name="new component" id="9ddaae8ef924a038" memberName="component"
-                    virtualName="" explicitFocusOrder="0" pos="752 8 96 32" class="Component"
+  <GENERICCOMPONENT name="pitchEnvDisplay" id="9ddaae8ef924a038" memberName="pitchEnvDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="752 8 96 32" class="PitchEnvDisplay"
                     params=""/>
 </JUCER_COMPONENT>
 

@@ -23,7 +23,7 @@ void PitchEnv::init(double sample_rate) {
   unit_ = N * (1 << 24) / (21.3 * sample_rate) + 0.5;
 }
 
-static uint8_t ratetab[] = {
+const uint8_t pitchenv_rate[] = {
   1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12,
   12, 13, 13, 14, 14, 15, 16, 16, 17, 18, 18, 19, 20, 21, 22, 23, 24,
   25, 26, 27, 28, 30, 31, 33, 34, 36, 37, 38, 39, 41, 42, 44, 46, 47,
@@ -32,7 +32,7 @@ static uint8_t ratetab[] = {
   153, 159, 165, 171, 178, 185, 193, 202, 211, 232, 243, 254, 255
 };
 
-static int8_t pitchtab[] = {
+const int8_t pitchenv_tab[] = {
   -128, -116, -104, -95, -85, -76, -68, -61, -56, -52, -49, -46, -43,
   -41, -39, -37, -35, -33, -32, -31, -30, -29, -28, -27, -26, -25, -24,
   -23, -22, -21, -20, -19, -18, -17, -16, -15, -14, -13, -12, -11, -10,
@@ -47,7 +47,7 @@ void PitchEnv::set(const int r[4], const int l[4]) {
     rates_[i] = r[i];
     levels_[i] = l[i];
   }
-  level_ = pitchtab[l[3]] << 19;
+  level_ = pitchenv_tab[l[3]] << 19;
   down_ = true;
   advance(0);
 }
@@ -82,10 +82,10 @@ void PitchEnv::advance(int newix) {
   ix_ = newix;
   if (ix_ < 4) {
     int newlevel = levels_[ix_];
-    targetlevel_ = pitchtab[newlevel] << 19;
+    targetlevel_ = pitchenv_tab[newlevel] << 19;
     rising_ = (targetlevel_ > level_);
 
-    inc_ = ratetab[rates_[ix_]] * unit_;
+    inc_ = pitchenv_rate[rates_[ix_]] * unit_;
   }
 }
 

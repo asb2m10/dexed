@@ -23,6 +23,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "msfa/env.h"
+#include "msfa/pitchenv.h"
 
 class EnvDisplay : public Component {
     Env env;
@@ -34,15 +35,20 @@ public:
 };
 
 class PitchEnvDisplay : public Component {
-    Env env;
+    char rvalues[8];
+    char render[96];
+
+    void renderDisplay();
 public:
+    PitchEnvDisplay();
+    
     char *pvalues;
     
     void paint(Graphics &g);
 };
 
 class AlgoDisplay : public Component {
-    void drawOp(Graphics &g, int x, int y, int num, bool feedback);
+    void drawOp(Graphics &g, int x, int y, int num);
 
 public:
 	AlgoDisplay();

@@ -445,6 +445,8 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel);
     parent->opCtrl[op].sclRightDepth->bind(sclRightLevel);
     parent->opCtrl[op].sclRate->bind(sclRateScaling);
+    parent->opCtrl[op].ampModSens->bind(ampModSens);
+    parent->opCtrl[op].velModSens->bind(keyVelSens);
 }
 
 
@@ -477,13 +479,9 @@ void OperatorEditor::updateDisplay() {
             txtFreq << " " << det;
     }
     khzDisplay->setText(txtFreq, NotificationType::dontSendNotification);
-
     envDisplay->repaint();
 }
 
-void OperatorEditor::updateEnv() {
-    //envDisplay->update(s_)
-}
 //[/MiscUserCode]
 
 

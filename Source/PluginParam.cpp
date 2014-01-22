@@ -297,7 +297,7 @@ void DexedAudioProcessor::initCtrl() {
 
         String opMode;
         opMode << opName << " MODE";
-        opCtrl[opVal].opMode = new CtrlDX(opMode, 1, opTarget + 17);
+        opCtrl[opVal].opMode = new CtrlDX(opMode, 2, opTarget + 17);
         ctrl.add(opCtrl[opVal].opMode);
 
         String coarse;
@@ -322,14 +322,12 @@ void DexedAudioProcessor::initCtrl() {
 
         String sclLeftDepth;
         sclLeftDepth << opName << " L SCALE DEPTH";
-        opCtrl[opVal].sclLeftDepth = new CtrlDX(sclLeftDepth, 100,
-                opTarget + 9);
+        opCtrl[opVal].sclLeftDepth = new CtrlDX(sclLeftDepth, 100, opTarget + 9);
         ctrl.add(opCtrl[opVal].sclLeftDepth);
 
         String sclRightDepth;
         sclRightDepth << opName << " R SCALE DEPTH";
-        opCtrl[opVal].sclRightDepth = new CtrlDX(sclRightDepth, 100,
-                opTarget + 10);
+        opCtrl[opVal].sclRightDepth = new CtrlDX(sclRightDepth, 100, opTarget + 10);
         ctrl.add(opCtrl[opVal].sclRightDepth);
 
         String sclLeftCurve;
@@ -339,18 +337,17 @@ void DexedAudioProcessor::initCtrl() {
 
         String sclRightCurve;
         sclRightCurve << opName << " R KEY SCALE";
-        opCtrl[opVal].sclRightCurve = new CtrlDX(sclRightCurve, 4,
-                opTarget + 12);
+        opCtrl[opVal].sclRightCurve = new CtrlDX(sclRightCurve, 4, opTarget + 12);
         ctrl.add(opCtrl[opVal].sclRightCurve);
 
         String sclRate;
         sclRate << opName << " RATE SCALING";
-        opCtrl[opVal].sclRate = new CtrlDX(sclRate, 7, opTarget + 13);
+        opCtrl[opVal].sclRate = new CtrlDX(sclRate, 8, opTarget + 13);
         ctrl.add(opCtrl[opVal].sclRate);
 
         String ampModSens;
         ampModSens << opName << " A MOD SENS.";
-        opCtrl[opVal].ampModSens = new CtrlDX(ampModSens, 3, opTarget + 14);
+        opCtrl[opVal].ampModSens = new CtrlDX(ampModSens, 4, opTarget + 14);
         ctrl.add(opCtrl[opVal].ampModSens);
 
         String velModSens;

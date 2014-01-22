@@ -51,7 +51,6 @@ public:
     void bind(DexedAudioProcessor *processor, int num);
     void updateGain(float v);
     void updateDisplay();
-    void updateEnv();
     //[/UserMethods]
 
     void paint (Graphics& g);
