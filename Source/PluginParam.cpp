@@ -386,7 +386,7 @@ int DexedAudioProcessor::importSysex(const char *imported) {
             }
             patchNames[i][j] = c;
         }
-        patchNames[i][11] = 0;
+        patchNames[i][10] = 0;
     }
     return 0;
 }
@@ -585,11 +585,15 @@ const String DexedAudioProcessor::getParameterText(int index) {
 }
 
 
+
+#define CURRENT_PLUGINSTATE_VERSION 1
 struct PluginState {
+    int version;
     uint8_t sysex[4011];
     uint8_t program[161];
     float cutoff;
     float reso;
+    int programNum;
 };
 
 //==============================================================================
@@ -602,10 +606,13 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     
     PluginState state;
     
+    state.version = CURRENT_PLUGINSTATE_VERSION;
+    
     exportSysex((char *)(&state.sysex));
     memcpy(state.program, data, 161);
     state.cutoff = fx.uiCutoff;
     state.reso = fx.uiReso;
+    state.programNum = currentProgram;
     
     destData.insert(&state, sizeof(PluginState), 0);
 }
@@ -630,12 +637,17 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     memcpy((void *) &state, source, sizeInBytes);
 
+    if ( state.version != CURRENT_PLUGINSTATE_VERSION ) {
+        TRACE("version of VST chunk is not compatible, bailing out");
+        return;
+    }
     importSysex((char *) state.sysex);
     memcpy(data, state.program, 161);
     
     fx.uiCutoff = state.cutoff;
     fx.uiReso = state.reso;
-
+    currentProgram = state.programNum;
+    
     lastStateSave = (long) time(NULL);
     TRACE("setting VST STATE");
     updateUI();

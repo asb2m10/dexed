@@ -277,7 +277,7 @@ void DexedAudioProcessorEditor::updateUI() {
     int id = processor->getCurrentProgram() + 1;
     presets.setSelectedId(id, NotificationType::dontSendNotification);
     
-    global.repaint();
+    global.updateDisplay();
 }
 
 void DexedAudioProcessorEditor::rebuildPresetCombobox() {
