@@ -314,7 +314,7 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == pitchRate4)
     {
         //[UserSliderCode_pitchRate4] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();        
+        pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate4]
     }
     else if (sliderThatWasMoved == pitchRate1)

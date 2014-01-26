@@ -408,6 +408,21 @@ void DexedAudioProcessor::exportSysex(char *dest) {
     memcpy(dest+4102, footer, 2);
 }
 
+/**
+ * This function normalize data that comes from corrupted sysex data.
+ * It used to avoid engine crashing upon extrem values
+ */
+char normparm(char value, char max) {
+    if ( value <= max )
+        return value;
+        
+    // if this is beyond the max, we expect a 0-255 range, normalize this
+    // to the expected return value; and this value as a random data.
+    
+    return ((float)value)/255 * max;
+}
+
+
 void DexedAudioProcessor::unpackProgram(int idx) {
     char *bulk = sysex + (idx * 128);
 
@@ -553,16 +568,20 @@ int DexedAudioProcessor::getCurrentProgram() {
 
 void DexedAudioProcessor::setCurrentProgram(int index) {
     TRACE("setting program %d state", index);
-    if ( lastStateSave + 2 < time(NULL) ) {
-        for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
-            if (voices[i].keydown == false && voices[i].live == true) {
-                voices[i].live = false;
-            }
-        }
-        index = index > 31 ? 31 : index;
-        unpackProgram(index);
-        lfo.reset(data + 137);
+
+    if ( lastStateSave + 2 > time(NULL) ) {
+        TRACE("skipping save, storage recall to close");
+        return;
     }
+    
+    for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
+        if (voices[i].keydown == false && voices[i].live == true) {
+            voices[i].live = false;
+        }
+    }
+    index = index > 31 ? 31 : index;
+    unpackProgram(index);
+    lfo.reset(data + 137);
     currentProgram = index;
     updateUI();
 }
@@ -584,12 +603,10 @@ const String DexedAudioProcessor::getParameterText(int index) {
     return ctrl[index]->getValueDisplay();
 }
 
-
-
-#define CURRENT_PLUGINSTATE_VERSION 1
+#define CURRENT_PLUGINSTATE_VERSION 2
 struct PluginState {
     int version;
-    uint8_t sysex[4011];
+    uint8_t sysex[4104];
     uint8_t program[161];
     float cutoff;
     float reso;
@@ -631,7 +648,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     }
     
     if ( sizeInBytes > sizeof(PluginState) ) {
-        TRACE("hmmm, too big plugin state size %d", sizeInBytes);
+        TRACE("too big plugin state size %d", sizeInBytes);
         sizeInBytes = sizeof(PluginState);
     }
     

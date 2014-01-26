@@ -49,6 +49,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     initCtrl();
     setCurrentProgram(0);
     sendSysexChange = true;
+    normalizeDxVelocity = false;
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -254,6 +255,10 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
         return;
     }
 
+    if ( normalizeDxVelocity ) {
+        velo = ((float)velo) * 0.7874015; // 100/127
+    }
+    
     int note = currentNote;
     for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
         if (!voices[note].keydown) {

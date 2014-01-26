@@ -51,7 +51,7 @@ public:
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
     void updateDisplay();
-    
+
     String systemMsg;
     String paramMsg;
     //[/UserMethods]

@@ -79,7 +79,10 @@ class DexedAudioProcessor  : public AudioProcessor
      * and needs to be updated.
      */
     bool refreshVoice;
-
+    
+    bool normalizeDxVelocity;
+    bool sendSysexChange;
+    
     MidiBuffer midiOut;
 
     void processMidiMessage(MidiMessage *msg);
@@ -94,7 +97,7 @@ public :
     static const int REFRESH_COMP = 1 << 1;
     
     int refreshUI;
-    bool sendSysexChange;
+
     char data[161];
     
     ScopedPointer<ZipFile> builtin_pgm;
