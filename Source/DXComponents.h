@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2014 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -18,14 +18,41 @@
  * Boston, MA 02110-1301 USA.
  */
 
-#ifndef DXLOOKNFEEL_H_INCLUDED
-#define DXLOOKNFEEL_H_INCLUDED
+#ifndef DXCOMPONENTS_H_INCLUDED
+#define DXCOMPONENTS_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class DXLookNFeel : public LookAndFeel_V3 {
+#include "msfa/env.h"
+
+class EnvDisplay : public Component {
+    Env env;
 public:
-    DXLookNFeel();
+    EnvDisplay();
+    char *pvalues;
+    void paint(Graphics &g);
 };
 
-#endif  // DXLOOKNFEEL_H_INCLUDED
+class PitchEnvDisplay : public Component {
+    char rvalues[8];
+public:
+    PitchEnvDisplay();
+    char *pvalues;
+    void paint(Graphics &g);
+};
+
+class AlgoDisplay : public Component {
+    void drawOp(Graphics &g, int x, int y, int num);
+public:
+	AlgoDisplay();
+    char *algo;
+	void paint(Graphics &g);
+};
+
+class VuMeter: public Component {
+    void paint(Graphics &g);
+    public :
+    float v;
+};
+
+#endif  // DXCOMPONENTS_H_INCLUDED

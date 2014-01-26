@@ -25,7 +25,7 @@
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
 #include "GlobalEditor.h"
-#include "DXLookNFeel.h"
+#include "DXComponents.h"
 
 //==============================================================================
 /**

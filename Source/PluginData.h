@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2014 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -17,11 +17,11 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301 USA.
  */
- 
-#include "DXLookNFeel.h"
 
-DXLookNFeel::DXLookNFeel() {
-    setColour(TextButton::buttonColourId,Colour(0xFF0FC00F));
-    setColour(Slider::rotarySliderOutlineColourId,Colour(0xFF0FC00F));
-    setColour(Slider::rotarySliderFillColourId,Colour(0xFFFFFFFF));
-}
+#ifndef PLUGINDATA_H_INCLUDED
+#define PLUGINDATA_H_INCLUDED
+
+#include "../JuceLibraryCode/JuceHeader.h"
+
+
+#endif  // PLUGINDATA_H_INCLUDED

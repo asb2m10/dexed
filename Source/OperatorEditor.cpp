@@ -196,14 +196,6 @@ OperatorEditor::OperatorEditor ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    envDisplay->s_rate[0] = s_egv1;
-    envDisplay->s_rate[1] = s_egv2;
-    envDisplay->s_rate[2] = s_egv3;
-    envDisplay->s_rate[3] = s_egv4;
-    envDisplay->s_level[0] = s_egl1;
-    envDisplay->s_level[1] = s_egl2;
-    envDisplay->s_level[2] = s_egl3;
-    envDisplay->s_level[3] = s_egl4;
     //[/Constructor]
 }
 
@@ -447,14 +439,15 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     parent->opCtrl[op].sclRate->bind(sclRateScaling);
     parent->opCtrl[op].ampModSens->bind(ampModSens);
     parent->opCtrl[op].velModSens->bind(keyVelSens);
+    
+    int offset = parent->opCtrl[op].egRate[0]->getOffset();
+    envDisplay->pvalues = &(parent->data[offset]);
 }
-
 
 void OperatorEditor::updateGain(float v) {
     vu->v = v;
     vu->repaint();
 }
-
 
 void OperatorEditor::updateDisplay() {
     float freq = opCoarse->getValue();

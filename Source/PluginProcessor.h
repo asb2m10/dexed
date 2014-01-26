@@ -62,8 +62,8 @@ class DexedAudioProcessor  : public AudioProcessor
     int workBlockSize;
     int currentProgram;
     char sysex[4096];
-    char patchNames[32][13];
-
+    StringArray programNames;
+    
     /**
      * The last time the state was save, to be able to bypass a VST host bug.
      */

@@ -268,10 +268,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\GlobalEditor.cpp">
+    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\OperatorEditor.cpp">
+    <ClCompile Include="..\..\Source\PluginParam.cpp">
+      <Filter>Dexed\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PluginData.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\msfa\freqlut.cc">
@@ -301,16 +304,19 @@
     <ClCompile Include="..\..\Source\msfa\sin.cc">
       <Filter>Dexed\Source\msfa</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\DXLookNFeel.cpp">
-      <Filter>Dexed\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
-      <Filter>Dexed\Source</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\PluginEditor.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\PluginParam.cpp">
+    <ClCompile Include="..\..\Source\GlobalEditor.cpp">
+      <Filter>Dexed\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OperatorEditor.cpp">
+      <Filter>Dexed\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DXLookNFeel.cpp">
+      <Filter>Dexed\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DXComponents.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\PluginFx.cpp">
@@ -1383,10 +1389,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\GlobalEditor.h">
+    <ClInclude Include="..\..\Source\PluginProcessor.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\OperatorEditor.h">
+    <ClInclude Include="..\..\Source\PluginParam.h">
+      <Filter>Dexed\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\PluginData.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\msfa\freqlut.h">
@@ -1428,16 +1437,19 @@
     <ClInclude Include="..\..\Source\msfa\synth.h">
       <Filter>Dexed\Source\msfa</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\DXLookNFeel.h">
-      <Filter>Dexed\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PluginProcessor.h">
-      <Filter>Dexed\Source</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\PluginEditor.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\PluginParam.h">
+    <ClInclude Include="..\..\Source\GlobalEditor.h">
+      <Filter>Dexed\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OperatorEditor.h">
+      <Filter>Dexed\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DXLookNFeel.h">
+      <Filter>Dexed\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DXComponents.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginFx.h">

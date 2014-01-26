@@ -212,10 +212,9 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         
         for(int i=0;i<processor->builtin_pgm->getNumEntries();i++) {
             const ZipFile::ZipEntry *e = processor->builtin_pgm->getEntry(i);
-            
             cart.add(e->filename.dropLastCharacters(4));
-
         }
+        
         AlertWindow dialog(String("Builtin cartridges"), "", AlertWindow::NoIcon, this);
         dialog.addComboBox(String("cart"), cart);
         dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
@@ -234,7 +233,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     
     if (buttonThatWasClicked == aboutButton) {
         AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.3", "https://github.com/asb2m10/dexed\n"
-                "(c) 2013 Pascal Gauthier\nUnder the GPL v2\n\n"
+                "(c) 2013-2014 Pascal Gauthier\nUnder the GPL v2\n\n"
                 "Based on Music Synthesizer for Android\nhttps://code.google.com/p/music-synthesizer-for-android");
         return;
     }
