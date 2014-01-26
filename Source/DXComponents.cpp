@@ -195,11 +195,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
         dist[0] = dist[1] = dist[2] = dist[3] = 1;
         total = 4;
     }
-    
-    TRACE("total %f", total);
-    TRACE("level %d %d %d %d", levels[0], levels[1], levels[2], levels[3]);
-    TRACE("dist %f %f %f %f", dist[0], dist[1], dist[2], dist[3]);
-    
+        
     // TODO : this is WIP
     float ratio =  96 / total;
     
