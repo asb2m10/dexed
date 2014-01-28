@@ -417,7 +417,7 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     unpackProgram(index);
     lfo.reset(data + 137);
     currentProgram = index;
-    updateUI();
+    triggerAsyncUpdate();
 }
 
 const String DexedAudioProcessor::getProgramName(int index) {

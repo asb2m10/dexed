@@ -194,7 +194,7 @@ void DexedAudioProcessor::packProgram(int idx, const char *name) {
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
     memcpy(data, rawdata, 160);
-    refreshUI = true;
+    triggerAsyncUpdate();
 }
 
 void DexedAudioProcessor::loadBuiltin(int idx) {

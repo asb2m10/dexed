@@ -41,7 +41,7 @@ struct ProcessorVoice {
 //==============================================================================
 /**
 */
-class DexedAudioProcessor  : public AudioProcessor
+class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
 {
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
@@ -89,13 +89,17 @@ class DexedAudioProcessor  : public AudioProcessor
     void keydown(uint8_t pitch, uint8_t velo);
     void keyup(uint8_t pitch);
     void processSamples(int n_samples, int16_t *buffer);
-
+    
+    /**
+     * this is called from the Audio thread to tell
+     * to update the UI / hostdata 
+     */
+    void handleAsyncUpdate();
+    
     void initCtrl();
 
 public :
     static const int REFRESH_MSG = 1;
-    static const int REFRESH_COMP = 1 << 1;
-    
     int refreshUI;
 
     char data[161];

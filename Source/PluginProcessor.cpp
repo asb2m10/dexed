@@ -28,6 +28,7 @@
 #include "msfa/pitchenv.h"
 #include "msfa/aligned_buf.h"
 
+
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
 #ifdef DEBUG
@@ -189,7 +190,7 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
             }
             TRACE("program update sysex");
             updateProgramFromSysex(buf+4);
-            refreshUI |= REFRESH_COMP;
+            triggerAsyncUpdate();
             return;
         }
 
@@ -202,7 +203,7 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
             TRACE("update 32bulk voice)");
             importSysex((const char *)buf+4);
             currentProgram = 0;
-            refreshUI |= REFRESH_COMP;
+            triggerAsyncUpdate();
         }
         return;
     }
@@ -222,6 +223,8 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
         case 0xb0 : {
             int controller = buf[1];
             int value = buf[2];
+            
+            // pedal
             if (controller == 64) {
                 sustain = value != 0;
                 if (!sustain) {
@@ -417,6 +420,9 @@ bool DexedAudioProcessor::hasEditor() const {
 
 
 void DexedAudioProcessor::updateUI() {
+    // notify host something has changed
+    updateHostDisplay();
+    
     AudioProcessorEditor *editor = getActiveEditor();
     if ( editor == NULL ) {
         return;
@@ -428,6 +434,11 @@ void DexedAudioProcessor::updateUI() {
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     return new DexedAudioProcessorEditor (this);
 }
+
+void DexedAudioProcessor::handleAsyncUpdate() {
+   updateUI();
+}
+
 
 void DexedAudioProcessor::log(const char *source, const char *fmt, ...) {
     char output[4096];

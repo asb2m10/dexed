@@ -250,8 +250,6 @@ void DexedAudioProcessorEditor::timerCallback() {
     int32_t env[6];
     
     if ( processor->refreshUI ) {
-        if ( processor->refreshUI & DexedAudioProcessor::REFRESH_COMP )
-            updateUI();
         if ( processor->refreshUI & DexedAudioProcessor::REFRESH_MSG )
             global.repaint();
         processor->refreshUI = 0;
