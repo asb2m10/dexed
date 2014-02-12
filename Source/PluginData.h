@@ -22,6 +22,52 @@
 #define PLUGINDATA_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#define SYSEX_SIZE 4104
 
+
+enum UpackedOffset {
+	egRate,
+	egLevel = 4,
+	breakpoint = 8,
+	lScaleDepth,
+	rScaleDepth,
+	lKeyScale,
+	rKeyScale,
+	rateScaling,
+	keyVelocity,
+	outputLevel,
+	mode,
+	fCoarse,
+	fFine, 
+	oscDetune,
+
+	// Global values
+	pitchEgRate = 126,
+	pitchEgLevel = 130,
+	algorythm = 134,
+	feedback,
+	oscKeySync,
+	lfoSpeed,
+	lfoDelay,
+	lfoPmDepth,
+	lfoAmDepth,
+	lfoKeySync,
+	lfoWave,
+	middleC,
+	pModeSens
+};
+
+void extractProgramNames(const char *block, StringArray &dest);
+void exportSysex(char *dest, char *src);
+void packProgram(uint8_t *dest, uint8_t *src, int idx, String name);
+
+class CartridgeManager {
+    ScopedPointer<ZipFile> builtin_pgm;
+public:
+	StringArray cartNames;
+
+	CartridgeManager();
+	void getSysex(int idx, char *data);
+};
 
 #endif  // PLUGINDATA_H_INCLUDED

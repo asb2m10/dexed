@@ -37,8 +37,8 @@
                                                                     //[/Comments]
 */
 class GlobalEditor  : public Component,
-                      public SliderListener,
-                      public ComboBoxListener
+                      public ComboBoxListener,
+                      public SliderListener
 {
 public:
     //==============================================================================
@@ -58,8 +58,8 @@ public:
 
     void paint (Graphics& g);
     void resized();
-    void sliderValueChanged (Slider* sliderThatWasMoved);
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void sliderValueChanged (Slider* sliderThatWasMoved);
 
 
 
@@ -69,7 +69,6 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Slider> algo;
     ScopedPointer<ComboBox> lfoType;
     ScopedPointer<Slider> lfoSpeed;
     ScopedPointer<Slider> lfoAmDepth;
@@ -77,7 +76,6 @@ private:
     ScopedPointer<Slider> lfoDelay;
     ScopedPointer<Slider> cutoff;
     ScopedPointer<Slider> reso;
-    ScopedPointer<AlgoDisplay> algoDisplay;
     ScopedPointer<Slider> pitchRate2;
     ScopedPointer<Slider> pitchRate3;
     ScopedPointer<Slider> pitchRate4;
@@ -86,12 +84,14 @@ private:
     ScopedPointer<Slider> pitchLevel3;
     ScopedPointer<Slider> pitchLevel4;
     ScopedPointer<Slider> pitchLevel1;
-    ScopedPointer<Slider> feedback;
     ScopedPointer<Slider> transpose;
     ScopedPointer<ToggleButton> oscSync;
     ScopedPointer<Slider> pitchModSens;
     ScopedPointer<ToggleButton> lfoSync;
     ScopedPointer<PitchEnvDisplay> pitchEnvDisplay;
+    ScopedPointer<AlgoDisplay> algoDisplay;
+    ScopedPointer<Slider> feedback;
+    ScopedPointer<Slider> algo;
 
 
     //==============================================================================

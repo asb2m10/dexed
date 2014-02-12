@@ -35,15 +35,19 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
         public ComboBoxListener,
         public Timer {
     DexedAudioProcessor *processor;
-    ComboBox presets;
+    ComboBox programs;
+    ComboBox cartridges;
+            
     MidiKeyboardComponent midiKeyboard;
     DXLookNFeel dx_lnf;
-           
-    ScopedPointer<TextButton> cartButton;
+
     ScopedPointer<TextButton> loadButton;
     ScopedPointer<TextButton> saveButton;
     ScopedPointer<TextButton> storeButton;
     ScopedPointer<TextButton> aboutButton;
+    ScopedPointer<TextButton> settings;
+            
+    void storeProgram();
 
 public:
 
@@ -57,11 +61,12 @@ public:
     void paint (Graphics& g);
     void buttonClicked (Button* buttonThatWasClicked);
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+
     OperatorEditor operators[6];
     GlobalEditor global;
 
     void updateUI();
-    void rebuildPresetCombobox();
+    void rebuildProgramCombobox();
 };
 
 

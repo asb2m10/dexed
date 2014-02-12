@@ -28,6 +28,7 @@
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "PluginParam.h"
+#include "PluginData.h"
 #include "PluginFx.h"
 
 struct ProcessorVoice {
@@ -61,8 +62,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     SInt16 *workBlock;
     int workBlockSize;
     int currentProgram;
-    char sysex[4096];
-    StringArray programNames;
     
     /**
      * The last time the state was save, to be able to bypass a VST host bug.
@@ -99,12 +98,12 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     void initCtrl();
 
 public :
-    static const int REFRESH_MSG = 1;
-    int refreshUI;
-
+    StringArray programNames;    
+    char sysex[4096];    
     char data[161];
     
-    ScopedPointer<ZipFile> builtin_pgm;
+    CartridgeManager cartManager;
+
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];
@@ -126,7 +125,6 @@ public :
     ScopedPointer<CtrlFloat> fxReso;
 
     int importSysex(const char *imported);
-    void exportSysex(char *dest);
     void setDxValue(int offset, int v);
 
     //==============================================================================

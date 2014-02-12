@@ -29,12 +29,6 @@
 //==============================================================================
 GlobalEditor::GlobalEditor ()
 {
-    addAndMakeVisible (algo = new Slider ("algo"));
-    algo->setRange (1, 32, 1);
-    algo->setSliderStyle (Slider::Rotary);
-    algo->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
-    algo->addListener (this);
-
     addAndMakeVisible (lfoType = new ComboBox ("new combo box"));
     lfoType->setEditableText (false);
     lfoType->setJustificationType (Justification::centredLeft);
@@ -84,9 +78,6 @@ GlobalEditor::GlobalEditor ()
     reso->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     reso->addListener (this);
 
-    addAndMakeVisible (algoDisplay = new AlgoDisplay());
-    algoDisplay->setName ("algoDisplay");
-
     addAndMakeVisible (pitchRate2 = new Slider ("pitchRate2"));
     pitchRate2->setRange (0, 99, 1);
     pitchRate2->setSliderStyle (Slider::Rotary);
@@ -135,12 +126,6 @@ GlobalEditor::GlobalEditor ()
     pitchLevel1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     pitchLevel1->addListener (this);
 
-    addAndMakeVisible (feedback = new Slider ("feedback"));
-    feedback->setRange (0, 7, 1);
-    feedback->setSliderStyle (Slider::Rotary);
-    feedback->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
-    feedback->addListener (this);
-
     addAndMakeVisible (transpose = new Slider ("transpose"));
     transpose->setRange (0, 49, 0);
     transpose->setSliderStyle (Slider::LinearVertical);
@@ -162,6 +147,21 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (pitchEnvDisplay = new PitchEnvDisplay());
     pitchEnvDisplay->setName ("pitchEnvDisplay");
 
+    addAndMakeVisible (algoDisplay = new AlgoDisplay());
+    algoDisplay->setName ("algoDisplay");
+
+    addAndMakeVisible (feedback = new Slider ("feedback"));
+    feedback->setRange (0, 7, 1);
+    feedback->setSliderStyle (Slider::Rotary);
+    feedback->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    feedback->addListener (this);
+
+    addAndMakeVisible (algo = new Slider ("algo"));
+    algo->setRange (1, 32, 1);
+    algo->setSliderStyle (Slider::Rotary);
+    algo->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    algo->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -180,7 +180,6 @@ GlobalEditor::~GlobalEditor()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    algo = nullptr;
     lfoType = nullptr;
     lfoSpeed = nullptr;
     lfoAmDepth = nullptr;
@@ -188,7 +187,6 @@ GlobalEditor::~GlobalEditor()
     lfoDelay = nullptr;
     cutoff = nullptr;
     reso = nullptr;
-    algoDisplay = nullptr;
     pitchRate2 = nullptr;
     pitchRate3 = nullptr;
     pitchRate4 = nullptr;
@@ -197,12 +195,14 @@ GlobalEditor::~GlobalEditor()
     pitchLevel3 = nullptr;
     pitchLevel4 = nullptr;
     pitchLevel1 = nullptr;
-    feedback = nullptr;
     transpose = nullptr;
     oscSync = nullptr;
     pitchModSens = nullptr;
     lfoSync = nullptr;
     pitchEnvDisplay = nullptr;
+    algoDisplay = nullptr;
+    feedback = nullptr;
+    algo = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -232,7 +232,6 @@ void GlobalEditor::paint (Graphics& g)
 
 void GlobalEditor::resized()
 {
-    algo->setBounds (568, 32, 24, 24);
     lfoType->setBounds (624, 40, 96, 16);
     lfoSpeed->setBounds (624, 16, 96, 16);
     lfoAmDepth->setBounds (696, 64, 24, 24);
@@ -240,7 +239,6 @@ void GlobalEditor::resized()
     lfoDelay->setBounds (672, 64, 24, 24);
     cutoff->setBounds (8, 40, 48, 48);
     reso->setBounds (64, 40, 48, 48);
-    algoDisplay->setBounds (408, 8, 152, 74);
     pitchRate2->setBounds (776, 64, 32, 24);
     pitchRate3->setBounds (800, 64, 32, 24);
     pitchRate4->setBounds (824, 64, 32, 24);
@@ -249,14 +247,31 @@ void GlobalEditor::resized()
     pitchLevel3->setBounds (800, 40, 32, 24);
     pitchLevel4->setBounds (824, 40, 32, 24);
     pitchLevel1->setBounds (752, 40, 32, 24);
-    feedback->setBounds (568, 56, 24, 24);
     transpose->setBounds (728, 0, 24, 56);
     oscSync->setBounds (600, 64, 24, 24);
     pitchModSens->setBounds (728, 64, 24, 24);
     lfoSync->setBounds (624, 64, 24, 24);
     pitchEnvDisplay->setBounds (752, 8, 96, 32);
+    algoDisplay->setBounds (442, 8, 152, 74);
+    feedback->setBounds (568, 32, 24, 24);
+    algo->setBounds (568, 8, 24, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
+}
+
+void GlobalEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    //[UsercomboBoxChanged_Pre]
+    //[/UsercomboBoxChanged_Pre]
+
+    if (comboBoxThatHasChanged == lfoType)
+    {
+        //[UserComboBoxCode_lfoType] -- add your combo box handling code here..
+        //[/UserComboBoxCode_lfoType]
+    }
+
+    //[UsercomboBoxChanged_Post]
+    //[/UsercomboBoxChanged_Post]
 }
 
 void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
@@ -264,12 +279,7 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == algo)
-    {
-        //[UserSliderCode_algo] -- add your slider handling code here..
-        //[/UserSliderCode_algo]
-    }
-    else if (sliderThatWasMoved == lfoSpeed)
+    if (sliderThatWasMoved == lfoSpeed)
     {
         //[UserSliderCode_lfoSpeed] -- add your slider handling code here..
         //[/UserSliderCode_lfoSpeed]
@@ -347,11 +357,6 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel1]
     }
-    else if (sliderThatWasMoved == feedback)
-    {
-        //[UserSliderCode_feedback] -- add your slider handling code here..
-        //[/UserSliderCode_feedback]
-    }
     else if (sliderThatWasMoved == transpose)
     {
         //[UserSliderCode_transpose] -- add your slider handling code here..
@@ -362,24 +367,19 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_pitchModSens] -- add your slider handling code here..
         //[/UserSliderCode_pitchModSens]
     }
+    else if (sliderThatWasMoved == feedback)
+    {
+        //[UserSliderCode_feedback] -- add your slider handling code here..
+        //[/UserSliderCode_feedback]
+    }
+    else if (sliderThatWasMoved == algo)
+    {
+        //[UserSliderCode_algo] -- add your slider handling code here..
+        //[/UserSliderCode_algo]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
-}
-
-void GlobalEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
-{
-    //[UsercomboBoxChanged_Pre]
-    //[/UsercomboBoxChanged_Pre]
-
-    if (comboBoxThatHasChanged == lfoType)
-    {
-        //[UserComboBoxCode_lfoType] -- add your combo box handling code here..
-        //[/UserComboBoxCode_lfoType]
-    }
-
-    //[UsercomboBoxChanged_Post]
-    //[/UsercomboBoxChanged_Post]
 }
 
 
@@ -447,10 +447,6 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="855" initialHeight="90">
   <BACKGROUND backgroundColour="ffffff"/>
-  <SLIDER name="algo" id="8a226ddf9bbff752" memberName="algo" virtualName=""
-          explicitFocusOrder="0" pos="568 32 24 24" min="1" max="32" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="0" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="new combo box" id="31018596af3b34e9" memberName="lfoType"
             virtualName="" explicitFocusOrder="0" pos="624 40 96 16" editable="0"
             layout="33" items="TRIANGLE&#10;SAW DOWN&#10;SAW UP&#10;SQUARE&#10;SINE&#10;S&amp;HOLD"
@@ -479,9 +475,6 @@ BEGIN_JUCER_METADATA
           explicitFocusOrder="0" pos="64 40 48 48" min="0" max="1" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
-  <GENERICCOMPONENT name="algoDisplay" id="b26fb9e3b5f0bc37" memberName="algoDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="408 8 152 74" class="AlgoDisplay"
-                    params=""/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
           virtualName="" explicitFocusOrder="0" pos="776 64 32 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
@@ -514,10 +507,6 @@ BEGIN_JUCER_METADATA
           virtualName="" explicitFocusOrder="0" pos="752 40 32 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
-          explicitFocusOrder="0" pos="568 56 24 24" min="0" max="7" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
           virtualName="" explicitFocusOrder="0" pos="728 0 24 56" min="0"
           max="49" int="0" style="LinearVertical" textBoxPos="NoTextBox"
@@ -535,6 +524,17 @@ BEGIN_JUCER_METADATA
   <GENERICCOMPONENT name="pitchEnvDisplay" id="9ddaae8ef924a038" memberName="pitchEnvDisplay"
                     virtualName="" explicitFocusOrder="0" pos="752 8 96 32" class="PitchEnvDisplay"
                     params=""/>
+  <GENERICCOMPONENT name="algoDisplay" id="b26fb9e3b5f0bc37" memberName="algoDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="442 8 152 74" class="AlgoDisplay"
+                    params=""/>
+  <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
+          explicitFocusOrder="0" pos="568 32 24 24" min="0" max="7" int="1"
+          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="algo" id="8a226ddf9bbff752" memberName="algo" virtualName=""
+          explicitFocusOrder="0" pos="568 8 24 24" min="1" max="32" int="1"
+          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="0" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

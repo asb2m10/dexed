@@ -205,12 +205,7 @@ void CtrlDX::updateComponent() {
  *
  */
 void DexedAudioProcessor::initCtrl() {
-    MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
-    builtin_pgm = new ZipFile(mis, true);
-    builtin_pgm->sortEntriesByFilename();
-    
     loadBuiltin(0);
-    
     currentProgram = 0;
     
     fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);

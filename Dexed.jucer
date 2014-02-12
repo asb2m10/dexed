@@ -111,6 +111,28 @@
         <MODULEPATH id="juce_audio_basics" path="../../juce"/>
       </MODULEPATHS>
     </VS2012>
+    <VS2013 targetFolder="Builds/VisualStudio2013" vstFolder="c:\SDKs\vstsdk2.4">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="1" optimisation="1" targetName="Dexed"/>
+        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
+                       isDebug="0" optimisation="2" targetName="Dexed"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
+        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
+        <MODULEPATH id="juce_graphics" path="../../juce"/>
+        <MODULEPATH id="juce_events" path="../../juce"/>
+        <MODULEPATH id="juce_data_structures" path="../../juce"/>
+        <MODULEPATH id="juce_core" path="../../juce"/>
+        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
+        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
+        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
+        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
+        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
+      </MODULEPATHS>
+    </VS2013>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>

@@ -31,40 +31,43 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     : AudioProcessorEditor (ownerFilter),
     midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
-
     LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
 
     setSize (865, 420);
 
     processor = ownerFilter;
-
-    addAndMakeVisible (cartButton = new TextButton("CART"));
-    cartButton->setButtonText ("CART");
-    cartButton->addListener (this);
-    cartButton->setBounds(5, 5, 50, 18);
+    
+    addAndMakeVisible(&cartridges);
+    cartridges.setEditableText(false);
+    cartridges.setJustificationType(Justification::centredLeft);
+    cartridges.setTextWhenNothingSelected(String::empty);
+    cartridges.setBounds(5, 5, 160, 18);
+    cartridges.addItemList(processor->cartManager.cartNames, 1);
+    cartridges.setSelectedItemIndex(0);
+    cartridges.addListener(this);
     
     addAndMakeVisible (loadButton = new TextButton("LOAD"));
     loadButton->setButtonText ("LOAD");
     loadButton->addListener (this);
-    loadButton->setBounds(57, 5, 50, 18);
+    loadButton->setBounds(169, 5, 50, 18);
 
     addAndMakeVisible(saveButton = new TextButton("SAVE"));
     saveButton->setButtonText ("SAVE");
     saveButton->addListener (this);
-    saveButton->setBounds (109, 5, 50, 18);
+    saveButton->setBounds (222, 5, 50, 18);
     
-    addAndMakeVisible (&presets);
-    presets.setEditableText (false);
-    presets.setJustificationType (Justification::centredLeft);
-    presets.setTextWhenNothingSelected (String::empty);
-    presets.setBounds(163, 5, 180, 18);
-    rebuildPresetCombobox();
-    presets.addListener(this);
+    addAndMakeVisible (&programs);
+    programs.setEditableText (false);
+    programs.setJustificationType (Justification::centredLeft);
+    programs.setTextWhenNothingSelected (String::empty);
+    programs.setBounds(276, 5, 160, 18);
+    rebuildProgramCombobox();
+    programs.addListener(this);
     
     addAndMakeVisible(storeButton = new TextButton("STORE"));
     storeButton->setButtonText ("STORE");
     storeButton->addListener (this);
-    storeButton->setBounds (347, 5, 50, 18);
+    storeButton->setBounds (439, 5, 50, 18);
 
     addAndMakeVisible(aboutButton = new TextButton("ABOUT"));
     aboutButton->setButtonText ("ABOUT");
@@ -147,8 +150,8 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
             fp_in.close();
             processor->importSysex((char *) &syx_data);
             processor->setCurrentProgram(0);
-            rebuildPresetCombobox();
-            presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+            rebuildProgramCombobox();
+            programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
             processor->updateHostDisplay();
         }
 
@@ -159,9 +162,9 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         FileChooser fc ("Export DX sysex...", File::nonexistent, "*.syx", 1);
         if ( fc.browseForFileToSave(true) ) {
             String f = fc.getResults().getReference(0).getFullPathName();
-            uint8_t syx_data[4104];
+            char syx_data[4104];
 
-            processor->exportSysex((char *) syx_data);
+            exportSysex((char *) syx_data, (char *) &processor->sysex);
 
             ofstream fp_out(f.toRawUTF8(), ios::binary);
             fp_out.write((char *)syx_data, 4104);
@@ -178,59 +181,21 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     }
     
     if (buttonThatWasClicked == storeButton) {
-        AlertWindow dialog(String("Store Program"), "", AlertWindow::NoIcon, this);
-        dialog.addTextEditor(String("Name"), processor->getProgramName(processor->getCurrentProgram()), String("Name"), false);
-        
-        StringArray programs;
-        
-        for(int i=0;i<32;i++) {
-            programs.add(presets.getItemText(i));
-        }
-        
-        dialog.addComboBox(String("Dest"), programs);
-        dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
-        dialog.addButton("Cancel", 1, KeyPress(KeyPress::escapeKey));
-        if ( dialog.runModalLoop() == 0 ) {
-            TextEditor *name = dialog.getTextEditor(String("Name"));
-            ComboBox *dest = dialog.getComboBoxComponent(String("Dest"));
-            
-            int programNum = dest->getSelectedItemIndex();
-            const char *programName = name->getText().toRawUTF8();
-            
-            processor->packProgram(programNum, programName);
-            
-            rebuildPresetCombobox();
-            
-            processor->setCurrentProgram(programNum);
-            processor->updateHostDisplay();
-        }
+        storeProgram();
         return;
     }
-
+/*
     if (buttonThatWasClicked == cartButton) {
-        StringArray cart;
-        
-        for(int i=0;i<processor->builtin_pgm->getNumEntries();i++) {
-            const ZipFile::ZipEntry *e = processor->builtin_pgm->getEntry(i);
-            cart.add(e->filename.dropLastCharacters(4));
-        }
-        
         AlertWindow dialog(String("Builtin cartridges"), "", AlertWindow::NoIcon, this);
-        dialog.addComboBox(String("cart"), cart);
+        dialog.addComboBox(String("cart"), processor->cartManager.cartNames);
         dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
         dialog.addButton("Cancel", 1, KeyPress(KeyPress::escapeKey));
         if ( dialog.runModalLoop() == 0 ) {
-            ComboBox *select = dialog.getComboBoxComponent(String("cart"));
-            int idx = select->getSelectedItemIndex();
-            processor->loadBuiltin(idx);
-            processor->setCurrentProgram(0);
-            rebuildPresetCombobox();
-            presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
-            processor->updateHostDisplay();
+
         }
         return;
     }
-    
+  */  
     if (buttonThatWasClicked == aboutButton) {
         AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.3", "https://github.com/asb2m10/dexed\n"
                 "(c) 2013-2014 Pascal Gauthier\nUnder the GPL v2\n\n"
@@ -242,18 +207,21 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
 }
 
 void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged) {
-    processor->setCurrentProgram(comboBoxThatHasChanged->getSelectedId()-1);
-    processor->updateHostDisplay();    
+    if ( comboBoxThatHasChanged == &programs ) {
+        processor->setCurrentProgram(programs.getSelectedId()-1);
+        processor->updateHostDisplay();
+    } else {
+        int idx = comboBoxThatHasChanged->getSelectedItemIndex();
+        processor->loadBuiltin(idx);
+        processor->setCurrentProgram(0);
+        rebuildProgramCombobox();
+        programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+        processor->updateHostDisplay();
+    }
 }
 
 void DexedAudioProcessorEditor::timerCallback() {
     int32_t env[6];
-    
-    if ( processor->refreshUI ) {
-        if ( processor->refreshUI & DexedAudioProcessor::REFRESH_MSG )
-            global.repaint();
-        processor->refreshUI = 0;
-    }
     
     if ( processor->peekEnvStatus(env) == false )
         return;
@@ -272,18 +240,96 @@ void DexedAudioProcessorEditor::updateUI() {
     }
     
     int id = processor->getCurrentProgram() + 1;
-    presets.setSelectedId(id, NotificationType::dontSendNotification);
+    programs.setSelectedId(id, NotificationType::dontSendNotification);
     
     global.updateDisplay();
 }
 
-void DexedAudioProcessorEditor::rebuildPresetCombobox() {
-    presets.clear(NotificationType::dontSendNotification);
+void DexedAudioProcessorEditor::rebuildProgramCombobox() {
+    programs.clear(NotificationType::dontSendNotification);
     for(int i=0;i<processor->getNumPrograms();i++) {
         String id;
         id << (i+1) << ". " << processor->getProgramName(i);
-        presets.addItem(id, i+1);
+        programs.addItem(id, i+1);
     }
-    presets.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+    programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
 }
 
+void DexedAudioProcessorEditor::storeProgram() {
+    String currentName(processor->getProgramName(processor->getCurrentProgram()));
+    char destSysex[4096];
+    File *externalFile = NULL;
+
+    memcpy(&destSysex, processor->sysex, 4096);
+
+    while (true) {
+        String msg;
+        if ( externalFile == NULL ) {
+            msg = "Store program to current cartridge";
+        } else {
+            msg = "Store program to " + externalFile->getFileName();
+        }
+        
+        AlertWindow dialog(String("Store Program"), msg, AlertWindow::NoIcon, this);
+        dialog.addTextEditor(String("Name"), currentName, String("Name"), false);
+        // TODO: fix the name length to 10
+
+        StringArray programs;
+        extractProgramNames((char *) &destSysex, programs);
+
+        dialog.addComboBox(String("Dest"), programs);
+        dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
+        dialog.addButton("Cancel", 1, KeyPress(KeyPress::escapeKey));
+        dialog.addButton("External File", 2, KeyPress());
+        int response = dialog.runModalLoop();
+
+        if ( response == 2 ) {
+            FileChooser fc("Destination Sysex", File::nonexistent, "*.syx;*.SYX;*.*", 1);
+
+            if ( fc.browseForFileToOpen() ) {
+                if ( externalFile != NULL ) 
+                    delete externalFile;
+
+                MemoryBlock block;
+                externalFile = new File(fc.getResults().getReference(0));
+                if ( externalFile->loadFileAsData(block) ) {
+                    block.copyTo(destSysex, 6, 4096);
+                    continue;
+                }
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Read error", "Unable to read file");
+            }
+        }
+
+        if ( response == 0 ) {
+            TextEditor *name = dialog.getTextEditor(String("Name"));
+            ComboBox *dest = dialog.getComboBoxComponent(String("Dest"));
+            
+            int programNum = dest->getSelectedItemIndex();
+            String programName = name->getText();
+            if ( programName.length() > 10 ) {
+                int toStrip = programName.length() - 10;
+                programName.dropLastCharacters(toStrip);
+            }
+
+            if ( externalFile == NULL ) {
+                packProgram((uint8_t *) processor->sysex, (uint8_t *) processor->data, programNum, programName);
+                processor->programNames.set(programNum, programName);
+                rebuildProgramCombobox();
+                processor->setCurrentProgram(programNum);
+                processor->updateHostDisplay();
+            } else {
+                packProgram((uint8_t *) &destSysex, (uint8_t *) processor->data, programNum, programName);
+                char sysexFile[4104];
+                exportSysex((char *) &sysexFile, (char *) &destSysex);
+                if ( ! externalFile->replaceWithData(sysexFile, 4104) ) {
+                    AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
+                }
+            }
+        }
+
+        break;
+    }
+
+    if ( externalFile != NULL ) 
+        delete externalFile;
+}

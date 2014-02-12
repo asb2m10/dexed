@@ -32,7 +32,6 @@ uint8_t sysexChecksum(const char *sysex) {
     return ((1 << 8) - sum);
 }
 
-
 void extractProgramNames(const char *block, StringArray &dest) {
     char programName[11];
     
@@ -66,35 +65,65 @@ void extractProgramNames(const char *block, StringArray &dest) {
     }
 }
 
-int DexedAudioProcessor::importSysex(const char *imported) {
-    memcpy(sysex, imported + 6, 4096);
-    
-    uint8_t checksum = sysexChecksum(sysex);
-    extractProgramNames(sysex, programNames);
-    
-    if ( checksum != imported[4102] ) {
-        TRACE("sysex import checksum doesnt match");
-        return 1;
-    }
-    
-    return 0;
-}
-
-void DexedAudioProcessor::exportSysex(char *dest) {
+void exportSysex(char *dest, char *src) {
     uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 };
     memcpy(dest, header, 6);
     
     // copy 32 voices
-    memcpy(dest+6, sysex, 4096);
+    memcpy(dest+6, src, 4096);
     
     // make checksum for dump
-    uint8_t footer[] = { sysexChecksum(sysex), 0xF7 };
+    uint8_t footer[] = { sysexChecksum(src), 0xF7 };
     
     memcpy(dest+4102, footer, 2);
 }
 
 /**
- * This function normalize data that comes from corrupted sysex data.
+ * Pack a program into a 32 packed sysex
+ */
+void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
+    uint8_t *bulk = dest + (idx * 128);
+    
+    for(int op = 0; op < 6; op++) {
+        // eg rate and level, brk pt, depth, scaling
+        memcpy(bulk + op * 17, src + op * 21, 11);
+        int pp = op*17;
+        int up = op*21;
+        
+        // left curves
+        bulk[pp+11] = (src[up+11]&0x03) | ((src[up+12]&0x03) << 2);
+        bulk[pp+12] = (src[up+13]&0x07) | ((src[up+20]&0x0f) << 3);
+        // kvs_ams
+        bulk[pp+13] = (src[up+14]&0x03) | ((src[up+15]&0x07) << 2);
+        // output lvl
+        bulk[pp+14] = src[up+16];
+        // fcoarse_mode
+        bulk[pp+15] = (src[up+17]&0x01) | ((src[up+18]&0x1f) << 1);
+        // fine freq
+        bulk[pp+16] = src[up+19];
+    }
+    memcpy(bulk + 102, src + 126, 9);      // pitch env, algo
+    bulk[111] = (src[135]&0x07) | ((src[136]&0x01) << 3);
+    memcpy(bulk + 112, src + 137, 4);      // lfo
+    bulk[116] = (src[141]&0x01) | (((src[142]&0x07) << 1) | ((src[143]&0x07) << 4));
+    bulk[117] = src[144];
+    int eos = 0;
+    for(int i=0; i < 10; i++) {
+        char c = name[i];
+        if ( c == 0 )
+            eos = 1;
+        if ( eos ) {
+            bulk[117+i] = ' ';
+            continue;
+        }
+        c = c < 32 ? ' ' : c;
+        c = c > 127 ? ' ' : c;
+        bulk[117+i] = c;
+    }
+}
+
+/**
+ * This function normalize data that comes from corrupted sysex.
  * It used to avoid engine crashing upon extrem values
  */
 char normparm(char value, char max) {
@@ -112,6 +141,11 @@ void DexedAudioProcessor::unpackProgram(int idx) {
     
     for (int op = 0; op < 6; op++) {
         // eg rate and level, brk pt, depth, scaling
+
+        for(int i=0; i<11; i++) {
+            data[op * 21 + i] = normparm(bulk[op * 17 + i], 99);
+        }
+
         memcpy(data + op * 21, bulk + op * 17, 11);
         char leftrightcurves = bulk[op * 17 + 11];
         data[op * 21 + 11] = leftrightcurves & 3;
@@ -128,7 +162,12 @@ void DexedAudioProcessor::unpackProgram(int idx) {
         data[op * 21 + 19] = bulk[op * 17 + 16];  // fine freq
         data[op * 21 + 20] = detune_rs >> 3;
     }
-    memcpy(data + 126, bulk + 102, 9);  // pitch env, algo
+
+    for (int i=0; i<8; i++)  {
+        data[126+i] = normparm(bulk[102+i], 99);
+    }
+    data[134] = normparm(bulk[110], 31);
+
     char oks_fb = bulk[111];
     data[135] = oks_fb & 7;
     data[136] = oks_fb >> 3;
@@ -146,51 +185,20 @@ void DexedAudioProcessor::unpackProgram(int idx) {
     data[160] = 1;
 }
 
-void DexedAudioProcessor::packProgram(int idx, const char *name) {
-    char *bulk = sysex + (idx * 128);
+int DexedAudioProcessor::importSysex(const char *imported) {
+    memcpy(sysex, imported + 6, 4096);
     
-    for(int op = 0; op < 6; op++) {
-        // eg rate and level, brk pt, depth, scaling
-        memcpy(bulk + op * 17, data + op * 21, 11);
-        int pp = op*17;
-        int up = op*21;
-        
-        // left curves
-        bulk[pp+11] = (data[up+11]&0x03) | ((data[up+12]&0x03) << 2);
-        bulk[pp+12] = (data[up+13]&0x07) | ((data[up+20]&0x0f) << 3);
-        // kvs_ams
-        bulk[pp+13] = (data[up+14]&0x03) | ((data[up+15]&0x07) << 2);
-        // output lvl
-        bulk[pp+14] = data[up+16];
-        // fcoarse_mode
-        bulk[pp+15] = (data[up+17]&0x01) | ((data[up+18]&0x1f) << 1);
-        // fine freq
-        bulk[pp+16] = data[up+19];
-    }
-    memcpy(bulk + 102, data + 126, 9);      // pitch env, algo
-    bulk[111] = (data[135]&0x07) | ((data[136]&0x01) << 3);
-    memcpy(bulk + 112, data + 137, 4);      // lfo
-    bulk[116] = (data[141]&0x01) | (((data[142]&0x07) << 1) | ((data[143]&0x07) << 4));
-    bulk[117] = data[144];
-    int eos = 0;
-    for(int i=0; i < 10; i++) {
-        char c = name[i];
-        if ( c == 0 )
-            eos = 1;
-        if ( eos ) {
-            bulk[117+i] = ' ';
-            continue;
-        }
-        c = c < 32 ? ' ' : c;
-        c = c > 127 ? ' ' : c;
-        bulk[117+i] = c;
+    uint8_t checksum = sysexChecksum(((char *) &sysex));
+    extractProgramNames(sysex, programNames);
+    
+    if ( checksum != imported[4102] ) {
+        TRACE("sysex import checksum doesnt match");
+        return 1;
     }
     
-    char programName[11];
-    memcpy(programName, bulk+117, 10);
-    programName[10] = 0;
-    programNames.set(idx, String(programName));
+    return 0;
 }
+
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
     memcpy(data, rawdata, 160);
@@ -198,17 +206,8 @@ void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
 }
 
 void DexedAudioProcessor::loadBuiltin(int idx) {
-    InputStream *is = builtin_pgm->createStreamForEntry(idx);
-    
-    if ( is == NULL ) {
-        TRACE("ENTRY IN ZIP NOT FOUND");
-        return;
-    }
-    
-    uint8_t syx_data[4104];
-    is->read(&syx_data, 4104);
-    delete is;
-    
+    char syx_data[4104];
+    cartManager.getSysex(idx, (char *) &syx_data);
     importSysex((char *) &syx_data);
 }
 
@@ -234,7 +233,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     
     state.version = CURRENT_PLUGINSTATE_VERSION;
     
-    exportSysex((char *)(&state.sysex));
+    exportSysex((char *)(&state.sysex), (char *) sysex);
     memcpy(state.program, data, 161);
     state.cutoff = fx.uiCutoff;
     state.reso = fx.uiReso;
@@ -291,3 +290,27 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
  memcpy((void *) data, source, sizeInBytes);
  updateUI();
  }*/
+
+
+CartridgeManager::CartridgeManager() {
+    MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
+    builtin_pgm = new ZipFile(mis, true);
+    builtin_pgm->sortEntriesByFilename();
+
+    for(int i=0;i<builtin_pgm->getNumEntries();i++) {
+        const ZipFile::ZipEntry *e = builtin_pgm->getEntry(i);
+        cartNames.add(e->filename.dropLastCharacters(4));
+    }
+}
+
+void CartridgeManager::getSysex(int idx, char *dest) {
+    InputStream *is = builtin_pgm->createStreamForEntry(idx);
+    
+    if ( is == NULL ) {
+        TRACE("ENTRY IN ZIP NOT FOUND");
+        return;
+    }
+
+    is->read(dest, 4104);
+    delete is;
+}
