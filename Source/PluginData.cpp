@@ -107,18 +107,19 @@ void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
     memcpy(bulk + 112, src + 137, 4);      // lfo
     bulk[116] = (src[141]&0x01) | (((src[142]&0x07) << 1) | ((src[143]&0x07) << 4));
     bulk[117] = src[144];
+        
     int eos = 0;
     for(int i=0; i < 10; i++) {
-        char c = name[i];
+        char c = (char) name[i];
         if ( c == 0 )
             eos = 1;
         if ( eos ) {
-            bulk[117+i] = ' ';
+            bulk[118+i] = ' ';
             continue;
         }
         c = c < 32 ? ' ' : c;
         c = c > 127 ? ' ' : c;
-        bulk[117+i] = c;
+        bulk[118+i] = c;
     }
 }
 

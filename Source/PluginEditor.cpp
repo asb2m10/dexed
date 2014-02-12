@@ -305,10 +305,10 @@ void DexedAudioProcessorEditor::storeProgram() {
             ComboBox *dest = dialog.getComboBoxComponent(String("Dest"));
             
             int programNum = dest->getSelectedItemIndex();
-            String programName = name->getText();
+            String programName(name->getText());
             if ( programName.length() > 10 ) {
                 int toStrip = programName.length() - 10;
-                programName.dropLastCharacters(toStrip);
+                programName = programName.dropLastCharacters(toStrip);
             }
 
             if ( externalFile == NULL ) {
