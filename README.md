@@ -40,6 +40,13 @@ Dexed doesn't check the sysex checksum so you can load any type of files. If the
 match, it will tell you but load it anyway. This feature act as a kind of a randomization 
 for DX programs.
 
+Warning: loading corrupt/random data can crash the plugin and ultimatly your DAW. I'm doing my
+best to filter out values that can crash the DX engine; but I keep it to the minimum to get the
+digital circuit bending feel.
+
+Saving those currupt/random sysex data will regenerate a 32 bulk program sysex dump with a 
+valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks your DX7 keyboard.
+
 Credits & thanks
 ----------------
 Raph Levien and msfa team, markusthegeek, Jean-Marc Desprez	and all the crew who made these historic
@@ -51,7 +58,7 @@ TODO - Dexed
 * Implement a better DX look and feel (amp, pitch, algo)
 * Better implementation of the LPF filter
 * Various code cleanup
-* Standalone executable
+* Standalone executable (for full support of the editor)
 
 TODO - msfa
 -----------
