@@ -23,10 +23,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-#include "msfa/env.h"
-
 class EnvDisplay : public Component {
-    Env env;
 public:
     EnvDisplay();
     char *pvalues;

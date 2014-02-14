@@ -44,7 +44,7 @@ Warning: loading corrupt/random data can crash the plugin and ultimatly your DAW
 best to filter out values that can crash the DX engine; but I keep it to the minimum to get the
 digital circuit bending feel.
 
-Saving those currupt/random sysex data will regenerate a 32 bulk program sysex dump with a 
+Saving those corrupt/random sysex data will regenerate a 32 bulk program sysex dump with a 
 valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks your DX7 keyboard.
 
 Credits & thanks

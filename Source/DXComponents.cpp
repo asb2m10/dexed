@@ -135,35 +135,58 @@ EnvDisplay::EnvDisplay() {
 }
 
 void EnvDisplay::paint(Graphics &g) {
-    int rate[4];
-    int level[4];
-    
-    g.setColour(Colours::black.withAlpha(0.1f));
+    g.setColour(Colours::black.withAlpha(0.5f));
     g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
-    g.setColour(Colours::white);
+    g.setColour(Colour(0xFF0FC00F).withAlpha(0.3f));
     
-    for (int i = 0; i < 4; i++) {
-        rate[i] = pvalues[i];
-        level[i] = pvalues[i+4];
+    char *levels = pvalues + 4;
+    char *rates = pvalues;
+    
+    float dist[4];
+    float total;
+    
+    int old = levels[3];
+    
+    for(int i=0;i<4;i++) {
+        int nw = levels[i];
+        dist[i] = ((float)abs(nw - old)) / rates[i] == 0 ? 1 : rates[i];
+        total += dist[i];
+        old = nw;
     }
     
-    env.init(rate, level, 99 << 5, 0);
-    env.keydown(true);
-    for (int i = 0; i < 72; i++) {
-        int32_t pos = env.getsample();
-        for (int j = 0; j < 16; j++) {
-            env.getsample();
-        }
-        g.setPixel(i, 32 - (sqrt(pos) / 512));
+    if ( total < 1 ) {
+        dist[0] = dist[1] = dist[2] = dist[3] = 1;
+        total = 4;
     }
-    env.keydown(false);
-    for (int i = 0; i < 24; i++) {
-        int32_t pos = env.getsample();
-        for (int j = 0; j < 16; j++) {
-            env.getsample();
-        }
-        g.setPixel(i + 72, 32 - (sqrt(pos) / 512));
+    
+    // TODO : this is WIP
+    float ratio =  96 / total;
+    
+    int oldx = 0;
+    int oldy = 32 - ((float)levels[3] / 3.125);
+    Path p;
+    
+    p.startNewSubPath(0, 32);
+    
+    for(int i=0;i<4;i++) {
+        int newx = dist[i] * ratio + oldx;
+        int newy = 32 - ((float)levels[i] / 3.125);
+        
+        p.lineTo(newx, newy);
+        //g.drawLine(oldx, oldy, newx, newy, 2);
+        
+        oldx = newx;
+        oldy = newy;
     }
+    p.lineTo(96,32);
+    p.lineTo(0, 32);
+    
+    g.fillPath(p);
+    
+    g.setColour(Colour(0xFFFFFFFF));
+    String len;
+    len << ((int) total);
+    g.drawText(len, 5, 1, 72, 14, Justification::left, true);
 }
 
 PitchEnvDisplay::PitchEnvDisplay() {
@@ -200,7 +223,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
     float ratio =  96 / total;
     
     int oldx = 0;
-    int oldy = (pitchenv_tab[levels[3]] + 128) / 10;
+    int oldy = (pitchenv_tab[levels[3]] + 128) / 5;
     
     for(int i=0;i<4;i++) {
         int newx = dist[i] * ratio + oldx;
