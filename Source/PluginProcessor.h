@@ -103,7 +103,8 @@ public :
     char data[161];
     
     CartridgeManager cartManager;
-
+    VoiceStatus voiceStatus;
+    
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];
@@ -140,7 +141,7 @@ public :
     AudioProcessorEditor* createEditor();
     bool hasEditor() const;
     void updateUI();
-    bool peekEnvStatus(int32_t *values);
+    bool peekVoiceStatus();
     void packProgram(int idx, const char *name);
     void unpackProgram(int idx);
     void updateProgramFromSysex(const uint8 *rawdata);
@@ -183,18 +184,18 @@ public :
     MidiKeyboardState keyboardState;
     void unbindUI();
 
-    static void log(const char *source, const char *fmt, ...);
-
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
 
 };
 
+void dexed_trace(const char *source, const char *fmt, ...);
+
 #ifdef _MSC_VER
-#define TRACE(fmt, ...) DexedAudioProcessor::log(__FUNCTION__,fmt,##__VA_ARGS__)
+#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
 #else
-#define TRACE(fmt, ...) DexedAudioProcessor::log(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
 #endif
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED

@@ -27,6 +27,12 @@
 #include "pitchenv.h"
 #include "fm_core.h"
 
+struct VoiceStatus {
+  uint32_t amp[6];
+  char ampStep[6];
+  char pitchStep;
+};
+
 class Dx7Note {
  public:
   void init(const char patch[156], int midinote, int velocity);
@@ -47,7 +53,7 @@ class Dx7Note {
 
   // PG:add the update
   void update(const char patch[156], int midinote);
-  void peekEnvStatus(int32_t *env);
+  void peekVoiceStatus(VoiceStatus &status);
 
  private:
   FmCore core_;

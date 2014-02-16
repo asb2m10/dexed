@@ -52,15 +52,13 @@ public:
     void bind(DexedAudioProcessor *processor, int num);
     void updateGain(float v);
     void updateDisplay();
+    void updateEnvPos(char pos);
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
-
-
-
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]

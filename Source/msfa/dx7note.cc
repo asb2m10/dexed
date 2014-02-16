@@ -236,10 +236,14 @@ void Dx7Note::update(const char patch[156], int midinote) {
   pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
 }
 
-void Dx7Note::peekEnvStatus(int32_t *env) {
+void dexed_trace(const char *source, const char *fmt, ...);
+
+void Dx7Note::peekVoiceStatus(VoiceStatus &status) {
   for(int i=0;i<6;i++) {
-    env[i] = params_[i].gain[1];
+    status.amp[i] = params_[i].gain[1];
+    env_[i].getPosition(&status.ampStep[i]);
   }
+  pitchenv_.getPosition(&status.pitchStep);
 }
 
 

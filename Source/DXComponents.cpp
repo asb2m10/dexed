@@ -137,7 +137,7 @@ EnvDisplay::EnvDisplay() {
 void EnvDisplay::paint(Graphics &g) {
     g.setColour(Colours::black.withAlpha(0.5f));
     g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
-    g.setColour(Colour(0xFF0FC00F).withAlpha(0.3f));
+
     
     char *levels = pvalues + 4;
     char *rates = pvalues;
@@ -167,13 +167,17 @@ void EnvDisplay::paint(Graphics &g) {
     Path p;
     
     p.startNewSubPath(0, 32);
+    g.setColour(Colours::white);
     
-    for(int i=0;i<4;i++) {
+    int i;
+    for(i=0;i<4;i++) {
         int newx = dist[i] * ratio + oldx;
         int newy = 32 - ((float)levels[i] / 3.125);
         
         p.lineTo(newx, newy);
-        //g.drawLine(oldx, oldy, newx, newy, 2);
+        if ( vPos == i ) {
+            g.fillEllipse(oldx-2, oldy-2, 4, 4);
+        }
         
         oldx = newx;
         oldy = newy;
@@ -181,6 +185,11 @@ void EnvDisplay::paint(Graphics &g) {
     p.lineTo(96,32);
     p.lineTo(0, 32);
     
+    if ( vPos == i ) {
+        g.fillEllipse(oldx-2, oldy-2, 4, 4);
+    }
+
+    g.setColour(Colour(0xFF0FC00F).withAlpha(0.3f));
     g.fillPath(p);
     
     g.setColour(Colour(0xFFFFFFFF));
@@ -191,6 +200,7 @@ void EnvDisplay::paint(Graphics &g) {
 
 PitchEnvDisplay::PitchEnvDisplay() {
     pvalues = (char *) &TMP_LEVEL_PTR;
+    vPos = 0;
 }
 
 void PitchEnvDisplay::paint(Graphics &g) {
@@ -223,17 +233,28 @@ void PitchEnvDisplay::paint(Graphics &g) {
     float ratio =  96 / total;
     
     int oldx = 0;
-    int oldy = (pitchenv_tab[levels[3]] + 128) / 5;
+    int oldy = 25 - (pitchenv_tab[levels[3]] + 128) / 10;
     
-    for(int i=0;i<4;i++) {
+    int i;
+    for(i=0;i<4;i++) {
         int newx = dist[i] * ratio + oldx;
-        int newy = (pitchenv_tab[levels[i]] + 128) / 10;
+        int newy = 25 - (pitchenv_tab[levels[i]] + 128) / 10;
         
         g.drawLine(oldx, oldy, newx, newy, 2);
+        
+        if ( vPos == i ) {
+            g.fillEllipse(oldx-2, oldy-2, 4, 4);
+        }
         
         oldx = newx;
         oldy = newy;
     }
+    
+    if ( vPos == i ) {
+        g.fillEllipse(oldx-2, oldy-2, 4, 4);
+    }
+    
+    TRACE("pitch pos %d", vPos);
 }
 
 

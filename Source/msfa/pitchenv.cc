@@ -84,8 +84,13 @@ void PitchEnv::advance(int newix) {
     int newlevel = levels_[ix_];
     targetlevel_ = pitchenv_tab[newlevel] << 19;
     rising_ = (targetlevel_ > level_);
-
     inc_ = pitchenv_rate[rates_[ix_]] * unit_;
   }
 }
+
+void PitchEnv::getPosition(char *step) {
+  *step = ix_;
+
+}
+
 

@@ -337,7 +337,7 @@ void DexedAudioProcessor::processSamples(int n_samples, int16_t *buffer) {
 
 
 // ====================================================================
-bool DexedAudioProcessor::peekEnvStatus(int32_t *env) {
+bool DexedAudioProcessor::peekVoiceStatus() {
     if ( currentNote == -1 )
         return false;
 
@@ -345,7 +345,7 @@ bool DexedAudioProcessor::peekEnvStatus(int32_t *env) {
     int note = currentNote;
     for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
         if (voices[note].keydown) {
-            voices[note].dx7_note->peekEnvStatus(env);
+            voices[note].dx7_note->peekVoiceStatus(voiceStatus);
             return true;
         }
         if ( --note < 0 )
@@ -356,15 +356,13 @@ bool DexedAudioProcessor::peekEnvStatus(int32_t *env) {
     note = currentNote;
     for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
         if (voices[note].live) {
-            voices[note].dx7_note->peekEnvStatus(env);
+            voices[note].dx7_note->peekVoiceStatus(voiceStatus);
             return true;
         }
         if ( --note < 0 )
             note = MAX_ACTIVE_NOTES-1;
     }
 
-    // all the notes are stopped, return 0;
-    memset(env, 0, sizeof(int32_t) * 6);
     return true;
 }
 
@@ -439,8 +437,7 @@ void DexedAudioProcessor::handleAsyncUpdate() {
    updateUI();
 }
 
-
-void DexedAudioProcessor::log(const char *source, const char *fmt, ...) {
+void dexed_trace(const char *source, const char *fmt, ...) {
     char output[4096];
     va_list argptr;
     va_start(argptr, fmt);

@@ -184,20 +184,9 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         storeProgram();
         return;
     }
-/*
-    if (buttonThatWasClicked == cartButton) {
-        AlertWindow dialog(String("Builtin cartridges"), "", AlertWindow::NoIcon, this);
-        dialog.addComboBox(String("cart"), processor->cartManager.cartNames);
-        dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
-        dialog.addButton("Cancel", 1, KeyPress(KeyPress::escapeKey));
-        if ( dialog.runModalLoop() == 0 ) {
 
-        }
-        return;
-    }
-  */  
     if (buttonThatWasClicked == aboutButton) {
-        AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.3", "https://github.com/asb2m10/dexed\n"
+        AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.4", "https://github.com/asb2m10/dexed\n"
                 "(c) 2013-2014 Pascal Gauthier\nUnder the GPL v2\n\n"
                 "Based on Music Synthesizer for Android\nhttps://code.google.com/p/music-synthesizer-for-android");
         return;
@@ -220,15 +209,15 @@ void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChange
     }
 }
 
-void DexedAudioProcessorEditor::timerCallback() {
-    int32_t env[6];
-    
-    if ( processor->peekEnvStatus(env) == false )
+void DexedAudioProcessorEditor::timerCallback() {    
+    if ( ! processor->peekVoiceStatus() )
         return;
-    
+
     for(int i=0;i<6;i++) {
-        operators[i].updateGain(sqrt(env[5 - i]) / 8196);
-    } 
+        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);
+        operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
+    }
+    global.updatePitchPos(processor->voiceStatus.pitchStep);
 }   
 
 void DexedAudioProcessorEditor::updateUI() {

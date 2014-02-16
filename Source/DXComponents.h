@@ -27,6 +27,7 @@ class EnvDisplay : public Component {
 public:
     EnvDisplay();
     char *pvalues;
+    char vPos;    
     void paint(Graphics &g);
 };
 
@@ -35,6 +36,7 @@ class PitchEnvDisplay : public Component {
 public:
     PitchEnvDisplay();
     char *pvalues;
+    char vPos;
     void paint(Graphics &g);
 };
 

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include <math.h>
+
 #include "synth.h"
 #include "env.h"
 
@@ -99,3 +101,6 @@ void Env::advance(int newix) {
   }
 }
 
+void Env::getPosition(char *step) {
+    *step = ix_;
+}

@@ -439,7 +439,7 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     parent->opCtrl[op].sclRate->bind(sclRateScaling);
     parent->opCtrl[op].ampModSens->bind(ampModSens);
     parent->opCtrl[op].velModSens->bind(keyVelSens);
-    
+
     int offset = parent->opCtrl[op].egRate[0]->getOffset();
     envDisplay->pvalues = &(parent->data[offset]);
 }
@@ -475,6 +475,11 @@ void OperatorEditor::updateDisplay() {
     envDisplay->repaint();
 }
 
+
+void OperatorEditor::updateEnvPos(char pos) {
+    envDisplay->vPos = pos;
+    envDisplay->repaint();
+}
 //[/MiscUserCode]
 
 

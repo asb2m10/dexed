@@ -430,6 +430,10 @@ void GlobalEditor::updateDisplay() {
     repaint();
 }
 
+void GlobalEditor::updatePitchPos(int pos) {
+    pitchEnvDisplay->vPos = pos;
+    pitchEnvDisplay->repaint();
+}
 //[/MiscUserCode]
 
 

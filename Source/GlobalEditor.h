@@ -50,6 +50,7 @@ public:
     void bind(DexedAudioProcessor *processor);
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
+    void updatePitchPos(int pos);
     void updateDisplay();
 
     String systemMsg;

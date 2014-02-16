@@ -42,6 +42,7 @@ class Env {
   void keydown(bool down);
   void setparam(int param, int value);
   static int scaleoutlevel(int outlevel);
+  void getPosition(char *step);    
  private:
   int rates_[4];
   int levels_[4];

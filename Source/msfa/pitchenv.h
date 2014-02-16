@@ -30,6 +30,7 @@ class PitchEnv {
   // Result is in Q24/octave
   int32_t getsample();
   void keydown(bool down);
+  void getPosition(char *step);
  private:
   static int unit_;
   int rates_[4];
