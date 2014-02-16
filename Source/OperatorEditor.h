@@ -59,6 +59,9 @@ public:
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+
+
+
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     //[/UserVariables]

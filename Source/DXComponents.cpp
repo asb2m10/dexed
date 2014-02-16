@@ -198,6 +198,7 @@ void EnvDisplay::paint(Graphics &g) {
     g.drawText(len, 5, 1, 72, 14, Justification::left, true);
 }
 
+
 PitchEnvDisplay::PitchEnvDisplay() {
     pvalues = (char *) &TMP_LEVEL_PTR;
     vPos = 0;
@@ -253,8 +254,6 @@ void PitchEnvDisplay::paint(Graphics &g) {
     if ( vPos == i ) {
         g.fillEllipse(oldx-2, oldy-2, 4, 4);
     }
-    
-    TRACE("pitch pos %d", vPos);
 }
 
 

@@ -110,6 +110,7 @@ OperatorEditor::OperatorEditor ()
     khzDisplay->setJustificationType (Justification::centred);
     khzDisplay->setEditable (false, false, false);
     khzDisplay->setColour (Label::backgroundColourId, Colour (0x6a000000));
+    khzDisplay->setColour (Label::textColourId, Colours::white);
     khzDisplay->setColour (Label::outlineColourId, Colour (0x00000000));
     khzDisplay->setColour (TextEditor::textColourId, Colours::black);
     khzDisplay->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
@@ -547,10 +548,10 @@ BEGIN_JUCER_METADATA
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <LABEL name="khz" id="eb961eed8902a6fc" memberName="khzDisplay" virtualName=""
-         explicitFocusOrder="0" pos="32 8 88 16" bkgCol="6a000000" outlineCol="0"
-         edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="11" bold="0" italic="0" justification="36"/>
+         explicitFocusOrder="0" pos="32 8 88 16" bkgCol="6a000000" textCol="ffffffff"
+         outlineCol="0" edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="11" bold="0" italic="0" justification="36"/>
   <SLIDER name="detune" id="f093ec8defca2fc2" memberName="detune" virtualName=""
           explicitFocusOrder="0" pos="24 24 56 24" min="-7" max="7" int="1"
           style="LinearHorizontal" textBoxPos="NoTextBox" textBoxEditable="0"

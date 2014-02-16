@@ -25,6 +25,9 @@
 
 class DXLookNFeel : public LookAndFeel_V3 {
 public:
+    static Colour dxDarkBrown;
+    static Colour dxLightBrown;
+    
     DXLookNFeel();
 };
 

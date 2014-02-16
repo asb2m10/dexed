@@ -51,6 +51,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     setCurrentProgram(0);
     sendSysexChange = true;
     normalizeDxVelocity = false;
+
+    memset(&voiceStatus, 0, sizeof(VoiceStatus));
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {

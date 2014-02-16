@@ -20,6 +20,9 @@
  
 #include "DXLookNFeel.h"
 
+Colour DXLookNFeel::dxDarkBrown = Colour(0xFF0FC00F);
+Colour DXLookNFeel::dxLightBrown = Colour(0xFFA87B67);
+
 DXLookNFeel::DXLookNFeel() {
     setColour(TextButton::buttonColourId,Colour(0xFF0FC00F));
     setColour(Slider::rotarySliderOutlineColourId,Colour(0xFF0FC00F));

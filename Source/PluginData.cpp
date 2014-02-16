@@ -26,10 +26,11 @@
 
 
 uint8_t sysexChecksum(const char *sysex) {
-    uint8_t sum = 0;
-    for (int i=0; i<4096; i++)
-        sum = (sum + sysex[i]) % (1 << 8);
-    return ((1 << 8) - sum);
+    int sum = 0;
+    int i;
+    
+    for (i = 0; i < 4096; sum -= sysex[i++]);
+    return sum & 0x7F;
 }
 
 void extractProgramNames(const char *block, StringArray &dest) {
@@ -127,14 +128,18 @@ void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
  * This function normalize data that comes from corrupted sysex.
  * It used to avoid engine crashing upon extrem values
  */
-char normparm(char value, char max) {
-    if ( value <= max )
+char normparm(char value, char max, int id) {
+    if ( value <= max && value >= 0 )
         return value;
     
     // if this is beyond the max, we expect a 0-255 range, normalize this
     // to the expected return value; and this value as a random data.
     
-    return ((float)value)/255 * max;
+    value = abs(value);
+    
+    char v = ((float)value)/255 * max;
+
+    return v;
 }
 
 void DexedAudioProcessor::unpackProgram(int idx) {
@@ -144,7 +149,7 @@ void DexedAudioProcessor::unpackProgram(int idx) {
         // eg rate and level, brk pt, depth, scaling
 
         for(int i=0; i<11; i++) {
-            data[op * 21 + i] = normparm(bulk[op * 17 + i], 99);
+            data[op * 21 + i] = normparm(bulk[op * 17 + i], 99, i);
         }
 
         memcpy(data + op * 21, bulk + op * 17, 11);
@@ -165,10 +170,10 @@ void DexedAudioProcessor::unpackProgram(int idx) {
     }
 
     for (int i=0; i<8; i++)  {
-        data[126+i] = normparm(bulk[102+i], 99);
+        data[126+i] = normparm(bulk[102+i], 99, 126+i);
     }
-    data[134] = normparm(bulk[110], 31);
-
+    data[134] = normparm(bulk[110], 31, 134);
+    
     char oks_fb = bulk[111];
     data[135] = oks_fb & 7;
     data[136] = oks_fb >> 3;
@@ -193,13 +198,12 @@ int DexedAudioProcessor::importSysex(const char *imported) {
     extractProgramNames(sysex, programNames);
     
     if ( checksum != imported[4102] ) {
-        TRACE("sysex import checksum doesnt match");
+        TRACE("sysex import checksum doesnt match %d != %d", checksum, imported[4102]);
         return 1;
     }
     
     return 0;
 }
-
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
     memcpy(data, rawdata, 160);
@@ -208,6 +212,7 @@ void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
 
 void DexedAudioProcessor::loadBuiltin(int idx) {
     char syx_data[4104];
+    memset(&syx_data, 0, 4104);
     cartManager.getSysex(idx, (char *) &syx_data);
     importSysex((char *) &syx_data);
 }
