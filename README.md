@@ -1,5 +1,5 @@
-Dexed DX7 Software Emulator
-===========================
+Dexed FM Synth Software Emulator
+================================
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
 Under the hood, it uses [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) 
@@ -24,8 +24,12 @@ Features
 
 Binary downloads
 ----------------
-It is far from finished but for those who want to try the "music-synthesizer-for-android" project
-on a PC/Mac, you can download it [here](http://le-son666.com/software/dexed).
+Dexed is not a finished product but it is stable enough to be used in a DAW environment: in normal operation it doesn't crash
+and the VST state saving works.
+
+* Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) 
+- [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip)
+- [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
 
 Using as a DX7 editor
 ---------------------
