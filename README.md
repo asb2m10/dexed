@@ -2,11 +2,11 @@ Dexed FM Synth Software Emulator
 ================================
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
-Under the hood, it uses [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) 
+Under the hood it uses [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) 
 for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
 
 The goal of this project is to be a great tool/companion for the original DX7. Yes, the sound engine 
-with 'float' values parameter; different waveform (à la TX81z) would be great but anything that 
+with 'float' value parameters; different waveform (à la TX81z) would be great but anything that 
 goes beyond the DX7 should will be a fork of this project. This is to keep the compatiblity with
 the original synth.
 
@@ -17,19 +17,17 @@ Features
 --------
 * Multi platform (OS X, Windows, Linux) and multi format (VST, AU and others that I don't use); by using JUCE
 * The sound engine [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) is closely modeled on the original DX7 characteristics
-* All of the 144 DX7 parameters are available from one single panel
+* 144 DAW automatable DX7 parameters available from one single panel
 * Fully supports DX7 input and output Sysex messages; including controller change. This means that you can use this with a native DX7/TX7 as a patch editor
 * Each operator have a realtime VU meter to know wich one is active
 * Can load/save any DX7/TX7 sysex programs. It is also possible to save a single program into a different sysex file.
 
 Binary downloads
 ----------------
-Dexed is not a finished product but it is stable enough to be used in a DAW environment: in normal operation it doesn't crash
-and the VST state saving works.
+Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
+in normal operation it shouldn't crash and the VST state saving works.
 
-* Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) 
-- [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip)
-- [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
+* Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
 
 Using as a DX7 editor
 ---------------------
@@ -53,7 +51,7 @@ valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks 
 
 Credits & thanks
 ----------------
-Raph Levien and msfa team, markusthegeek, Jean-Marc Desprez	and all the crew who made these historic
+Raph Levien and the msfa team, markusthegeek, Jean-Marc Desprez	and all the crew who made these historic
 DX programs: (Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, 
 Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie)
 
@@ -67,5 +65,4 @@ TODO - Dexed
 TODO - msfa
 -----------
 * LFO Amplitude
-* MOD Wheel action
 * Algo 4 & 6 feedback

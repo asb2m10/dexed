@@ -75,6 +75,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     currentNote = 0;
     controllers.values_[kControllerPitch] = 0x2000;
+    controllers.values_[KcontrollerModWheel] = 0;
     sustain = false;
     extra_buf_size = 0;
 
@@ -226,6 +227,12 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
             int controller = buf[1];
             int value = buf[2];
             
+            // mod wheel
+            if ( controller == 1 ) {
+                controllers.values_[KcontrollerModWheel] = value;
+                return;
+            }
+            
             // pedal
             if (controller == 64) {
                 sustain = value != 0;
@@ -237,6 +244,7 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
                         }
                     }
                 }
+                return;
             }
         }
         return;

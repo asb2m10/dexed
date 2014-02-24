@@ -143,7 +143,7 @@ void EnvDisplay::paint(Graphics &g) {
     char *rates = pvalues;
     
     float dist[4];
-    float total;
+    float total = 0;
     
     int old = levels[3];
     
@@ -213,7 +213,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
     char *rates = pvalues;
     
     float dist[4];
-    float total;
+    float total = 0;
     
     int old = pitchenv_tab[levels[3]] + 128;
     // find the scale

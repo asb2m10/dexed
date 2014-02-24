@@ -102,7 +102,7 @@ public:
     /** Returns the raw handle to whatever kind of window is being used.
 
         On windows, this is probably a HWND, on the mac, it's likely to be a WindowRef,
-        but rememeber there's no guarantees what you'll get back.
+        but remember there's no guarantees what you'll get back.
     */
     virtual void* getNativeHandle() const = 0;
 
@@ -175,6 +175,9 @@ public:
 
     /** True if the window is currently full-screen. */
     virtual bool isFullScreen() const = 0;
+
+    /** True if the window is in kiosk-mode. */
+    virtual bool isKioskMode() const;
 
     /** Sets the size to restore to if fullscreen mode is turned off. */
     void setNonFullScreenBounds (const Rectangle<int>& newBounds) noexcept;

@@ -152,10 +152,9 @@ void MidiKeyboardComponent::setLowestVisibleKeyFloat (float noteNumber)
         firstKey = noteNumber;
 
         if (hasMoved)
-        {
             sendChangeMessage();
-            resized();
-        }
+
+        resized();
     }
 }
 
@@ -212,19 +211,11 @@ void MidiKeyboardComponent::getKeyPosition (int midiNoteNumber, const float keyW
                                      5.0f, 6 - blackNoteWidth * 0.3f,
                                      6.0f };
 
-    static const float widths[] = { 1.0f, blackNoteWidth,
-                                    1.0f, blackNoteWidth,
-                                    1.0f,
-                                    1.0f, blackNoteWidth,
-                                    1.0f, blackNoteWidth,
-                                    1.0f, blackNoteWidth,
-                                    1.0f };
-
     const int octave = midiNoteNumber / 12;
     const int note   = midiNoteNumber % 12;
 
     x = roundToInt (octave * 7.0f * keyWidth_ + notePos [note] * keyWidth_);
-    w = roundToInt (widths [note] * keyWidth_);
+    w = roundToInt (MidiMessage::isMidiNoteBlack (note) ? blackNoteWidth * keyWidth_ : keyWidth_);
 }
 
 void MidiKeyboardComponent::getKeyPos (int midiNoteNumber, int& x, int& w) const
@@ -259,6 +250,12 @@ int MidiKeyboardComponent::getKeyStartPosition (const int midiNoteNumber) const
     int x, w;
     getKeyPos (midiNoteNumber, x, w);
     return x;
+}
+
+int MidiKeyboardComponent::getNoteAtPosition (Point<int> p)
+{
+    float v;
+    return xyToNote (p, v);
 }
 
 const uint8 MidiKeyboardComponent::whiteNotes[] = { 0, 2, 4, 5, 7, 9, 11 };
@@ -383,12 +380,12 @@ void MidiKeyboardComponent::paint (Graphics& g)
     else
         y2 = 5.0f;
 
-    g.setGradientFill (ColourGradient (Colours::black.withAlpha (0.3f), x1, y1,
-                                       Colours::transparentBlack, x2, y2, false));
-
     int x, w;
     getKeyPos (rangeEnd, x, w);
     x += w;
+
+    const Colour shadowCol (findColour (shadowColourId));
+    g.setGradientFill (ColourGradient (shadowCol, x1, y1, shadowCol.withAlpha (0.0f), x2, y2, false));
 
     switch (orientation)
     {
@@ -458,14 +455,13 @@ void MidiKeyboardComponent::drawWhiteNote (int midiNoteNumber,
         g.setColour (textColour);
         g.setFont (Font (jmin (12.0f, keyWidth * 0.9f)).withHorizontalScale (0.8f));
 
-        Justification justification (Justification::centredBottom);
-
-        if (orientation == verticalKeyboardFacingLeft)
-            justification = Justification::centredLeft;
-        else if (orientation == verticalKeyboardFacingRight)
-            justification = Justification::centredRight;
-
-        g.drawFittedText (text, x + 2, y + 2, w - 4, h - 4, justification, 1);
+        switch (orientation)
+        {
+            case horizontalKeyboard:            g.drawFittedText (text, x + 1, y,     w - 1, h - 2, Justification::centredBottom, 1); break;
+            case verticalKeyboardFacingLeft:    g.drawFittedText (text, x + 2, y + 2, w - 4, h - 4, Justification::centredLeft,   1); break;
+            case verticalKeyboardFacingRight:   g.drawFittedText (text, x + 2, y + 2, w - 4, h - 4, Justification::centredRight,  1); break;
+            default: break;
+        }
     }
 
     g.setColour (lineColour);
@@ -531,7 +527,7 @@ void MidiKeyboardComponent::setOctaveForMiddleC (const int octaveNum)
 
 String MidiKeyboardComponent::getWhiteNoteText (const int midiNoteNumber)
 {
-    if (keyWidth > 14.0f && midiNoteNumber % 12 == 0)
+    if (keyWidth > 11.0f && midiNoteNumber % 12 == 0)
         return MidiMessage::getMidiNoteName (midiNoteNumber, true, true, octaveNumForMiddleC);
 
     return String::empty;
@@ -594,31 +590,29 @@ void MidiKeyboardComponent::resized()
             }
         }
 
-        const bool showScrollButtons = canScroll && (((int) firstKey) > rangeStart || kx2 > w + xOffset * 2);
-
-        scrollDown->setVisible (showScrollButtons);
-        scrollUp->setVisible (showScrollButtons);
+        scrollDown->setVisible (canScroll && firstKey > (float) rangeStart);
 
         xOffset = 0;
 
-        if (showScrollButtons)
+        if (canScroll)
         {
             const int scrollButtonW = jmin (12, w / 2);
+            Rectangle<int> r (getLocalBounds());
 
             if (orientation == horizontalKeyboard)
             {
-                scrollDown->setBounds (0, 0, scrollButtonW, getHeight());
-                scrollUp->setBounds (getWidth() - scrollButtonW, 0, scrollButtonW, getHeight());
+                scrollDown->setBounds (r.removeFromLeft  (scrollButtonW));
+                scrollUp  ->setBounds (r.removeFromRight (scrollButtonW));
             }
             else if (orientation == verticalKeyboardFacingLeft)
             {
-                scrollDown->setBounds (0, 0, getWidth(), scrollButtonW);
-                scrollUp->setBounds (0, getHeight() - scrollButtonW, getWidth(), scrollButtonW);
+                scrollDown->setBounds (r.removeFromTop    (scrollButtonW));
+                scrollUp  ->setBounds (r.removeFromBottom (scrollButtonW));
             }
             else
             {
-                scrollDown->setBounds (0, getHeight() - scrollButtonW, getWidth(), scrollButtonW);
-                scrollUp->setBounds (0, 0, getWidth(), scrollButtonW);
+                scrollDown->setBounds (r.removeFromBottom (scrollButtonW));
+                scrollUp  ->setBounds (r.removeFromTop    (scrollButtonW));
             }
 
             int endOfLastKey, kw;
@@ -626,7 +620,7 @@ void MidiKeyboardComponent::resized()
             endOfLastKey += kw;
 
             float mousePositionVelocity;
-            const int spaceAvailable = w - scrollButtonW * 2;
+            const int spaceAvailable = w;
             const int lastStartKey = remappedXYToNote (Point<int> (endOfLastKey - spaceAvailable, 0), mousePositionVelocity) + 1;
 
             if (lastStartKey >= 0 && ((int) firstKey) > lastStartKey)
@@ -636,14 +630,16 @@ void MidiKeyboardComponent::resized()
             }
 
             int newOffset = 0;
-            getKeyPos (((int) firstKey), newOffset, kw);
-            xOffset = newOffset - scrollButtonW;
+            getKeyPos ((int) firstKey, newOffset, kw);
+            xOffset = newOffset;
         }
         else
         {
             firstKey = (float) rangeStart;
         }
 
+        getKeyPos (rangeEnd, kx2, kw2);
+        scrollUp->setVisible (canScroll && kx2 > w);
         repaint();
     }
 }

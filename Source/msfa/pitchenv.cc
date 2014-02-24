@@ -90,7 +90,6 @@ void PitchEnv::advance(int newix) {
 
 void PitchEnv::getPosition(char *step) {
   *step = ix_;
-
 }
 
 

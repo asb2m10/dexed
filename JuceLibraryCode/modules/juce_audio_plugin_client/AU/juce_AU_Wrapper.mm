@@ -535,7 +535,7 @@ public:
    #if BUILD_AU_CARBON_UI
     int GetNumCustomUIComponents() override
     {
-        return PluginHostType().isDigitalPerformer() ? 0 : 1;
+        return getHostType().isDigitalPerformer() ? 0 : 1;
     }
 
     void GetUIComponentDescs (ComponentDescription* inDescArray) override
@@ -947,6 +947,7 @@ public:
         incomingEvents.addEvent (data, 3, (int) inStartFrame);
         return noErr;
        #else
+        (void) nStatus; (void) inChannel; (void) inData1; (void) inData2; (void) inStartFrame;
         return kAudioUnitErr_PropertyNotInUse;
        #endif
     }
@@ -958,6 +959,7 @@ public:
         incomingEvents.addEvent (inData, (int) inLength, 0);
         return noErr;
        #else
+        (void) inData; (void) inLength;
         return kAudioUnitErr_PropertyNotInUse;
        #endif
     }
@@ -1093,7 +1095,7 @@ public:
 
         bool keyPressed (const KeyPress&) override
         {
-            if (PluginHostType().isAbletonLive())
+            if (getHostType().isAbletonLive())
             {
                 static NSTimeInterval lastEventTime = 0; // check we're not recursively sending the same event
                 NSTimeInterval eventTime = [[NSApp currentEvent] timestamp];

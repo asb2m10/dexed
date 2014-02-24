@@ -18,7 +18,7 @@
 #define __CONTROLLERS_H
 
 // State of MIDI controllers
-
+const int KcontrollerModWheel = 1;
 const int kControllerPitch = 128;
 
 class Controllers {
