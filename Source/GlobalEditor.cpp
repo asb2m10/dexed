@@ -29,17 +29,17 @@
 //==============================================================================
 GlobalEditor::GlobalEditor ()
 {
-    addAndMakeVisible (lfoType = new ComboBox ("new combo box"));
+    addAndMakeVisible (lfoType = new ComboBox ("lfoType"));
     lfoType->setEditableText (false);
     lfoType->setJustificationType (Justification::centredLeft);
     lfoType->setTextWhenNothingSelected (String::empty);
-    lfoType->setTextWhenNoChoicesAvailable ("(no choices)");
-    lfoType->addItem ("TRIANGLE", 1);
-    lfoType->addItem ("SAW DOWN", 2);
-    lfoType->addItem ("SAW UP", 3);
-    lfoType->addItem ("SQUARE", 4);
-    lfoType->addItem ("SINE", 5);
-    lfoType->addItem ("S&HOLD", 6);
+    lfoType->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    lfoType->addItem (TRANS("TRIANGLE"), 1);
+    lfoType->addItem (TRANS("SAW DOWN"), 2);
+    lfoType->addItem (TRANS("SAW UP"), 3);
+    lfoType->addItem (TRANS("SQUARE"), 4);
+    lfoType->addItem (TRANS("SINE"), 5);
+    lfoType->addItem (TRANS("S&HOLD"), 6);
     lfoType->addListener (this);
 
     addAndMakeVisible (lfoSpeed = new Slider ("lfoSpeed"));
@@ -48,13 +48,13 @@ GlobalEditor::GlobalEditor ()
     lfoSpeed->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     lfoSpeed->addListener (this);
 
-    addAndMakeVisible (lfoAmDepth = new Slider ("new slider"));
+    addAndMakeVisible (lfoAmDepth = new Slider ("lfoAmDepth"));
     lfoAmDepth->setRange (0, 99, 1);
     lfoAmDepth->setSliderStyle (Slider::Rotary);
     lfoAmDepth->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     lfoAmDepth->addListener (this);
 
-    addAndMakeVisible (lfoPitchDepth = new Slider ("new slider"));
+    addAndMakeVisible (lfoPitchDepth = new Slider ("lfoPitchDepth"));
     lfoPitchDepth->setRange (0, 99, 1);
     lfoPitchDepth->setSliderStyle (Slider::Rotary);
     lfoPitchDepth->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -127,7 +127,7 @@ GlobalEditor::GlobalEditor ()
     pitchLevel1->addListener (this);
 
     addAndMakeVisible (transpose = new Slider ("transpose"));
-    transpose->setRange (0, 49, 0);
+    transpose->setRange (0, 48, 0);
     transpose->setSliderStyle (Slider::LinearVertical);
     transpose->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     transpose->addListener (this);
@@ -234,24 +234,24 @@ void GlobalEditor::resized()
 {
     lfoType->setBounds (624, 40, 96, 16);
     lfoSpeed->setBounds (624, 16, 96, 16);
-    lfoAmDepth->setBounds (696, 64, 24, 24);
+    lfoAmDepth->setBounds (672, 64, 24, 24);
     lfoPitchDepth->setBounds (648, 64, 24, 24);
-    lfoDelay->setBounds (672, 64, 24, 24);
+    lfoDelay->setBounds (624, 64, 24, 24);
     cutoff->setBounds (8, 40, 48, 48);
     reso->setBounds (64, 40, 48, 48);
-    pitchRate2->setBounds (776, 64, 32, 24);
-    pitchRate3->setBounds (800, 64, 32, 24);
-    pitchRate4->setBounds (824, 64, 32, 24);
-    pitchRate1->setBounds (752, 64, 32, 24);
-    pitchLevel2->setBounds (776, 40, 32, 24);
-    pitchLevel3->setBounds (800, 40, 32, 24);
-    pitchLevel4->setBounds (824, 40, 32, 24);
-    pitchLevel1->setBounds (752, 40, 32, 24);
-    transpose->setBounds (728, 0, 24, 56);
+    pitchRate2->setBounds (752, 64, 32, 24);
+    pitchRate3->setBounds (776, 64, 32, 24);
+    pitchRate4->setBounds (800, 64, 32, 24);
+    pitchRate1->setBounds (728, 64, 32, 24);
+    pitchLevel2->setBounds (752, 40, 32, 24);
+    pitchLevel3->setBounds (776, 40, 32, 24);
+    pitchLevel4->setBounds (800, 40, 32, 24);
+    pitchLevel1->setBounds (728, 40, 32, 24);
+    transpose->setBounds (832, 0, 24, 88);
     oscSync->setBounds (600, 64, 24, 24);
-    pitchModSens->setBounds (728, 64, 24, 24);
-    lfoSync->setBounds (624, 64, 24, 24);
-    pitchEnvDisplay->setBounds (752, 8, 96, 32);
+    pitchModSens->setBounds (696, 64, 24, 24);
+    lfoSync->setBounds (600, 40, 24, 24);
+    pitchEnvDisplay->setBounds (728, 8, 96, 32);
     algoDisplay->setBounds (442, 8, 152, 74);
     feedback->setBounds (568, 32, 24, 24);
     algo->setBounds (568, 8, 24, 24);
@@ -451,24 +451,24 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="855" initialHeight="90">
   <BACKGROUND backgroundColour="ffffff"/>
-  <COMBOBOX name="new combo box" id="31018596af3b34e9" memberName="lfoType"
-            virtualName="" explicitFocusOrder="0" pos="624 40 96 16" editable="0"
-            layout="33" items="TRIANGLE&#10;SAW DOWN&#10;SAW UP&#10;SQUARE&#10;SINE&#10;S&amp;HOLD"
+  <COMBOBOX name="lfoType" id="31018596af3b34e9" memberName="lfoType" virtualName=""
+            explicitFocusOrder="0" pos="624 40 96 16" editable="0" layout="33"
+            items="TRIANGLE&#10;SAW DOWN&#10;SAW UP&#10;SQUARE&#10;SINE&#10;S&amp;HOLD"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="lfoSpeed" id="b10eaf327ab3bff5" memberName="lfoSpeed" virtualName=""
           explicitFocusOrder="0" pos="624 16 96 16" min="0" max="99" int="1"
           style="LinearHorizontal" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="new slider" id="3e95a6206fa4a891" memberName="lfoAmDepth"
-          virtualName="" explicitFocusOrder="0" pos="696 64 24 24" min="0"
+  <SLIDER name="lfoAmDepth" id="3e95a6206fa4a891" memberName="lfoAmDepth"
+          virtualName="" explicitFocusOrder="0" pos="672 64 24 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="new slider" id="6ead769ca786c813" memberName="lfoPitchDepth"
+  <SLIDER name="lfoPitchDepth" id="6ead769ca786c813" memberName="lfoPitchDepth"
           virtualName="" explicitFocusOrder="0" pos="648 64 24 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="lfoDelay" id="1fce68dc81619ef5" memberName="lfoDelay" virtualName=""
-          explicitFocusOrder="0" pos="672 64 24 24" min="0" max="99" int="1"
+          explicitFocusOrder="0" pos="624 64 24 24" min="0" max="99" int="1"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="cutoff" id="40531f16bb0bd225" memberName="cutoff" virtualName=""
@@ -480,53 +480,53 @@ BEGIN_JUCER_METADATA
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
-          virtualName="" explicitFocusOrder="0" pos="776 64 32 24" min="0"
-          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="pitchRate3" id="187c25b24413fccf" memberName="pitchRate3"
-          virtualName="" explicitFocusOrder="0" pos="800 64 32 24" min="0"
-          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="pitchRate4" id="1aeb2a8fbbcbeaab" memberName="pitchRate4"
-          virtualName="" explicitFocusOrder="0" pos="824 64 32 24" min="0"
-          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="pitchRate1" id="419d613b3fb9604e" memberName="pitchRate1"
           virtualName="" explicitFocusOrder="0" pos="752 64 32 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="pitchRate3" id="187c25b24413fccf" memberName="pitchRate3"
+          virtualName="" explicitFocusOrder="0" pos="776 64 32 24" min="0"
+          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="pitchRate4" id="1aeb2a8fbbcbeaab" memberName="pitchRate4"
+          virtualName="" explicitFocusOrder="0" pos="800 64 32 24" min="0"
+          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="pitchRate1" id="419d613b3fb9604e" memberName="pitchRate1"
+          virtualName="" explicitFocusOrder="0" pos="728 64 32 24" min="0"
+          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchLevel2" id="3a355ad2221887d9" memberName="pitchLevel2"
-          virtualName="" explicitFocusOrder="0" pos="776 40 32 24" min="0"
-          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="pitchLevel3" id="5c5d782e8a7f3ad7" memberName="pitchLevel3"
-          virtualName="" explicitFocusOrder="0" pos="800 40 32 24" min="0"
-          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="pitchLevel4" id="eb900b141fbad8ff" memberName="pitchLevel4"
-          virtualName="" explicitFocusOrder="0" pos="824 40 32 24" min="0"
-          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="pitchLevel1" id="344cbe26ec9fa128" memberName="pitchLevel1"
           virtualName="" explicitFocusOrder="0" pos="752 40 32 24" min="0"
           max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="pitchLevel3" id="5c5d782e8a7f3ad7" memberName="pitchLevel3"
+          virtualName="" explicitFocusOrder="0" pos="776 40 32 24" min="0"
+          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="pitchLevel4" id="eb900b141fbad8ff" memberName="pitchLevel4"
+          virtualName="" explicitFocusOrder="0" pos="800 40 32 24" min="0"
+          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <SLIDER name="pitchLevel1" id="344cbe26ec9fa128" memberName="pitchLevel1"
+          virtualName="" explicitFocusOrder="0" pos="728 40 32 24" min="0"
+          max="99" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
-          virtualName="" explicitFocusOrder="0" pos="728 0 24 56" min="0"
-          max="49" int="0" style="LinearVertical" textBoxPos="NoTextBox"
+          virtualName="" explicitFocusOrder="0" pos="832 0 24 88" min="0"
+          max="48" int="0" style="LinearVertical" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="oscSync" id="8f3fe641537cd00" memberName="oscSync" virtualName=""
                 explicitFocusOrder="0" pos="600 64 24 24" buttonText="" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="0"/>
   <SLIDER name="pitchModSens" id="904f73df85a9f886" memberName="pitchModSens"
-          virtualName="" explicitFocusOrder="0" pos="728 64 24 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="696 64 24 24" min="0"
           max="7" int="0" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
-                explicitFocusOrder="0" pos="624 64 24 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="0" pos="600 40 24 24" buttonText="" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="pitchEnvDisplay" id="9ddaae8ef924a038" memberName="pitchEnvDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="752 8 96 32" class="PitchEnvDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="728 8 96 32" class="PitchEnvDisplay"
                     params=""/>
   <GENERICCOMPONENT name="algoDisplay" id="b26fb9e3b5f0bc37" memberName="algoDisplay"
                     virtualName="" explicitFocusOrder="0" pos="442 8 152 74" class="AlgoDisplay"

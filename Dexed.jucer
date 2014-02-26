@@ -8,7 +8,8 @@
               pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
               aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="AAX_ePlugInCategory_Dynamics"
-              jucerVersion="3.1.0" companyName="Digital Suburban">
+              jucerVersion="3.1.0" companyName="Digital Suburban" buildVST3="0"
+              buildRTAS="0" buildAAX="0" pluginManufacturerEmail="support@yourcompany.com">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>

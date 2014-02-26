@@ -200,6 +200,12 @@
 #ifndef  JucePlugin_Manufacturer
  #define JucePlugin_Manufacturer           "Digital Suburban"
 #endif
+#ifndef  JucePlugin_ManufacturerWebsite
+ #define JucePlugin_ManufacturerWebsite    ""
+#endif
+#ifndef  JucePlugin_ManufacturerEmail
+ #define JucePlugin_ManufacturerEmail      "support@yourcompany.com"
+#endif
 #ifndef  JucePlugin_ManufacturerCode
  #define JucePlugin_ManufacturerCode       'Manu'
 #endif
@@ -286,9 +292,6 @@
 #endif
 #ifndef  JucePlugin_AAXProductId
  #define JucePlugin_AAXProductId           JucePlugin_PluginCode
-#endif
-#ifndef  JucePlugin_AAXPluginId
- #define JucePlugin_AAXPluginId            JucePlugin_PluginCode
 #endif
 #ifndef  JucePlugin_AAXCategory
  #define JucePlugin_AAXCategory            AAX_ePlugInCategory_Dynamics

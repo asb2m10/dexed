@@ -1,14 +1,14 @@
-Dexed FM Synth Software Emulator
-================================
+Dexed - FM Synth Plugin
+=======================
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
 Under the hood it uses [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) 
 for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
 
-The goal of this project is to be a great tool/companion for the original DX7. Yes, the sound engine 
-with 'float' value parameters; different waveform (à la TX81z) would be great but anything that 
-goes beyond the DX7 should will be a fork of this project. This is to keep the compatiblity with
-the original synth.
+The goal of this project is to be a great tool/companion for the original DX7. Sound engine 
+with 'float' value parameters, different waveform à la TX81z would be great but anything that 
+goes beyond the DX7 should and will be a fork of this project. This is to keep the compatiblity with
+the original DX7.
 
 Dexed is licensed on the GPL v2. The msfa component (acronym for music synthesizer for android, see msfa 
 in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
@@ -31,10 +31,10 @@ in normal operation it shouldn't crash and the VST state saving works.
 
 Using as a DX7 editor
 ---------------------
-This plugin can process original DX7 messages. If you change a parameter, it will send the 
-corresponding DX7 sysex to midi out. Not all DAW supports sysex; for example
-Ableton Live simply discard any sysex data. Reaper does process midi out, but doesn't pass any
-midi in sysex input data to the plugin.
+This plugin can process original DX7 sysex messages. If you change a parameter, 
+it will send the corresponding DX7 sysex to midi out. Not all DAW supports 
+sysex; for example Ableton Live simply discard any sysex data. Reaper does 
+process midi out, but doesn't pass any midi in sysex input data to the plugin.
 
 Randomized programs
 -------------------

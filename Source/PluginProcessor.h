@@ -94,9 +94,10 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
      * to update the UI / hostdata 
      */
     void handleAsyncUpdate();
-    
     void initCtrl();
 
+    PropertiesFile::Options prefOptions;
+    
 public :
     StringArray programNames;    
     char sysex[4096];    
@@ -184,6 +185,9 @@ public :
     MidiKeyboardState keyboardState;
     void unbindUI();
 
+    void loadPreference();
+    void savePreference();
+    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

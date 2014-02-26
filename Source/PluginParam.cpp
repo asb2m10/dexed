@@ -432,5 +432,22 @@ const String DexedAudioProcessor::getParameterText(int index) {
     return ctrl[index]->getValueDisplay();
 }
 
+void DexedAudioProcessor::loadPreference() {
+    PropertiesFile prop(prefOptions);
+    
+    if ( ! prop.isValidFile() ) {
+        return;
+    }
+    
+    if ( prop.containsKey( String("normalizeDxVelocity") ) ) {
+        normalizeDxVelocity = prop.getIntValue( String("normalizeDxVelocity") );
+    }
+}
 
+void DexedAudioProcessor::savePreference() {
+    PropertiesFile prop(prefOptions);
+    
+    prop.setValue(String("normalizeDxVelocity"), normalizeDxVelocity);
+    prop.save();
+}
 

@@ -81,9 +81,9 @@ OperatorEditor::OperatorEditor ()
     opMode->setEditableText (false);
     opMode->setJustificationType (Justification::centredLeft);
     opMode->setTextWhenNothingSelected (String::empty);
-    opMode->setTextWhenNoChoicesAvailable ("(no choices)");
-    opMode->addItem ("RATIO", 1);
-    opMode->addItem ("FIXED", 2);
+    opMode->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    opMode->addItem (TRANS("RATIO"), 1);
+    opMode->addItem (TRANS("FIXED"), 2);
     opMode->addListener (this);
 
     addAndMakeVisible (opLevel = new Slider ("opLevel"));
@@ -105,7 +105,7 @@ OperatorEditor::OperatorEditor ()
     opCoarse->addListener (this);
 
     addAndMakeVisible (khzDisplay = new Label ("khz",
-                                               "1,000 kHz"));
+                                               TRANS("1,000 kHz")));
     khzDisplay->setFont (Font (11.00f, Font::plain));
     khzDisplay->setJustificationType (Justification::centred);
     khzDisplay->setEditable (false, false, false);
@@ -125,14 +125,14 @@ OperatorEditor::OperatorEditor ()
     envDisplay->setName ("envDisplay");
 
     addAndMakeVisible (sclLeftLevel = new Slider ("sclLeftLevel"));
-    sclLeftLevel->setTooltip ("Keyboard Scale Level Left Depth ");
+    sclLeftLevel->setTooltip (TRANS("Keyboard Scale Level Left Depth "));
     sclLeftLevel->setRange (0, 99, 1);
     sclLeftLevel->setSliderStyle (Slider::Rotary);
     sclLeftLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     sclLeftLevel->addListener (this);
 
     addAndMakeVisible (sclRightLevel = new Slider ("sclRightLevel"));
-    sclRightLevel->setTooltip ("Keyboard Scale Level Right Depth ");
+    sclRightLevel->setTooltip (TRANS("Keyboard Scale Level Right Depth "));
     sclRightLevel->setRange (0, 99, 1);
     sclRightLevel->setSliderStyle (Slider::Rotary);
     sclRightLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
@@ -142,33 +142,33 @@ OperatorEditor::OperatorEditor ()
     kbdLeftCurve->setEditableText (false);
     kbdLeftCurve->setJustificationType (Justification::centredLeft);
     kbdLeftCurve->setTextWhenNothingSelected (String::empty);
-    kbdLeftCurve->setTextWhenNoChoicesAvailable ("(no choices)");
-    kbdLeftCurve->addItem ("-LN", 1);
-    kbdLeftCurve->addItem ("-EX", 2);
-    kbdLeftCurve->addItem ("+EX", 3);
-    kbdLeftCurve->addItem ("+LN", 4);
+    kbdLeftCurve->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    kbdLeftCurve->addItem (TRANS("-LN"), 1);
+    kbdLeftCurve->addItem (TRANS("-EX"), 2);
+    kbdLeftCurve->addItem (TRANS("+EX"), 3);
+    kbdLeftCurve->addItem (TRANS("+LN"), 4);
     kbdLeftCurve->addListener (this);
 
     addAndMakeVisible (kbdRightCurve = new ComboBox ("kbdRightCurve"));
     kbdRightCurve->setEditableText (false);
     kbdRightCurve->setJustificationType (Justification::centredLeft);
     kbdRightCurve->setTextWhenNothingSelected (String::empty);
-    kbdRightCurve->setTextWhenNoChoicesAvailable ("(no choices)");
-    kbdRightCurve->addItem ("-LN", 1);
-    kbdRightCurve->addItem ("-EX", 2);
-    kbdRightCurve->addItem ("+EX", 3);
-    kbdRightCurve->addItem ("+LN", 4);
+    kbdRightCurve->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    kbdRightCurve->addItem (TRANS("-LN"), 1);
+    kbdRightCurve->addItem (TRANS("-EX"), 2);
+    kbdRightCurve->addItem (TRANS("+EX"), 3);
+    kbdRightCurve->addItem (TRANS("+LN"), 4);
     kbdRightCurve->addListener (this);
 
     addAndMakeVisible (sclLvlBrkPt = new Slider ("sclLvlBrkPt"));
-    sclLvlBrkPt->setTooltip ("Scale Level Breakpoint");
+    sclLvlBrkPt->setTooltip (TRANS("Scale Level Breakpoint"));
     sclLvlBrkPt->setRange (0, 99, 1);
     sclLvlBrkPt->setSliderStyle (Slider::Rotary);
     sclLvlBrkPt->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     sclLvlBrkPt->addListener (this);
 
     addAndMakeVisible (sclRateScaling = new Slider ("sclRateScaling"));
-    sclRateScaling->setTooltip ("Keyboard Rate Scaling");
+    sclRateScaling->setTooltip (TRANS("Keyboard Rate Scaling"));
     sclRateScaling->setRange (0, 7, 1);
     sclRateScaling->setSliderStyle (Slider::Rotary);
     sclRateScaling->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);

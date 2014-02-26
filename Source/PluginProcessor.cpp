@@ -53,6 +53,11 @@ DexedAudioProcessor::DexedAudioProcessor() {
     normalizeDxVelocity = false;
 
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
+
+    prefOptions.applicationName = String("Dexed");
+    prefOptions.filenameSuffix = String("xml");
+    prefOptions.folderName = String("DigitalSuburban");
+    prefOptions.osxLibrarySubFolder = String("Application Support");
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {

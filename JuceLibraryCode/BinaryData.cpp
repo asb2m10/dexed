@@ -1276,8 +1276,6 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw
     return 0;
 }
 
-const int namedResourceListSize = 1;
-
 const char* namedResourceList[] =
 {
     "builtin_pgm_zip"
