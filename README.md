@@ -24,9 +24,9 @@ Features
 
 Changelog
 ---------
-* Version 0.4.0 (current sprint)
-** Modulatioin wheel support
-** Now using the [OBxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
+=== Version 0.4.0 (current sprint)
+* Modulatioin wheel support
+* Now using the [OBxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
 
 Binary downloads
 ----------------
