@@ -22,6 +22,12 @@ Features
 * Each operator have a realtime VU meter to know wich one is active
 * Can load/save any DX7/TX7 sysex programs. It is also possible to save a single program into a different sysex file.
 
+Changelog
+---------
+* Version 0.4.0 (current sprint)
+** Modulatioin wheel support
+** Now using the [OBxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
+
 Binary downloads
 ----------------
 Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
@@ -51,18 +57,18 @@ valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks 
 
 Credits & thanks
 ----------------
-Raph Levien and the msfa team, markusthegeek, Jean-Marc Desprez	and all the crew who made these historic
-DX programs: (Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, 
-Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie)
+* DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
+* LP Filter : Filatov Vadim (2DaT); taken from the excellent [OBxd](https://obxd.wordpress.com) project
+* Original DX7 compilation : Jean-Marc Desprez [SynprezFM](http://www.synprez.com/SynprezFM) and to all the all crew who made these historic DX programs: Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
+* markusthegeek direct implication for this project
 
 TODO - Dexed 
 ------------
 * Implement a better DX look and feel (amp, pitch, algo)
-* Better implementation of the LPF filter
 * Various code cleanup
 * Standalone executable (for full support of the editor)
 
 TODO - msfa
 -----------
-* LFO Amplitude
+* LFO/Mod-wheel Amplitude
 * Algo 4 & 6 feedback

@@ -1,29 +1,59 @@
-/*
-  ==============================================================================
-
-    PluginFx.h
-    Created: 26 Dec 2013 7:13:29pm
-    Author:  Pascal Gauthier
-
-  ==============================================================================
-*/
+/**
+ *
+ * Copyright (c) 2013 Pascal Gauthier.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301 USA.
+ */
 
 #ifndef PLUGINFX_H_INCLUDED
 #define PLUGINFX_H_INCLUDED
 
 class PluginFx {
-    /**
-     * Used for the 4pole LFP
-     */
-    // process and ui values
+	float s1,s2,s3,s4;
+	float sampleRate;
+	float sampleRateInv;
+    float d, c;
+	float R24;
+	float rcor24,rcor24Inv;
+    float bright;
+    
+	//24 db multimode
+    float mm;
+	float mmt;
+	int mmch;
+    inline float NR24(float sample,float g,float lpc);
+
+    // preprocess value from the UI
+    float rCutoff;
+    float rReso;
+    
+    // thread values; if these are different from the UI,
+    // it needs to be recalculated.
     float pReso;
     float pCutoff;
-    float p, Q;
-    int srate;
-    float state[4];
-    float output;
+    
+    // I am still keeping the 2pole w/multimode filter
+    inline float NR(float sample, float g);
+	bool bandPassSw;
+	float rcor,rcorInv;
+    int R;
+    
 public:
     
+    // this is set directly by the ui / parameter
     float uiCutoff;
     float uiReso;
     

@@ -1,95 +1,194 @@
-/*
-  ==============================================================================
+/**
+ *
+ * Copyright (c) 2013-2014 Pascal Gauthier.
+ * Copyright (C) 2013-2014 Filatov Vadim.
+ * 
+ * Filter taken from the OBXd project :
+ *   https://github.com/2DaT/Obxd
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301 USA.
+ */
 
-    PluginFx.cpp
-    Created: 26 Dec 2013 7:13:29pm
-    Author:  Pascal Gauthier
-
-    The LPF is taken from the PD moog~ object. (David Lowenfels) 
-    Code is based off of Tim Stilson's moog filter code
- 
-  ==============================================================================
-*/
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "PluginFx.h"
 #include "PluginProcessor.h"
 
-static float gaintable[199] = {
-    0.999969, 0.990082, 0.980347, 0.970764, 0.961304, 0.951996, 0.94281, 0.933777, 0.924866, 0.916077, 0.90741, 0.898865, 0.890442,
-    0.882141, 0.873962, 0.865906, 0.857941, 0.850067, 0.842346, 0.834686, 0.827148, 0.819733, 0.812378, 0.805145, 0.798004, 0.790955,
-    0.783997, 0.77713, 0.770355, 0.763672, 0.75708 , 0.75058, 0.744141, 0.737793, 0.731537, 0.725342, 0.719238, 0.713196, 0.707245,
-    0.701355, 0.695557, 0.689819, 0.684174, 0.678558, 0.673035, 0.667572, 0.66217, 0.65686, 0.651581, 0.646393, 0.641235, 0.636169,
-    0.631134, 0.62619, 0.621277, 0.616425, 0.611633, 0.606903, 0.602234, 0.597626, 0.593048, 0.588531, 0.584045, 0.579651, 0.575287,
-    0.570953, 0.566681, 0.562469, 0.558289, 0.554169, 0.550079, 0.546051, 0.542053, 0.538116, 0.53421, 0.530334, 0.52652, 0.522736,
-    0.518982, 0.515289, 0.511627, 0.507996 , 0.504425, 0.500885, 0.497375, 0.493896, 0.490448, 0.487061, 0.483704, 0.480377, 0.477081,
-    0.473816, 0.470581, 0.467377, 0.464203, 0.46109, 0.457977, 0.454926, 0.451874, 0.448883, 0.445892, 0.442932, 0.440033, 0.437134,
-    0.434265, 0.431427, 0.428619, 0.425842, 0.423096, 0.42038, 0.417664, 0.415009, 0.412354, 0.409729, 0.407135, 0.404572, 0.402008,
-    0.399506, 0.397003, 0.394501, 0.392059, 0.389618, 0.387207, 0.384827, 0.382477, 0.380127, 0.377808, 0.375488, 0.37323, 0.370972,
-    0.368713, 0.366516, 0.364319, 0.362122, 0.359985, 0.357849, 0.355713, 0.353607, 0.351532, 0.349457, 0.347412, 0.345398, 0.343384,
-    0.34137, 0.339417, 0.337463, 0.33551, 0.333588, 0.331665, 0.329773, 0.327911, 0.32605, 0.324188, 0.322357, 0.320557, 0.318756,
-    0.316986, 0.315216, 0.313446, 0.311707, 0.309998, 0.308289, 0.30658, 0.304901, 0.303223, 0.301575, 0.299927, 0.298309, 0.296692,
-    0.295074, 0.293488, 0.291931, 0.290375, 0.288818, 0.287262, 0.285736, 0.284241, 0.282715, 0.28125, 0.279755, 0.27829, 0.276825,
-    0.275391, 0.273956, 0.272552, 0.271118, 0.269745, 0.268341, 0.266968, 0.265594, 0.264252, 0.262909, 0.261566, 0.260223, 0.258911,
-    0.257599, 0.256317, 0.255035, 0.25375
-};
+const float dc = 1e-18;
 
-static inline float saturate(float input) { //clamp without branching
-#define _limit 0.95
-    float x1 = fabsf( input + _limit );
-    float x2 = fabsf( input - _limit );
-    return 0.5 * (x1 - x2);
+inline static float tptpc(float& state,float inp,float cutoff) {
+	double v = (inp - state) * cutoff / (1 + cutoff);
+	double res = v + state;
+	state = res + v;
+	return res;
 }
 
-static inline float crossfade(float amount, float a, float b) {
-    return (1-amount) * a + amount * b;
+inline static float tptlpupw(float & state , float inp , float cutoff , float srInv) {
+	cutoff = (cutoff * srInv)*juce::float_Pi;
+	double v = (inp - state) * cutoff / (1 + cutoff);
+	double res = v + state;
+	state = res + v;
+	return res;
 }
 
-void PluginFx::init(int sampleRate) {
+static float linsc(float param,const float min,const float max) {
+    return (param) * (max - min) + min;
+}
+
+static float logsc(float param, const float min,const float max,const float rolloff = 19.0f) {
+	return ((expf(param * logf(rolloff+1)) - 1.0f) / (rolloff)) * (max-min) + min;
+}
+
+void PluginFx::init(int sr) {
+    mm=0;
+    s1=s2=s3=s4=c=d=0;
+    R24=0;
+    
+    mmch = (int)(mm * 3);
+    mmt = mm*3-mmch;
+
+    sampleRate = sr;
+    sampleRateInv = 1/sampleRate;
+    float rcrate =sqrt((44000/sampleRate));
+    rcor24 = (970.0 / 44000)*rcrate;
+    rcor24Inv = 1 / rcor24;
+    
+    bright = tan((sampleRate*0.5f-10) * juce::float_Pi * sampleRateInv);
+    
+    R = 1;
+	rcor = (480.0 / 44000)*rcrate;
+    rcorInv = 1 / rcor;
+    bandPassSw = false;
+    
     uiCutoff = 1;
     uiReso = 0;
-    srate = sampleRate;
-    output = 0;
-    for(int i=0;i<4;i++)
-        state[i] = 0;
+    
+    pCutoff = -1;
+    pReso = -1;
+}
+
+inline float PluginFx::NR24(float sample,float g,float lpc) {
+    float ml = 1 / (1+g);
+    float S = (lpc*(lpc*(lpc*s1 + s2) + s3) +s4)*ml;
+    float G = lpc*lpc*lpc*lpc;
+    float y = (sample - R24 * S) / (1 + R24*G);
+    return y + 1e-8;
+};
+
+inline float PluginFx::NR(float sample, float g) {
+    float y = ((sample- R * s1*2 - g*s1  - s2)/(1+ g*(2*R + g))) + dc;
+    return y;
 }
 
 void PluginFx::process(float *work, int sampleSize) {
-
     // don't apply the LPF if the cutoff is to maximum
     if ( uiCutoff == 1 )
         return;
     
-    // the UI values haved changed
-    if ( uiCutoff != pCutoff || uiReso != pReso) {
-        // calc cutoff
-        // mel scale freq : http://www.speech.kth.se/~giampi/auditoryscales/
-        float freqCutoff = 700 * (pow(M_E,(uiCutoff*4000/1127)-1)) + 20;
-        float fc = 2 * freqCutoff / srate;
-        float x2 = fc*fc;
-        float x3 = fc*x2;
-        p = -0.69346 * x3 - 0.59515 * x2 + 3.2937 * fc - 1.0072; //cubic fit
-
-        // calc reso
-        float ix = p * 99;
-        int ixint = floor( ix );
-        float ixfrac = ix - ixint;
-        Q = uiReso * crossfade( ixfrac, gaintable[ ixint + 99 ], gaintable[ ixint + 100 ] );
-
+    if ( uiCutoff != pCutoff || uiReso != pReso ) {
+        rReso = (0.991-logsc(1-uiReso,0,0.991,40));
+        R24 = 3.5 * rReso;
+        
+        float cutoffNorm = logsc(uiCutoff,60,19000,30);
+        rCutoff = (float)tan(cutoffNorm * sampleRateInv * juce::float_Pi);
+        
         pCutoff = uiCutoff;
         pReso = uiReso;
+
+        R = 1 - rReso;
     }
-  
-    for (int i=0; i < sampleSize; i++ ) {
-        output = 0.10 * ( work[i] - output ); //negative feedback
-        for(int pole=0; pole < 4; pole++) {
-            float temp = state[pole];
-            output = saturate( output + p * (output - temp));
-            state[pole] = output;
-            output = saturate( output + temp );
+    
+    // THIS IS MY FAVORITE 4POLE OBXd filter
+    
+    // maybe smooth this value
+    float g = rCutoff;
+    
+    for(int i=0; i < sampleSize; i++ ) {
+        float s = work[i];
+		s = s - 0.45*tptlpupw(c,s,15,sampleRateInv);
+        s = tptpc(d,s,bright);
+        
+        float lpc = g / (1 + g);
+        
+        float y0 = NR24(s,g,lpc);
+        
+        //first low pass in cascade
+        double v = (y0 - s1) * lpc;
+        double res = v + s1;
+        s1 = res + v;
+        
+        //damping
+        s1 =atan(s1*rcor24)*rcor24Inv;
+        float y1= res;
+        float y2 = tptpc(s2,y1,g);
+        float y3 = tptpc(s3,y2,g);
+        float y4 = tptpc(s4,y3,g);
+        float mc;
+        
+        switch(mmch) {
+			case 0:
+				mc = ((1 - mmt) * y4 + (mmt) * y3);
+				break;
+			case 1:
+				mc = ((1 - mmt) * y3 + (mmt) * y2);
+				break;
+			case 2:
+				mc = ((1 - mmt) * y2 + (mmt) * y1);
+				break;
+			case 3:
+				mc = y1;
+				break;
         }
-        work[i] = output;
-        output *= Q;  //scale the feedback
+        
+        //half volume comp
+        work[i] = mc * (1 + R24 * 0.45);
     }
 }
 
+/*
+ 
+ // THIS IS THE 2POLE FILTER
+ 
+ for(int i=0; i < sampleSize; i++ ) {
+ float s = work[i];
+ s = s - 0.45*tptlpupw(c,s,15,sampleRateInv);
+ s = tptpc(d,s,bright);
+ 
+ //float v = ((sample- R * s1*2 - g2*s1 - s2)/(1+ R*g1*2 + g1*g2));
+ float v = NR(s,g);
+ float y1 = v*g + s1;
+ //damping
+ s1 = atan(s1 * rcor) * rcorInv;
+ 
+ float y2 = y1*g + s2;
+ s2 = y2 + y1*g;
+ 
+ double mc;
+ if(!bandPassSw)
+ mc = (1-mm)*y2 + (mm)*v;
+ else
+ {
+ 
+ mc =2 * ( mm < 0.5 ?
+ ((0.5 - mm) * y2 + (mm) * y1):
+ ((1-mm) * y1 + (mm-0.5) * v)
+ );
+ }
+ 
+ work[i] = mc;
+ }
+ 
+*/
