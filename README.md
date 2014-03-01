@@ -59,7 +59,7 @@ Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [OBxd](https://obxd.wordpress.com) project
-* Original DX7 compilation : Jean-Marc Desprez (autthor of [SynprezFM](http://www.synprez.com/SynprezFM)) and to all the all crew who made these historic DX programs: Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
+* Original DX7 compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) and to all the all crew who made these historic DX programs: Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * markusthegeek direct implication for this project
 
 TODO - Dexed 
