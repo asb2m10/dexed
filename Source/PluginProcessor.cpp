@@ -88,6 +88,9 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     workBlock = new SInt16[samplesPerBlock];
 
     keyboardState.reset();
+    
+    nextMidi= new MidiMessage(0xF0);
+	midiMsg = new MidiMessage(0xF0);
 }
 
 void DexedAudioProcessor::releaseResources() {
@@ -130,24 +133,47 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     // add messages to the buffer if the user is clicking on the on-screen keys
     keyboardState.processNextMidiBuffer (midiMessages, 0, numSamples, true);
     
-    // check input
     MidiBuffer::Iterator it(midiMessages);
-    MidiMessage msg;
-    int pos;
-    
-    while(it.getNextEvent(msg, pos)) {
-        processMidiMessage(&msg);
-    }
-    midiMessages.clear();
+    hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
 
-    processSamples(numSamples, workBlock);
     float *channelData = buffer.getSampleData(0);
-    for(int i = 0; i < numSamples; i++ ) {
-        float f = ((float) workBlock[i]) / (float) 32768;
-        if( f > 1 ) f = 1;
-        if( f < -1 ) f = -1;
-        channelData[i] = (double) f;
-   }
+    int samplePos = 0;
+    
+    while(getNextEvent(&it, numSamples)) {
+        processMidiMessage(midiMsg);
+    }
+    
+    while ( samplePos < numSamples ) {
+        int block = numSamples;
+        
+        /*
+         * MIDI message needs to be bound to 
+         * the sample. When a rendering occurs
+         * very large blocks can be passed and
+         * without this code, the plugin will be 
+         * out of sync... TODO!
+         
+        while(getNextEvent(&it, samplePos)) {
+            processMidiMessage(midiMsg);
+        }
+        
+        if ( hasMidiMessage ) {
+            block = midiEventPos - samplePos;
+        } else {
+            block = numSamples - samplePos;
+        }
+         */
+        
+        processSamples(block, workBlock);
+        for(int i = 0; i < block; i++ ) {
+            float f = ((float) workBlock[i+samplePos]) / (float) 32768;
+            if( f > 1 ) f = 1;
+            if( f < -1 ) f = -1;
+            channelData[i+samplePos] = (double) f;
+        }
+        
+        samplePos += block;
+    }
 
     fx.process(channelData, numSamples);
     
@@ -162,7 +188,8 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
         buffer.clear (i, 0, buffer.getNumSamples());
     }
-
+    
+    midiMessages.clear();
     if ( ! midiOut.isEmpty() ) {
         midiMessages.swapWith(midiOut);
     }
@@ -173,6 +200,15 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
     return new DexedAudioProcessor();
+}
+
+bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samplePos) {
+	if (hasMidiMessage && midiEventPos <= samplePos) {
+		*midiMsg = *nextMidi;
+		hasMidiMessage = iter->getNextEvent(*nextMidi, midiEventPos);
+		return true;
+	}
+	return false;
 }
 
 void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {

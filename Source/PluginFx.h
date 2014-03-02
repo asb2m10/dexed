@@ -30,13 +30,13 @@ class PluginFx {
 	float rcor24,rcor24Inv;
     float bright;
     
-	//24 db multimode
+	// 24 db multimode
     float mm;
 	float mmt;
 	int mmch;
     inline float NR24(float sample,float g,float lpc);
 
-    // preprocess value from the UI
+    // preprocess values taken the UI
     float rCutoff;
     float rReso;
     

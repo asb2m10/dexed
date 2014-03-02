@@ -97,6 +97,12 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     void initCtrl();
 
     PropertiesFile::Options prefOptions;
+
+	MidiMessage* nextMidi,*midiMsg;
+	bool hasMidiMessage;
+    int midiEventPos;
+	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
+    
     
 public :
     StringArray programNames;    

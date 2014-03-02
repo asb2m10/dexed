@@ -43,7 +43,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartridges.setTextWhenNothingSelected(String::empty);
     cartridges.setBounds(5, 5, 160, 18);
     cartridges.addItemList(processor->cartManager.cartNames, 1);
-    cartridges.setSelectedItemIndex(0);
+    cartridges.setSelectedItemIndex(0, NotificationType::dontSendNotification);
     cartridges.addListener(this);
     
     addAndMakeVisible (loadButton = new TextButton("LOAD"));
@@ -132,7 +132,6 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 }
 
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
-
     if (buttonThatWasClicked == loadButton) {
         FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX;*.*", 1);
 

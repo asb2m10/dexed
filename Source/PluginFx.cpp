@@ -1,9 +1,9 @@
 /**
  *
  * Copyright (c) 2013-2014 Pascal Gauthier.
- * Copyright (C) 2013-2014 Filatov Vadim.
+ * Copyright (c) 2013-2014 Filatov Vadim.
  * 
- * Filter taken from the OBXd project :
+ * Filter taken from the Obxd project :
  *   https://github.com/2DaT/Obxd
  *
  * This program is free software; you can redistribute it and/or
