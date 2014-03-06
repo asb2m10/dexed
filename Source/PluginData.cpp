@@ -217,16 +217,6 @@ void DexedAudioProcessor::loadBuiltin(int idx) {
     importSysex((char *) &syx_data);
 }
 
-#define CURRENT_PLUGINSTATE_VERSION 2
-struct PluginState {
-    int version;
-    uint8_t sysex[4104];
-    uint8_t program[161];
-    float cutoff;
-    float reso;
-    int programNum;
-};
-
 //==============================================================================
 void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     // You should use this method to store your parameters in the memory block.
@@ -235,17 +225,22 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     
     // used to SAVE plugin state
     
-    PluginState state;
+    XmlElement dexedState("dexedState");
+    XmlElement *dexedBlob = dexedState.createNewChildElement("dexedBlob");
     
-    state.version = CURRENT_PLUGINSTATE_VERSION;
+    dexedState.setAttribute("cutoff", fx.uiCutoff);
+    dexedState.setAttribute("reso", fx.uiReso);
+    dexedState.setAttribute("currentProgram", currentProgram);
+
+    char sysex_blob[4104];
+    exportSysex((char *) &sysex_blob, (char *) sysex);
     
-    exportSysex((char *)(&state.sysex), (char *) sysex);
-    memcpy(state.program, data, 161);
-    state.cutoff = fx.uiCutoff;
-    state.reso = fx.uiReso;
-    state.programNum = currentProgram;
+    NamedValueSet blobSet;
+    blobSet.set("sysex", var((void *) &sysex_blob, 4104));
+    blobSet.set("program", var((void *) &data, 161));
     
-    destData.insert(&state, sizeof(PluginState), 0);
+    blobSet.copyToXmlAttributes(*dexedBlob);
+    copyXmlToBinary(dexedState, destData);
 }
 
 void DexedAudioProcessor::setStateInformation(const void* source, int sizeInBytes) {
@@ -253,32 +248,36 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     // whose contents will have been created by the getStateInformation() call.
     
     // used to LOAD plugin state
+    ScopedPointer<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
     
-    PluginState state;
-    
-    if ( sizeInBytes < sizeof(PluginState) ) {
-        TRACE("too small plugin state size %d", sizeInBytes);
+    if (root == nullptr) {
+        TRACE("unkown state format");
         return;
     }
     
-    if ( sizeInBytes > sizeof(PluginState) ) {
-        TRACE("too big plugin state size %d", sizeInBytes);
-        sizeInBytes = sizeof(PluginState);
-    }
-    
-    memcpy((void *) &state, source, sizeInBytes);
-    
-    if ( state.version != CURRENT_PLUGINSTATE_VERSION ) {
-        TRACE("version of VST chunk is not compatible, bailing out");
+    fx.uiCutoff = root->getDoubleAttribute("cutoff");
+    fx.uiReso = root->getDoubleAttribute("reso");
+    currentProgram = root->getIntAttribute("currentProgram");
+
+    XmlElement *dexedBlob = root->getChildByName("dexedBlob");
+    if ( dexedBlob == NULL ) {
+        TRACE("dexedBlob element not found");
         return;
     }
     
-    importSysex((char *) state.sysex);
-    memcpy(data, state.program, 161);
+    NamedValueSet blobSet;
+    blobSet.setFromXmlAttributes(*dexedBlob);
     
-    fx.uiCutoff = state.cutoff;
-    fx.uiReso = state.reso;
-    currentProgram = state.programNum;
+    var sysex_blob = blobSet["sysex"];
+    var program = blobSet["program"];
+    
+    if ( sysex_blob.isVoid() || program.isVoid() ) {
+        TRACE("unkown serialized blob data");
+        return;
+    }
+    
+    importSysex((char *) sysex_blob.getBinaryData()->getData());
+    memcpy(data, program.getBinaryData()->getData(), 161);
     
     lastStateSave = (long) time(NULL);
     TRACE("setting VST STATE");
@@ -311,7 +310,7 @@ CartridgeManager::CartridgeManager() {
 
 void CartridgeManager::getSysex(int idx, char *dest) {
     InputStream *is = builtin_pgm->createStreamForEntry(idx);
-    
+
     if ( is == NULL ) {
         TRACE("ENTRY IN ZIP NOT FOUND");
         return;
@@ -320,3 +319,4 @@ void CartridgeManager::getSysex(int idx, char *dest) {
     is->read(dest, 4104);
     delete is;
 }
+

@@ -89,7 +89,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     keyboardState.reset();
     
-    nextMidi= new MidiMessage(0xF0);
+    nextMidi = new MidiMessage(0xF0);
 	midiMsg = new MidiMessage(0xF0);
 }
 
@@ -108,6 +108,9 @@ void DexedAudioProcessor::releaseResources() {
     }
 
     keyboardState.reset();
+    
+    delete nextMidi;
+    delete midiMsg;
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
