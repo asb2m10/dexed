@@ -162,6 +162,9 @@ GlobalEditor::GlobalEditor ()
     algo->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     algo->addListener (this);
 
+    addAndMakeVisible (lcdDisplay = new LcdDisplay());
+    lcdDisplay->setName ("lcdDisplay");
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -170,7 +173,7 @@ GlobalEditor::GlobalEditor ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    systemMsg << "* DEXED DX synthesizer *";
+    lcdDisplay->systemMsg << "* DEXED DX synthesizer *";
 
     //[/Constructor]
 }
@@ -203,6 +206,7 @@ GlobalEditor::~GlobalEditor()
     algoDisplay = nullptr;
     feedback = nullptr;
     algo = nullptr;
+    lcdDisplay = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -216,17 +220,7 @@ void GlobalEditor::paint (Graphics& g)
     //[/UserPrePaint]
 
     //[UserPaint] Add your own custom painting code here..
-    g.setColour (Colours::black);
-    g.setFont (Font (Font::getDefaultMonospacedFontName(), 15.00f, Font::plain));
-    g.drawText (systemMsg,
-                11, 8, 300, 8,
-                Justification::centredLeft, true);
 
-    g.setColour (Colours::black);
-    g.setFont (Font (Font::getDefaultMonospacedFontName(), 15.00f, Font::plain));
-    g.drawText (paramMsg,
-                11, 24, 300, 8,
-                Justification::centredLeft, true);
     //[/UserPaint]
 }
 
@@ -255,6 +249,7 @@ void GlobalEditor::resized()
     algoDisplay->setBounds (442, 8, 152, 74);
     feedback->setBounds (568, 32, 24, 24);
     algo->setBounds (568, 8, 24, 24);
+    lcdDisplay->setBounds (8, 0, 256, 32);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -415,12 +410,12 @@ void GlobalEditor::bind(DexedAudioProcessor *parent) {
 }
 
 void GlobalEditor::setSystemMessage(String msg) {
-    systemMsg = msg;
+    lcdDisplay->systemMsg = msg;
     repaint();
 }
 
 void GlobalEditor::setParamMessage(String msg) {
-    paramMsg = msg;
+    lcdDisplay->paramMsg = msg;
     repaint();
 }
 
@@ -539,6 +534,9 @@ BEGIN_JUCER_METADATA
           explicitFocusOrder="0" pos="568 8 24 24" min="1" max="32" int="1"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="0" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
+  <GENERICCOMPONENT name="lcdDisplay" id="30c7bb8f114cbbe3" memberName="lcdDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="8 0 256 32" class="LcdDisplay"
+                    params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

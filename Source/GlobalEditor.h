@@ -53,8 +53,6 @@ public:
     void updatePitchPos(int pos);
     void updateDisplay();
 
-    String systemMsg;
-    String paramMsg;
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -93,6 +91,7 @@ private:
     ScopedPointer<AlgoDisplay> algoDisplay;
     ScopedPointer<Slider> feedback;
     ScopedPointer<Slider> algo;
+    ScopedPointer<LcdDisplay> lcdDisplay;
 
 
     //==============================================================================

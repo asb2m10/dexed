@@ -283,3 +283,16 @@ void VuMeter::paint(Graphics &g) {
         g.fillRoundedRectangle (3.0f, (height-3.0f) - (3.0f + i * h + h * 0.1f) , width - 6.0f, h * 0.8f, 0);
     }
 }
+
+void LcdDisplay::paint(Graphics &g) {
+    g.setColour(Colours::black.withAlpha(0.4f));
+    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
+    g.setColour (Colours::white);
+    g.setFont (Font (Font::getDefaultMonospacedFontName(), 15.00f, Font::plain));
+    g.drawText (systemMsg,
+                4, 4, 300, 8,
+                Justification::centredLeft, true);
+    g.drawText (paramMsg,
+                4, 20, 300, 8,
+                Justification::centredLeft, true);
+}

@@ -370,16 +370,16 @@ void DexedAudioProcessor::processSamples(int n_samples, float *buffer) {
         for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
             if (voices[note].live) {
                 voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-            }
-
-            for (int j=0; j < N; ++j) {
-                int32_t val = audiobuf.get()[j] >> 4;
-                int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-                float f = ((float) clip_val) / (float) 32768;
-                if( f > 1 ) f = 1;
-                if( f < -1 ) f = -1;
-                sumbuf[j] += f;
-                audiobuf.get()[j] = 0;
+                
+                for (int j=0; j < N; ++j) {
+                    int32_t val = audiobuf.get()[j] >> 4;
+                    int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
+                    float f = ((float) clip_val) / (float) 32768;
+                    if( f > 1 ) f = 1;
+                    if( f < -1 ) f = -1;
+                    sumbuf[j] += f;
+                    audiobuf.get()[j] = 0;
+                }
             }
         }
         
@@ -425,7 +425,6 @@ bool DexedAudioProcessor::peekVoiceStatus() {
 
     return true;
 }
-
 
 const String DexedAudioProcessor::getInputChannelName (int channelIndex) const {
     return String (channelIndex + 1);
@@ -475,7 +474,6 @@ const String DexedAudioProcessor::getName() const {
 bool DexedAudioProcessor::hasEditor() const {
     return true; // (change this to false if you choose to not supply an editor)
 }
-
 
 void DexedAudioProcessor::updateUI() {
     // notify host something has changed

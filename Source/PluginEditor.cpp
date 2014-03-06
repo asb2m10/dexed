@@ -33,7 +33,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 {
     LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
 
-    setSize (865, 420);
+    setSize (866, 420);
 
     processor = ownerFilter;
     
@@ -72,32 +72,32 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     addAndMakeVisible(aboutButton = new TextButton("ABOUT"));
     aboutButton->setButtonText ("ABOUT");
     aboutButton->addListener (this);
-    aboutButton->setBounds (805, 5, 50, 18);
+    aboutButton->setBounds (807, 5, 50, 18);
 
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
-    operators[0].setBounds(5, 39, 280, 90);
+    operators[0].setBounds(7, 38, 280, 90);
     operators[0].bind(processor, 0);
     
     addAndMakeVisible(&(operators[1]));
-    operators[1].setBounds(290, 39, 280, 90);
+    operators[1].setBounds(294, 38, 280, 90);
     operators[1].bind(processor, 1);
     
     addAndMakeVisible(&(operators[2]));
-    operators[2].setBounds(575, 39, 280, 90);
+    operators[2].setBounds(579, 38, 280, 90);
     operators[2].bind(processor, 2);
     
     addAndMakeVisible(&(operators[3]));
-    operators[3].setBounds(5, 133, 280, 90);
+    operators[3].setBounds(7, 133, 280, 90);
     operators[3].bind(processor, 3);
     
     addAndMakeVisible(&(operators[4]));
-    operators[4].setBounds(290, 133, 280, 90);
+    operators[4].setBounds(294, 133, 280, 90);
     operators[4].bind(processor, 4);
     
     addAndMakeVisible(&(operators[5]));
-    operators[5].setBounds(575, 133, 280, 90);
+    operators[5].setBounds(579, 133, 280, 90);
     operators[5].bind(processor, 5);
 
     // add the midi keyboard component..
@@ -124,10 +124,10 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 
 //==============================================================================
 void DexedAudioProcessorEditor::paint (Graphics& g) {    
-    g.setColour(Colour(0xFF744420));
+    g.setColour(Colour(0xFF47260D));
     g.fillRoundedRectangle(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 0);
     
-    g.setColour(Colour(0xFFA87B67));
+    g.setColour(Colour(0xFF4D3828));
     g.fillRoundedRectangle(0.0f, 30, (float) getWidth(), 200, 0);
 }
 

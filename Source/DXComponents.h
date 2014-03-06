@@ -54,4 +54,11 @@ class VuMeter: public Component {
     float v;
 };
 
+class LcdDisplay : public Component {
+public:
+    String systemMsg;
+    String paramMsg;
+    void paint(Graphics &g);    
+};
+
 #endif  // DXCOMPONENTS_H_INCLUDED
