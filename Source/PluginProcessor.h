@@ -56,10 +56,10 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     bool sustain;
 
     // Extra buffering for when GetSamples wants a buffer not a multiple of N
-    int16_t extra_buf[N];
+    float extra_buf[N];
     int extra_buf_size;
 
-    SInt16 *workBlock;
+    float *workBlock;
     int workBlockSize;
     int currentProgram;
     
@@ -87,7 +87,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     void processMidiMessage(MidiMessage *msg);
     void keydown(uint8_t pitch, uint8_t velo);
     void keyup(uint8_t pitch);
-    void processSamples(int n_samples, int16_t *buffer);
+    void processSamples(int n_samples, float *buffer);
     
     /**
      * this is called from the Audio thread to tell

@@ -85,7 +85,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     extra_buf_size = 0;
 
     workBlockSize = samplesPerBlock;
-    workBlock = new SInt16[samplesPerBlock];
+    workBlock = new float[samplesPerBlock];
 
     keyboardState.reset();
     
@@ -129,7 +129,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     if ( numSamples > workBlockSize ) {
         delete workBlock;
         workBlockSize = numSamples;
-        workBlock = new SInt16[workBlockSize];
+        workBlock = new float[workBlockSize];
     }
 
     // Now pass any incoming midi messages to our keyboard state object, and let it
@@ -169,10 +169,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         
         processSamples(block, workBlock);
         for(int i = 0; i < block; i++ ) {
-            float f = ((float) workBlock[i+samplePos]) / (float) 32768;
-            if( f > 1 ) f = 1;
-            if( f < -1 ) f = -1;
-            channelData[i+samplePos] = (double) f;
+            channelData[i+samplePos] = workBlock[i];
         }
         
         samplePos += block;
@@ -347,7 +344,7 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
 }
 
 
-void DexedAudioProcessor::processSamples(int n_samples, int16_t *buffer) {
+void DexedAudioProcessor::processSamples(int n_samples, float *buffer) {
     int i;
     for (i = 0; i < n_samples && i < extra_buf_size; i++) {
         buffer[i] = extra_buf[i];
@@ -359,11 +356,14 @@ void DexedAudioProcessor::processSamples(int n_samples, int16_t *buffer) {
         extra_buf_size -= n_samples;
         return;
     }
-    
+        
     for (; i < n_samples; i += N) {
         AlignedBuf<int32_t, N> audiobuf;
+        float sumbuf[N];
+        
         for (int j = 0; j < N; ++j) {
             audiobuf.get()[j] = 0;
+            sumbuf[j] = 0;
         }
         int32_t lfovalue = lfo.getsample();
         int32_t lfodelay = lfo.getdelay();
@@ -371,18 +371,24 @@ void DexedAudioProcessor::processSamples(int n_samples, int16_t *buffer) {
             if (voices[note].live) {
                 voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
             }
+
+            for (int j=0; j < N; ++j) {
+                int32_t val = audiobuf.get()[j] >> 4;
+                int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
+                float f = ((float) clip_val) / (float) 32768;
+                if( f > 1 ) f = 1;
+                if( f < -1 ) f = -1;
+                sumbuf[j] += f;
+                audiobuf.get()[j] = 0;
+            }
         }
+        
         int jmax = n_samples - i;
         for (int j = 0; j < N; ++j) {
-            int32_t val = audiobuf.get()[j] >> 4;
-            int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff :
-            val >> 9;
-            // val = val & 0x0FFF7000;
-            // TODO: maybe some dithering?
             if (j < jmax) {
-                buffer[i + j] = clip_val;
+                buffer[i + j] = sumbuf[j];
             } else {
-                extra_buf[j - jmax] = clip_val;
+                extra_buf[j - jmax] = sumbuf[j];
             }
         }
     }
