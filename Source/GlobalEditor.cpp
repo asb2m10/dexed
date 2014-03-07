@@ -173,7 +173,7 @@ GlobalEditor::GlobalEditor ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    lcdDisplay->systemMsg << "* DEXED DX synthesizer *";
+    lcdDisplay->systemMsg << "*** DEXED FM synthesizer ***";
 
     //[/Constructor]
 }

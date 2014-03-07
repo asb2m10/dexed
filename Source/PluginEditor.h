@@ -36,16 +36,17 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
         public Timer {
     DexedAudioProcessor *processor;
     ComboBox programs;
-    ComboBox cartridges;
+    PopupMenu cartPopup;
             
     MidiKeyboardComponent midiKeyboard;
     DXLookNFeel dx_lnf;
 
+    ScopedPointer<TextButton> cartButton;
     ScopedPointer<TextButton> loadButton;
     ScopedPointer<TextButton> saveButton;
     ScopedPointer<TextButton> storeButton;
     ScopedPointer<TextButton> aboutButton;
-    ScopedPointer<TextButton> settings;
+    ScopedPointer<TextButton> settingsButton;
             
     void storeProgram();
 

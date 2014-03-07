@@ -36,43 +36,47 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     setSize (866, 420);
 
     processor = ownerFilter;
-    
-    addAndMakeVisible(&cartridges);
-    cartridges.setEditableText(false);
-    cartridges.setJustificationType(Justification::centredLeft);
-    cartridges.setTextWhenNothingSelected(String::empty);
-    cartridges.setBounds(5, 5, 160, 18);
-    cartridges.addItemList(processor->cartManager.cartNames, 1);
-    cartridges.setSelectedItemIndex(0, NotificationType::dontSendNotification);
-    cartridges.addListener(this);
+
+    addAndMakeVisible (cartButton = new TextButton("CART"));
+    cartButton->setButtonText ("CART");
+    cartButton->addListener (this);
+    cartButton->setBounds(5, 6, 50, 18);
+    for(int i=0;i<processor->cartManager.cartNames.size();i++) {
+        cartPopup.addItem(i+1, processor->cartManager.cartNames[i]);
+    }
     
     addAndMakeVisible (loadButton = new TextButton("LOAD"));
     loadButton->setButtonText ("LOAD");
     loadButton->addListener (this);
-    loadButton->setBounds(169, 5, 50, 18);
+    loadButton->setBounds(59, 6, 50, 18);
 
     addAndMakeVisible(saveButton = new TextButton("SAVE"));
     saveButton->setButtonText ("SAVE");
     saveButton->addListener (this);
-    saveButton->setBounds (222, 5, 50, 18);
+    saveButton->setBounds (113, 6, 50, 18);
     
     addAndMakeVisible (&programs);
     programs.setEditableText (false);
     programs.setJustificationType (Justification::centredLeft);
     programs.setTextWhenNothingSelected (String::empty);
-    programs.setBounds(276, 5, 160, 18);
+    programs.setBounds(167, 6, 160, 18);
     rebuildProgramCombobox();
     programs.addListener(this);
     
     addAndMakeVisible(storeButton = new TextButton("STORE"));
     storeButton->setButtonText ("STORE");
     storeButton->addListener (this);
-    storeButton->setBounds (439, 5, 50, 18);
+    storeButton->setBounds (331, 6, 50, 18);
 
+    addAndMakeVisible(settingsButton = new TextButton("PARMS"));
+    settingsButton->setButtonText ("PARMS");
+    settingsButton->addListener (this);
+    settingsButton->setBounds (755, 6, 50, 18);
+    
     addAndMakeVisible(aboutButton = new TextButton("ABOUT"));
     aboutButton->setButtonText ("ABOUT");
     aboutButton->addListener (this);
-    aboutButton->setBounds (807, 5, 50, 18);
+    aboutButton->setBounds (807, 6, 50, 18);
 
 
     // OPERATORS
@@ -132,6 +136,17 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 }
 
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
+    if (buttonThatWasClicked == cartButton) {
+        int result = cartPopup.show();
+        processor->loadBuiltin(result-1);
+        processor->setCurrentProgram(0);
+        rebuildProgramCombobox();
+        programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+        processor->updateHostDisplay();
+        return;
+    }
+    
+    
     if (buttonThatWasClicked == loadButton) {
         FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX;*.*", 1);
 
@@ -195,17 +210,8 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
 }
 
 void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged) {
-    if ( comboBoxThatHasChanged == &programs ) {
-        processor->setCurrentProgram(programs.getSelectedId()-1);
-        processor->updateHostDisplay();
-    } else {
-        int idx = comboBoxThatHasChanged->getSelectedItemIndex();
-        processor->loadBuiltin(idx);
-        processor->setCurrentProgram(0);
-        rebuildProgramCombobox();
-        programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
-        processor->updateHostDisplay();
-    }
+    processor->setCurrentProgram(programs.getSelectedId()-1);
+    processor->updateHostDisplay();
 }
 
 void DexedAudioProcessorEditor::timerCallback() {    

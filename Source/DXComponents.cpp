@@ -194,7 +194,8 @@ void EnvDisplay::paint(Graphics &g) {
     
     g.setColour(Colour(0xFFFFFFFF));
     String len;
-    len << ((int) total);
+    len << ((int) total) << " / ";
+    len << ((int) vPos);
     g.drawText(len, 5, 1, 72, 14, Justification::left, true);
 }
 
@@ -290,9 +291,9 @@ void LcdDisplay::paint(Graphics &g) {
     g.setColour (Colours::white);
     g.setFont (Font (Font::getDefaultMonospacedFontName(), 15.00f, Font::plain));
     g.drawText (systemMsg,
-                4, 4, 300, 8,
+                7, 4, 300, 8,
                 Justification::centredLeft, true);
     g.drawText (paramMsg,
-                4, 20, 300, 8,
+                7, 20, 300, 8,
                 Justification::centredLeft, true);
 }

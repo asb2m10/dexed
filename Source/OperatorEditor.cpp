@@ -241,8 +241,8 @@ void OperatorEditor::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.setColour (Colour (0x41000000));
-    g.fillRect (-5, -8, 293, 100);
+    g.setColour (Colour (0x32000000));
+    g.fillRect (-5, -7, 293, 100);
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -498,7 +498,7 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="280" initialHeight="90">
   <BACKGROUND backgroundColour="ffffff">
-    <RECT pos="-5 -8 293 100" fill="solid: 41000000" hasStroke="0"/>
+    <RECT pos="-5 -7 293 100" fill="solid: 32000000" hasStroke="0"/>
   </BACKGROUND>
   <SLIDER name="egl1" id="dc070cc41347df47" memberName="s_egl1" virtualName=""
           explicitFocusOrder="0" pos="136 40 24 24" min="0" max="99" int="1"
