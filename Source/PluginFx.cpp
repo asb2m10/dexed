@@ -115,13 +115,12 @@ void PluginFx::process(float *work, int sampleSize) {
     
     // maybe smooth this value
     float g = rCutoff;
-    
+    float lpc = g / (1 + g);
+
     for(int i=0; i < sampleSize; i++ ) {
         float s = work[i];
 		s = s - 0.45*tptlpupw(c,s,15,sampleRateInv);
         s = tptpc(d,s,bright);
-        
-        float lpc = g / (1 + g);
         
         float y0 = NR24(s,g,lpc);
         

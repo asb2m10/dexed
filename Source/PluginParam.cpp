@@ -130,6 +130,7 @@ void CtrlDX::setValueHost(float f) {
 }
 
 void CtrlDX::setValue(int v) {
+    TRACE("setting value %d %d", dxOffset, v);
     if (v >= steps) {
         TRACE("WARNING: value too big %s : %d", label.toRawUTF8(), v);
         v = steps - 1;
@@ -137,7 +138,7 @@ void CtrlDX::setValue(int v) {
     dxValue = v;
     if (dxOffset >= 0) {
         if (parent != NULL)
-            parent->setDxValue(dxOffset, v);
+            parent->setDxValue(dxOffset, dxValue);
     }
 }
 
@@ -385,6 +386,7 @@ float DexedAudioProcessor::getParameter(int index) {
 
 void DexedAudioProcessor::setParameter(int index, float newValue) {
     ctrl[index]->setValueHost(newValue);
+    forceRefreshUI = true;
 }
 
 int DexedAudioProcessor::getNumPrograms() {

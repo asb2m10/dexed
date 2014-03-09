@@ -112,6 +112,8 @@ public :
     CartridgeManager cartManager;
     VoiceStatus voiceStatus;
     
+    bool forceRefreshUI;
+    
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];

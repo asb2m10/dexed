@@ -138,6 +138,9 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     if (buttonThatWasClicked == cartButton) {
         int result = cartPopup.show();
+        if ( result < 1 )
+            return;
+        
         processor->loadBuiltin(result-1);
         processor->setCurrentProgram(0);
         rebuildProgramCombobox();
@@ -214,7 +217,12 @@ void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChange
     processor->updateHostDisplay();
 }
 
-void DexedAudioProcessorEditor::timerCallback() {    
+void DexedAudioProcessorEditor::timerCallback() {
+    if ( processor->forceRefreshUI ) {
+        processor->forceRefreshUI = false;
+        updateUI();
+    }
+    
     if ( ! processor->peekVoiceStatus() )
         return;
 
