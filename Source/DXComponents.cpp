@@ -2,6 +2,10 @@
  *
  * Copyright (c) 2014 Pascal Gauthier.
  *
+ * DX7 Envelope Tables from legasynth-0.4.1 / DX7 Patch Editor
+ * Copyright (C) 2002 Juan Linietsky <coding@reduz.com.ar>
+ * Copyright (C) 2006 Mark-André Hopf <mhopf@mark13.org>
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 2 of
@@ -130,77 +134,6 @@ void AlgoDisplay::drawOp(Graphics &g, int x, int y, int num) {
     }
 }
 
-EnvDisplay::EnvDisplay() {
-    pvalues = (char *) &TMP_LEVEL_PTR;    
-}
-/*
-void EnvDisplay::paint(Graphics &g) {
-    g.setColour(Colours::black.withAlpha(0.5f));
-    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
-
-    
-    char *levels = pvalues + 4;
-    char *rates = pvalues;
-    
-    float dist[4];
-    float total = 0;
-    
-    int old = levels[3];
-    
-    for(int i=0;i<4;i++) {
-        int nw = levels[i];
-        dist[i] = ((float)abs(nw - old)) / rates[i] == 0 ? 1 : rates[i];
-        total += dist[i];
-        old = nw;
-    }
-    
-    if ( total < 1 ) {
-        dist[0] = dist[1] = dist[2] = dist[3] = 1;
-        total = 4;
-    }
-    
-    // TODO : this is WIP
-    float ratio =  96 / total;
-    
-    int oldx = 0;
-    int oldy = 32 - ((float)levels[3] / 3.125);
-    Path p;
-    
-    p.startNewSubPath(0, 32);
-    g.setColour(Colours::white);
-    
-    int i;
-    for(i=0;i<4;i++) {
-        int newx = dist[i] * ratio + oldx;
-        int newy = 32 - ((float)levels[i] / 3.125);
-        
-        p.lineTo(newx, newy);
-        if ( vPos == i ) {
-            g.fillEllipse(oldx-2, oldy-2, 4, 4);
-        }
-        
-        oldx = newx;
-        oldy = newy;
-    }
-    p.lineTo(96,32);
-    p.lineTo(0, 32);
-    
-    if ( vPos == i ) {
-        g.fillEllipse(oldx-2, oldy-2, 4, 4);
-    }
-
-    g.setColour(Colour(0xFF0FC00F).withAlpha(0.3f));
-    g.fillPath(p);
-    
-    g.setColour(Colour(0xFFFFFFFF));
-    String len;
-    len << ((int) total) << " / ";
-    len << ((int) vPos);
-    g.drawText(len, 5, 1, 72, 14, Justification::left, true);
-}
-*/
-
-
 static float EG_rate_rise_duration[128] = {
     38.00000 ,34.96000 ,31.92000 ,28.88000 ,25.84000 ,
     22.80000 ,20.64000 ,18.48000 ,16.32000 ,14.16000 ,
@@ -318,13 +251,17 @@ static float EG_rate_rise_percent[128] = {
     1.00000 ,1.00000 ,1.00000
 };
 
-double getDuration(int p_rate, int p_level_l, int p_level_r) {
+static double getDuration(int p_rate, int p_level_l, int p_level_r) {
     float *duration_table=(p_level_r>p_level_l) ? EG_rate_rise_duration : EG_rate_decay_duration;
     double duration=duration_table[p_rate];
     
     float* percent_table =(p_level_r>p_level_l) ? EG_rate_rise_percent  : EG_rate_decay_percent;
     duration *= fabs(percent_table[p_level_r]-percent_table[p_level_l]);
     return duration;
+}
+
+EnvDisplay::EnvDisplay() {
+    pvalues = (char *) &TMP_LEVEL_PTR;
 }
 
 void EnvDisplay::paint(Graphics &g) {
@@ -419,8 +356,6 @@ void EnvDisplay::paint(Graphics &g) {
     g.drawText(len, 5, 1, 72, 14, Justification::left, true);
 }
 
-
-
 PitchEnvDisplay::PitchEnvDisplay() {
     pvalues = (char *) &TMP_LEVEL_PTR;
     vPos = 0;
@@ -478,9 +413,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
     }
 }
 
-
 void VuMeter::paint(Graphics &g) {
-    
     // taken from the drawLevelMeter ;
     float width = getWidth();
     float height = getHeight();

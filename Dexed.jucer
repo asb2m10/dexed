@@ -12,6 +12,7 @@
               buildRTAS="0" buildAAX="0" pluginManufacturerEmail="support@yourcompany.com">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
+      <FILE id="xxGEA4" name="about.png" compile="0" resource="1" file="Resources/about.png"/>
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
     </GROUP>
     <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">

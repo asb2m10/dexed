@@ -2660,6 +2660,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resources\about.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
     <None Include="..\..\Resources\builtin_pgm.zip">
       <Filter>Dexed\Resources</Filter>
     </None>

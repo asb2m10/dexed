@@ -1,4 +1,4 @@
-Dexed - FM Synth Plugin
+Dexed - FM Plugin Synth
 =======================
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
@@ -27,6 +27,7 @@ Changelog
 #### Version 0.4.0 (current sprint)
 * Modulation wheel support
 * Now using the [Obxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
+* Pitchbend range / step
 
 Binary downloads
 ----------------
@@ -59,7 +60,8 @@ Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
-* Original DX7 compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) and to all the all crew who made these historic DX programs: Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
+* DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
+* DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * markusthegeek direct implication for this project
 
 TODO - Dexed 

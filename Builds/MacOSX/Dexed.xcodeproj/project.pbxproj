@@ -103,6 +103,7 @@
 		0CB234755B75E0DBC2FFB58E = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_ResizableCornerComponent.cpp"; path = "../../JuceLibraryCode/modules/juce_gui_basics/layout/juce_ResizableCornerComponent.cpp"; sourceTree = "SOURCE_ROOT"; };
 		0DCC7A5AD5AC5D3637FFAAFB = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_ToolbarButton.h"; path = "../../JuceLibraryCode/modules/juce_gui_basics/buttons/juce_ToolbarButton.h"; sourceTree = "SOURCE_ROOT"; };
 		0DE1759C594D2719742E928A = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_ElementComparator.h"; path = "../../JuceLibraryCode/modules/juce_core/containers/juce_ElementComparator.h"; sourceTree = "SOURCE_ROOT"; };
+		0E3FA3D7B11FC7D19CC634BE = {isa = PBXFileReference; lastKnownFileType = image.png; name = about.png; path = ../../Resources/about.png; sourceTree = "SOURCE_ROOT"; };
 		0E989C4BC7933A41E9B0019E = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_KeyboardFocusTraverser.cpp"; path = "../../JuceLibraryCode/modules/juce_gui_basics/keyboard/juce_KeyboardFocusTraverser.cpp"; sourceTree = "SOURCE_ROOT"; };
 		0EA1F582E4E45EB90F02223A = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = "juce_mac_CoreGraphicsContext.mm"; path = "../../JuceLibraryCode/modules/juce_graphics/native/juce_mac_CoreGraphicsContext.mm"; sourceTree = "SOURCE_ROOT"; };
 		0EF8098DE092ED5C25105241 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_MouseInactivityDetector.cpp"; path = "../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_MouseInactivityDetector.cpp"; sourceTree = "SOURCE_ROOT"; };
@@ -876,6 +877,7 @@
 		FF6607118B29435E76806DFA = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Dexed.component; sourceTree = "BUILT_PRODUCTS_DIR"; };
 		FF973BD60572C077A148D3AB = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_WildcardFileFilter.h"; path = "../../JuceLibraryCode/modules/juce_core/files/juce_WildcardFileFilter.h"; sourceTree = "SOURCE_ROOT"; };
 		F472964B0FFEE5615B72CE3D = {isa = PBXGroup; children = (
+					0E3FA3D7B11FC7D19CC634BE,
 					15B75D829C40872D542A38B8, ); name = Resources; sourceTree = "<group>"; };
 		BDC5059F1563FD8DD69AD324 = {isa = PBXGroup; children = (
 					3715DFDD7A1B12083F051F5A,
