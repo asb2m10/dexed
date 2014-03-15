@@ -313,6 +313,9 @@
     <ClCompile Include="..\..\Source\GlobalEditor.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\ParamDialog.cpp">
+      <Filter>Dexed\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\OperatorEditor.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
@@ -1465,6 +1468,9 @@
       <Filter>Dexed\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\GlobalEditor.h">
+      <Filter>Dexed\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ParamDialog.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\OperatorEditor.h">

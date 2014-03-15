@@ -51,8 +51,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     // The original DX7 had one single LFO. Later units had an LFO per note.
     Lfo lfo;
 
-    // in MIDI units (0x4000 is neutral)
-    Controllers controllers;
     bool sustain;
 
     // Extra buffering for when GetSamples wants a buffer not a multiple of N
@@ -105,6 +103,8 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     
     
 public :
+    // in MIDI units (0x4000 is neutral)
+    Controllers controllers;
     StringArray programNames;    
     char sysex[4096];    
     char data[161];

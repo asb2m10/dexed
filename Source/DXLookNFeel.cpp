@@ -20,7 +20,7 @@
  
 #include "DXLookNFeel.h"
 
-Colour DXLookNFeel::dxDarkBrown = Colour(0xFF0FC00F);
+Colour DXLookNFeel::dxDarkBrown = Colour(0xFF47260D);
 Colour DXLookNFeel::dxLightBrown = Colour(0xFFA87B67);
 
 DXLookNFeel::DXLookNFeel() {

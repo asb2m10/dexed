@@ -153,6 +153,7 @@
     <ClCompile Include="..\..\Source\msfa\sin.cc"/>
     <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
     <ClCompile Include="..\..\Source\GlobalEditor.cpp"/>
+    <ClCompile Include="..\..\Source\ParamDialog.cpp"/>
     <ClCompile Include="..\..\Source\OperatorEditor.cpp"/>
     <ClCompile Include="..\..\Source\DXLookNFeel.cpp"/>
     <ClCompile Include="..\..\Source\DXComponents.cpp"/>
@@ -1153,6 +1154,7 @@
     <ClInclude Include="..\..\Source\msfa\synth.h"/>
     <ClInclude Include="..\..\Source\PluginEditor.h"/>
     <ClInclude Include="..\..\Source\GlobalEditor.h"/>
+    <ClInclude Include="..\..\Source\ParamDialog.h"/>
     <ClInclude Include="..\..\Source\OperatorEditor.h"/>
     <ClInclude Include="..\..\Source\DXLookNFeel.h"/>
     <ClInclude Include="..\..\Source\DXComponents.h"/>

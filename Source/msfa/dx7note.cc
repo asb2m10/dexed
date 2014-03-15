@@ -184,15 +184,23 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
   int32_t pitchmod = pitchenv_.getsample();
   uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
   // TODO: add modulation sources (mod wheel, etc)
-  uint32_t pwmd = (ctrls->values_[KcontrollerModWheel] * 0.7874) * (1 << 24);
+  uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
   int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
     
   pitchmod += (((int64_t)pwmd) * (int64_t)senslfo) >> 39;
   pitchmod += (((int64_t)pmd) * (int64_t)senslfo) >> 39;
 
-  // hardcodes a pitchbend range of 3 semitones, TODO make configurable
   int pitchbend = ctrls->values_[kControllerPitch];
-  int32_t pb = (pitchbend - 0x2000) << 9;
+  int32_t pb;
+    
+  if ( ctrls->values_[kControllerPitchStep] == 0 ) {
+      pb = ((float)((pitchbend - 0x2000) << 11)) * ((float)ctrls->values_[kControllerPitchRange]) / 12.0;
+  } else {
+      int stp = 12 / ctrls->values_[kControllerPitchStep];
+      pb = (pitchbend - 0x2000) / stp;
+      pb = (pb * stp) << 11;
+  }
+    
   pitchmod += pb;
   for (int op = 0; op < 6; op++) {
     params_[op].gain[0] = params_[op].gain[1];

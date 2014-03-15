@@ -53,6 +53,8 @@
       <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
             file="Source/GlobalEditor.cpp"/>
       <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
+      <FILE id="eZN5P2" name="ParamDialog.cpp" compile="1" resource="0" file="Source/ParamDialog.cpp"/>
+      <FILE id="fijjBN" name="ParamDialog.h" compile="0" resource="0" file="Source/ParamDialog.h"/>
       <FILE id="oUObPG" name="OperatorEditor.cpp" compile="1" resource="0"
             file="Source/OperatorEditor.cpp"/>
       <FILE id="ChJDca" name="OperatorEditor.h" compile="0" resource="0"

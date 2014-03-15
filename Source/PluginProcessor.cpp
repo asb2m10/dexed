@@ -58,6 +58,11 @@ DexedAudioProcessor::DexedAudioProcessor() {
     prefOptions.filenameSuffix = String("xml");
     prefOptions.folderName = String("DigitalSuburban");
     prefOptions.osxLibrarySubFolder = String("Application Support");
+    
+    controllers.values_[kControllerPitchRange] = 3;
+    controllers.values_[kControllerPitchStep] = 0;
+    loadPreference();
+
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -80,7 +85,9 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     currentNote = 0;
     controllers.values_[kControllerPitch] = 0x2000;
-    controllers.values_[KcontrollerModWheel] = 0;
+    controllers.values_[kControllerModWheel] = 0;
+
+    
     sustain = false;
     extra_buf_size = 0;
 
@@ -270,7 +277,7 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
             
             // mod wheel
             if ( controller == 1 ) {
-                controllers.values_[KcontrollerModWheel] = value;
+                controllers.values_[kControllerModWheel] = value;
                 return;
             }
             
@@ -297,7 +304,7 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
 
     switch (cmd) {
         case 0xe0 :
-            controllers.values_[kControllerPitch] = (char) buf[1] | (buf[2] << 7);
+            controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
         break;
     }
 

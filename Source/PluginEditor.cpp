@@ -21,6 +21,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "GlobalEditor.h"
+#include "ParamDialog.h"
 #include "math.h"
 #include <fstream>
 
@@ -202,6 +203,25 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         return;
     }
 
+    if (buttonThatWasClicked == settingsButton) {
+        
+        AlertWindow window("","", AlertWindow::NoIcon, this);
+        ParamDialog param;
+        param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
+        param.setDialogValues(processor->controllers);
+        
+        window.addCustomComponent(&param);
+        window.addButton("OK", 0);
+        window.addButton("Cancel" ,1);
+        if ( window.runModalLoop() != 0 )
+            return;
+        
+        param.getDialogValues(processor->controllers);
+        processor->savePreference();
+        
+        return;
+    }
+    
     if (buttonThatWasClicked == aboutButton) {
         AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.4", "https://github.com/asb2m10/dexed\n"
                 "(c) 2013-2014 Pascal Gauthier\nUnder the GPL v2\n\n"

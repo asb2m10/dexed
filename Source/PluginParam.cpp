@@ -444,12 +444,24 @@ void DexedAudioProcessor::loadPreference() {
     if ( prop.containsKey( String("normalizeDxVelocity") ) ) {
         normalizeDxVelocity = prop.getIntValue( String("normalizeDxVelocity") );
     }
+    
+    if ( prop.containsKey( String("pitchRange") ) ) {
+        controllers.values_[kControllerPitchRange] = prop.getIntValue( String("pitchRange") );
+    }
+    
+    if ( prop.containsKey( String("pitchStep") ) ) {
+        controllers.values_[kControllerPitchStep] = prop.getIntValue( String("pitchStep") );
+    }
+    
 }
 
 void DexedAudioProcessor::savePreference() {
     PropertiesFile prop(prefOptions);
     
     prop.setValue(String("normalizeDxVelocity"), normalizeDxVelocity);
+    prop.setValue(String("pitchRange"), controllers.values_[kControllerPitchRange]);
+    prop.setValue(String("pitchStep"), controllers.values_[kControllerPitchStep]);
+    
     prop.save();
 }
 
