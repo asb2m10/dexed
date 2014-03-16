@@ -51,6 +51,7 @@ public:
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
     void updatePitchPos(int pos);
+    void updateVu(float v);
     void updateDisplay();
 
     //[/UserMethods]
@@ -92,6 +93,8 @@ private:
     ScopedPointer<Slider> feedback;
     ScopedPointer<Slider> algo;
     ScopedPointer<LcdDisplay> lcdDisplay;
+    ScopedPointer<Slider> output;
+    ScopedPointer<VuMeter> vuOutput;
 
 
     //==============================================================================

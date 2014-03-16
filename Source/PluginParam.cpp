@@ -215,6 +215,9 @@ void DexedAudioProcessor::initCtrl() {
     fxReso = new CtrlFloat("Resonance", &fx.uiReso);
     ctrl.add(fxReso);
     
+    output = new CtrlFloat("Output", &fx.uiGain);
+    ctrl.add(output);
+    
     algo = new CtrlDX("ALGORITHM", 32, 134, 1);
     ctrl.add(algo);
     

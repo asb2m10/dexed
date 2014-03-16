@@ -278,6 +278,7 @@ void DexedAudioProcessorEditor::timerCallback() {
         operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
+    global.updateVu(processor->vuSignal);
 }   
 
 void DexedAudioProcessorEditor::updateUI() {

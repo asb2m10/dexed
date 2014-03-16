@@ -47,6 +47,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     
     currentNote = -1;
     workBlock = NULL;
+    vuSignal = 0;
     initCtrl();
     setCurrentProgram(0);
     sendSysexChange = true;
@@ -175,14 +176,24 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
          */
         
         processSamples(block, workBlock);
-        for(int i = 0; i < block; i++ ) {
+        for(int i = 0; i < block; i++ )
             channelData[i+samplePos] = workBlock[i];
-        }
         
         samplePos += block;
     }
 
     fx.process(channelData, numSamples);
+    for(int i=0; i<numSamples; i++) {
+        float s = std::abs(channelData[i]);
+        
+        const double decayFactor = 0.99992;
+        if (s > vuSignal)
+            vuSignal = s;
+        else if (vuSignal > 0.001f)
+            vuSignal *= decayFactor;
+        else
+            vuSignal = 0;
+    }
     
     // DX7 is a mono synth
     for (int channel = 1; channel < getNumInputChannels(); ++channel) {

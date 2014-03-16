@@ -28,6 +28,7 @@ Changelog
 * Modulation wheel support
 * Now using the [Obxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
 * Pitchbend range / step
+* Output VU status
 
 Binary downloads
 ----------------

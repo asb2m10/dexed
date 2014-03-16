@@ -50,8 +50,10 @@ public:
 
 class VuMeter: public Component {
     void paint(Graphics &g);
-    public :
+public :
+    VuMeter();    
     float v;
+    int totalBlocks;
 };
 
 class LcdDisplay : public Component {

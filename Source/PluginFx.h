@@ -39,11 +39,13 @@ class PluginFx {
     // preprocess values taken the UI
     float rCutoff;
     float rReso;
+    float rGain;
     
     // thread values; if these are different from the UI,
     // it needs to be recalculated.
     float pReso;
     float pCutoff;
+    float pGain;
     
     // I am still keeping the 2pole w/multimode filter
     inline float NR(float sample, float g);
@@ -56,6 +58,7 @@ public:
     // this is set directly by the ui / parameter
     float uiCutoff;
     float uiReso;
+    float uiGain;
     
     void init(int sampleRate);
     void process(float *work, int sampleSize);

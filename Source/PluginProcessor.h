@@ -114,6 +114,8 @@ public :
     
     bool forceRefreshUI;
     
+    float vuSignal;
+    
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];
@@ -133,6 +135,7 @@ public :
 
     ScopedPointer<CtrlFloat> fxCutoff;
     ScopedPointer<CtrlFloat> fxReso;
+    ScopedPointer<CtrlFloat> output;
 
     int importSysex(const char *imported);
     void setDxValue(int offset, int v);

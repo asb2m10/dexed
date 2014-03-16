@@ -230,6 +230,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     
     dexedState.setAttribute("cutoff", fx.uiCutoff);
     dexedState.setAttribute("reso", fx.uiReso);
+    dexedState.setAttribute("gain", fx.uiGain);
     dexedState.setAttribute("currentProgram", currentProgram);
 
     char sysex_blob[4104];
@@ -257,6 +258,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     fx.uiCutoff = root->getDoubleAttribute("cutoff");
     fx.uiReso = root->getDoubleAttribute("reso");
+    fx.uiGain = root->getDoubleAttribute("gain");
     currentProgram = root->getIntAttribute("currentProgram");
 
     XmlElement *dexedBlob = root->getChildByName("dexedBlob");

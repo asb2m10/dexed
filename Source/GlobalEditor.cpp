@@ -165,6 +165,15 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (lcdDisplay = new LcdDisplay());
     lcdDisplay->setName ("lcdDisplay");
 
+    addAndMakeVisible (output = new Slider ("cutoff"));
+    output->setRange (0, 1, 0);
+    output->setSliderStyle (Slider::Rotary);
+    output->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    output->addListener (this);
+
+    addAndMakeVisible (vuOutput = new VuMeter());
+    vuOutput->setName ("vuOutput");
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -174,6 +183,7 @@ GlobalEditor::GlobalEditor ()
 
     //[Constructor] You can add your own custom stuff here..
     lcdDisplay->systemMsg << "*** DEXED FM synthesizer ***";
+    vuOutput->totalBlocks = 6;
 
     //[/Constructor]
 }
@@ -207,6 +217,8 @@ GlobalEditor::~GlobalEditor()
     feedback = nullptr;
     algo = nullptr;
     lcdDisplay = nullptr;
+    output = nullptr;
+    vuOutput = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -218,6 +230,24 @@ void GlobalEditor::paint (Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
+
+    g.setColour (Colours::black);
+    g.setFont (Font (10.00f, Font::plain));
+    g.drawText (TRANS("Volume"),
+                27, 73, 45, 15,
+                Justification::centred, true);
+
+    g.setColour (Colours::black);
+    g.setFont (Font (10.00f, Font::plain));
+    g.drawText (TRANS("Cutoff"),
+                75, 73, 45, 15,
+                Justification::centred, true);
+
+    g.setColour (Colours::black);
+    g.setFont (Font (10.00f, Font::plain));
+    g.drawText (TRANS("Resonance"),
+                123, 73, 45, 15,
+                Justification::centred, true);
 
     //[UserPaint] Add your own custom painting code here..
 
@@ -231,8 +261,8 @@ void GlobalEditor::resized()
     lfoAmDepth->setBounds (672, 64, 24, 24);
     lfoPitchDepth->setBounds (648, 64, 24, 24);
     lfoDelay->setBounds (624, 64, 24, 24);
-    cutoff->setBounds (8, 40, 48, 48);
-    reso->setBounds (64, 40, 48, 48);
+    cutoff->setBounds (80, 40, 40, 40);
+    reso->setBounds (128, 40, 40, 40);
     pitchRate2->setBounds (752, 64, 32, 24);
     pitchRate3->setBounds (776, 64, 32, 24);
     pitchRate4->setBounds (800, 64, 32, 24);
@@ -249,7 +279,9 @@ void GlobalEditor::resized()
     algoDisplay->setBounds (442, 8, 152, 74);
     feedback->setBounds (568, 32, 24, 24);
     algo->setBounds (568, 8, 24, 24);
-    lcdDisplay->setBounds (8, 0, 256, 32);
+    lcdDisplay->setBounds (8, 0, 232, 32);
+    output->setBounds (32, 40, 40, 40);
+    vuOutput->setBounds (8, 44, 16, 38);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -372,6 +404,11 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_algo] -- add your slider handling code here..
         //[/UserSliderCode_algo]
     }
+    else if (sliderThatWasMoved == output)
+    {
+        //[UserSliderCode_output] -- add your slider handling code here..
+        //[/UserSliderCode_output]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
@@ -403,6 +440,7 @@ void GlobalEditor::bind(DexedAudioProcessor *parent) {
     parent->pitchEgRate[3]->bind(pitchRate4);
     parent->fxCutoff->bind(cutoff);
     parent->fxReso->bind(reso);
+    parent->output->bind(output);
     algoDisplay->algo = &(parent->data[134]);
     pitchEnvDisplay->pvalues = &(parent->data[126]);
     processor = parent;
@@ -429,6 +467,11 @@ void GlobalEditor::updatePitchPos(int pos) {
     pitchEnvDisplay->vPos = pos;
     pitchEnvDisplay->repaint();
 }
+
+void GlobalEditor::updateVu(float f) {
+    vuOutput->v = f;
+    vuOutput->repaint();
+}
 //[/MiscUserCode]
 
 
@@ -445,7 +488,14 @@ BEGIN_JUCER_METADATA
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="855" initialHeight="90">
-  <BACKGROUND backgroundColour="ffffff"/>
+  <BACKGROUND backgroundColour="ffffff">
+    <TEXT pos="27 73 45 15" fill="solid: ff000000" hasStroke="0" text="Volume"
+          fontname="Default font" fontsize="10" bold="0" italic="0" justification="36"/>
+    <TEXT pos="75 73 45 15" fill="solid: ff000000" hasStroke="0" text="Cutoff"
+          fontname="Default font" fontsize="10" bold="0" italic="0" justification="36"/>
+    <TEXT pos="123 73 45 15" fill="solid: ff000000" hasStroke="0" text="Resonance"
+          fontname="Default font" fontsize="10" bold="0" italic="0" justification="36"/>
+  </BACKGROUND>
   <COMBOBOX name="lfoType" id="31018596af3b34e9" memberName="lfoType" virtualName=""
             explicitFocusOrder="0" pos="624 40 96 16" editable="0" layout="33"
             items="TRIANGLE&#10;SAW DOWN&#10;SAW UP&#10;SQUARE&#10;SINE&#10;S&amp;HOLD"
@@ -467,11 +517,11 @@ BEGIN_JUCER_METADATA
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="cutoff" id="40531f16bb0bd225" memberName="cutoff" virtualName=""
-          explicitFocusOrder="0" pos="8 40 48 48" min="0" max="1" int="0"
+          explicitFocusOrder="0" pos="80 40 40 40" min="0" max="1" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="reso" id="c8c13464e81a8d83" memberName="reso" virtualName=""
-          explicitFocusOrder="0" pos="64 40 48 48" min="0" max="1" int="0"
+          explicitFocusOrder="0" pos="128 40 40 40" min="0" max="1" int="0"
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
@@ -535,8 +585,14 @@ BEGIN_JUCER_METADATA
           style="Rotary" textBoxPos="NoTextBox" textBoxEditable="0" textBoxWidth="80"
           textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="lcdDisplay" id="30c7bb8f114cbbe3" memberName="lcdDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="8 0 256 32" class="LcdDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="8 0 232 32" class="LcdDisplay"
                     params=""/>
+  <SLIDER name="cutoff" id="7697fdd54fd1593e" memberName="output" virtualName=""
+          explicitFocusOrder="0" pos="32 40 40 40" min="0" max="1" int="0"
+          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1"/>
+  <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
+                    explicitFocusOrder="0" pos="8 44 16 38" class="VuMeter" params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

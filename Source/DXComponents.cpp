@@ -413,6 +413,10 @@ void PitchEnvDisplay::paint(Graphics &g) {
     }
 }
 
+VuMeter::VuMeter() {
+    totalBlocks = 16;
+}
+
 void VuMeter::paint(Graphics &g) {
     // taken from the drawLevelMeter ;
     float width = getWidth();
@@ -420,22 +424,16 @@ void VuMeter::paint(Graphics &g) {
     
     g.setColour (Colours::black);
     g.fillRoundedRectangle (0.0f, 0.0f, (float)  width, (float) height, 0);
-    /*g.setColour (Colours::black.withAlpha (0.2f));
-     g.drawRoundedRectangle (1.0f, 1.0f, width - 2.0f, height - 2.0f, 3.0f, 1.0f);*/
-    
-    const int totalBlocks = 16;
+
     const int numBlocks = roundToInt (totalBlocks * v);
     const float h = (height - 6.0f) / (float) totalBlocks;
     
     for (int i = 0; i < totalBlocks; ++i) {
-        g.setColour (Colours::red);
         if (i >= numBlocks)
             g.setColour (Colours::red.withAlpha (0.2f));
         else
             g.setColour (Colours::red);
-        //g.fillRoundedRectangle (3.0f + i * w + w * 0.1f, 3.0f, w * 0.8f, height - 6.0f, w * 0.4f);
-        
-        g.fillRoundedRectangle (3.0f, (height-3.0f) - (3.0f + i * h + h * 0.1f) , width - 6.0f, h * 0.8f, 0);
+        g.fillRoundedRectangle (3.0f, (height-4.0f) - (3.0f + i * h + h * 0.1f) , width - 6.0f, h * 0.8f, 0);
     }
 }
 
