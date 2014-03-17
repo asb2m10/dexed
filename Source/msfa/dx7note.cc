@@ -26,6 +26,14 @@
 
 using namespace std;
 
+void dexed_trace(const char *source, const char *fmt, ...);
+
+#ifdef _MSC_VER
+#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
+#else
+#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+#endif
+
 int32_t midinote_to_logfreq(int midinote) {
   const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
   const int step = (1 << 24) / 12;
@@ -191,16 +199,18 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
   pitchmod += (((int64_t)pmd) * (int64_t)senslfo) >> 39;
 
   int pitchbend = ctrls->values_[kControllerPitch];
-  int32_t pb;
+  int32_t pb = (pitchbend - 0x2000);
     
-  if ( ctrls->values_[kControllerPitchStep] == 0 ) {
-      pb = ((float)((pitchbend - 0x2000) << 11)) * ((float)ctrls->values_[kControllerPitchRange]) / 12.0;
-  } else {
-      int stp = 12 / ctrls->values_[kControllerPitchStep];
-      pb = (pitchbend - 0x2000) / stp;
-      pb = (pb * stp) << 11;
+  if ( pb != 0 ) {
+    if ( ctrls->values_[kControllerPitchStep] == 0 ) {
+        pb = ((float)(pb << 11)) * ((float)ctrls->values_[kControllerPitchRange]) / 12.0;
+    } else {
+        int stp = 12 / ctrls->values_[kControllerPitchStep];
+        pb = pb * stp / 8191;
+        pb = (pb * (8191/stp)) << 11;
+    }
   }
-    
+        
   pitchmod += pb;
   for (int op = 0; op < 6; op++) {
     params_[op].gain[0] = params_[op].gain[1];

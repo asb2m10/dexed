@@ -175,7 +175,6 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         return;
     }
     
-    
     if (buttonThatWasClicked == loadButton) {
         FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX;*.*", 1);
 
@@ -191,7 +190,9 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
             }
             fp_in.read((char *)syx_data, 4104);
             fp_in.close();
-            processor->importSysex((char *) &syx_data);
+            if ( processor->importSysex((char *) &syx_data) ) {
+                global.setSystemMessage(String("Unkown sysex format !?"));
+            }
             processor->setCurrentProgram(0);
             rebuildProgramCombobox();
             programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
@@ -248,9 +249,6 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     }
     
     if (buttonThatWasClicked == aboutButton) {
-        /*AlertWindow::showMessageBoxAsync(AlertWindow::NoIcon, "DEXED - DX Emulator 0.4", "https://github.com/asb2m10/dexed\n"
-                "(c) 2013-2014 Pascal Gauthier\nUnder the GPL v2\n\n"
-                "Based on Music Synthesizer for Android\nhttps://code.google.com/p/music-synthesizer-for-android");*/
         AboutBox about(this);
         about.runModalLoop();
         return;

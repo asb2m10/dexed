@@ -75,11 +75,10 @@ void PluginFx::init(int sr) {
     
     uiCutoff = 1;
     uiReso = 0;
-    uiGain = 0.8;
+    uiGain = 1;
     
     pCutoff = -1;
     pReso = -1;
-    pGain = -1;
 }
 
 inline float PluginFx::NR24(float sample,float g,float lpc) {
@@ -96,74 +95,72 @@ inline float PluginFx::NR(float sample, float g) {
 }
 
 void PluginFx::process(float *work, int sampleSize) {
+    if ( uiGain != 1 ) {
+        for(int i=0; i < sampleSize; i++ )
+            work[i] *= uiGain;
+    }
+    
     // don't apply the LPF if the cutoff is to maximum
-    if ( uiCutoff != 1 ) {
-        if ( uiCutoff != pCutoff || uiReso != pReso ) {
-            rReso = (0.991-logsc(1-uiReso,0,0.991));
-            R24 = 3.5 * rReso;
+    if ( uiCutoff == 1 )
+        return;
+    
+    if ( uiCutoff != pCutoff || uiReso != pReso ) {
+        rReso = (0.991-logsc(1-uiReso,0,0.991));
+        R24 = 3.5 * rReso;
         
-            float cutoffNorm = logsc(uiCutoff,60,19000);
-            rCutoff = (float)tan(cutoffNorm * sampleRateInv * juce::float_Pi);
+        float cutoffNorm = logsc(uiCutoff,60,19000);
+        rCutoff = (float)tan(cutoffNorm * sampleRateInv * juce::float_Pi);
             
-            pCutoff = uiCutoff;
-            pReso = uiReso;
-            
-            R = 1 - rReso;
+        pCutoff = uiCutoff;
+        pReso = uiReso;
+        
+        R = 1 - rReso;
+    }
+        
+    // THIS IS MY FAVORITE 4POLE OBXd filter
+        
+    // maybe smooth this value
+    float g = rCutoff;
+    float lpc = g / (1 + g);
+    
+    for(int i=0; i < sampleSize; i++ ) {
+        float s = work[i];
+        s = s - 0.45*tptlpupw(c,s,15,sampleRateInv);
+        s = tptpc(d,s,bright);
+        
+        float y0 = NR24(s,g,lpc);
+        
+        //first low pass in cascade
+        double v = (y0 - s1) * lpc;
+        double res = v + s1;
+        s1 = res + v;
+        
+        //damping
+        s1 =atan(s1*rcor24)*rcor24Inv;
+        float y1= res;
+        float y2 = tptpc(s2,y1,g);
+        float y3 = tptpc(s3,y2,g);
+        float y4 = tptpc(s4,y3,g);
+        float mc;
+    
+        switch(mmch) {
+            case 0:
+                mc = ((1 - mmt) * y4 + (mmt) * y3);
+                break;
+            case 1:
+                mc = ((1 - mmt) * y3 + (mmt) * y2);
+                break;
+            case 2:
+                mc = ((1 - mmt) * y2 + (mmt) * y1);
+                break;
+            case 3:
+                mc = y1;
+                break;
         }
         
-        // THIS IS MY FAVORITE 4POLE OBXd filter
-        
-        // maybe smooth this value
-        float g = rCutoff;
-        float lpc = g / (1 + g);
-        
-        for(int i=0; i < sampleSize; i++ ) {
-            float s = work[i];
-            s = s - 0.45*tptlpupw(c,s,15,sampleRateInv);
-            s = tptpc(d,s,bright);
-            
-            float y0 = NR24(s,g,lpc);
-            
-            //first low pass in cascade
-            double v = (y0 - s1) * lpc;
-            double res = v + s1;
-            s1 = res + v;
-            
-            //damping
-            s1 =atan(s1*rcor24)*rcor24Inv;
-            float y1= res;
-            float y2 = tptpc(s2,y1,g);
-            float y3 = tptpc(s3,y2,g);
-            float y4 = tptpc(s4,y3,g);
-            float mc;
-        
-            switch(mmch) {
-                case 0:
-                    mc = ((1 - mmt) * y4 + (mmt) * y3);
-                    break;
-                case 1:
-                    mc = ((1 - mmt) * y3 + (mmt) * y2);
-                    break;
-                case 2:
-                    mc = ((1 - mmt) * y2 + (mmt) * y1);
-                    break;
-                case 3:
-                    mc = y1;
-                    break;
-            }
-        
-            //half volume comp
-            work[i] = mc * (1 + R24 * 0.45);
-        }
+        //half volume comp
+        work[i] = mc * (1 + R24 * 0.45);
     }
-    
-    if ( uiGain != pGain ) {
-        rGain = linsc(uiGain, 0, 1.25);
-        pGain = uiGain;
-    }
-    
-    for(int i=0; i < sampleSize; i++ )
-        work[i] *= rGain;
 }
 
 /*

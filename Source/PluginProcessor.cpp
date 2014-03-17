@@ -63,7 +63,6 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();
-
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -87,7 +86,6 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     currentNote = 0;
     controllers.values_[kControllerPitch] = 0x2000;
     controllers.values_[kControllerModWheel] = 0;
-
     
     sustain = false;
     extra_buf_size = 0;

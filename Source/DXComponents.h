@@ -56,8 +56,12 @@ public :
     int totalBlocks;
 };
 
-class LcdDisplay : public Component {
+class LcdDisplay : public Component, public Timer, public AsyncUpdater {
+    void timerCallback();
+    void handleAsyncUpdate();
 public:
+    LcdDisplay();
+    void setSystemMsg(String msg);
     String systemMsg;
     String paramMsg;
     void paint(Graphics &g);    

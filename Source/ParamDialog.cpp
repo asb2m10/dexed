@@ -49,6 +49,7 @@ ParamDialog::ParamDialog ()
 
 
     //[Constructor] You can add your own custom stuff here..
+    pitchRange->setEnabled(pitchStep->getValue() == 0);
     //[/Constructor]
 }
 
@@ -110,6 +111,7 @@ void ParamDialog::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == pitchStep)
     {
         //[UserSliderCode_pitchStep] -- add your slider handling code here..
+        pitchRange->setEnabled(pitchStep->getValue() == 0);
         //[/UserSliderCode_pitchStep]
     }
 

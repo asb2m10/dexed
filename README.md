@@ -24,17 +24,18 @@ Features
 
 Changelog
 ---------
-#### Version 0.4.0 (current sprint)
+#### Version 0.4.0
 * Modulation wheel support
 * Now using the [Obxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
 * Pitchbend range / step
-* Output VU status
+* Output/Volume VU status
 
 Binary downloads
 ----------------
 Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
 in normal operation it shouldn't crash and the VST state saving works.
 
+* Version 0.4.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.4.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.4.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.4.0-osx.vst.zip)
 * Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
 
 Using as a DX7 editor
@@ -57,6 +58,12 @@ digital circuit bending feel.
 Saving those corrupt/random sysex data will regenerate a 32 bulk program sysex dump with a 
 valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks your DX7 keyboard.
 
+FAQ (possibly)
+--------------
+* Some programs can generate distortion : This is because the voice summing still needs some tuning. You can simply lower the volume on those programs.
+* Some sysex seems to be corrupted : Even if the sysex checksum doesn't match, Dexed will try to load it (this is a kind of randomize feature). Right now Dexed supports only original DX7 sysex, other DX family sysex (like the DX21) is considered as random data.
+* Dexed doesn't receive/send parameter data from/to my DX7 : Most DX7 parameter change are done via sysex and very few VST host actually implements sysex. I'm planning to do a standalone executable to handle this issue.
+
 Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
@@ -70,6 +77,7 @@ TODO - Dexed
 * Implement a better DX look and feel (amp, pitch, algo)
 * Various code cleanup
 * Standalone executable (for full support of the sysex editor)
+* Midi sample resolution on DAW block size
 
 TODO - msfa
 -----------

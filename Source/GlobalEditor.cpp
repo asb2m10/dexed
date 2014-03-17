@@ -182,7 +182,6 @@ GlobalEditor::GlobalEditor ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    lcdDisplay->systemMsg << "*** DEXED FM synthesizer ***";
     vuOutput->totalBlocks = 6;
 
     //[/Constructor]
@@ -448,8 +447,7 @@ void GlobalEditor::bind(DexedAudioProcessor *parent) {
 }
 
 void GlobalEditor::setSystemMessage(String msg) {
-    lcdDisplay->systemMsg = msg;
-    repaint();
+    lcdDisplay->setSystemMsg(msg);
 }
 
 void GlobalEditor::setParamMessage(String msg) {

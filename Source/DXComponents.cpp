@@ -437,6 +437,25 @@ void VuMeter::paint(Graphics &g) {
     }
 }
 
+LcdDisplay::LcdDisplay() {
+    systemMsg << "*** DEXED FM synthesizer ***";
+}
+
+void LcdDisplay::timerCallback() {
+    systemMsg = "*** DEXED FM synthesizer ***";
+    repaint();
+}
+
+void LcdDisplay::setSystemMsg(String msg) {
+    systemMsg = msg;
+    triggerAsyncUpdate();
+}
+
+void LcdDisplay::handleAsyncUpdate() {
+    repaint();
+    startTimer(5000);
+}
+
 void LcdDisplay::paint(Graphics &g) {
     g.setColour(Colours::black.withAlpha(0.4f));
     g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
