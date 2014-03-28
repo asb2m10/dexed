@@ -24,6 +24,10 @@ Features
 
 Changelog
 ---------
+
+#### Version 0.5.0 (current sprint)
+* Offical Linux support
+
 #### Version 0.4.0
 * Modulation wheel support
 * Now using the [Obxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation

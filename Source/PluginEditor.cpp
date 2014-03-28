@@ -47,7 +47,7 @@ public:
         g.drawImage (about_png, 0, 0, about_png.getWidth(), about_png.getHeight(),
                      0, 0, about_png.getWidth(), about_png.getHeight());
         g.setColour(Colour(0xFF000000));
-        String ver("Version 0.4 ; built date " __DATE__ );
+        String ver("Version 0.5 ; built date " __DATE__ );
         g.drawSingleLineText(ver, 9, 118);
     }
 };
@@ -170,7 +170,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         processor->loadBuiltin(result-1);
         processor->setCurrentProgram(0);
         rebuildProgramCombobox();
-        programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+        programs.setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
         processor->updateHostDisplay();
         return;
     }
@@ -195,7 +195,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
             }
             processor->setCurrentProgram(0);
             rebuildProgramCombobox();
-            programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+            programs.setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
             processor->updateHostDisplay();
         }
 
@@ -288,19 +288,19 @@ void DexedAudioProcessorEditor::updateUI() {
     }
     
     int id = processor->getCurrentProgram() + 1;
-    programs.setSelectedId(id, NotificationType::dontSendNotification);
+    programs.setSelectedId(id, dontSendNotification);
     
     global.updateDisplay();
 }
 
 void DexedAudioProcessorEditor::rebuildProgramCombobox() {
-    programs.clear(NotificationType::dontSendNotification);
+    programs.clear(dontSendNotification);
     for(int i=0;i<processor->getNumPrograms();i++) {
         String id;
         id << (i+1) << ". " << processor->getProgramName(i);
         programs.addItem(id, i+1);
     }
-    programs.setSelectedId(processor->getCurrentProgram()+1, NotificationType::dontSendNotification);
+    programs.setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
 }
 
 void DexedAudioProcessorEditor::storeProgram() {

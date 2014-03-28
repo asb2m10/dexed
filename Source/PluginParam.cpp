@@ -108,7 +108,7 @@ String CtrlFloat::getValueDisplay() {
 
 void CtrlFloat::updateComponent() {
     if (slider != NULL) {
-        slider->setValue(*vPointer, NotificationType::dontSendNotification);
+        slider->setValue(*vPointer, dontSendNotification);
     }
 }
 
@@ -180,16 +180,16 @@ void CtrlDX::comboBoxChanged(ComboBox* combo) {
 void CtrlDX::updateComponent() {
     if (slider != NULL) {
         slider->setValue(getValue() + displayValue,
-                NotificationType::dontSendNotification);
+                dontSendNotification);
     }
 
     if (button != NULL) {
         if (getValue() == 0) {
             button->setToggleState(false,
-                    NotificationType::dontSendNotification);
+                    dontSendNotification);
         } else {
             button->setToggleState(true,
-                    NotificationType::dontSendNotification);
+                    dontSendNotification);
         }
     }
 
@@ -198,7 +198,7 @@ void CtrlDX::updateComponent() {
         if (comboBox->getNumItems() <= cvalue) {
             cvalue = comboBox->getNumItems();
         }
-        comboBox->setSelectedId(cvalue, NotificationType::dontSendNotification);
+        comboBox->setSelectedId(cvalue, dontSendNotification);
     }
 }
 
