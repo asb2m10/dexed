@@ -57,8 +57,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     float extra_buf[N];
     int extra_buf_size;
 
-    float *workBlock;
-    int workBlockSize;
     int currentProgram;
     
     /**

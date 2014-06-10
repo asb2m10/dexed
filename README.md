@@ -5,10 +5,10 @@ Dexed is a multi platform, multi format plugin synth that is closely modeled on 
 Under the hood it uses [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) 
 for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
 
-The goal of this project is to be a great tool/companion for the original DX7. Sound engine 
+The goal of this project is to be a tool/companion for the original DX7. Sound engine 
 with 'float' value parameters, different waveform à la TX81z would be great but anything that 
 goes beyond the DX7 should and will be a fork of this project. This is to keep the compatiblity with
-the original DX7.
+the original machine.
 
 Dexed is licensed on the GPL v2. The msfa component (acronym for music synthesizer for android, see msfa 
 in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
@@ -24,6 +24,10 @@ Features
 
 Changelog
 ---------
+#### Version 0.5.0
+* Linux support
+* Fix large DAW blocksize with midi events 
+
 #### Version 0.4.0
 * Modulation wheel support
 * Now using the [Obxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
@@ -35,6 +39,7 @@ Binary downloads
 Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
 in normal operation it shouldn't crash and the VST state saving works.
 
+* Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
 * Version 0.4.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.4.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.4.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.4.0-osx.vst.zip)
 * Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
 
@@ -77,7 +82,6 @@ TODO - Dexed
 * Implement a better DX look and feel (amp, pitch, algo)
 * Various code cleanup
 * Standalone executable (for full support of the sysex editor)
-* Midi sample resolution on DAW block size
 
 TODO - msfa
 -----------

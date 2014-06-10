@@ -46,7 +46,6 @@ DexedAudioProcessor::DexedAudioProcessor() {
     lastStateSave = 0;
     
     currentNote = -1;
-    workBlock = NULL;
     vuSignal = 0;
     initCtrl();
     setCurrentProgram(0);
@@ -90,9 +89,6 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     sustain = false;
     extra_buf_size = 0;
 
-    workBlockSize = samplesPerBlock;
-    workBlock = new float[samplesPerBlock];
-
     keyboardState.reset();
     
     nextMidi = new MidiMessage(0xF0);
@@ -109,10 +105,6 @@ void DexedAudioProcessor::releaseResources() {
         voices[note].live = false;
     }
 
-    if ( workBlock != NULL ) {
-        delete workBlock;
-    }
-
     keyboardState.reset();
     
     delete nextMidi;
@@ -121,6 +113,7 @@ void DexedAudioProcessor::releaseResources() {
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
     int numSamples = buffer.getNumSamples();
+    int i = 0;
     
     if ( refreshVoice ) {
         for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
@@ -131,13 +124,6 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         refreshVoice = false;
     }
 
-    // check buffer size
-    if ( numSamples > workBlockSize ) {
-        delete workBlock;
-        workBlockSize = numSamples;
-        workBlock = new float[workBlockSize];
-    }
-
     // Now pass any incoming midi messages to our keyboard state object, and let it
     // add messages to the buffer if the user is clicking on the on-screen keys
     keyboardState.processNextMidiBuffer (midiMessages, 0, numSamples, true);
@@ -146,38 +132,67 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
 
     float *channelData = buffer.getSampleData(0);
-    int samplePos = 0;
+  
+    // flush first events
+    for (i = 0; i < numSamples && i < extra_buf_size; i++) {
+        channelData[i] = extra_buf[i];
+    }
+    
+    // remaining buffer is still to be processed
+    if (extra_buf_size > numSamples) {
+        for (int j = 0; j < extra_buf_size - numSamples; j++) {
+            extra_buf[j] = extra_buf[j + numSamples];
+        }
+        extra_buf_size -= numSamples;
+        
+        // flush the event, they will be process in next cycle
+        while(getNextEvent(&it, numSamples)) {
+            processMidiMessage(midiMsg);
+        }
+    } else {
+        for (; i < numSamples; i += N) {
+            AlignedBuf<int32_t, N> audiobuf;
+            float sumbuf[N];
+            
+            while(getNextEvent(&it, i)) {
+                processMidiMessage(midiMsg);
+            }
+            
+            for (int j = 0; j < N; ++j) {
+                audiobuf.get()[j] = 0;
+                sumbuf[j] = 0;
+            }
+            int32_t lfovalue = lfo.getsample();
+            int32_t lfodelay = lfo.getdelay();
+            for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+                if (voices[note].live) {
+                    voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
+                    
+                    for (int j=0; j < N; ++j) {
+                        int32_t val = audiobuf.get()[j] >> 4;
+                        int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
+                        float f = ((float) clip_val) / (float) 32768;
+                        if( f > 1 ) f = 1;
+                        if( f < -1 ) f = -1;
+                        sumbuf[j] += f;
+                        audiobuf.get()[j] = 0;
+                    }
+                }
+            }
+            
+            int jmax = numSamples - i;
+            for (int j = 0; j < N; ++j) {
+                if (j < jmax) {
+                    channelData[i + j] = sumbuf[j];
+                } else {
+                    extra_buf[j - jmax] = sumbuf[j];
+                }
+            }
+        }
+    }
     
     while(getNextEvent(&it, numSamples)) {
         processMidiMessage(midiMsg);
-    }
-    
-    while ( samplePos < numSamples ) {
-        int block = numSamples;
-        
-        /*
-         * MIDI message needs to be bound to 
-         * the sample. When a rendering occurs
-         * very large blocks can be passed and
-         * without this code, the plugin will be 
-         * out of sync... TODO!
-         
-        while(getNextEvent(&it, samplePos)) {
-            processMidiMessage(midiMsg);
-        }
-        
-        if ( hasMidiMessage ) {
-            block = midiEventPos - samplePos;
-        } else {
-            block = numSamples - samplePos;
-        }
-         */
-        
-        processSamples(block, workBlock);
-        for(int i = 0; i < block; i++ )
-            channelData[i+samplePos] = workBlock[i];
-        
-        samplePos += block;
     }
 
     fx.process(channelData, numSamples);
@@ -209,6 +224,14 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     if ( ! midiOut.isEmpty() ) {
         midiMessages.swapWith(midiOut);
     }
+}
+
+void DexedAudioProcessor::processSamples(int n_samples, float *buffer) {
+    int i;
+
+
+
+    extra_buf_size = i - n_samples;
 }
 
 
@@ -358,59 +381,6 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
         }
     }
 }
-
-
-void DexedAudioProcessor::processSamples(int n_samples, float *buffer) {
-    int i;
-    for (i = 0; i < n_samples && i < extra_buf_size; i++) {
-        buffer[i] = extra_buf[i];
-    }
-    if (extra_buf_size > n_samples) {
-        for (int j = 0; j < extra_buf_size - n_samples; j++) {
-            extra_buf[j] = extra_buf[j + n_samples];
-        }
-        extra_buf_size -= n_samples;
-        return;
-    }
-        
-    for (; i < n_samples; i += N) {
-        AlignedBuf<int32_t, N> audiobuf;
-        float sumbuf[N];
-        
-        for (int j = 0; j < N; ++j) {
-            audiobuf.get()[j] = 0;
-            sumbuf[j] = 0;
-        }
-        int32_t lfovalue = lfo.getsample();
-        int32_t lfodelay = lfo.getdelay();
-        for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-            if (voices[note].live) {
-                voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-                
-                for (int j=0; j < N; ++j) {
-                    int32_t val = audiobuf.get()[j] >> 4;
-                    int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-                    float f = ((float) clip_val) / (float) 32768;
-                    if( f > 1 ) f = 1;
-                    if( f < -1 ) f = -1;
-                    sumbuf[j] += f;
-                    audiobuf.get()[j] = 0;
-                }
-            }
-        }
-        
-        int jmax = n_samples - i;
-        for (int j = 0; j < N; ++j) {
-            if (j < jmax) {
-                buffer[i + j] = sumbuf[j];
-            } else {
-                extra_buf[j - jmax] = sumbuf[j];
-            }
-        }
-    }
-    extra_buf_size = i - n_samples;
-}
-
 
 // ====================================================================
 bool DexedAudioProcessor::peekVoiceStatus() {
