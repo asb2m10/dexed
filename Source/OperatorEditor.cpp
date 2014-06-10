@@ -472,7 +472,7 @@ void OperatorEditor::updateDisplay() {
         else
             txtFreq << " " << det;
     }
-    khzDisplay->setText(txtFreq, NotificationType::dontSendNotification);
+    khzDisplay->setText(txtFreq, dontSendNotification);
     envDisplay->repaint();
 }
 

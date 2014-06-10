@@ -444,6 +444,7 @@ LcdDisplay::LcdDisplay() {
 void LcdDisplay::timerCallback() {
     systemMsg = "*** DEXED FM synthesizer ***";
     repaint();
+    stopTimer();
 }
 
 void LcdDisplay::setSystemMsg(String msg) {
