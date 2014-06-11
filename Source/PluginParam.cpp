@@ -79,7 +79,7 @@ void Ctrl::sliderValueChanged(Slider* moved) {
 }
 
 void Ctrl::buttonClicked(Button* clicked) {
-    publishValue(clicked->getToggleStateValue() == 1 ? 1 : 0);
+    publishValue(clicked->getToggleState());
 }
 
 void Ctrl::comboBoxChanged(ComboBox* combo) {
@@ -160,10 +160,11 @@ String CtrlDX::getValueDisplay() {
 
 void CtrlDX::publishValue(float value) {
     Ctrl::publishValue(value / steps);
-
+    
     DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
-    if ( editor == NULL )
+    if ( editor == NULL ) {
         return;
+    }
     String msg;
     msg << label << " = " << getValueDisplay();
     editor->global.setParamMessage(msg);
@@ -177,6 +178,10 @@ void CtrlDX::comboBoxChanged(ComboBox* combo) {
     publishValue(combo->getSelectedId() - 1);
 }
 
+void CtrlDX::buttonClicked(Button *button) {
+    publishValue((int) button->getToggleState());
+}
+
 void CtrlDX::updateComponent() {
     if (slider != NULL) {
         slider->setValue(getValue() + displayValue,
@@ -185,11 +190,9 @@ void CtrlDX::updateComponent() {
 
     if (button != NULL) {
         if (getValue() == 0) {
-            button->setToggleState(false,
-                    dontSendNotification);
+            button->setToggleState(false, dontSendNotification);
         } else {
-            button->setToggleState(true,
-                    dontSendNotification);
+            button->setToggleState(true, dontSendNotification);
         }
     }
 
@@ -418,6 +421,13 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     lfo.reset(data + 137);
     currentProgram = index;
     triggerAsyncUpdate();
+    
+    // reset parameter display
+    DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) getActiveEditor();
+    if ( editor == NULL ) {
+        return;
+    }
+    editor->global.setParamMessage("");
 }
 
 const String DexedAudioProcessor::getProgramName(int index) {

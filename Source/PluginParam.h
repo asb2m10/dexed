@@ -96,6 +96,7 @@ public:
     
     void sliderValueChanged (Slider* moved);
     void comboBoxChanged (ComboBox* combo);
+    void buttonClicked (Button* buttonThatWasClicked);
     void updateComponent();
 };
 

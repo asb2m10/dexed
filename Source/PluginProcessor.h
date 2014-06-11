@@ -83,7 +83,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     void processMidiMessage(MidiMessage *msg);
     void keydown(uint8_t pitch, uint8_t velo);
     void keyup(uint8_t pitch);
-    void processSamples(int n_samples, float *buffer);
     
     /**
      * this is called from the Audio thread to tell

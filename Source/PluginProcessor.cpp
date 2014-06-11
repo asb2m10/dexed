@@ -226,14 +226,6 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 }
 
-void DexedAudioProcessor::processSamples(int n_samples, float *buffer) {
-    int i;
-
-
-
-    extra_buf_size = i - n_samples;
-}
-
 
 //==============================================================================
 // This creates new instances of the plugin..
