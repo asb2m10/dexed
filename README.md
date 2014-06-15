@@ -7,7 +7,7 @@ for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
 
 The goal of this project is to be a tool/companion for the original DX7. Sound engine 
 with 'float' value parameters, different waveform à la TX81z would be great but anything that 
-goes beyond the DX7 should and will be a fork of this project. This is to keep the compatiblity with
+goes beyond the DX7 should and will be a fork of this project. This is to keep the compatibility with
 the original machine.
 
 Dexed is licensed on the GPL v2. The msfa component (acronym for music synthesizer for android, see msfa 
@@ -19,7 +19,7 @@ Features
 * The sound engine [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) is closely modeled on the original DX7 characteristics
 * 144 DAW automatable DX7 parameters available from one single panel
 * Fully supports DX7 input and output Sysex messages; including controller change. This means that you can use this with a native DX7/TX7 as a patch editor
-* Each operator have a realtime VU meter to know wich one is active
+* Each operator have a realtime VU meter to know which one is active
 * Can load/save any DX7/TX7 sysex programs. It is also possible to save a single program into a different sysex file.
 
 Changelog
@@ -39,7 +39,7 @@ Binary downloads
 Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
 in normal operation it shouldn't crash and the VST state saving works.
 
-* Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
+* Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
 * Version 0.4.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.4.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.4.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.4.0-osx.vst.zip)
 * Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
 
