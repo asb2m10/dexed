@@ -189,6 +189,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                 }
             }
         }
+        extra_buf_size = i - numSamples;
     }
     
     while(getNextEvent(&it, numSamples)) {
