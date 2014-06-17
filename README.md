@@ -24,6 +24,10 @@ Features
 
 Changelog
 ---------
+#### Version 0.5.1
+* Fix distortion issue with FL (DAW blocksize not multiple of 64)
+* OS X 64bit build (the VST package contains both 32bit and 64bit)
+
 #### Version 0.5.0
 * Linux support
 * Fix large DAW blocksize with midi events 
@@ -39,6 +43,7 @@ Binary downloads
 Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
 in normal operation it shouldn't crash and the VST state saving works.
 
+* Version 0.5.1 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.1-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.1-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.1-osx.vst.zip)
 * Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
 * Version 0.4.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.4.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.4.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.4.0-osx.vst.zip)
 * Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
@@ -85,5 +90,6 @@ TODO - Dexed
 
 TODO - msfa
 -----------
+* The sample rate should not change the response of the envelopes
 * LFO/Mod-wheel Amplitude
 * Algo 4 & 6 feedback
