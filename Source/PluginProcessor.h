@@ -30,6 +30,7 @@
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
+#include "SysexComm.h"
 
 struct ProcessorVoice {
     int midi_note;
@@ -42,7 +43,7 @@ struct ProcessorVoice {
 //==============================================================================
 /**
 */
-class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
+class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback
 {
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
@@ -78,9 +79,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     bool normalizeDxVelocity;
     bool sendSysexChange;
     
-    MidiBuffer midiOut;
-
-    void processMidiMessage(MidiMessage *msg);
+    void processMidiMessage(const MidiMessage *msg);
     void keydown(uint8_t pitch, uint8_t velo);
     void keyup(uint8_t pitch);
     
@@ -98,6 +97,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater
     int midiEventPos;
 	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
     
+    void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message);
     
 public :
     // in MIDI units (0x4000 is neutral)
@@ -107,6 +107,9 @@ public :
     char data[161];
     
     CartridgeManager cartManager;
+    SysexComm sysexComm;
+    MidiBuffer midiOut;
+    
     VoiceStatus voiceStatus;
     
     bool forceRefreshUI;
@@ -145,7 +148,8 @@ public :
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
-
+    void panic();
+    
     //==============================================================================
     AudioProcessorEditor* createEditor();
     bool hasEditor() const;

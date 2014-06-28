@@ -37,18 +37,21 @@ void Ctrl::bind(Slider *s) {
     slider = s;
     updateComponent();
     s->addListener(this);
+    s->addMouseListener(this, true);
 }
 
 void Ctrl::bind(Button *b) {
     button = b;
     updateComponent();
     b->addListener(this);
+    b->addMouseListener(this, true);
 }
 
 void Ctrl::bind(ComboBox *c) {
     comboBox = c;
     updateComponent();
     c->addListener(this);
+    c->addMouseListener(this, true);
 }
 
 void Ctrl::unbind() {
@@ -84,6 +87,13 @@ void Ctrl::buttonClicked(Button* clicked) {
 
 void Ctrl::comboBoxChanged(ComboBox* combo) {
     publishValue((combo->getSelectedId() - 1) / combo->getNumItems());
+}
+
+void Ctrl::mouseEnter(const juce::MouseEvent &event) {
+    updateDisplayName();
+}
+
+void Ctrl::updateDisplayName() {
 }
 
 // ************************************************************************
@@ -166,9 +176,7 @@ String CtrlDX::getValueDisplay() {
     return ret;
 }
 
-void CtrlDX::publishValue(float value) {
-    Ctrl::publishValue(value / steps);
-    
+void CtrlDX::updateDisplayName() {
     DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
     if ( editor == NULL ) {
         return;
@@ -176,6 +184,12 @@ void CtrlDX::publishValue(float value) {
     String msg;
     msg << label << " = " << getValueDisplay();
     editor->global.setParamMessage(msg);
+}
+
+
+void CtrlDX::publishValue(float value) {
+    Ctrl::publishValue(value / steps);
+    updateDisplayName();
 }
 
 void CtrlDX::sliderValueChanged(Slider* moved) {
@@ -376,11 +390,22 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
     if (offset >= 0)
         data[offset] = v;
 
+    // MIDDLE C (transpose)
+    if (offset == 144)
+        panic();
+    
     if (!sendSysexChange)
         return;
+    
     uint8 msg[7] = { 0xF0, 0x43, 0x10, offset > 127, 0, (uint8) v, 0xF7 };
+    msg[2] = 0x10 | sysexComm.getChl();
     msg[4] = offset & 0x7F;
-    midiOut.addEvent(msg, 7, 0);
+    
+    if ( sysexComm.isOutputActive() ) {
+        sysexComm.send(MidiMessage(msg,7));
+    } else {
+        midiOut.addEvent(msg, 7, 0);
+    }
 }
 
 void DexedAudioProcessor::unbindUI() {
@@ -474,6 +499,18 @@ void DexedAudioProcessor::loadPreference() {
         controllers.values_[kControllerPitchStep] = prop.getIntValue( String("pitchStep") );
     }
     
+    if ( prop.containsKey( String("sysexIn") ) ) {
+        sysexComm.setInput( prop.getValue("sysexIn") );
+    }
+    
+    if ( prop.containsKey( String("sysexOut") ) ) {
+        sysexComm.setOutput( prop.getValue("sysexOut") );
+    }
+    
+    if ( prop.containsKey( String("sysexChl") ) ) {
+        sysexComm.setChl( prop.getIntValue( String("sysexChl") ) );
+    }
+    
 }
 
 void DexedAudioProcessor::savePreference() {
@@ -482,6 +519,10 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("normalizeDxVelocity"), normalizeDxVelocity);
     prop.setValue(String("pitchRange"), controllers.values_[kControllerPitchRange]);
     prop.setValue(String("pitchStep"), controllers.values_[kControllerPitchStep]);
+    
+    prop.setValue(String("sysexIn"), sysexComm.getInput());
+    prop.setValue(String("sysexOut"), sysexComm.getOutput());
+    prop.setValue(String("sysexChl"), sysexComm.getChl());
     
     prop.save();
 }

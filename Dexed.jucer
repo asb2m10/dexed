@@ -67,6 +67,8 @@
       <FILE id="x2E8Zg" name="DXComponents.h" compile="0" resource="0" file="Source/DXComponents.h"/>
       <FILE id="bvvgdq" name="PluginFx.cpp" compile="1" resource="0" file="Source/PluginFx.cpp"/>
       <FILE id="E4gace" name="PluginFx.h" compile="0" resource="0" file="Source/PluginFx.h"/>
+      <FILE id="KLqlYP" name="SysexComm.cpp" compile="1" resource="0" file="Source/SysexComm.cpp"/>
+      <FILE id="DWALdR" name="SysexComm.h" compile="0" resource="0" file="Source/SysexComm.h"/>
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>

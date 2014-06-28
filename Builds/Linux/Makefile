@@ -70,6 +70,7 @@ OBJECTS := \
   $(OBJDIR)/DXLookNFeel_cfc3afa2.o \
   $(OBJDIR)/DXComponents_a6963633.o \
   $(OBJDIR)/PluginFx_d84f776e.o \
+  $(OBJDIR)/SysexComm_f57b4ecd.o \
   $(OBJDIR)/BinaryData_ce4232d4.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
   $(OBJDIR)/juce_audio_devices_a4c8a728.o \
@@ -196,6 +197,11 @@ $(OBJDIR)/DXComponents_a6963633.o: ../../Source/DXComponents.cpp
 $(OBJDIR)/PluginFx_d84f776e.o: ../../Source/PluginFx.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling PluginFx.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/SysexComm_f57b4ecd.o: ../../Source/SysexComm.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling SysexComm.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/BinaryData_ce4232d4.o: ../../JuceLibraryCode/BinaryData.cpp

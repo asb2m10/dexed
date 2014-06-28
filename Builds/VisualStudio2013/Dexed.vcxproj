@@ -157,6 +157,7 @@
     <ClCompile Include="..\..\Source\DXLookNFeel.cpp"/>
     <ClCompile Include="..\..\Source\DXComponents.cpp"/>
     <ClCompile Include="..\..\Source\PluginFx.cpp"/>
+    <ClCompile Include="..\..\Source\SysexComm.cpp"/>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </ClCompile>
@@ -1158,6 +1159,7 @@
     <ClInclude Include="..\..\Source\DXLookNFeel.h"/>
     <ClInclude Include="..\..\Source\DXComponents.h"/>
     <ClInclude Include="..\..\Source\PluginFx.h"/>
+    <ClInclude Include="..\..\Source\SysexComm.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioSampleBuffer.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_FloatVectorOperations.h"/>

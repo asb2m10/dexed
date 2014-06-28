@@ -37,6 +37,7 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     DexedAudioProcessor *processor;
     ComboBox programs;
     PopupMenu cartPopup;
+    PopupMenu sendPopup;
             
     MidiKeyboardComponent midiKeyboard;
     DXLookNFeel dx_lnf;
@@ -47,7 +48,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     ScopedPointer<TextButton> storeButton;
     ScopedPointer<TextButton> aboutButton;
     ScopedPointer<TextButton> settingsButton;
-            
+    ScopedPointer<TextButton> sendButton;
+    
     void storeProgram();
 
 public:

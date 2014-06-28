@@ -25,7 +25,7 @@
 #include "PluginData.h"
 
 
-uint8_t sysexChecksum(const char *sysex) {
+uint8_t sysexChecksum(const char *sysex, int size) {
     int sum = 0;
     int i;
     
@@ -66,18 +66,39 @@ void extractProgramNames(const char *block, StringArray &dest) {
     }
 }
 
-void exportSysex(char *dest, char *src) {
+void exportSysexCart(char *dest, char *src, char sysexChl) {
     uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 };
+    header[2] = sysexChl;
+    
     memcpy(dest, header, 6);
     
     // copy 32 voices
     memcpy(dest+6, src, 4096);
     
     // make checksum for dump
-    uint8_t footer[] = { sysexChecksum(src), 0xF7 };
+    uint8_t footer[] = { sysexChecksum(src, 4096), 0xF7 };
     
     memcpy(dest+4102, footer, 2);
 }
+
+
+void exportSysexPgm(char *dest, char *src, char sysexChl) {
+    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B };
+    header[2] = sysexChl;
+    
+    memcpy(dest, header, 6);
+    
+    // copy 1 unpacked voices
+    memcpy(dest+6, src, 155);
+    
+    // put some logic to "mute" an operator if the level is 0
+    
+    // make checksum for dump
+    uint8_t footer[] = { sysexChecksum(src, 155), 0xF7 };
+    
+    memcpy(dest+161, footer, 2);
+}
+
 
 /**
  * Pack a program into a 32 packed sysex
@@ -194,7 +215,7 @@ void DexedAudioProcessor::unpackProgram(int idx) {
 int DexedAudioProcessor::importSysex(const char *imported) {
     memcpy(sysex, imported + 6, 4096);
     
-    uint8_t checksum = sysexChecksum(((char *) &sysex));
+    uint8_t checksum = sysexChecksum(((char *) &sysex), 4096);
     extractProgramNames(sysex, programNames);
     
     if ( checksum != imported[4102] ) {
@@ -234,7 +255,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("currentProgram", currentProgram);
 
     char sysex_blob[4104];
-    exportSysex((char *) &sysex_blob, (char *) sysex);
+    exportSysexCart((char *) &sysex_blob, (char *) sysex, 0);
     
     NamedValueSet blobSet;
     blobSet.set("sysex", var((void *) &sysex_blob, 4104));
@@ -285,19 +306,6 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     TRACE("setting VST STATE");
     updateUI();
 }
-
-//==============================================================================
-/*void DexedAudioProcessor::getCurrentProgramStateInformation(
- MemoryBlock& destData) {
- destData.insert(data, 161, 0);
- }
- 
- void DexedAudioProcessor::setCurrentProgramStateInformation(const void* source,
- int sizeInBytes) {
- memcpy((void *) data, source, sizeInBytes);
- updateUI();
- }*/
-
 
 CartridgeManager::CartridgeManager() {
     MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);

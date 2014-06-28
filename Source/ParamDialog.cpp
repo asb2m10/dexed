@@ -41,15 +41,46 @@ ParamDialog::ParamDialog ()
     pitchStep->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     pitchStep->addListener (this);
 
+    addAndMakeVisible (sysexIn = new ComboBox ("sysexIn"));
+    sysexIn->setEditableText (false);
+    sysexIn->setJustificationType (Justification::centredLeft);
+    sysexIn->setTextWhenNothingSelected (String::empty);
+    sysexIn->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    sysexIn->addListener (this);
+
+    addAndMakeVisible (sysexOut = new ComboBox ("sysexOut"));
+    sysexOut->setEditableText (false);
+    sysexOut->setJustificationType (Justification::centredLeft);
+    sysexOut->setTextWhenNothingSelected (String::empty);
+    sysexOut->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    sysexOut->addListener (this);
+
+    addAndMakeVisible (sysexChl = new Slider ("sysexChl"));
+    sysexChl->setRange (1, 16, 1);
+    sysexChl->setSliderStyle (Slider::Rotary);
+    sysexChl->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    sysexChl->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (280, 200);
+    setSize (280, 300);
 
 
     //[Constructor] You can add your own custom stuff here..
     pitchRange->setEnabled(pitchStep->getValue() == 0);
+
+    StringArray input;
+    input.add("None");
+    input.addArray(MidiInput::getDevices());
+    sysexIn->addItemList(input, 1);
+
+    StringArray output;
+    output.add("None");
+    output.addArray(MidiOutput::getDevices());
+    sysexOut->addItemList(output, 1);
+
     //[/Constructor]
 }
 
@@ -60,6 +91,9 @@ ParamDialog::~ParamDialog()
 
     pitchRange = nullptr;
     pitchStep = nullptr;
+    sysexIn = nullptr;
+    sysexOut = nullptr;
+    sysexChl = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -77,13 +111,31 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Pitch Bend Range"),
-                28, 20, 131, 23,
+                19, 21, 205, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Pitch Bend Step"),
-                28, 52, 128, 23,
+                19, 61, 229, 23,
+                Justification::centredLeft, true);
+
+    g.setColour (Colours::white);
+    g.setFont (Font (15.00f, Font::plain));
+    g.drawText (TRANS("Sysex In"),
+                19, 170, 131, 23,
+                Justification::centredLeft, true);
+
+    g.setColour (Colours::white);
+    g.setFont (Font (15.00f, Font::plain));
+    g.drawText (TRANS("Sysex Out"),
+                19, 210, 131, 23,
+                Justification::centredLeft, true);
+
+    g.setColour (Colours::white);
+    g.setFont (Font (15.00f, Font::plain));
+    g.drawText (TRANS("Sysex Channel"),
+                19, 258, 245, 23,
                 Justification::centredLeft, true);
 
     //[UserPaint] Add your own custom painting code here..
@@ -92,8 +144,11 @@ void ParamDialog::paint (Graphics& g)
 
 void ParamDialog::resized()
 {
-    pitchRange->setBounds (184, 16, 72, 24);
-    pitchStep->setBounds (184, 56, 72, 24);
+    pitchRange->setBounds (192, 16, 72, 24);
+    pitchStep->setBounds (192, 56, 72, 24);
+    sysexIn->setBounds (104, 168, 152, 24);
+    sysexOut->setBounds (104, 208, 152, 24);
+    sysexChl->setBounds (184, 256, 72, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -114,23 +169,58 @@ void ParamDialog::sliderValueChanged (Slider* sliderThatWasMoved)
         pitchRange->setEnabled(pitchStep->getValue() == 0);
         //[/UserSliderCode_pitchStep]
     }
+    else if (sliderThatWasMoved == sysexChl)
+    {
+        //[UserSliderCode_sysexChl] -- add your slider handling code here..
+        //[/UserSliderCode_sysexChl]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
+}
+
+void ParamDialog::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
+{
+    //[UsercomboBoxChanged_Pre]
+    //[/UsercomboBoxChanged_Pre]
+
+    if (comboBoxThatHasChanged == sysexIn)
+    {
+        //[UserComboBoxCode_sysexIn] -- add your combo box handling code here..
+        //[/UserComboBoxCode_sysexIn]
+    }
+    else if (comboBoxThatHasChanged == sysexOut)
+    {
+        //[UserComboBoxCode_sysexOut] -- add your combo box handling code here..
+        //[/UserComboBoxCode_sysexOut]
+    }
+
+    //[UsercomboBoxChanged_Post]
+    //[/UsercomboBoxChanged_Post]
 }
 
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void ParamDialog::setDialogValues(Controllers &c) {
+void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr) {
     pitchRange->setValue(c.values_[kControllerPitchRange]);
     pitchStep->setValue(c.values_[kControllerPitchStep]);
+    sysexChl->setValue(mgr.getChl() + 1);
+
+    StringArray inputs = MidiInput::getDevices();
+    sysexIn->setItemEnabled(inputs.indexOf(mgr.getInput()), true);
+    
+    StringArray outputs = MidiOutput::getDevices();
+    sysexOut->setItemEnabled(outputs.indexOf(mgr.getOutput()), true);
 }
 
-void ParamDialog::getDialogValues(Controllers &c) {
+void ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr) {
     c.values_[kControllerPitchRange] = pitchRange->getValue();
     c.values_[kControllerPitchStep] = pitchStep->getValue();
+    mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
+    mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
+    mgr.setChl(sysexChl->getValue() - 1);
 }
 
 //[/MiscUserCode]
@@ -148,21 +238,37 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="ParamDialog" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="280" initialHeight="200">
+                 fixedSize="1" initialWidth="280" initialHeight="300">
   <BACKGROUND backgroundColour="ff4e270d">
-    <TEXT pos="28 20 131 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
+    <TEXT pos="19 21 205 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="28 52 128 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
+    <TEXT pos="19 61 229 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+    <TEXT pos="19 170 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex In"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+    <TEXT pos="19 210 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex Out"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+    <TEXT pos="19 258 245 23" fill="solid: ffffffff" hasStroke="0" text="Sysex Channel"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
-          virtualName="" explicitFocusOrder="0" pos="184 16 72 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="192 16 72 24" min="0"
           max="12" int="1" style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchStep" id="b86af4b792e768ca" memberName="pitchStep"
-          virtualName="" explicitFocusOrder="0" pos="184 56 72 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="192 56 72 24" min="0"
           max="12" int="1" style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
+            explicitFocusOrder="0" pos="104 168 152 24" editable="0" layout="33"
+            items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <COMBOBOX name="sysexOut" id="44730115841c2214" memberName="sysexOut" virtualName=""
+            explicitFocusOrder="0" pos="104 208 152 24" editable="0" layout="33"
+            items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
+          explicitFocusOrder="0" pos="184 256 72 24" min="1" max="16" int="1"
+          style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
+          textBoxHeight="20" skewFactor="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -25,7 +25,7 @@
 #define SYSEX_SIZE 4104
 
 
-enum UpackedOffset {
+enum UnpackedOffset {
 	egRate,
 	egLevel = 4,
 	breakpoint = 8,
@@ -54,11 +54,13 @@ enum UpackedOffset {
 	lfoKeySync,
 	lfoWave,
 	middleC,
-	pModeSens
+	pModeSens,
+    osc6state
 };
 
 void extractProgramNames(const char *block, StringArray &dest);
-void exportSysex(char *dest, char *src);
+void exportSysexCart(char *dest, char *src, char sysexChl);
+void exportSysexPgm(char *dest, char *src, char sysexChl);
 void packProgram(uint8_t *dest, uint8_t *src, int idx, String name);
 
 class CartridgeManager {

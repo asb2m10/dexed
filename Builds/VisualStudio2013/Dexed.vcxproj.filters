@@ -328,6 +328,9 @@
     <ClCompile Include="..\..\Source\PluginFx.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\SysexComm.cpp">
+      <Filter>Dexed\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
       <Filter>Juce Modules\juce_audio_basics\buffers</Filter>
     </ClCompile>
@@ -1483,6 +1486,9 @@
       <Filter>Dexed\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginFx.h">
+      <Filter>Dexed\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\SysexComm.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h">

@@ -51,7 +51,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     setCurrentProgram(0);
     sendSysexChange = true;
     normalizeDxVelocity = false;
-
+    sysexComm.listener = this;
+    
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
     prefOptions.applicationName = String("Dexed");
@@ -62,6 +63,12 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();
+    
+    for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+        voices[note].dx7_note = NULL;
+    }
+    nextMidi = NULL;
+    midiMsg = NULL;
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -99,16 +106,24 @@ void DexedAudioProcessor::releaseResources() {
     currentNote = -1;
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        delete voices[note].dx7_note;        
+        if ( voices[note].dx7_note != NULL ) {
+            delete voices[note].dx7_note;
+            voices[note].dx7_note = NULL;
+        }
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
     }
 
     keyboardState.reset();
-    
-    delete nextMidi;
-    delete midiMsg;
+    if ( nextMidi != NULL ) {
+        delete nextMidi;
+        nextMidi = NULL;
+    }
+    if ( midiMsg != NULL ) {
+        delete midiMsg;
+        midiMsg = NULL;
+    }
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
@@ -243,7 +258,7 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 	return false;
 }
 
-void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
+void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     if ( msg->isSysEx() ) {
 
         const uint8 *buf = msg->getSysExData();
@@ -335,12 +350,20 @@ void DexedAudioProcessor::processMidiMessage(MidiMessage *msg) {
 
 }
 
+void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) {
+    if ( ! message.isSysEx() )
+        return;
+    processMidiMessage(&message);
+}
+
 void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
         keyup(pitch);
         return;
     }
 
+    pitch += (data[144] - 24);
+    
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
@@ -363,6 +386,8 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
 }
 
 void DexedAudioProcessor::keyup(uint8_t pitch) {
+    pitch += (data[144] - 24);
+    
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         if (voices[note].midi_note == pitch && voices[note].keydown) {
             if (sustain) {
@@ -373,6 +398,13 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
             voices[note].keydown = false;
         }
     }
+}
+
+void DexedAudioProcessor::panic() {
+    for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+        voices[i].keydown = false;
+    }
+    keyboardState.reset();
 }
 
 // ====================================================================

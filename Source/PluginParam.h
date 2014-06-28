@@ -25,7 +25,7 @@
 
 class DexedAudioProcessor;
 
-class Ctrl : public SliderListener, public ButtonListener, public ComboBoxListener {
+class Ctrl : public SliderListener, public ButtonListener, public ComboBoxListener, public MouseListener {
 protected:
     /**
      * Binded components of the UI
@@ -57,7 +57,9 @@ public:
     void comboBoxChanged (ComboBox* combo);
     void sliderValueChanged (Slider* moved);
     void buttonClicked (Button* buttonThatWasClicked);
-
+    void mouseEnter(const MouseEvent &event);
+    virtual void updateDisplayName();
+    
     /**
      * Index of this parameter
      */
@@ -73,7 +75,7 @@ public:
 	void setValueHost(float f);
 	float getValueHost();
 	String getValueDisplay();
-	void updateComponent();
+    void updateComponent();
 };
 
 // CtrlDX is a controller that is related to DX parameters
@@ -98,6 +100,8 @@ public:
     void comboBoxChanged (ComboBox* combo);
     void buttonClicked (Button* buttonThatWasClicked);
     void updateComponent();
+    
+    void updateDisplayName();
 };
 
 

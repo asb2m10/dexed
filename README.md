@@ -24,6 +24,12 @@ Features
 
 Changelog
 ---------
+#### Version 0.6.0 (current sprint)
+* Added external midi interface to send / receive sysex
+* Fix Tracktion crash upon startup 
+* Middle C (transpose) now works
+* Mouse over the interface controls now tells what it does without having to change it
+
 #### Version 0.5.1
 * Fix distortion issue with FL (DAW blocksize not multiple of 64)
 * OS X 64bit build (the VST package contains both 32bit and 64bit)
@@ -50,10 +56,7 @@ in normal operation it shouldn't crash and the VST state saving works.
 
 Using as a DX7 editor
 ---------------------
-This plugin can process original DX7 sysex messages. If you change a parameter, 
-it will send the corresponding DX7 sysex to midi out. Not all DAW supports 
-sysex; for example Ableton Live simply discard any sysex data. Reaper does 
-process midi out, but doesn't pass any midi in sysex input data to the plugin.
+You can use this plugin to edit your real DX7 patch. Since sysex support on most DAW is missing, you might need to configure this plugin to send/receive sysex data to a specific midi port.
 
 Randomized programs
 -------------------
@@ -72,7 +75,7 @@ FAQ (possibly)
 --------------
 * Some programs can generate distortion : This is because the voice summing still needs some tuning. You can simply lower the volume on those programs.
 * Some sysex seems to be corrupted : Even if the sysex checksum doesn't match, Dexed will try to load it (this is a kind of randomize feature). Right now Dexed supports only original DX7 sysex, other DX family sysex (like the DX21) is considered as random data.
-* Dexed doesn't receive/send parameter data from/to my DX7 : Most DX7 parameter change are done via sysex and very few VST host actually implements sysex. I'm planning to do a standalone executable to handle this issue.
+* Dexed doesn't receive/send parameter data from/to my DX7 : Most DX7 parameter change are done via sysex and very few VST host actually implements sysex. Configure this plugin to send sysex data to a specific midi interface (see PARM panel).
 
 Credits & thanks
 ----------------
@@ -86,10 +89,10 @@ TODO - Dexed
 ------------
 * Implement a better DX look and feel (amp, pitch, algo)
 * Various code cleanup
-* Standalone executable (for full support of the sysex editor)
 
 TODO - msfa
 -----------
 * The sample rate should not change the response of the envelopes
+* Portamento implentation
 * LFO/Mod-wheel Amplitude
 * Algo 4 & 6 feedback
