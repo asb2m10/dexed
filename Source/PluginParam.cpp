@@ -23,6 +23,7 @@
 #include "PluginParam.h"
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "Dexed.h"
 
 // ************************************************************************
 //
@@ -57,16 +58,19 @@ void Ctrl::bind(ComboBox *c) {
 void Ctrl::unbind() {
     if (slider != NULL) {
         slider->removeListener(this);
+        slider->removeMouseListener(this);
         slider = NULL;
     }
 
     if (button != NULL) {
         button->removeListener(this);
+        button->removeMouseListener(this);
         button = NULL;
     }
 
     if (comboBox != NULL) {
         comboBox->removeListener(this);
+        comboBox->removeMouseListener(this);
         comboBox = NULL;
     }
 }

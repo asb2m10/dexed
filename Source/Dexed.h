@@ -18,35 +18,17 @@
  * Boston, MA 02110-1301 USA.
  */
 
-#ifndef SYSEXCOMM_H_INCLUDED
-#define SYSEXCOMM_H_INCLUDED
+#ifndef DEXED_H_INCLUDED
+#define DEXED_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
+void dexed_trace(const char *source, const char *fmt, ...);
 
-class SysexComm {
-    MidiInput *input;
-    MidiOutput *output;
-    String inputName;
-    String outputName;
-    int sysexChl;
-public :
-    MidiInputCallback *listener;
-    
-    SysexComm();
-    ~SysexComm();
-    
-    void setInput(String name);
-    void setOutput(String name);
-    void setChl(int chl);
-    
-    String getInput();
-    String getOutput();
-    int getChl();
-    
-    bool isInputActive();
-    bool isOutputActive();
-    
-    void send(const MidiMessage& message);
-};
+#ifdef _MSC_VER
+#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
+#else
+#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+#endif
 
-#endif  // SYSEXCOMM_H_INCLUDED
+#define DEXED_VERSION "0.6.0"
+
+#endif  // DEXED_H_INCLUDED

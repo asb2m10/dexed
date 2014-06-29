@@ -1419,6 +1419,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\Dexed.h">
+      <Filter>Dexed\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\PluginProcessor.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>

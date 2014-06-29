@@ -23,13 +23,13 @@
 #include "PluginParam.h"
 #include "PluginProcessor.h"
 #include "PluginData.h"
-
+#include "Dexed.h"
 
 uint8_t sysexChecksum(const char *sysex, int size) {
     int sum = 0;
     int i;
     
-    for (i = 0; i < 4096; sum -= sysex[i++]);
+    for (i = 0; i < size; sum -= sysex[i++]);
     return sum & 0x7F;
 }
 

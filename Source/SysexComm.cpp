@@ -1,14 +1,25 @@
-/*
-  ==============================================================================
-
-    MidiMgr.cpp
-    Created: 24 Jun 2014 2:43:55am
-    Author:  Pascal Gauthier
-
-  ==============================================================================
-*/
+/**
+ *
+ * Copyright (c) 2014 Pascal Gauthier.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of
+ * the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be
+ * useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+ * PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301 USA.
+ */
 
 #include "SysexComm.h"
+#include "Dexed.h"
 
 SysexComm::SysexComm() {
     sysexChl = 1;
@@ -49,7 +60,7 @@ void SysexComm::setInput(String target) {
     int idx = devices.indexOf(target);
 
     if ( idx == -1 ) {
-        // device not found
+        TRACE("device %s not found", target.toRawUTF8());
         inputName = "";
         return;
     }
@@ -58,6 +69,9 @@ void SysexComm::setInput(String target) {
     if ( input != NULL ) {
         inputName = target;
         input->start();
+        TRACE("sysex %s opened", target.toRawUTF8());
+    } else {
+        TRACE("unable to open %s", target.toRawUTF8());
     }
 }
 
@@ -75,13 +89,17 @@ void SysexComm::setOutput(String target) {
     int idx = devices.indexOf(target);
     
     if ( idx == -1 ) {
-        // device not found
+        TRACE("device %s not found", target.toRawUTF8());
+        outputName = "";
         return;
     }
     
     output = MidiOutput::openDevice(idx);
     if ( output != NULL ) {
         outputName = target;
+        TRACE("sysex %s opened", target.toRawUTF8());
+    } else {
+        TRACE("unable to open %s", target.toRawUTF8());
     }
 }
 
@@ -105,5 +123,6 @@ void SysexComm::send(const juce::MidiMessage &message) {
     if ( output == NULL )
         return;
 
+    TRACE("sending sysex...");
     output->sendMessageNow(message);
 }

@@ -16,6 +16,7 @@
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
     </GROUP>
     <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">
+      <FILE id="pBbZ9Y" name="Dexed.h" compile="0" resource="0" file="Source/Dexed.h"/>
       <FILE id="Yp2cX4" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="ob0Eek" name="PluginProcessor.h" compile="0" resource="0"

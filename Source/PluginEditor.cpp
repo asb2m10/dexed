@@ -22,8 +22,11 @@
 #include "PluginEditor.h"
 #include "GlobalEditor.h"
 #include "ParamDialog.h"
+#include "Dexed.h"
 #include "math.h"
 #include <fstream>
+
+
 
 using namespace ::std;
 
@@ -47,7 +50,7 @@ public:
         g.drawImage (about_png, 0, 0, about_png.getWidth(), about_png.getHeight(),
                      0, 0, about_png.getWidth(), about_png.getHeight());
         g.setColour(Colour(0xFF000000));
-        String ver("Version 0.5 ; built date " __DATE__ );
+        String ver("Version " DEXED_VERSION " ; built date " __DATE__ );
         g.drawSingleLineText(ver, 9, 118);
     }
 };
@@ -147,8 +150,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     global.setBounds(5,235,855,90);
     global.bind(processor);
     
-    sendPopup.addItem(1, "Send current program to DX7 via sysex");
-    sendPopup.addItem(2, "Send current cartridge to DX7 via sysex");
+    sendPopup.addItem(1, "Send current program to DX7");
+    sendPopup.addItem(2, "Send current cartridge to DX7");
     
     updateUI();
     startTimer(100);

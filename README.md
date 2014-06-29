@@ -25,7 +25,7 @@ Features
 Changelog
 ---------
 #### Version 0.6.0 (current sprint)
-* Added external midi interface to send / receive sysex
+* Added external midi interface to send / receive sysex message
 * Fix Tracktion crash upon startup 
 * Middle C (transpose) now works
 * Mouse over the interface controls now tells what it does without having to change it
@@ -47,7 +47,7 @@ Changelog
 Binary downloads
 ----------------
 Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
-in normal operation it shouldn't crash and the VST state saving works.
+in normal operation it shouldn't crash and the VST state saving works. If you don't see the new version here but you see it in the change log, it's because this version is in development (current sprint). Only officials (tested) builds are listed here.
 
 * Version 0.5.1 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.1-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.1-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.1-osx.vst.zip)
 * Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
@@ -87,12 +87,13 @@ Credits & thanks
 
 TODO - Dexed 
 ------------
-* Implement a better DX look and feel (amp, pitch, algo)
+* Implement a better DX look and feel (amp, pitch, algo) *** commin Q4 2014
 * Various code cleanup
+* 4op (DX21/DX27/DX100) sysex import
 
 TODO - msfa
 -----------
 * The sample rate should not change the response of the envelopes
-* Portamento implentation
-* LFO/Mod-wheel Amplitude
+* Portamento implementation
+* LFO/Mod-wheel amplitude
 * Algo 4 & 6 feedback

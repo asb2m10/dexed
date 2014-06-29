@@ -18,6 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "Dexed.h"
 //[/Headers]
 
 #include "ParamDialog.h"
@@ -74,12 +75,12 @@ ParamDialog::ParamDialog ()
     StringArray input;
     input.add("None");
     input.addArray(MidiInput::getDevices());
-    sysexIn->addItemList(input, 1);
+    sysexIn->addItemList(input, 2);
 
     StringArray output;
     output.add("None");
     output.addArray(MidiOutput::getDevices());
-    sysexOut->addItemList(output, 1);
+    sysexOut->addItemList(output, 2);
 
     //[/Constructor]
 }
@@ -123,13 +124,13 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Sysex In"),
-                19, 170, 131, 23,
+                19, 178, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Sysex Out"),
-                19, 210, 131, 23,
+                19, 218, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
@@ -146,8 +147,8 @@ void ParamDialog::resized()
 {
     pitchRange->setBounds (192, 16, 72, 24);
     pitchStep->setBounds (192, 56, 72, 24);
-    sysexIn->setBounds (104, 168, 152, 24);
-    sysexOut->setBounds (104, 208, 152, 24);
+    sysexIn->setBounds (104, 176, 152, 24);
+    sysexOut->setBounds (104, 216, 152, 24);
     sysexChl->setBounds (184, 256, 72, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -209,10 +210,15 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr) {
     sysexChl->setValue(mgr.getChl() + 1);
 
     StringArray inputs = MidiInput::getDevices();
-    sysexIn->setItemEnabled(inputs.indexOf(mgr.getInput()), true);
-    
+    int idx = inputs.indexOf(mgr.getInput());
+    idx = idx == -1 ? 0 : idx + 1;
+    sysexIn->setSelectedItemIndex(idx);
+
     StringArray outputs = MidiOutput::getDevices();
-    sysexOut->setItemEnabled(outputs.indexOf(mgr.getOutput()), true);
+    idx = outputs.indexOf(mgr.getOutput());
+    TRACE("output idx %d output %s", idx, mgr.getOutput().toRawUTF8());
+    idx = idx == -1 ? 0 : idx + 1;
+    sysexOut->setSelectedItemIndex(idx);
 }
 
 void ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr) {
@@ -244,9 +250,9 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <TEXT pos="19 61 229 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 170 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex In"
+    <TEXT pos="19 178 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex In"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 210 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex Out"
+    <TEXT pos="19 218 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex Out"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <TEXT pos="19 258 245 23" fill="solid: ffffffff" hasStroke="0" text="Sysex Channel"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
@@ -260,10 +266,10 @@ BEGIN_JUCER_METADATA
           max="12" int="1" style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
-            explicitFocusOrder="0" pos="104 168 152 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="104 176 152 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="sysexOut" id="44730115841c2214" memberName="sysexOut" virtualName=""
-            explicitFocusOrder="0" pos="104 208 152 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="104 216 152 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
           explicitFocusOrder="0" pos="184 256 72 24" min="1" max="16" int="1"

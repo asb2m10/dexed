@@ -21,6 +21,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+#include "Dexed.h"
 #include "msfa/synth.h"
 #include "msfa/freqlut.h"
 #include "msfa/sin.h"
