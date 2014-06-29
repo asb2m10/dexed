@@ -87,9 +87,9 @@ Credits & thanks
 
 TODO - Dexed 
 ------------
+* Yamaha 4 operators (DX21/DX27/DX100) sysex import
 * Implement a better DX look and feel (amp, pitch, algo) *** commin Q4 2014
 * Various code cleanup
-* 4op (DX21/DX27/DX100) sysex import
 
 TODO - msfa
 -----------
