@@ -75,7 +75,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
      * and needs to be updated.
      */
     bool refreshVoice;
-    
+
     bool normalizeDxVelocity;
     bool sendSysexChange;
     
@@ -108,7 +108,6 @@ public :
     
     CartridgeManager cartManager;
     SysexComm sysexComm;
-    MidiBuffer midiOut;
     
     VoiceStatus voiceStatus;
     
@@ -155,7 +154,6 @@ public :
     bool hasEditor() const;
     void updateUI();
     bool peekVoiceStatus();
-    void packProgram(int idx, const char *name);
     void unpackProgram(int idx);
     void updateProgramFromSysex(const uint8 *rawdata);
     void loadBuiltin(int idx);

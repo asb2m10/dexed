@@ -53,6 +53,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
+    keyboardState.addListener(&sysexComm);
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
@@ -236,11 +237,6 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i) {
         buffer.clear (i, 0, buffer.getNumSamples());
     }
-    
-    midiMessages.clear();
-    if ( ! midiOut.isEmpty() ) {
-        midiMessages.swapWith(midiOut);
-    }
 }
 
 
@@ -260,46 +256,6 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 }
 
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
-    if ( msg->isSysEx() ) {
-
-        const uint8 *buf = msg->getSysExData();
-        int sz = msg->getSysExDataSize();
-        TRACE("SYSEX RECEIVED %d", sz);
-        if ( sz < 3 )
-            return;
-
-        // test if it is a Yamaha Sysex
-        if ( buf[0] != 0x43 ) {
-            TRACE("not a yamaha sysex %d", buf[0]);
-            return;
-        }
-        
-        // single voice dump
-        if ( buf[2] == 0 ) {
-            if ( sz < 155 ) {
-                TRACE("wrong single voice datasize %d", sz);
-                return;
-            }
-            TRACE("program update sysex");
-            updateProgramFromSysex(buf+4);
-            triggerAsyncUpdate();
-            return;
-        }
-
-        // 32 voice dump
-        if ( buf[2] == 9 ) {
-            if ( sz < 4016 ) {
-                TRACE("wrong 32 voice datasize %d", sz);
-                return;
-            }
-            TRACE("update 32bulk voice)");
-            importSysex((const char *)buf+4);
-            currentProgram = 0;
-            triggerAsyncUpdate();
-        }
-        return;
-    }
-
     const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];
 
@@ -351,12 +307,6 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
 
 }
 
-void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) {
-    if ( ! message.isSysEx() )
-        return;
-    processMidiMessage(&message);
-}
-
 void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
         keyup(pitch);
@@ -406,6 +356,59 @@ void DexedAudioProcessor::panic() {
         voices[i].keydown = false;
     }
     keyboardState.reset();
+}
+
+void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) {
+    if ( message.isActiveSense() ) 
+        return;
+
+    sysexComm.inActivity = true;
+
+    if ( ! message.isSysEx() )
+        return;
+
+    //const uint8 *buf = msg->getSysExData();
+    const uint8 *buf = message.getRawData();
+    int sz = message.getRawDataSize();
+
+    if ( sz < 3 )
+        return;
+
+    TRACE("SYSEX RECEIVED %d", sz);
+
+    // test if it is a Yamaha Sysex
+    if ( buf[1] != 0x43 ) {
+        TRACE("not a yamaha sysex %d", buf[0]);
+        return;
+    }
+        
+    // single voice dump
+    if ( buf[3] == 0 ) {
+         if ( sz < 155 ) {
+            TRACE("wrong single voice datasize %d", sz);
+            return;
+        }
+
+        TRACE("program update sysex");
+        updateProgramFromSysex(buf+6);
+        String name = normalizeSysexName((const char *) buf+151);
+        packProgram((uint8_t *) sysex, (uint8_t *) data, currentProgram, name); 
+        programNames.set(currentProgram, name);
+    }
+
+    // 32 voice dump
+    if ( buf[3] == 9 ) {
+        if ( sz < 4104 ) {
+            TRACE("wrong 32 voice datasize %d", sz);
+            return;
+        }
+        TRACE("update 32bulk voice");
+        importSysex((const char *)buf);
+        setCurrentProgram(0);
+    }
+
+    updateHostDisplay();
+    forceRefreshUI = true;
 }
 
 // ====================================================================
@@ -490,7 +493,7 @@ bool DexedAudioProcessor::hasEditor() const {
 void DexedAudioProcessor::updateUI() {
     // notify host something has changed
     updateHostDisplay();
-    
+ 
     AudioProcessorEditor *editor = getActiveEditor();
     if ( editor == NULL ) {
         return;

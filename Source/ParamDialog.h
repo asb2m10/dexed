@@ -48,7 +48,7 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void setDialogValues(Controllers &c, SysexComm &mgr);
-    void getDialogValues(Controllers &c, SysexComm &mgr);
+    bool getDialogValues(Controllers &c, SysexComm &mgr);
     //[/UserMethods]
 
     void paint (Graphics& g);

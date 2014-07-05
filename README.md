@@ -25,7 +25,7 @@ Features
 Changelog
 ---------
 #### Version 0.6.0 (current sprint)
-* Added external midi interface to send / receive sysex message
+* Added external midi interface to send / receive sysex messages
 * Fix Tracktion crash upon startup 
 * Middle C (transpose) now works
 * Mouse over the interface controls now tells what it does without having to change it
@@ -47,7 +47,9 @@ Changelog
 Binary downloads
 ----------------
 Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
-in normal operation it shouldn't crash and the VST state saving works. If you don't see the new version here but you see it in the change log, it's because this version is in development (current sprint). Only officials (tested) builds are listed here.
+in normal operation it shouldn't crash and the VST state saving works. If you don't see the 
+new version here but you see it in the change log, it's because this version is in development 
+(current sprint). Only officials (tested) builds are listed here.
 
 * Version 0.5.1 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.1-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.1-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.1-osx.vst.zip)
 * Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
@@ -56,7 +58,32 @@ in normal operation it shouldn't crash and the VST state saving works. If you do
 
 Using as a DX7 editor
 ---------------------
-You can use this plugin to edit your real DX7 patch. Since sysex support on most DAW is missing, you might need to configure this plugin to send/receive sysex data to a specific midi port.
+You can use this plugin to edit your real DX7 patchs. Since midi send/receive are quirky for the 
+majority of VST hosts, any sysex messages (editor messages) must be send or received with the external Dexed
+midi interface, configurable in the "PARM" panel. By setting a DX7 in / DX7 out, Dexed will 
+listen to specific program/cartridge changes from your DX7 and send controller/program/cartridge
+you edit.
+
+### Prerequisite
+* Before you use this interface, your DX7 must be configured to send or receive sysex messages. By hitting [FUNCTION] and [8] button : 
+* The first one is the midi channel. By reading some of DX7 literature, most DX7 are supposed to support only 1 channel. Unless you are running a cluster of DX7, you should keep this to 1.
+* The second one (press [8] again) is "SYS INFO AVAIL" or "SYS INFO UNAVAIL". Keep it to "SYS INFO AVAIL" to be able to receive sysex messages.
+* The third one, you need to remove MEMORY PROTECT on the internal or cartridge memory to be able to receive a Dexed 32 voice bulk dump.
+
+### To send to your DX7
+* If the midi port is configured, any parameter change will be sent to your DX7.
+* Use the [SEND] button on Dexed to send program or cartridge changes to your DX7. Be sure you have set [MEMORY PROTECT] to off so the cartridge (internal et external one) on the DX7 can be overridden.
+
+### To receive to your DX7
+* Receive a program by simply using [MEMORY SELECT] then the program you want to change ([1] to [32]).
+* Receive a cartridge by pressing [FUNCTION] then 3 times on [8] you should see " MIDI TRANSMIT ? ". If you hit yes, Dexed should receive the complete cartridge.
+
+### Troubleshooting
+* If the midi ports are opened correcly you should see a DX7 light flashing when you send or receive midi data from/to your DX7. If you don't see anything, or just the input, it because it was unable to open the output midi interface.
+* If you play on your DX7 keyboard, the |DX7 In light| should be flashing. Use this to test the midi in communication.
+* If you click/play on the Dexed virtual keyboard, it will send the correspoding midi note to the DX7 port; if configured. Use this to test the midi out communication.
+* If the data sent is corrupted (wrong checksum, DX7 crash); it might be the midi interface implementation. Default Windows USB midi driver can send corrupt sysex data. If it is the case, use a third party device (like the midiman uno) that have his own USB driver.
+* If you are unable to open the interface (error message after the [PARM] dialog), it might be because the midi driver doesn't support multiple clients (common on Windows). Be sure that there are no other applications that are using the same midi interface. 
 
 Randomized programs
 -------------------

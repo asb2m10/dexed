@@ -407,8 +407,6 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
     
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(msg,7));
-    } else {
-        midiOut.addEvent(msg, 7, 0);
     }
 }
 

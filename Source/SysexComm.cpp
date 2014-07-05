@@ -22,7 +22,7 @@
 #include "Dexed.h"
 
 SysexComm::SysexComm() {
-    sysexChl = 1;
+    sysexChl = 0;
     listener = NULL;    // this will get injected later
     
     inputName = "";
@@ -46,7 +46,7 @@ String SysexComm::getInput() {
     return inputName;
 }
 
-void SysexComm::setInput(String target) {
+bool SysexComm::setInput(String target) {
     if ( input != NULL ) {
         input->stop();
         delete input;
@@ -54,7 +54,7 @@ void SysexComm::setInput(String target) {
     }
     
     if ( listener == NULL )
-        return;
+        return true;
     
     StringArray devices = MidiInput::getDevices();
     int idx = devices.indexOf(target);
@@ -62,24 +62,28 @@ void SysexComm::setInput(String target) {
     if ( idx == -1 ) {
         TRACE("device %s not found", target.toRawUTF8());
         inputName = "";
-        return;
+        if ( target == "None" || target == "" )
+            return true;
+        return false;
     }
 
     input = MidiInput::openDevice(idx, listener);
-    if ( input != NULL ) {
-        inputName = target;
-        input->start();
-        TRACE("sysex %s opened", target.toRawUTF8());
-    } else {
+    if ( input == NULL ) {
         TRACE("unable to open %s", target.toRawUTF8());
+        return false;
     }
+
+    inputName = target;
+    TRACE("sysex %s opened", target.toRawUTF8());
+    input->start();
+    return true;
 }
 
 String SysexComm::getOutput() {
     return outputName;
 }
 
-void SysexComm::setOutput(String target) {
+bool SysexComm::setOutput(String target) {
     if ( output != NULL ) {
         delete output;
         output = NULL;
@@ -91,16 +95,20 @@ void SysexComm::setOutput(String target) {
     if ( idx == -1 ) {
         TRACE("device %s not found", target.toRawUTF8());
         outputName = "";
-        return;
+        if ( target == "None" || target == "" )
+            return true;
+        return false;
     }
     
     output = MidiOutput::openDevice(idx);
-    if ( output != NULL ) {
-        outputName = target;
-        TRACE("sysex %s opened", target.toRawUTF8());
-    } else {
+    if ( output == NULL ) {
         TRACE("unable to open %s", target.toRawUTF8());
+        return false;
     }
+
+    outputName = target;
+    TRACE("sysex %s opened", target.toRawUTF8());
+    return true;
 }
 
 bool SysexComm::isInputActive() {
@@ -119,10 +127,26 @@ void SysexComm::setChl(int chl) {
     sysexChl = chl;
 }
 
-void SysexComm::send(const juce::MidiMessage &message) {
+int SysexComm::send(const MidiMessage &message) {
+    if ( output == NULL )
+        return 2;
+
+    outActivity = true;
+    output->sendMessageNow(message);
+    return 0;
+}
+
+// This is called from the UI Keyboard...
+void SysexComm::handleNoteOn(MidiKeyboardState*, int, int midiNoteNumber, float velocity) {
     if ( output == NULL )
         return;
 
-    TRACE("sending sysex...");
-    output->sendMessageNow(message);
+    outActivity = true;
+    char iVelo = velocity * 100;
+    MidiMessage msg(0x90 + sysexChl, midiNoteNumber, iVelo);
+    output->sendMessageNow(msg);
+}
+
+void SysexComm::handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber) {
+    handleNoteOn(source, midiChannel, midiNoteNumber, 0);
 }

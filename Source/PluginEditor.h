@@ -21,11 +21,13 @@
 #ifndef PLUGINEDITOR_H_INCLUDED
 #define PLUGINEDITOR_H_INCLUDED
 
+
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
 #include "GlobalEditor.h"
 #include "DXComponents.h"
+#include "DXLookNFeel.h"
 
 //==============================================================================
 /**
@@ -49,7 +51,7 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     ScopedPointer<TextButton> aboutButton;
     ScopedPointer<TextButton> settingsButton;
     ScopedPointer<TextButton> sendButton;
-    
+    ScopedPointer<Component> midiMonitor;
     void storeProgram();
 
 public:

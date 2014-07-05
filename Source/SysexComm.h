@@ -23,20 +23,21 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class SysexComm {
+class SysexComm : public MidiKeyboardStateListener {
     MidiInput *input;
     MidiOutput *output;
     String inputName;
     String outputName;
     int sysexChl;
+
 public :
     MidiInputCallback *listener;
     
     SysexComm();
     ~SysexComm();
     
-    void setInput(String name);
-    void setOutput(String name);
+    bool setInput(String name);
+    bool setOutput(String name);
     void setChl(int chl);
     
     String getInput();
@@ -46,7 +47,13 @@ public :
     bool isInputActive();
     bool isOutputActive();
     
-    void send(const MidiMessage& message);
+    int send(const MidiMessage& message);
+
+    void handleNoteOn(MidiKeyboardState* source, int midiChannel, int midiNoteNumber, float velocity);
+    void handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber);
+
+    bool inActivity;
+    bool outActivity;
 };
 
 #endif  // SYSEXCOMM_H_INCLUDED

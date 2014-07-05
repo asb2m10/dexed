@@ -123,19 +123,19 @@ void ParamDialog::paint (Graphics& g)
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Sysex In"),
+    g.drawText (TRANS("DX7 In"),
                 19, 178, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Sysex Out"),
+    g.drawText (TRANS("DX7 Out"),
                 19, 218, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Sysex Channel"),
+    g.drawText (TRANS("DX7 Channel"),
                 19, 258, 245, 23,
                 Justification::centredLeft, true);
 
@@ -221,12 +221,16 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr) {
     sysexOut->setSelectedItemIndex(idx);
 }
 
-void ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr) {
+bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr) {
+    bool ret = true;
+
     c.values_[kControllerPitchRange] = pitchRange->getValue();
     c.values_[kControllerPitchStep] = pitchStep->getValue();
-    mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
-    mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
+    ret &= mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
+    ret &= mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
     mgr.setChl(sysexChl->getValue() - 1);
+
+    return ret;
 }
 
 //[/MiscUserCode]
@@ -250,11 +254,11 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <TEXT pos="19 61 229 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 178 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex In"
+    <TEXT pos="19 178 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 218 131 23" fill="solid: ffffffff" hasStroke="0" text="Sysex Out"
+    <TEXT pos="19 218 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 258 245 23" fill="solid: ffffffff" hasStroke="0" text="Sysex Channel"
+    <TEXT pos="19 258 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"

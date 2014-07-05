@@ -58,6 +58,7 @@ enum UnpackedOffset {
     osc6state
 };
 
+String normalizeSysexName(const char *sysexName);
 void extractProgramNames(const char *block, StringArray &dest);
 void exportSysexCart(char *dest, char *src, char sysexChl);
 void exportSysexPgm(char *dest, char *src, char sysexChl);

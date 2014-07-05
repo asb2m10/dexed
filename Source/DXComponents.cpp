@@ -457,11 +457,18 @@ void LcdDisplay::handleAsyncUpdate() {
     startTimer(5000);
 }
 
+#ifdef _WIN32 
+    const float LCD_FONTSIZE = 13.0f;
+#else 
+    const float LCD_FONTSIZE = 15.0f;
+#endif
+
 void LcdDisplay::paint(Graphics &g) {
+
     g.setColour(Colours::black.withAlpha(0.4f));
     g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
     g.setColour (Colours::white);
-    g.setFont (Font (Font::getDefaultMonospacedFontName(), 15.00f, Font::plain));
+    g.setFont (Font (Font::getDefaultMonospacedFontName(), LCD_FONTSIZE, Font::plain));
     g.drawText (systemMsg,
                 7, 4, 300, 8,
                 Justification::centredLeft, true);

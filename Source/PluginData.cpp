@@ -33,36 +33,41 @@ uint8_t sysexChecksum(const char *sysex, int size) {
     return sum & 0x7F;
 }
 
-void extractProgramNames(const char *block, StringArray &dest) {
-    char programName[11];
+String normalizeSysexName(const char *sysexName) {
+    char buffer[11];
+
+    memcpy(buffer, sysexName, 10);
     
+    for (int j = 0; j < 10; j++) {
+        char c = (unsigned char) buffer[j];
+        switch (c) {
+            case 92:
+                c = 'Y';
+                break; /* yen */
+            case 126:
+                c = '>';
+                break; /* >> */
+            case 127:
+                c = '<';
+                break; /* << */
+            default:
+                if (c < 32 || c > 127)
+                    c = 32;
+                break;
+        }
+        buffer[j] = c;
+    }
+    buffer[10] = 0;
+
+    return String(buffer);
+}
+
+
+void extractProgramNames(const char *block, StringArray &dest) {
     dest.clear();
     
     for (int i = 0; i < 32; i++) {
-        memcpy(programName, block + ((i * 128) + 118), 11);
-        
-        for (int j = 0; j < 10; j++) {
-            char c = (unsigned char) programName[j];
-            switch (c) {
-                case 92:
-                    c = 'Y';
-                    break; /* yen */
-                case 126:
-                    c = '>';
-                    break; /* >> */
-                case 127:
-                    c = '<';
-                    break; /* << */
-                default:
-                    if (c < 32 || c > 127)
-                        c = 32;
-                    break;
-            }
-            programName[j] = c;
-        }
-        programName[10] = 0;
-        
-        dest.add(String(programName));
+        dest.add(String(normalizeSysexName(block + ((i * 128) + 118))));
     }
 }
 
@@ -77,7 +82,7 @@ void exportSysexCart(char *dest, char *src, char sysexChl) {
     
     // make checksum for dump
     uint8_t footer[] = { sysexChecksum(src, 4096), 0xF7 };
-    
+
     memcpy(dest+4102, footer, 2);
 }
 
@@ -131,6 +136,7 @@ void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
     bulk[117] = src[144];
         
     int eos = 0;
+
     for(int i=0; i < 10; i++) {
         char c = (char) name[i];
         if ( c == 0 )
@@ -227,7 +233,7 @@ int DexedAudioProcessor::importSysex(const char *imported) {
 }
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
-    memcpy(data, rawdata, 160);
+    memcpy(data, rawdata, 161);
     triggerAsyncUpdate();
 }
 
