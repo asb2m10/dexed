@@ -313,6 +313,8 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     updateUI();
 }
 
+#define IDX_USER 1000
+
 CartridgeManager::CartridgeManager() {
     MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
     builtin_pgm = new ZipFile(mis, true);
@@ -322,17 +324,126 @@ CartridgeManager::CartridgeManager() {
         const ZipFile::ZipEntry *e = builtin_pgm->getEntry(i);
         cartNames.add(e->filename.dropLastCharacters(4));
     }
+
+#if JUCE_MAC
+    userCartFile = File(File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName() + File::separator + "Dexed_cart.zip");
+#else
+    userCartFile = File(File::getSpecialLocation(File::currentApplicationFile).getFullPathName() + File::separator + "Dexed_cart.zip");
+#endif
+    TRACE("Usercart file %s", userCartFile.getFullPathName().toRawUTF8());
+}
+
+CartridgeManager::~CartridgeManager() {
 }
 
 void CartridgeManager::getSysex(int idx, char *dest) {
-    InputStream *is = builtin_pgm->createStreamForEntry(idx);
-
-    if ( is == NULL ) {
-        TRACE("ENTRY IN ZIP NOT FOUND");
+    if ( idx < IDX_USER ) {
+        InputStream *is = builtin_pgm->createStreamForEntry(idx);
+        if ( is == NULL ) {
+            TRACE("ENTRY IN ZIP NOT FOUND");
+            return;
+        }
+        is->read(dest, 4104);
+        delete is;
+        
         return;
     }
+    
+    idx -= IDX_USER;
+    
+    if ( ! userCartFile.exists() )
+        return;
 
-    is->read(dest, 4104);
-    delete is;
+    ZipFile userZip(userCartFile);
+    userZip.sortEntriesByFilename();
+    if ( idx < userZip.getNumEntries() ) {
+        InputStream *is = userZip.createStreamForEntry(idx);
+        if ( is != NULL ) {
+            is->read(dest, 4104);
+            delete is;
+        } else {
+            TRACE("USER ENTRY %d NULL ?", idx);
+        }
+    }
 }
 
+void CartridgeManager::rebuildMenu() {
+    TRACE("rebuild menu zip");
+    
+    completeCarts.clear();
+    
+    if ( userCartFile.exists() ) {
+        zipIdx = 0;
+        ZipFile userZip(userCartFile);
+        userZip.sortEntriesByFilename();
+    
+        PopupMenu *user = fillContent("", &userZip);
+        if ( user != NULL ) {
+            completeCarts.addSubMenu("User", *user);
+            delete user;
+        }
+        lastModifiedUserCartFile = userCartFile.getLastModificationTime();
+    } else {
+        lastModifiedUserCartFile = Time(0);
+    }
+    
+    for(int i=0;i<cartNames.size();i++) {
+        completeCarts.addItem(i+1, cartNames[i]);
+    }
+}
+
+PopupMenu *CartridgeManager::getCarts() {
+    Time t = userCartFile.getLastModificationTime();
+    
+    TRACE("DIFF TM: %s %s", t.toString(true, true).toRawUTF8(), lastModifiedUserCartFile.toString(true, true).toRawUTF8());
+    
+    if ( t != lastModifiedUserCartFile || completeCarts.getNumItems() == 0 ) {
+        rebuildMenu();
+    }
+    return &completeCarts;
+}
+
+PopupMenu *CartridgeManager::fillContent(String root, ZipFile *userZip) {
+    PopupMenu *current = NULL;
+    
+    while(zipIdx < userZip->getNumEntries() ) {
+        String path = userZip->getEntry(zipIdx)->filename;
+
+        if ( path.endsWith(".DS_Store") || path.startsWith("__MACOSX") ) {
+            zipIdx++;
+            continue;
+        }
+
+        if ( ( ! path.startsWith(root) ) && root.length() != 0 )
+            return current;
+        
+        String tail = path.substring(root.length());
+        if ( tail.containsChar('/') ) {
+            String target = tail.upToFirstOccurrenceOf("/", true, false);
+            PopupMenu *child = fillContent(root + target, userZip);
+            
+            if ( child == NULL )
+                continue;
+            
+            if ( current == NULL )
+                current = new PopupMenu();
+
+            current->addSubMenu(tail.upToFirstOccurrenceOf("/", false, false), *child);
+            delete child;
+        } else {
+            zipIdx++;
+            
+            if ( tail.length() == 0 )
+                continue;
+            
+            if ( current == NULL )
+                current = new PopupMenu();
+
+            if ( tail.endsWithIgnoreCase(".syx") )
+                tail = tail.substring(0, tail.length()-4);
+
+            current->addItem(zipIdx + IDX_USER, tail);
+        }
+    }
+    return current;
+}

@@ -23,12 +23,16 @@
 
 void dexed_trace(const char *source, const char *fmt, ...);
 
-#ifdef _MSC_VER
-#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
+#ifdef DEBUG
+    #define DEXED_VERSION "0.6.0 DEBUG"
+    #ifdef _MSC_VER
+        #define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
+    #else
+        #define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+    #endif
 #else
-#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+    #define DEXED_VERSION "0.6.0"
+    #define TRACE(fmt, ...)
 #endif
-
-#define DEXED_VERSION "0.6.0"
 
 #endif  // DEXED_H_INCLUDED

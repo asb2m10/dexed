@@ -32,13 +32,13 @@ ParamDialog::ParamDialog ()
 {
     addAndMakeVisible (pitchRange = new Slider ("pitchRange"));
     pitchRange->setRange (0, 12, 1);
-    pitchRange->setSliderStyle (Slider::Rotary);
+    pitchRange->setSliderStyle (Slider::RotaryVerticalDrag);
     pitchRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     pitchRange->addListener (this);
 
     addAndMakeVisible (pitchStep = new Slider ("pitchStep"));
     pitchStep->setRange (0, 12, 1);
-    pitchStep->setSliderStyle (Slider::Rotary);
+    pitchStep->setSliderStyle (Slider::RotaryVerticalDrag);
     pitchStep->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     pitchStep->addListener (this);
 
@@ -58,7 +58,7 @@ ParamDialog::ParamDialog ()
 
     addAndMakeVisible (sysexChl = new Slider ("sysexChl"));
     sysexChl->setRange (1, 16, 1);
-    sysexChl->setSliderStyle (Slider::Rotary);
+    sysexChl->setSliderStyle (Slider::RotaryVerticalDrag);
     sysexChl->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     sysexChl->addListener (this);
 
@@ -66,7 +66,7 @@ ParamDialog::ParamDialog ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (280, 300);
+    setSize (330, 300);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -112,19 +112,19 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Pitch Bend Range"),
-                19, 21, 205, 23,
+                20, 18, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Pitch Bend Step"),
-                19, 61, 229, 23,
+                20, 58, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 In"),
-                19, 178, 131, 23,
+                20, 178, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
@@ -145,11 +145,11 @@ void ParamDialog::paint (Graphics& g)
 
 void ParamDialog::resized()
 {
-    pitchRange->setBounds (192, 16, 72, 24);
-    pitchStep->setBounds (192, 56, 72, 24);
-    sysexIn->setBounds (104, 176, 152, 24);
-    sysexOut->setBounds (104, 216, 152, 24);
-    sysexChl->setBounds (184, 256, 72, 24);
+    pitchRange->setBounds (240, 16, 72, 24);
+    pitchStep->setBounds (240, 56, 72, 24);
+    sysexIn->setBounds (96, 176, 208, 24);
+    sysexOut->setBounds (96, 216, 208, 24);
+    sysexChl->setBounds (240, 256, 72, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -248,13 +248,13 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="ParamDialog" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="280" initialHeight="300">
+                 fixedSize="1" initialWidth="330" initialHeight="300">
   <BACKGROUND backgroundColour="ff4e270d">
-    <TEXT pos="19 21 205 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
+    <TEXT pos="20 18 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 61 229 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
+    <TEXT pos="20 58 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 178 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
+    <TEXT pos="20 178 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <TEXT pos="19 218 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
@@ -262,23 +262,23 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
-          virtualName="" explicitFocusOrder="0" pos="192 16 72 24" min="0"
-          max="12" int="1" style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          virtualName="" explicitFocusOrder="0" pos="240 16 72 24" min="0"
+          max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchStep" id="b86af4b792e768ca" memberName="pitchStep"
-          virtualName="" explicitFocusOrder="0" pos="192 56 72 24" min="0"
-          max="12" int="1" style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          virtualName="" explicitFocusOrder="0" pos="240 56 72 24" min="0"
+          max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
-            explicitFocusOrder="0" pos="104 176 152 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="96 176 208 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="sysexOut" id="44730115841c2214" memberName="sysexOut" virtualName=""
-            explicitFocusOrder="0" pos="104 216 152 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="96 216 208 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
-          explicitFocusOrder="0" pos="184 256 72 24" min="1" max="16" int="1"
-          style="Rotary" textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          explicitFocusOrder="0" pos="240 256 72 24" min="1" max="16" int="1"
+          style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

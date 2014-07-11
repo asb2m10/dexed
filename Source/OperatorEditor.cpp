@@ -31,49 +31,49 @@ OperatorEditor::OperatorEditor ()
 {
     addAndMakeVisible (s_egl1 = new Slider ("egl1"));
     s_egl1->setRange (0, 99, 1);
-    s_egl1->setSliderStyle (Slider::Rotary);
+    s_egl1->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egl1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl1->addListener (this);
 
     addAndMakeVisible (s_egl2 = new Slider ("egl2"));
     s_egl2->setRange (0, 99, 1);
-    s_egl2->setSliderStyle (Slider::Rotary);
+    s_egl2->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egl2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl2->addListener (this);
 
     addAndMakeVisible (s_egl3 = new Slider ("egl3"));
     s_egl3->setRange (0, 99, 1);
-    s_egl3->setSliderStyle (Slider::Rotary);
+    s_egl3->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egl3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl3->addListener (this);
 
     addAndMakeVisible (s_egl4 = new Slider ("egl4"));
     s_egl4->setRange (0, 99, 1);
-    s_egl4->setSliderStyle (Slider::Rotary);
+    s_egl4->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egl4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egl4->addListener (this);
 
     addAndMakeVisible (s_egv1 = new Slider ("egr1"));
     s_egv1->setRange (0, 99, 1);
-    s_egv1->setSliderStyle (Slider::Rotary);
+    s_egv1->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egv1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv1->addListener (this);
 
     addAndMakeVisible (s_egv2 = new Slider ("egr3"));
     s_egv2->setRange (0, 99, 1);
-    s_egv2->setSliderStyle (Slider::Rotary);
+    s_egv2->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egv2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv2->addListener (this);
 
     addAndMakeVisible (s_egv3 = new Slider ("egr3"));
     s_egv3->setRange (0, 99, 1);
-    s_egv3->setSliderStyle (Slider::Rotary);
+    s_egv3->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egv3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv3->addListener (this);
 
     addAndMakeVisible (s_egv4 = new Slider ("egr4"));
     s_egv4->setRange (0, 99, 1);
-    s_egv4->setSliderStyle (Slider::Rotary);
+    s_egv4->setSliderStyle (Slider::RotaryVerticalDrag);
     s_egv4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     s_egv4->addListener (this);
 
@@ -88,19 +88,19 @@ OperatorEditor::OperatorEditor ()
 
     addAndMakeVisible (opLevel = new Slider ("opLevel"));
     opLevel->setRange (0, 99, 1);
-    opLevel->setSliderStyle (Slider::Rotary);
+    opLevel->setSliderStyle (Slider::RotaryVerticalDrag);
     opLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     opLevel->addListener (this);
 
     addAndMakeVisible (opFine = new Slider ("opFine"));
     opFine->setRange (0, 99, 1);
-    opFine->setSliderStyle (Slider::Rotary);
+    opFine->setSliderStyle (Slider::RotaryVerticalDrag);
     opFine->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     opFine->addListener (this);
 
     addAndMakeVisible (opCoarse = new Slider ("opCoarse"));
     opCoarse->setRange (0, 31, 1);
-    opCoarse->setSliderStyle (Slider::Rotary);
+    opCoarse->setSliderStyle (Slider::RotaryVerticalDrag);
     opCoarse->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     opCoarse->addListener (this);
 
@@ -127,14 +127,14 @@ OperatorEditor::OperatorEditor ()
     addAndMakeVisible (sclLeftLevel = new Slider ("sclLeftLevel"));
     sclLeftLevel->setTooltip (TRANS("Keyboard Scale Level Left Depth "));
     sclLeftLevel->setRange (0, 99, 1);
-    sclLeftLevel->setSliderStyle (Slider::Rotary);
+    sclLeftLevel->setSliderStyle (Slider::RotaryVerticalDrag);
     sclLeftLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     sclLeftLevel->addListener (this);
 
     addAndMakeVisible (sclRightLevel = new Slider ("sclRightLevel"));
     sclRightLevel->setTooltip (TRANS("Keyboard Scale Level Right Depth "));
     sclRightLevel->setRange (0, 99, 1);
-    sclRightLevel->setSliderStyle (Slider::Rotary);
+    sclRightLevel->setSliderStyle (Slider::RotaryVerticalDrag);
     sclRightLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     sclRightLevel->addListener (this);
 
@@ -163,26 +163,26 @@ OperatorEditor::OperatorEditor ()
     addAndMakeVisible (sclLvlBrkPt = new Slider ("sclLvlBrkPt"));
     sclLvlBrkPt->setTooltip (TRANS("Scale Level Breakpoint"));
     sclLvlBrkPt->setRange (0, 99, 1);
-    sclLvlBrkPt->setSliderStyle (Slider::Rotary);
+    sclLvlBrkPt->setSliderStyle (Slider::RotaryVerticalDrag);
     sclLvlBrkPt->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     sclLvlBrkPt->addListener (this);
 
     addAndMakeVisible (sclRateScaling = new Slider ("sclRateScaling"));
     sclRateScaling->setTooltip (TRANS("Keyboard Rate Scaling"));
     sclRateScaling->setRange (0, 7, 1);
-    sclRateScaling->setSliderStyle (Slider::Rotary);
+    sclRateScaling->setSliderStyle (Slider::RotaryVerticalDrag);
     sclRateScaling->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     sclRateScaling->addListener (this);
 
     addAndMakeVisible (keyVelSens = new Slider ("keyVelSens"));
     keyVelSens->setRange (0, 7, 1);
-    keyVelSens->setSliderStyle (Slider::Rotary);
+    keyVelSens->setSliderStyle (Slider::RotaryVerticalDrag);
     keyVelSens->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     keyVelSens->addListener (this);
 
     addAndMakeVisible (ampModSens = new Slider ("ampModSens"));
-    ampModSens->setRange (0, 4, 1);
-    ampModSens->setSliderStyle (Slider::Rotary);
+    ampModSens->setRange (0, 3, 1);
+    ampModSens->setSliderStyle (Slider::RotaryVerticalDrag);
     ampModSens->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     ampModSens->addListener (this);
 
@@ -502,51 +502,51 @@ BEGIN_JUCER_METADATA
   </BACKGROUND>
   <SLIDER name="egl1" id="dc070cc41347df47" memberName="s_egl1" virtualName=""
           explicitFocusOrder="0" pos="136 40 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egl2" id="66f5195e9c374029" memberName="s_egl2" virtualName=""
           explicitFocusOrder="0" pos="160 40 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egl3" id="9d57bd53203dcdb4" memberName="s_egl3" virtualName=""
           explicitFocusOrder="0" pos="184 40 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egl4" id="4f7c3ece3ea2cf9c" memberName="s_egl4" virtualName=""
           explicitFocusOrder="0" pos="208 40 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr1" id="2ca8137d80da46fb" memberName="s_egv1" virtualName=""
           explicitFocusOrder="0" pos="136 64 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr3" id="4ad6d0c532d15973" memberName="s_egv2" virtualName=""
           explicitFocusOrder="0" pos="160 64 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr3" id="8a2027f9ede16b4f" memberName="s_egv3" virtualName=""
           explicitFocusOrder="0" pos="184 64 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="egr4" id="8c04f1c943d837e8" memberName="s_egv4" virtualName=""
           explicitFocusOrder="0" pos="208 64 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="opMode" id="2cf8156bb94cdc40" memberName="opMode" virtualName=""
             explicitFocusOrder="0" pos="24 48 104 16" editable="0" layout="33"
             items="RATIO&#10;FIXED" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="opLevel" id="f8521c8214fb8993" memberName="opLevel" virtualName=""
           explicitFocusOrder="0" pos="232 56 32 32" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="opFine" id="e445aa61bd6cddcb" memberName="opFine" virtualName=""
           explicitFocusOrder="0" pos="104 24 24 24" min="0" max="99" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="opCoarse" id="4eec63d30d7488d2" memberName="opCoarse" virtualName=""
           explicitFocusOrder="0" pos="80 24 24 24" min="0" max="31" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <LABEL name="khz" id="eb961eed8902a6fc" memberName="khzDisplay" virtualName=""
          explicitFocusOrder="0" pos="32 8 88 16" bkgCol="6a000000" textCol="ffffffff"
          outlineCol="0" edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz"
@@ -561,11 +561,11 @@ BEGIN_JUCER_METADATA
                     params=""/>
   <SLIDER name="sclLeftLevel" id="bd6f338ae68e454f" memberName="sclLeftLevel"
           virtualName="" explicitFocusOrder="0" pos="0 64 24 24" tooltip="Keyboard Scale Level Left Depth "
-          min="0" max="99" int="1" style="Rotary" textBoxPos="NoTextBox"
+          min="0" max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="sclRightLevel" id="b9e23ed5187fc7e5" memberName="sclRightLevel"
           virtualName="" explicitFocusOrder="0" pos="64 64 24 24" tooltip="Keyboard Scale Level Right Depth "
-          min="0" max="99" int="1" style="Rotary" textBoxPos="NoTextBox"
+          min="0" max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="kbdLeftCurve" id="a4b068d60be648ca" memberName="kbdLeftCurve"
             virtualName="" explicitFocusOrder="0" pos="24 68 40 16" editable="0"
@@ -577,20 +577,20 @@ BEGIN_JUCER_METADATA
             textWhenNoItems="(no choices)"/>
   <SLIDER name="sclLvlBrkPt" id="c563ac3116923bbc" memberName="sclLvlBrkPt"
           virtualName="" explicitFocusOrder="0" pos="0 40 24 24" tooltip="Scale Level Breakpoint"
-          min="0" max="99" int="1" style="Rotary" textBoxPos="NoTextBox"
+          min="0" max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="sclRateScaling" id="f0d17c8e09aa4c49" memberName="sclRateScaling"
           virtualName="" explicitFocusOrder="0" pos="0 16 24 24" tooltip="Keyboard Rate Scaling"
-          min="0" max="7" int="1" style="Rotary" textBoxPos="NoTextBox"
+          min="0" max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="keyVelSens" id="21795d045d07602b" memberName="keyVelSens"
           virtualName="" explicitFocusOrder="0" pos="240 24 24 24" min="0"
-          max="7" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="ampModSens" id="634ceaa7b0f81a6c" memberName="ampModSens"
           virtualName="" explicitFocusOrder="0" pos="240 0 24 24" min="0"
-          max="4" int="1" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          max="3" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="vu" id="6f952594ea99dc1e" memberName="vu" virtualName=""
                     explicitFocusOrder="0" pos="268 0 12 88" class="VuMeter" params=""/>
 </JUCER_COMPONENT>

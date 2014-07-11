@@ -27,8 +27,6 @@
 #include "math.h"
 #include <fstream>
 
-
-
 using namespace ::std;
 
 class AboutBox : public DialogWindow {
@@ -118,9 +116,6 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartButton->setButtonText ("CART");
     cartButton->addListener (this);
     cartButton->setBounds(5, 6, 50, 18);
-    for(int i=0;i<processor->cartManager.cartNames.size();i++) {
-        cartPopup.addItem(i+1, processor->cartManager.cartNames[i]);
-    }
     
     addAndMakeVisible (loadButton = new TextButton("LOAD"));
     loadButton->setButtonText ("LOAD");
@@ -226,7 +221,7 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     if (buttonThatWasClicked == cartButton) {
-        int result = cartPopup.show();
+        int result = processor->cartManager.getCarts()->show();
         if ( result < 1 )
             return;
         
@@ -367,7 +362,7 @@ void DexedAudioProcessorEditor::timerCallback() {
         return;
 
     for(int i=0;i<6;i++) {
-        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);
+        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsens
         operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
