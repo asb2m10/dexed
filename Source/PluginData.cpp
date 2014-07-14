@@ -325,12 +325,7 @@ CartridgeManager::CartridgeManager() {
         cartNames.add(e->filename.dropLastCharacters(4));
     }
 
-#if JUCE_MAC
     userCartFile = File(File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName() + File::separator + "Dexed_cart.zip");
-#else
-    userCartFile = File(File::getSpecialLocation(File::currentApplicationFile).getFullPathName() + File::separator + "Dexed_cart.zip");
-#endif
-    TRACE("Usercart file %s", userCartFile.getFullPathName().toRawUTF8());
 }
 
 CartridgeManager::~CartridgeManager() {
@@ -395,6 +390,7 @@ void CartridgeManager::rebuildMenu() {
 PopupMenu *CartridgeManager::getCarts() {
     Time t = userCartFile.getLastModificationTime();
     
+    TRACE("Usercart file %s exists: %d", userCartFile.getFullPathName().toRawUTF8(), userCartFile.exists());
     TRACE("DIFF TM: %s %s", t.toString(true, true).toRawUTF8(), lastModifiedUserCartFile.toString(true, true).toRawUTF8());
     
     if ( t != lastModifiedUserCartFile || completeCarts.getNumItems() == 0 ) {

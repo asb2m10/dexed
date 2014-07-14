@@ -142,13 +142,14 @@ float CtrlDX::getValueHost() {
 void CtrlDX::setValueHost(float f) {
     setValue((f * steps));
     
+    /*
     DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
     if ( editor == NULL ) {
         return;
     }
     String msg;
     msg << label << " = " << getValueDisplay();
-    editor->global.setParamMessage(msg);
+    editor->global.setParamMessage(msg);*/
 }
 
 void CtrlDX::setValue(int v) {
@@ -389,10 +390,18 @@ void DexedAudioProcessor::initCtrl() {
 }
 
 void DexedAudioProcessor::setDxValue(int offset, int v) {
-    TRACE("setting dx %d %d", offset, v);
-    refreshVoice = true;
-    if (offset >= 0)
+    if (offset < 0)
+        return;
+
+    if ( data[offset] != v ) {
+        TRACE("setting dx %d %d", offset, v);
         data[offset] = v;
+    } else {
+        TRACE("ignoring dx7 same values %d %d", offset, v);
+        return;
+    }
+
+    refreshVoice = true;
 
     // MIDDLE C (transpose)
     if (offset == 144)

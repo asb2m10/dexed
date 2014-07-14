@@ -42,7 +42,7 @@ Changelog
 * Middle C (transpose) now works
 * Identify the parameter knob/switch by simply moving the mouse over it
 * Knobs now works with vertical mouse drags
-* User zipped DX7 cartridges
+* User DX7 zip cartridges
 
 #### Version 0.5.1
 * Fix distortion issue with FL (DAW blocksize not multiple of 64)
@@ -69,7 +69,7 @@ you edit.
 ### Prerequisite
 * Before you use this interface, your DX7 must be configured to send or receive sysex messages. Do this by hitting [FUNCTION] and [8] button 
 * Check the midi channel. By reading some of DX7 literature, most DX7 are supposed to support only 1 channel. Unless you are running a cluster of DX7, you should keep this to 1.
-* Press [8] again and you should see: "SYS INFO AVAIL" or "SYS INFO UNAVAIL". Keep it to "SYS INFO AVAIL" to be able to receive sysex messages.
+* Press [8] again and you should see: "SYS INFO AVAIL" or "SYS INFO UNAVAIL". Keep it to "SYS INFO AVAIL" to be able to receive sysex messages. This step is not required on a TX7.
 * You need to remove MEMORY PROTECT on the internal or cartridge memory to be able to receive a Dexed 32 voice bulk dump. This is done by using the [MEMORY PROTECT] button and then by pushing [NO].
 
 ### To send to your DX7
@@ -91,9 +91,9 @@ you edit.
 User DX7 zip cartridges
 -----------------------
 It is possible to enjoy your DX7 sysex collection from one single zip file. Simply move your zipped
-sysex content to where you have installed Dexed (VST plugins dir). The rename the zip file to 
-`Dexed_cart.zip`. You can modify this file anytime you want, Dexed will simply reparsed it when the 
-file is changed. Directories in the zip file is be a transformed into submenu when you hit the 
+sysex content to where you have installed Dexed (VST plugins dir). Then rename the zip file to 
+`Dexed_cart.zip`. You can modify this file anytime you want, Dexed will simply reparse it when the 
+file is changed. Directories in the zip file will be transformed into submenu when you hit the 
 [CART] button.
 
 Randomized programs
@@ -124,9 +124,9 @@ Credits & thanks
 
 Planned milestones 
 ------------------
-0.6 DX7 Editor + User cartridges
-0.7 msfa engine tuning
-0.8 Complete new UI 
+* 0.6 DX7 editor + user cartridges
+* 0.7 msfa engine tuning
+* 0.8 UI redesign
 
 TODO - Dexed 
 ------------

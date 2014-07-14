@@ -452,7 +452,6 @@ void GlobalEditor::setSystemMessage(String msg) {
 
 void GlobalEditor::setParamMessage(String msg) {
     lcdDisplay->paramMsg = msg;
-    repaint();
 }
 
 void GlobalEditor::updateDisplay() {
