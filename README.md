@@ -29,6 +29,8 @@ in normal operation it shouldn't crash and the VST state saving works. If you do
 new version here but you see it in the change log, it's because this version is in development 
 (current sprint). Only officials (tested) builds are listed here.
 
+
+* Version 0.6.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.0-osx.vst.zip)
 * Version 0.5.1 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.1-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.1-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.1-osx.vst.zip)
 * Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
 * Version 0.4.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.4.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.4.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.4.0-osx.vst.zip)
@@ -36,7 +38,7 @@ new version here but you see it in the change log, it's because this version is 
 
 Changelog
 ---------
-#### Version 0.6.0 (current sprint)
+#### Version 0.6.0
 * Added external midi interface to send / receive sysex messages
 * Fix Tracktion crash upon startup 
 * Middle C (transpose) now works
@@ -57,6 +59,14 @@ Changelog
 * Now using the [Obxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
 * Pitchbend range / step
 * Output/Volume VU status
+
+User DX7 zip cartridges
+-----------------------
+It is possible to enjoy your DX7 sysex collection from one single zip file. Simply move your zipped
+sysex content to where you have installed Dexed (VST plugins dir). Then rename the zip file to 
+`Dexed_cart.zip`. You can modify this file anytime you want, Dexed will simply reparse it when the 
+file is changed. Directories in the zip file will be transformed into submenu when you hit the 
+[CART] button.
 
 Using as a DX7 editor
 ---------------------
@@ -87,14 +97,6 @@ you edit.
 * If you click/play on the Dexed virtual keyboard, it will send the corresponding midi out note to the DX7 port; if configured. Use this to test the midi out communication.
 * If the data sent is corrupted (wrong checksum, DX7 crash), it might be the midi interface implementation. Default Windows USB midi driver are known to send corrupt sysex data. If it is the case, use a third party device (like the midiman uno) that have his own USB driver.
 * If you are unable to open the interface (error message after the using the [PARM] dialog), it might be because the midi driver doesn't support multiple clients (common on Windows). Be sure that there are no other applications that are using the same midi interface. 
-
-User DX7 zip cartridges
------------------------
-It is possible to enjoy your DX7 sysex collection from one single zip file. Simply move your zipped
-sysex content to where you have installed Dexed (VST plugins dir). Then rename the zip file to 
-`Dexed_cart.zip`. You can modify this file anytime you want, Dexed will simply reparse it when the 
-file is changed. Directories in the zip file will be transformed into submenu when you hit the 
-[CART] button.
 
 Randomized programs
 -------------------
