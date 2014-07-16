@@ -262,14 +262,14 @@ void GlobalEditor::resized()
     lfoDelay->setBounds (624, 64, 24, 24);
     cutoff->setBounds (80, 40, 40, 40);
     reso->setBounds (128, 40, 40, 40);
-    pitchRate2->setBounds (752, 64, 32, 24);
-    pitchRate3->setBounds (776, 64, 32, 24);
-    pitchRate4->setBounds (800, 64, 32, 24);
-    pitchRate1->setBounds (728, 64, 32, 24);
-    pitchLevel2->setBounds (752, 40, 32, 24);
-    pitchLevel3->setBounds (776, 40, 32, 24);
-    pitchLevel4->setBounds (800, 40, 32, 24);
-    pitchLevel1->setBounds (728, 40, 32, 24);
+    pitchRate2->setBounds (753, 64, 24, 24);
+    pitchRate3->setBounds (777, 64, 24, 24);
+    pitchRate4->setBounds (801, 64, 24, 24);
+    pitchRate1->setBounds (729, 64, 24, 24);
+    pitchLevel2->setBounds (753, 40, 24, 24);
+    pitchLevel3->setBounds (777, 40, 24, 24);
+    pitchLevel4->setBounds (801, 40, 24, 24);
+    pitchLevel1->setBounds (729, 40, 24, 24);
     transpose->setBounds (832, 0, 24, 88);
     oscSync->setBounds (600, 64, 24, 24);
     pitchModSens->setBounds (696, 64, 24, 24);
@@ -522,35 +522,35 @@ BEGIN_JUCER_METADATA
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
-          virtualName="" explicitFocusOrder="0" pos="752 64 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="753 64 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate3" id="187c25b24413fccf" memberName="pitchRate3"
-          virtualName="" explicitFocusOrder="0" pos="776 64 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="777 64 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate4" id="1aeb2a8fbbcbeaab" memberName="pitchRate4"
-          virtualName="" explicitFocusOrder="0" pos="800 64 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="801 64 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate1" id="419d613b3fb9604e" memberName="pitchRate1"
-          virtualName="" explicitFocusOrder="0" pos="728 64 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="729 64 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchLevel2" id="3a355ad2221887d9" memberName="pitchLevel2"
-          virtualName="" explicitFocusOrder="0" pos="752 40 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="753 40 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchLevel3" id="5c5d782e8a7f3ad7" memberName="pitchLevel3"
-          virtualName="" explicitFocusOrder="0" pos="776 40 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="777 40 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchLevel4" id="eb900b141fbad8ff" memberName="pitchLevel4"
-          virtualName="" explicitFocusOrder="0" pos="800 40 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="801 40 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchLevel1" id="344cbe26ec9fa128" memberName="pitchLevel1"
-          virtualName="" explicitFocusOrder="0" pos="728 40 32 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="729 40 24 24" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"

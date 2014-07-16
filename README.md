@@ -29,7 +29,7 @@ in normal operation it shouldn't crash and the VST state saving works. If you do
 new version here but you see it in the change log, it's because this version is in development 
 (current sprint). Only officials (tested) builds are listed here.
 
-
+* Version 0.6.1 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.1-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.1-osx.vst.zip)
 * Version 0.6.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.0-osx.vst.zip)
 * Version 0.5.1 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.1-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.1-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.1-osx.vst.zip)
 * Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
@@ -38,6 +38,9 @@ new version here but you see it in the change log, it's because this version is 
 
 Changelog
 ---------
+#### Version 0.6.1
+* Mouse over + LFO type fix + pitch eg values
+
 #### Version 0.6.0
 * Added external midi interface to send / receive sysex messages
 * Fix Tracktion crash upon startup 
@@ -66,7 +69,7 @@ It is possible to enjoy your DX7 sysex collection from one single zip file. Simp
 sysex content to where you have installed Dexed (VST plugins dir). Then rename the zip file to 
 `Dexed_cart.zip`. You can modify this file anytime you want, Dexed will simply reparse it when the 
 file is changed. Directories in the zip file will be transformed into submenu when you hit the 
-[CART] button.
+[CART] button. Watch out; Windows hides the .zip extension by default !
 
 Using as a DX7 editor
 ---------------------

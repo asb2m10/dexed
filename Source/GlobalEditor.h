@@ -53,7 +53,7 @@ public:
     void updatePitchPos(int pos);
     void updateVu(float v);
     void updateDisplay();
-
+    void repaintMsg();
     //[/UserMethods]
 
     void paint (Graphics& g);

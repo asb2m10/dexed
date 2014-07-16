@@ -189,6 +189,7 @@ void CtrlDX::updateDisplayName() {
     String msg;
     msg << label << " = " << getValueDisplay();
     editor->global.setParamMessage(msg);
+    editor->global.repaint();
 }
 
 
@@ -272,7 +273,7 @@ void DexedAudioProcessor::initCtrl() {
     lfoSync = new CtrlDX("LFO KEY SYNC", 2, 141);
     ctrl.add(lfoSync);
     
-    lfoWaveform = new CtrlDX("LFO WAVE", 5, 142);
+    lfoWaveform = new CtrlDX("LFO WAVE", 6, 142);
     ctrl.add(lfoWaveform);
     
     transpose = new CtrlDX("MIDDLE C", 49, 144);
@@ -284,14 +285,14 @@ void DexedAudioProcessor::initCtrl() {
     for (int i=0;i<4;i++) {
         String rate;
         rate << "PITCH EG RATE " << (i+1);
-        pitchEgRate[i] = new CtrlDX(rate, 99, 126+i);
+        pitchEgRate[i] = new CtrlDX(rate, 100, 126+i);
         ctrl.add(pitchEgRate[i]);
     }
 
     for (int i=0;i<4;i++) {
         String level;
         level << "PITCH EG LEVEL " << (i+1);
-        pitchEgLevel[i] = new CtrlDX(level, 99, 130+i);
+        pitchEgLevel[i] = new CtrlDX(level, 100, 130+i);
         ctrl.add(pitchEgLevel[i]);
     }
     
