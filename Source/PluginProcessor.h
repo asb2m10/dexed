@@ -40,6 +40,12 @@ struct ProcessorVoice {
     Dx7Note *dx7_note;
 };
 
+enum DexedEngineResolution {
+    DEXED_RESO_MODERN,
+    DEXED_RESO_MARKI,
+    DEXED_RESO_OPL
+};
+
 //==============================================================================
 /**
 */
@@ -98,6 +104,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
 	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
     
     void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message);
+    uint32_t engineResolution;
     
 public :
     // in MIDI units (0x4000 is neutral)
@@ -114,6 +121,9 @@ public :
     bool forceRefreshUI;
     
     float vuSignal;
+
+    int getEngineResolution();
+    void setEngineResolution(int rs);
     
     Array<Ctrl*> ctrl;
 

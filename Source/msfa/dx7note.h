@@ -53,7 +53,7 @@ class Dx7Note {
 
   // PG:add the update
   void update(const char patch[156], int midinote);
-  void peekVoiceStatus(VoiceStatus &status);
+  void peekVoiceStatus(VoiceStatus &status); 
 
  private:
   FmCore core_;
@@ -63,7 +63,8 @@ class Dx7Note {
   int32_t basepitch_[6];
   int32_t fb_buf_[2];
   int32_t fb_shift_;
-
+  int32_t ampmodsens_[6];
+        
   int ampmoddepth_;
   int algorithm_;
   int pitchmoddepth_;

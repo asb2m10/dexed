@@ -33,11 +33,13 @@ new version here but you see it in the change log, it's because this version is 
 * Version 0.6.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.0-osx.vst.zip)
 * Version 0.5.1 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.1-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.1-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.1-osx.vst.zip)
 * Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
-* Version 0.4.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.4.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.4.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.4.0-osx.vst.zip)
-* Version 0.3.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.3.0-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.3.0-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.3.0-osx.vst.zip)
 
 Changelog
 ---------
+#### Version 0.7.0 (current sprint)
+* DX Engine customizable bitrate engine
+* DX Engine AM implementation
+
 #### Version 0.6.1
 * Mouse over + LFO type fix + pitch eg values
 
@@ -49,20 +51,6 @@ Changelog
 * Knobs now works with vertical mouse drags
 * User DX7 zip cartridges
 
-#### Version 0.5.1
-* Fix distortion issue with FL (DAW blocksize not multiple of 64)
-* OS X 64bit build (the VST package contains both 32bit and 64bit)
-
-#### Version 0.5.0
-* Linux support
-* Fix large DAW blocksize with midi events 
-
-#### Version 0.4.0
-* Modulation wheel support
-* Now using the [Obxd](https://obxd.wordpress.com) 4-pole lowpass filter implementation
-* Pitchbend range / step
-* Output/Volume VU status
-
 User DX7 zip cartridges
 -----------------------
 It is possible to enjoy your DX7 sysex collection from one single zip file. Simply move your zipped
@@ -70,6 +58,23 @@ sysex content to where you have installed Dexed (VST plugins dir). Then rename t
 `Dexed_cart.zip`. You can modify this file anytime you want, Dexed will simply reparse it when the 
 file is changed. Directories in the zip file will be transformed into submenu when you hit the 
 [CART] button. Watch out; Windows hides the .zip extension by default !
+
+Engine resolutions
+------------------
+Dexed can be configured to try to use the original math limitation of a DX synthesizer. And when I say
+math limitation, I'm not only talking about the DAC, it is also about the sin LUT lookup table, multiply
+resolution and original DX sampling rate. This is a work in progress and this might take time to be able
+to perfect.
+
+If you look at the original DX7 and implementation a DX engine with 10-bit sin lookup and 12 mul possibility,
+you get something "not quite there". Yamaha did a lot of hacks to be able to squeeze this into something 
+musical and expressive. It is those 'hacks' that we need to recreate to be able to find that original
+DX sound.
+
+Dexed comes with 3 engine resolution.
+* Modern : this is the original 24-bit music-synthesizer-for-android implementation.
+* Mark I : this is a pale implementation of the limitation of a Yamaha DX7 Mark I with the 12-bit (with the 4-bit attenuator hack) DAC.
+* OPL Series : this is a experimental implementation of Yamaha 4-ops that used the YM2151 chip. These chips were supposed to be even more limited to the DX7 but gave a very interesting distinctive sound.
 
 Using as a DX7 editor
 ---------------------
@@ -142,5 +147,4 @@ TODO - msfa
 -----------
 * The sample rate should not change the response of the envelopes
 * Portamento implementation
-* LFO/Mod-wheel amplitude
 * Algo 4 & 6 feedback

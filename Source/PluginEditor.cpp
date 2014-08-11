@@ -27,6 +27,8 @@
 #include "math.h"
 #include <fstream>
 
+#include "msfa/fm_op_kernel.h"
+
 using namespace ::std;
 
 class AboutBox : public DialogWindow {
@@ -316,10 +318,12 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     }
 
     if (buttonThatWasClicked == settingsButton) {
+        int reso = processor->getEngineResolution();
+        
         AlertWindow window("","", AlertWindow::NoIcon, this);
         ParamDialog param;
         param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
-        param.setDialogValues(processor->controllers, processor->sysexComm);
+        param.setDialogValues(processor->controllers, processor->sysexComm, reso);
         
         window.addCustomComponent(&param);
         window.addButton("OK", 0);
@@ -327,7 +331,8 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         if ( window.runModalLoop() != 0 )
             return;
         
-        bool ret = param.getDialogValues(processor->controllers, processor->sysexComm);
+        bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &reso);
+        processor->setEngineResolution(reso);
         processor->savePreference();
         
         if ( ret == false ) {

@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
+#ifndef __FM_OP_KERNEL_H
+#define __FM_OP_KERNEL_H
+
+#include "controllers.h"
+
 class FmOpKernel {
- public:
+ public:    
   // gain1 and gain2 represent linear step: gain for sample i is
   // gain1 + (1 + i) / 64 * (gain2 - gain1)
 
   // This is the basic FM operator. No feedback.
   static void compute(int32_t *output, const int32_t *input,
                       int32_t phase0, int32_t freq,
-                      int32_t gain1, int32_t gain2, bool add);
+                      int32_t gain1, int32_t gain2, bool add, const Controllers *controllers);
   
   // This is a sine generator, no feedback.
   static void compute_pure(int32_t *output, int32_t phase0, int32_t freq,
-                           int32_t gain1, int32_t gain2, bool add);
+                           int32_t gain1, int32_t gain2, bool add, const Controllers *controllers);
 
   // One op with feedback, no add.
   static void compute_fb(int32_t *output, int32_t phase0, int32_t freq,
                          int32_t gain1, int32_t gain2,
-                         int32_t *fb_buf, int fb_gain, bool add);
+                         int32_t *fb_buf, int fb_gain, bool add, const Controllers *controllers);
 };
+
+#endif

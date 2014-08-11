@@ -523,6 +523,9 @@ void DexedAudioProcessor::loadPreference() {
         sysexComm.setChl( prop.getIntValue( String("sysexChl") ) );
     }
     
+    if ( prop.containsKey( String("engineResolution" ) ) ) {
+        engineResolution = prop.getIntValue( String(engineResolution) );
+    }
 }
 
 void DexedAudioProcessor::savePreference() {
@@ -535,6 +538,8 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("sysexIn"), sysexComm.getInput());
     prop.setValue(String("sysexOut"), sysexComm.getOutput());
     prop.setValue(String("sysexChl"), sysexComm.getChl());
+    
+    //prop.setValue(String("engineResolution"), engineResolution);
     
     prop.save();
 }

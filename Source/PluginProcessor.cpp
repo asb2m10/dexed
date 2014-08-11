@@ -28,6 +28,7 @@
 #include "msfa/exp2.h"
 #include "msfa/pitchenv.h"
 #include "msfa/aligned_buf.h"
+#include "msfa/fm_op_kernel.h"
 
 
 //==============================================================================
@@ -54,6 +55,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     normalizeDxVelocity = false;
     sysexComm.listener = this;
     keyboardState.addListener(&sysexComm);
+    engineResolution = -1;
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
@@ -66,11 +68,14 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();
     
+    setEngineResolution(DEXED_RESO_MODERN);
+    
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
     }
     nextMidi = NULL;
     midiMsg = NULL;
+
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -184,9 +189,14 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
+                    uint32_t state = 0;
                     
                     for (int j=0; j < N; ++j) {
-                        int32_t val = audiobuf.get()[j] >> 4;
+                        int32 r = rand() & 0xFFFF;
+                        int32_t val = audiobuf.get()[j]; //& 0xFFFFF000);// + r - state;
+                        state = r;
+                        
+                        val = val >> 4;
                         int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
                         float f = ((float) clip_val) / (float) 32768;
                         if( f > 1 ) f = 1;
@@ -411,6 +421,32 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
     forceRefreshUI = true;
 }
 
+
+int DexedAudioProcessor::getEngineResolution() {
+    return engineResolution;
+}
+
+void DexedAudioProcessor::setEngineResolution(int rs) {
+    switch (rs)  {
+        case DEXED_RESO_MODERN :
+            controllers.sinBitFilter = -1;
+            controllers.dacBitFilter = -1;
+            controllers.mulBitFilter = -1;
+            break;
+        case DEXED_RESO_MARKI:
+            controllers.sinBitFilter = 0xFFFFC000;  // 10 bit
+            controllers.dacBitFilter = 0xFFFFF000;  // semi 14 bit
+            break;
+        case DEXED_RESO_OPL:
+            controllers.sinBitFilter = 0xFFFF8000;  // 9 bit
+            controllers.dacBitFilter = 0xFFFF0000;
+            break;
+    }
+    
+    
+    engineResolution = rs;
+}
+
 // ====================================================================
 bool DexedAudioProcessor::peekVoiceStatus() {
     if ( currentNote == -1 )
@@ -507,7 +543,7 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
 }
 
 void DexedAudioProcessor::handleAsyncUpdate() {
-   updateUI();
+    updateUI();
 }
 
 void dexed_trace(const char *source, const char *fmt, ...) {

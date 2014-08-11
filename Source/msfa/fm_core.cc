@@ -22,6 +22,7 @@
 #include "fm_op_kernel.h"
 #include "fm_core.h"
 
+
 using namespace std;
 
 struct FmOperatorInfo {
@@ -108,7 +109,7 @@ void FmCore::dump() {
 }
 
 void FmCore::compute(int32_t *output, FmOpParams *params, int algorithm,
-                     int32_t *fb_buf, int feedback_shift) {
+                     int32_t *fb_buf, int feedback_shift, const Controllers *controllers) {
   const int kLevelThresh = 1120;
   const FmAlgorithm alg = algorithms[algorithm];
   bool has_contents[3] = { true, false, false };
@@ -131,16 +132,16 @@ void FmCore::compute(int32_t *output, FmOpParams *params, int algorithm,
           // cout << op << " fb " << inbus << outbus << add << endl;
           FmOpKernel::compute_fb(outptr, param.phase, param.freq,
                                  gain1, gain2,
-                                 fb_buf, feedback_shift, add);
+                                 fb_buf, feedback_shift, add, controllers);
         } else {
           // cout << op << " pure " << inbus << outbus << add << endl;
           FmOpKernel::compute_pure(outptr, param.phase, param.freq,
-                                   gain1, gain2, add);
+                                   gain1, gain2, add, controllers);
         }
       } else {
         // cout << op << " normal " << inbus << outbus << " " << param.freq << add << endl;
         FmOpKernel::compute(outptr, buf_[inbus - 1].get(),
-                            param.phase, param.freq, gain1, gain2, add);
+                            param.phase, param.freq, gain1, gain2, add, controllers);
       }
       has_contents[outbus] = true;
     } else if (!add) {

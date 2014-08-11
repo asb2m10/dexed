@@ -26,6 +26,11 @@ const int kControllerPitchStep = 130;
 class Controllers {
  public:
   int values_[131];
+    
+  // engine bit filters
+  uint32_t sinBitFilter;         // bit filter based upon sin LUT lookup
+  uint32_t dacBitFilter;         // bit filter based upon DAC resolution
+  uint32_t mulBitFilter;         // bit filter based upon multipliers (?????)
 };
 
 #endif  // __CONTROLLERS_H

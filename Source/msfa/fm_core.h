@@ -18,7 +18,9 @@
 #define __FM_CORE_H
 
 #include "aligned_buf.h"
+#include "fm_op_kernel.h"
 #include "synth.h"
+#include "controllers.h"
 
 struct FmOpParams {
   int32_t gain[2];
@@ -30,7 +32,7 @@ class FmCore {
  public:
   static void dump();
   void compute(int32_t *output, FmOpParams *params, int algorithm,
-               int32_t *fb_buf, int32_t feedback_gain);
+               int32_t *fb_buf, int32_t feedback_gain, const Controllers *controller);
  private:
   AlignedBuf<int32_t, N>buf_[2];
 };

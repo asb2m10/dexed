@@ -16,6 +16,7 @@
 
 #ifdef VERBOSE
 #include <iostream>
+using namespace std;
 #endif
 #include <math.h>
 #include "synth.h"
@@ -23,8 +24,6 @@
 #include "exp2.h"
 #include "controllers.h"
 #include "dx7note.h"
-
-using namespace std;
 
 void dexed_trace(const char *source, const char *fmt, ...);
 
@@ -135,6 +134,11 @@ static const uint8_t pitchmodsenstab[] = {
   0, 10, 20, 33, 55, 92, 153, 255
 };
 
+// PG: we need to find the real values
+static const uint8_t ampmodsenstab[] = {
+    0, 33, 153, 255
+};
+
 void Dx7Note::init(const char patch[156], int midinote, int velocity) {
   int rates[4];
   int levels[4];
@@ -173,6 +177,9 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
     // cout << op << " freq: " << freq << endl;
     params_[op].phase = 0;
     params_[op].gain[1] = 0;
+    ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
+      
+      TRACE("operator set: %d %d", op, ampmodsens_[op]);
   }
   for (int i = 0; i < 4; i++) {
     rates[i] = patch[126 + i];
@@ -191,9 +198,10 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
   const Controllers *ctrls) {
   int32_t pitchmod = pitchenv_.getsample();
   uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
-  // TODO: add modulation sources (mod wheel, etc)
+  // TODO(PG) : make this integer friendly
   uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
   int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
+  uint32_t amd = ampmoddepth_ * lfo_delay;    // Q32 :D
     
   pitchmod += (((int64_t)pwmd) * (int64_t)senslfo) >> 39;
   pitchmod += (((int64_t)pmd) * (int64_t)senslfo) >> 39;
@@ -214,13 +222,20 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
   pitchmod += pb;
   for (int op = 0; op < 6; op++) {
     params_[op].gain[0] = params_[op].gain[1];
-    int32_t level = env_[op].getsample();
-    int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
+
     //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
     params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
+
+    int32_t level = env_[op].getsample();
+    if ( ampmodsens_[op] != 0 ) {
+      uint32_t sensamp =  ampmodsens_[op] * (lfo_val - (1 << 23));
+      uint32_t amd_level = (((int64_t)amd) * (int64_t)sensamp) >> 40;
+      level -= amd_level;
+    }
+    int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
     params_[op].gain[1] = gain;
   }
-  core_.compute(buf, params_, algorithm_, fb_buf_, fb_shift_);
+  core_.compute(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
 }
 
 void Dx7Note::keyup() {

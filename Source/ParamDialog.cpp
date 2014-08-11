@@ -62,11 +62,21 @@ ParamDialog::ParamDialog ()
     sysexChl->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     sysexChl->addListener (this);
 
+    addAndMakeVisible (engineReso = new ComboBox ("new combo box"));
+    engineReso->setEditableText (false);
+    engineReso->setJustificationType (Justification::centredLeft);
+    engineReso->setTextWhenNothingSelected (String::empty);
+    engineReso->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    engineReso->addItem (TRANS("Modern (Direct)"), 1);
+    engineReso->addItem (TRANS("Mark I"), 2);
+    engineReso->addItem (TRANS("OPL Series"), 3);
+    engineReso->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (330, 300);
+    setSize (350, 350);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -95,6 +105,7 @@ ParamDialog::~ParamDialog()
     sysexIn = nullptr;
     sysexOut = nullptr;
     sysexChl = nullptr;
+    engineReso = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -124,20 +135,32 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 In"),
-                20, 178, 131, 23,
+                28, 226, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 Out"),
-                19, 218, 131, 23,
+                30, 267, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 Channel"),
-                19, 258, 245, 23,
+                27, 306, 245, 23,
                 Justification::centredLeft, true);
+
+    g.setColour (Colours::white);
+    g.setFont (Font (15.00f, Font::plain));
+    g.drawText (TRANS("Engine Resolution"),
+                22, 154, 276, 23,
+                Justification::centredLeft, true);
+
+    g.setColour (Colours::black);
+    g.fillRect (22, 138, 306, 1);
+
+    g.setColour (Colours::black);
+    g.fillRect (22, 194, 306, 1);
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -145,11 +168,12 @@ void ParamDialog::paint (Graphics& g)
 
 void ParamDialog::resized()
 {
-    pitchRange->setBounds (240, 16, 72, 24);
-    pitchStep->setBounds (240, 56, 72, 24);
-    sysexIn->setBounds (96, 176, 208, 24);
-    sysexOut->setBounds (96, 216, 208, 24);
-    sysexChl->setBounds (240, 256, 72, 24);
+    pitchRange->setBounds (264, 16, 72, 24);
+    pitchStep->setBounds (264, 56, 72, 24);
+    sysexIn->setBounds (104, 224, 224, 24);
+    sysexOut->setBounds (104, 264, 224, 24);
+    sysexChl->setBounds (264, 304, 72, 24);
+    engineReso->setBounds (160, 152, 168, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -195,6 +219,11 @@ void ParamDialog::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
         //[UserComboBoxCode_sysexOut] -- add your combo box handling code here..
         //[/UserComboBoxCode_sysexOut]
     }
+    else if (comboBoxThatHasChanged == engineReso)
+    {
+        //[UserComboBoxCode_engineReso] -- add your combo box handling code here..
+        //[/UserComboBoxCode_engineReso]
+    }
 
     //[UsercomboBoxChanged_Post]
     //[/UsercomboBoxChanged_Post]
@@ -204,7 +233,7 @@ void ParamDialog::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr) {
+void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso) {
     pitchRange->setValue(c.values_[kControllerPitchRange]);
     pitchStep->setValue(c.values_[kControllerPitchStep]);
     sysexChl->setValue(mgr.getChl() + 1);
@@ -216,12 +245,13 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr) {
 
     StringArray outputs = MidiOutput::getDevices();
     idx = outputs.indexOf(mgr.getOutput());
-    TRACE("output idx %d output %s", idx, mgr.getOutput().toRawUTF8());
     idx = idx == -1 ? 0 : idx + 1;
     sysexOut->setSelectedItemIndex(idx);
+
+    engineReso->setSelectedItemIndex(reso);
 }
 
-bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr) {
+bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso) {
     bool ret = true;
 
     c.values_[kControllerPitchRange] = pitchRange->getValue();
@@ -229,6 +259,8 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr) {
     ret &= mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
     ret &= mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
     mgr.setChl(sysexChl->getValue() - 1);
+
+    *reso = engineReso->getSelectedItemIndex();
 
     return ret;
 }
@@ -248,37 +280,45 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="ParamDialog" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="330" initialHeight="300">
+                 fixedSize="1" initialWidth="350" initialHeight="350">
   <BACKGROUND backgroundColour="ff4e270d">
     <TEXT pos="20 18 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <TEXT pos="20 58 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="20 178 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
+    <TEXT pos="28 226 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 218 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
+    <TEXT pos="30 267 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="19 258 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
+    <TEXT pos="27 306 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+    <TEXT pos="22 154 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+    <RECT pos="22 138 306 1" fill="solid: ff000000" hasStroke="0"/>
+    <RECT pos="22 194 306 1" fill="solid: ff000000" hasStroke="0"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
-          virtualName="" explicitFocusOrder="0" pos="240 16 72 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0"
           max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchStep" id="b86af4b792e768ca" memberName="pitchStep"
-          virtualName="" explicitFocusOrder="0" pos="240 56 72 24" min="0"
+          virtualName="" explicitFocusOrder="0" pos="264 56 72 24" min="0"
           max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
-            explicitFocusOrder="0" pos="96 176 208 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="104 224 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="sysexOut" id="44730115841c2214" memberName="sysexOut" virtualName=""
-            explicitFocusOrder="0" pos="96 216 208 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="104 264 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
-          explicitFocusOrder="0" pos="240 256 72 24" min="1" max="16" int="1"
+          explicitFocusOrder="0" pos="264 304 72 24" min="1" max="16" int="1"
           style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+  <COMBOBOX name="new combo box" id="4087ff978c3d9e8d" memberName="engineReso"
+            virtualName="" explicitFocusOrder="0" pos="160 152 168 24" editable="0"
+            layout="33" items="Modern (Direct)&#10;Mark I&#10;OPL Series"
+            textWhenNonSelected="" textWhenNoItems="(no choices)"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
