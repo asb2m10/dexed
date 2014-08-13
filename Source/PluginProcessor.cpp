@@ -26,6 +26,7 @@
 #include "msfa/freqlut.h"
 #include "msfa/sin.h"
 #include "msfa/exp2.h"
+#include "msfa/env.h"
 #include "msfa/pitchenv.h"
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
@@ -87,6 +88,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     Freqlut::init(sampleRate);
     Lfo::init(sampleRate);
     PitchEnv::init(sampleRate);
+    Env::init_sr(sampleRate);
     fx.init(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
@@ -364,6 +366,7 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
 void DexedAudioProcessor::panic() {
     for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
         voices[i].keydown = false;
+        voices[i].live = false;
     }
     keyboardState.reset();
 }
@@ -438,7 +441,7 @@ void DexedAudioProcessor::setEngineResolution(int rs) {
             controllers.dacBitFilter = 0xFFFFF000;  // semi 14 bit
             break;
         case DEXED_RESO_OPL:
-            controllers.sinBitFilter = 0xFFFF8000;  // 9 bit
+            controllers.sinBitFilter = 0xFFFF0000;  // 9 bit
             controllers.dacBitFilter = 0xFFFF0000;
             break;
     }

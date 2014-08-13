@@ -37,8 +37,11 @@ new version here but you see it in the change log, it's because this version is 
 Changelog
 ---------
 #### Version 0.7.0 (current sprint)
-* DX Engine customizable bitrate engine
-* DX Engine AM implementation
+* Preliminary Algo 4 & 6 feedback support
+* DX Engine 'Dirty DX' emulation
+* DX Engine LFO amplitude - still buggy
+* Fixed stucked notes when programs where changed
+* Fixed engine envelop wrong timing if it was not 44100Khz - still buggy
 
 #### Version 0.6.1
 * Mouse over + LFO type fix + pitch eg values
@@ -71,7 +74,7 @@ you get something "not quite there". Yamaha did a lot of hacks to be able to squ
 musical and expressive. It is those 'hacks' that we need to recreate to be able to find that original
 DX sound.
 
-Dexed comes with 3 engine resolution.
+Dexed comes with 3 engine resolutions :
 * Modern : this is the original 24-bit music-synthesizer-for-android implementation.
 * Mark I : this is a pale implementation of the limitation of a Yamaha DX7 Mark I with the 12-bit (with the 4-bit attenuator hack) DAC.
 * OPL Series : this is a experimental implementation of Yamaha 4-ops that used the YM2151 chip. These chips were supposed to be even more limited to the DX7 but gave a very interesting distinctive sound.
@@ -145,6 +148,5 @@ TODO - Dexed
 
 TODO - msfa
 -----------
-* The sample rate should not change the response of the envelopes
 * Portamento implementation
-* Algo 4 & 6 feedback
+* Feedback tuning

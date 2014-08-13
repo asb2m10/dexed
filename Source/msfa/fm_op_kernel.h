@@ -19,6 +19,12 @@
 
 #include "controllers.h"
 
+struct FmOpParams {
+    int32_t gain[2];
+    int32_t freq;
+    int32_t phase;
+};
+
 class FmOpKernel {
  public:    
   // gain1 and gain2 represent linear step: gain for sample i is
@@ -37,6 +43,12 @@ class FmOpKernel {
   static void compute_fb(int32_t *output, int32_t phase0, int32_t freq,
                          int32_t gain1, int32_t gain2,
                          int32_t *fb_buf, int fb_gain, bool add, const Controllers *controllers);
+    
+  static void compute_fb2(int32_t *output, FmOpParams *params, int32_t *fb_buf, int fb_shift,
+                          const Controllers *controllers);
+    
+  static void compute_fb3(int32_t *output, FmOpParams *params, int32_t *fb_buf, int fb_shift,
+                          const Controllers *controllers);
 };
 
 #endif

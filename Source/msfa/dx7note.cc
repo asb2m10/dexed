@@ -25,14 +25,6 @@ using namespace std;
 #include "controllers.h"
 #include "dx7note.h"
 
-void dexed_trace(const char *source, const char *fmt, ...);
-
-#ifdef _MSC_VER
-#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
-#else
-#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
-#endif
-
 int32_t midinote_to_logfreq(int midinote) {
   const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
   const int step = (1 << 24) / 12;
@@ -134,9 +126,8 @@ static const uint8_t pitchmodsenstab[] = {
   0, 10, 20, 33, 55, 92, 153, 255
 };
 
-// PG: we need to find the real values
 static const uint8_t ampmodsenstab[] = {
-    0, 33, 153, 255
+    0, 66, 109, 255
 };
 
 void Dx7Note::init(const char patch[156], int midinote, int velocity) {
@@ -178,8 +169,6 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
     params_[op].phase = 0;
     params_[op].gain[1] = 0;
     ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
-      
-      TRACE("operator set: %d %d", op, ampmodsens_[op]);
   }
   for (int i = 0; i < 4; i++) {
     rates[i] = patch[126 + i];
@@ -253,6 +242,7 @@ void Dx7Note::update(const char patch[156], int midinote) {
     int fine = patch[off + 19];
     int detune = patch[off + 20];
     basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
+    ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
   }
   algorithm_ = patch[134];
   int feedback = patch[135];

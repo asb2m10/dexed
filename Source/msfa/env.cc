@@ -21,6 +21,12 @@
 
 using namespace std;
 
+uint32_t Env::sr_multiplier = (1<<24);
+
+void Env::init_sr(double sampleRate) {
+    sr_multiplier = (44100 / sampleRate) * (1<<23);
+}
+
 void Env::init(const int r[4], const int l[4], int32_t ol, int rate_scaling) {
   for (int i = 0; i < 4; i++) {
     rates_[i] = r[i];
@@ -98,6 +104,9 @@ void Env::advance(int newix) {
     qrate += rate_scaling_;
     qrate = min(qrate, 63);
     inc_ = (4 + (qrate & 3)) << (2 + LG_N + (qrate >> 2));
+
+    // meh, this should be fixed elsewhere
+    inc_ = ((int64_t)inc_ * (int64_t)sr_multiplier) >> 23;
   }
 }
 

@@ -456,11 +456,8 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
         return;
     }
     
-    for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
-        if (voices[i].keydown == false && voices[i].live == true) {
-            voices[i].live = false;
-        }
-    }
+    panic();
+    
     index = index > 31 ? 31 : index;
     unpackProgram(index);
     lfo.reset(data + 137);
@@ -473,6 +470,8 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
         return;
     }
     editor->global.setParamMessage("");
+    
+    panic();
 }
 
 const String DexedAudioProcessor::getProgramName(int index) {

@@ -22,12 +22,6 @@
 #include "synth.h"
 #include "controllers.h"
 
-struct FmOpParams {
-  int32_t gain[2];
-  int32_t freq;
-  int32_t phase;
-};
-
 class FmCore {
  public:
   static void dump();
