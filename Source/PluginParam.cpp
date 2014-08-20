@@ -141,15 +141,6 @@ float CtrlDX::getValueHost() {
 
 void CtrlDX::setValueHost(float f) {
     setValue((f * steps));
-    
-    /*
-    DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
-    if ( editor == NULL ) {
-        return;
-    }
-    String msg;
-    msg << label << " = " << getValueDisplay();
-    editor->global.setParamMessage(msg);*/
 }
 
 void CtrlDX::setValue(int v) {

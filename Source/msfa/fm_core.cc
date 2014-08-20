@@ -48,9 +48,9 @@ const FmAlgorithm algorithms[32] = {
   { { 0xc1, 0x11, 0x11, 0x14, 0x01, 0x14 } }, // 1
   { { 0x01, 0x11, 0x11, 0x14, 0xc1, 0x14 } }, // 2
   { { 0xc1, 0x11, 0x14, 0x01, 0x11, 0x14 } }, // 3
-  { { 0xe1, 0x11, 0x94, 0x01, 0x11, 0x14 } }, // 4
+  { { 0xc1, 0x11, 0x94, 0x01, 0x11, 0x14 } }, // 4 ** EXCEPTION VIA CODE
   { { 0xc1, 0x14, 0x01, 0x14, 0x01, 0x14 } }, // 5
-  { { 0xd1, 0x94, 0x01, 0x14, 0x01, 0x14 } }, // 6
+  { { 0xc1, 0x94, 0x01, 0x14, 0x01, 0x14 } }, // 6 ** EXCEPTION VIA CODE
   { { 0xc1, 0x11, 0x05, 0x14, 0x01, 0x14 } }, // 7
   { { 0x01, 0x11, 0xc5, 0x14, 0x01, 0x14 } }, // 8
   { { 0x01, 0x11, 0x05, 0x14, 0xc1, 0x14 } }, // 9
@@ -130,28 +130,33 @@ void FmCore::compute(int32_t *output, FmOpParams *params, int algorithm,
         // PG: this is my 'dirty' implementation of FB for 2 and 3 operators...
         // still needs some tuning...
         if ((flags & 0xc0) == 0xc0 && feedback_shift < 16) {
-          switch ( (flags >> 6) - 0xc ) {
-          // one operator feedback, normal process
-          case 0 :
-            //cout << "\t" << op << " fb " << inbus << outbus << add << endl;
-            FmOpKernel::compute_fb(outptr, param.phase, param.freq,
-                gain1, gain2,
-                fb_buf, feedback_shift, add, controllers);
-            break;
+          switch ( algorithm ) {
             // two operator feedback, process exception for ALGO 6
-          case 1 :
+          case 5 :
             FmOpKernel::compute_fb2(outptr, params, fb_buf, feedback_shift, controllers);
-            params[1].phase += params[1].freq << LG_N;  // yuk, hack, we already processed op-5
+            param.phase += param.freq << LG_N;
+            params[1].phase += param.freq + params[1].freq << LG_N;  // yuk, hack, we already processed op-5
             op++; // ignore next operator;
             break;
             // three operator feedback, process exception for ALGO 4
-          case 2 :
+          case 3 :
             FmOpKernel::compute_fb3(outptr, params, fb_buf, feedback_shift, controllers);
-            params[1].phase += params[1].freq << LG_N; // hack, we already processed op-5 - op-4
-            params[2].phase += params[2].freq << LG_N; // yuk yuk
+            param.phase += param.freq << LG_N;
+            params[1].phase += param.freq + params[1].freq << LG_N; // hack, we already processed op-5 - op-4
+            params[2].phase += param.freq + params[1].freq + params[2].freq << LG_N; // yuk yuk
             op += 2; // ignore the 2 other operators
             break;
+          default:
+            // one operator feedback, normal proces
+            //cout << "\t" << op << " fb " << inbus << outbus << add << endl;
+            FmOpKernel::compute_fb(outptr, param.phase, param.freq,
+                                   gain1, gain2,
+                                   fb_buf, feedback_shift, add, controllers);
+            param.phase += param.freq << LG_N;
+            break;
           }
+          has_contents[outbus] = true;            
+          continue;
         } else {
           // cout << op << " pure " << inbus << outbus << add << endl;
           FmOpKernel::compute_pure(outptr, param.phase, param.freq,

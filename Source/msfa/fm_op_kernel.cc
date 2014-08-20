@@ -23,16 +23,8 @@
 #endif
 
 #include "synth.h"
-
 #include "sin.h"
 #include "fm_op_kernel.h"
-
-
-uint32_t restdither() {
-    return rand() & 0x3FFF;
-    return 0;
-
-}
 
 #ifdef HAVE_NEONx
 static bool hasNeon() {
@@ -51,8 +43,6 @@ static bool hasNeon() {
   return false;
 }
 #endif
-
-//#define BIT8 0xFFFFFF00
 
 void FmOpKernel::compute(int32_t *output, const int32_t *input,
                          int32_t phase0, int32_t freq,
@@ -172,7 +162,7 @@ void FmOpKernel::compute_fb2(int32_t *output, FmOpParams *parms, int32_t *fb_buf
     phase[1] = parms[1].phase;
     
     dgain[0] = (parms[0].gain[1] - parms[0].gain[0] + (N >> 1)) >> LG_N;
-    dgain[1] = (parms[1].gain[1] - parms[1].gain[1] + (N >> 1)) >> LG_N;
+    dgain[1] = (parms[1].gain[1] - parms[1].gain[0] + (N >> 1)) >> LG_N;
     
     gain[0] = parms[0].gain[0];
     gain[1] = parms[1].gain[1];
@@ -188,7 +178,7 @@ void FmOpKernel::compute_fb2(int32_t *output, FmOpParams *parms, int32_t *fb_buf
         
         // op 1
         gain[1] += dgain[1];
-        //scaled_fb = (y0 + y) >> (fb_shift + 1);
+        scaled_fb = (y0 + y) >> (fb_shift + 1);
         y0 = y;
         y = Sin::lookup(phase[1] + scaled_fb + y);
         y = ((int64_t)y * (int64_t)gain) >> 24;

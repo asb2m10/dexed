@@ -47,7 +47,7 @@ class Env {
   static void init_sr(double sample_rate);
     
  private:
-  // This code is normalized to 44100, need to put a multiplier
+  // PG: This code is normalized to 44100, need to put a multiplier
   // if we are not using 44100.
   static uint32_t sr_multiplier;
     

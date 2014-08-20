@@ -19,6 +19,7 @@
 using namespace std;
 #endif
 #include <math.h>
+#include <stdlib.h>
 #include "synth.h"
 #include "freqlut.h"
 #include "exp2.h"
@@ -126,8 +127,10 @@ static const uint8_t pitchmodsenstab[] = {
   0, 10, 20, 33, 55, 92, 153, 255
 };
 
-static const uint8_t ampmodsenstab[] = {
-    0, 66, 109, 255
+
+// 0, 66, 109, 255
+static const uint32_t ampmodsenstab[] = {
+    0, 4342338, 7171437, 16777216
 };
 
 void Dx7Note::init(const char patch[156], int midinote, int velocity) {
@@ -190,7 +193,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
   // TODO(PG) : make this integer friendly
   uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
   int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
-  uint32_t amd = ampmoddepth_ * lfo_delay;    // Q32 :D
+  uint32_t amd = ((int64_t)ampmoddepth_ * (int64_t)lfo_delay) >> 8;    // Q24 :D
     
   pitchmod += (((int64_t)pwmd) * (int64_t)senslfo) >> 39;
   pitchmod += (((int64_t)pmd) * (int64_t)senslfo) >> 39;
@@ -216,12 +219,13 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
     params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
 
     int32_t level = env_[op].getsample();
-    if ( ampmodsens_[op] != 0 ) {
-      uint32_t sensamp =  ampmodsens_[op] * (lfo_val - (1 << 23));
-      uint32_t amd_level = (((int64_t)amd) * (int64_t)sensamp) >> 40;
-      level -= amd_level;
-    }
     int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
+      if ( ampmodsens_[op] != 0 ) {
+          uint32_t sensamp = ((int64_t)ampmodsens_[op]) * ((int64_t)gain) >> 24;
+          sensamp = ((int64_t)sensamp) * ((int64_t)lfo_val) >> 24;
+          uint32_t amd_level = (((int64_t)amd) * (int64_t)sensamp) >> 24;
+          gain -= amd_level;
+      }
     params_[op].gain[1] = gain;
   }
   core_.compute(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
@@ -249,6 +253,7 @@ void Dx7Note::update(const char patch[156], int midinote) {
   fb_shift_ = feedback != 0 ? 8 - feedback : 16;
   pitchmoddepth_ = (patch[139] * 165) >> 6;
   pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
+  ampmoddepth_ = (patch[140] * 165) >> 6;
 }
 
 void Dx7Note::peekVoiceStatus(VoiceStatus &status) {

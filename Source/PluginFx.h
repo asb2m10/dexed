@@ -21,6 +21,15 @@
 #ifndef PLUGINFX_H_INCLUDED
 #define PLUGINFX_H_INCLUDED
 
+#include "../JuceLibraryCode/JuceHeader.h"
+
+class ModuleFx {
+public:
+    virtual ~ModuleFx() {};
+    virtual void init(int sampleRate) = 0;
+    virtual void process(float *work, int sz) = 0;
+};
+
 class PluginFx {
 	float s1,s2,s3,s4;
 	float sampleRate;
@@ -54,6 +63,8 @@ class PluginFx {
     int R;
     
 public:
+    
+    ScopedPointer<ModuleFx> obxdFilter;
     
     // this is set directly by the ui / parameter
     float uiCutoff;

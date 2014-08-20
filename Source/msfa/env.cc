@@ -19,7 +19,7 @@
 #include "synth.h"
 #include "env.h"
 
-using namespace std;
+//using namespace std;
 
 uint32_t Env::sr_multiplier = (1<<24);
 
@@ -40,7 +40,7 @@ void Env::init(const int r[4], const int l[4], int32_t ol, int rate_scaling) {
 }
 
 int32_t Env::getsample() {
-  if (ix_ < 3 || (ix_ < 4) && !down_) {
+  if (ix_ < 3 || ((ix_ < 4) && !down_)) {
     if (rising_) {
       const int jumptarget = 1716;
       if (level_ < (jumptarget << 16)) {

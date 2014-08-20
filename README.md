@@ -30,18 +30,15 @@ new version here but you see it in the change log, it's because this version is 
 (current sprint). Only officials (tested) builds are listed here.
 
 * Version 0.6.1 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.1-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.1-osx.vst.zip)
-* Version 0.6.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.0-osx.vst.zip)
-* Version 0.5.1 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.1-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.1-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.1-osx.vst.zip)
-* Version 0.5.0 [vst win32](http://le-son666.com/software/dexed/dexed-0.5.0a-win32.zip) - [vst win64](http://le-son666.com/software/dexed/dexed-0.5.0a-win64.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.5.0-osx.vst.zip)
 
 Changelog
 ---------
 #### Version 0.7.0 (current sprint)
 * Preliminary Algo 4 & 6 feedback support
 * DX Engine 'Dirty DX' emulation
-* DX Engine LFO amplitude - still buggy
+* DX Engine LFO amplitude
 * Fixed stucked notes when programs where changed
-* Fixed engine envelop wrong timing if it was not 44100Khz - still buggy
+* Fixed engine envelop wrong timing if it was not 44100Khz
 
 #### Version 0.6.1
 * Mouse over + LFO type fix + pitch eg values

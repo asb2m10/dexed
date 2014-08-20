@@ -53,7 +53,7 @@ void PitchEnv::set(const int r[4], const int l[4]) {
 }
 
 int32_t PitchEnv::getsample() {
-  if (ix_ < 3 || (ix_ < 4) && !down_) {
+  if (ix_ < 3 || ((ix_ < 4) && !down_)) {
     if (rising_) {
       level_ += inc_;
       if (level_ >= targetlevel_) {
