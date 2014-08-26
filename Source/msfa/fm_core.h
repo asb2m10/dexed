@@ -22,13 +22,37 @@
 #include "synth.h"
 #include "controllers.h"
 
+
+class FmOperatorInfo {
+public:
+    int in;
+    int out;
+};
+
+enum FmOperatorFlags {
+    OUT_BUS_ONE = 1 << 0,
+    OUT_BUS_TWO = 1 << 1,
+    OUT_BUS_ADD = 1 << 2,
+    IN_BUS_ONE = 1 << 4,
+    IN_BUS_TWO = 1 << 5,
+    FB_IN = 1 << 6,
+    FB_OUT = 1 << 7
+};
+
+class FmAlgorithm {
+public:
+    int ops[6];
+};
+
 class FmCore {
  public:
+  virtual ~FmCore() {};
   static void dump();
-  void compute(int32_t *output, FmOpParams *params, int algorithm,
-               int32_t *fb_buf, int32_t feedback_gain, const Controllers *controller);
- private:
+  virtual void compute(int32_t *output, FmOpParams *params, int algorithm,
+                       int32_t *fb_buf, int32_t feedback_gain, const Controllers *controller);
+ protected:
   AlignedBuf<int32_t, N>buf_[2];
+  const static FmAlgorithm algorithms[32];
 };
 
 #endif  // __FM_CORE_H

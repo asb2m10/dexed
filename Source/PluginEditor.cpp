@@ -142,11 +142,21 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     storeButton->addListener(this);
     storeButton->setBounds(331, 6, 50, 18);
 
+    addAndMakeVisible(initButton = new TextButton("INIT"));
+    initButton->setButtonText("INIT");
+    initButton->addListener(this);
+    initButton->setBounds(385, 6, 50, 18);
+
+    addAndMakeVisible(monoButton = new TextButton("MONO"));
+    monoButton->setButtonText("MONO");
+    monoButton->addListener(this);
+    monoButton->setBounds(439, 6, 50, 18);
+
     addAndMakeVisible(sendButton = new TextButton("SEND"));
     sendButton->setVisible(false);
     sendButton->setButtonText("SEND");
     sendButton->addListener(this);
-    sendButton->setBounds(385, 6, 50, 18);
+    sendButton->setBounds(493, 6, 50, 18);
     sendButton->setVisible(processor->sysexComm.isOutputActive());
     
     addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
@@ -155,7 +165,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     addAndMakeVisible(settingsButton = new TextButton("PARMS"));
     settingsButton->setButtonText("PARMS");
     settingsButton->addListener(this);
-    settingsButton->setBounds(755, 6, 50, 18);
+    settingsButton->setBounds(754, 6, 50, 18);
     
     addAndMakeVisible(aboutButton = new TextButton("ABOUT"));
     aboutButton->setButtonText("ABOUT");
@@ -318,12 +328,12 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     }
 
     if (buttonThatWasClicked == settingsButton) {
-        int reso = processor->getEngineResolution();
+        int tp = processor->getEngineType();
         
         AlertWindow window("","", AlertWindow::NoIcon, this);
         ParamDialog param;
         param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
-        param.setDialogValues(processor->controllers, processor->sysexComm, reso);
+        param.setDialogValues(processor->controllers, processor->sysexComm, tp);
         
         window.addCustomComponent(&param);
         window.addButton("OK", 0);
@@ -331,8 +341,8 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         if ( window.runModalLoop() != 0 )
             return;
         
-        bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &reso);
-        processor->setEngineResolution(reso);
+        bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &tp);
+        processor->setEngineType(tp);
         processor->savePreference();
         
         if ( ret == false ) {
@@ -340,6 +350,11 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
         }
 
         sendButton->setVisible(processor->sysexComm.isOutputActive());
+        return;
+    }
+    
+    if (buttonThatWasClicked == initButton ) {
+        processor->resetToInitVoice();
         return;
     }
     

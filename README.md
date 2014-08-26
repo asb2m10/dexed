@@ -35,10 +35,12 @@ Changelog
 ---------
 #### Version 0.7.0 (current sprint)
 * Preliminary Algo 4 & 6 feedback support
-* DX Engine 'Dirty DX' emulation
-* DX Engine LFO amplitude
+* DX Engine 'Dirty DX' emulation, including based on OPL chips
+* DX Engine LFO amplitude. This still needs some tunings
 * Fixed stucked notes when programs where changed
+* Added the 'INIT' button to re-initialize a program
 * Fixed engine envelop wrong timing if it was not 44100Khz
+* Filter only .syx files when using the Dexed_cart.zip file
 
 #### Version 0.6.1
 * Mouse over + LFO type fix + pitch eg values

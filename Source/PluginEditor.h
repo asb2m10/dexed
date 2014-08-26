@@ -51,6 +51,9 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     ScopedPointer<TextButton> aboutButton;
     ScopedPointer<TextButton> settingsButton;
     ScopedPointer<TextButton> sendButton;
+    ScopedPointer<TextButton> initButton;
+    ScopedPointer<TextButton> monoButton;
+            
     ScopedPointer<Component> midiMonitor;
     void storeProgram();
 

@@ -60,6 +60,8 @@ inline static T max(const T& a, const T& b) {
 
 void dexed_trace(const char *source, const char *fmt, ...);
 
+#define QER(n,b) ( ((float)n)/(1<<b) )
+
 #ifdef _MSC_VER
 #define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
 #else

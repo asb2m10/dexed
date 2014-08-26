@@ -244,6 +244,24 @@ void DexedAudioProcessor::loadBuiltin(int idx) {
     importSysex((char *) &syx_data);
 }
 
+void DexedAudioProcessor::resetToInitVoice() {
+    const char init_voice[] =
+      { 99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 99, 0, 1, 0, 7,
+        99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
+        73, 78, 73, 84, 32, 86, 79, 73, 67, 69} ;
+    
+    for(int i=0;i<sizeof(init_voice);i++) {
+        data[i] = init_voice[i];
+    }
+    panic();
+    triggerAsyncUpdate();
+}
+
 //==============================================================================
 void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     // You should use this method to store your parameters in the memory block.
@@ -409,7 +427,12 @@ PopupMenu *CartridgeManager::fillContent(String root, ZipFile *userZip) {
             zipIdx++;
             continue;
         }
-
+        
+        if ( ! path.endsWithIgnoreCase(".syx") ) {
+            zipIdx++;
+            continue;
+        }
+        
         if ( ( ! path.startsWith(root) ) && root.length() != 0 )
             return current;
         
@@ -435,8 +458,8 @@ PopupMenu *CartridgeManager::fillContent(String root, ZipFile *userZip) {
             if ( current == NULL )
                 current = new PopupMenu();
 
-            if ( tail.endsWithIgnoreCase(".syx") )
-                tail = tail.substring(0, tail.length()-4);
+            // remove the .syx extension
+            tail = tail.substring(0, tail.length()-4);
 
             current->addItem(zipIdx + IDX_USER, tail);
         }

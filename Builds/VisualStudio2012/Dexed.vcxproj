@@ -139,9 +139,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>
-    <ClCompile Include="..\..\Source\PluginParam.cpp"/>
-    <ClCompile Include="..\..\Source\PluginData.cpp"/>
+    <ClCompile Include="..\..\Source\PluginFx.cpp"/>
+    <ClCompile Include="..\..\Source\EngineMkI.cpp"/>
+    <ClCompile Include="..\..\Source\EngineOpl.cpp"/>
+    <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
+    <ClCompile Include="..\..\Source\GlobalEditor.cpp"/>
+    <ClCompile Include="..\..\Source\ParamDialog.cpp"/>
+    <ClCompile Include="..\..\Source\OperatorEditor.cpp"/>
+    <ClCompile Include="..\..\Source\DXLookNFeel.cpp"/>
+    <ClCompile Include="..\..\Source\DXComponents.cpp"/>
     <ClCompile Include="..\..\Source\msfa\freqlut.cc"/>
     <ClCompile Include="..\..\Source\msfa\lfo.cc"/>
     <ClCompile Include="..\..\Source\msfa\dx7note.cc"/>
@@ -151,13 +157,9 @@
     <ClCompile Include="..\..\Source\msfa\fm_op_kernel.cc"/>
     <ClCompile Include="..\..\Source\msfa\pitchenv.cc"/>
     <ClCompile Include="..\..\Source\msfa\sin.cc"/>
-    <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
-    <ClCompile Include="..\..\Source\GlobalEditor.cpp"/>
-    <ClCompile Include="..\..\Source\ParamDialog.cpp"/>
-    <ClCompile Include="..\..\Source\OperatorEditor.cpp"/>
-    <ClCompile Include="..\..\Source\DXLookNFeel.cpp"/>
-    <ClCompile Include="..\..\Source\DXComponents.cpp"/>
-    <ClCompile Include="..\..\Source\PluginFx.cpp"/>
+    <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>
+    <ClCompile Include="..\..\Source\PluginParam.cpp"/>
+    <ClCompile Include="..\..\Source\PluginData.cpp"/>
     <ClCompile Include="..\..\Source\SysexComm.cpp"/>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.cpp">
       <ExcludedFromBuild>true</ExcludedFromBuild>
@@ -1137,10 +1139,15 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_plugin_client\VST\juce_VST_Wrapper.cpp"/>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\Dexed.h"/>
-    <ClInclude Include="..\..\Source\PluginProcessor.h"/>
-    <ClInclude Include="..\..\Source\PluginParam.h"/>
-    <ClInclude Include="..\..\Source\PluginData.h"/>
+    <ClInclude Include="..\..\Source\PluginFx.h"/>
+    <ClInclude Include="..\..\Source\EngineMkI.h"/>
+    <ClInclude Include="..\..\Source\EngineOpl.h"/>
+    <ClInclude Include="..\..\Source\PluginEditor.h"/>
+    <ClInclude Include="..\..\Source\GlobalEditor.h"/>
+    <ClInclude Include="..\..\Source\ParamDialog.h"/>
+    <ClInclude Include="..\..\Source\OperatorEditor.h"/>
+    <ClInclude Include="..\..\Source\DXLookNFeel.h"/>
+    <ClInclude Include="..\..\Source\DXComponents.h"/>
     <ClInclude Include="..\..\Source\msfa\freqlut.h"/>
     <ClInclude Include="..\..\Source\msfa\lfo.h"/>
     <ClInclude Include="..\..\Source\msfa\aligned_buf.h"/>
@@ -1154,13 +1161,10 @@
     <ClInclude Include="..\..\Source\msfa\pitchenv.h"/>
     <ClInclude Include="..\..\Source\msfa\sin.h"/>
     <ClInclude Include="..\..\Source\msfa\synth.h"/>
-    <ClInclude Include="..\..\Source\PluginEditor.h"/>
-    <ClInclude Include="..\..\Source\GlobalEditor.h"/>
-    <ClInclude Include="..\..\Source\ParamDialog.h"/>
-    <ClInclude Include="..\..\Source\OperatorEditor.h"/>
-    <ClInclude Include="..\..\Source\DXLookNFeel.h"/>
-    <ClInclude Include="..\..\Source\DXComponents.h"/>
-    <ClInclude Include="..\..\Source\PluginFx.h"/>
+    <ClInclude Include="..\..\Source\Dexed.h"/>
+    <ClInclude Include="..\..\Source\PluginProcessor.h"/>
+    <ClInclude Include="..\..\Source\PluginParam.h"/>
+    <ClInclude Include="..\..\Source\PluginData.h"/>
     <ClInclude Include="..\..\Source\SysexComm.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioDataConverters.h"/>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_AudioSampleBuffer.h"/>

@@ -56,7 +56,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     normalizeDxVelocity = false;
     sysexComm.listener = this;
     keyboardState.addListener(&sysexComm);
-    engineResolution = -1;
+    engineType = -1;
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
@@ -69,7 +69,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();
     
-    setEngineResolution(DEXED_RESO_MODERN);
+    setEngineType(DEXED_ENGINE_MODERN);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
@@ -191,12 +191,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-                    uint32_t state = 0;
                     
                     for (int j=0; j < N; ++j) {
-                        int32 r = rand() & 0xFFFF;
-                        int32_t val = audiobuf.get()[j]; //& 0xFFFFF000);// + r - state;
-                        state = r;
+                        int32_t val = audiobuf.get()[j]; //& 0xFFFFF000);
                         
                         val = val >> 4;
                         int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
@@ -425,29 +422,25 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 }
 
 
-int DexedAudioProcessor::getEngineResolution() {
-    return engineResolution;
+int DexedAudioProcessor::getEngineType() {
+    return engineType;
 }
 
-void DexedAudioProcessor::setEngineResolution(int rs) {
-    switch (rs)  {
-        case DEXED_RESO_MODERN :
-            controllers.sinBitFilter = -1;
-            controllers.dacBitFilter = -1;
-            controllers.mulBitFilter = -1;
+void DexedAudioProcessor::setEngineType(int tp) {
+    switch (tp)  {
+        case DEXED_ENGINE_MODERN :
+            controllers.core = &engineMsfa;
             break;
-        case DEXED_RESO_MARKI:
+        case DEXED_ENGINE_MARKI:
             controllers.sinBitFilter = 0xFFFFC000;  // 10 bit
             controllers.dacBitFilter = 0xFFFFF000;  // semi 14 bit
+            controllers.core = &engineMkI;
             break;
-        case DEXED_RESO_OPL:
-            controllers.sinBitFilter = 0xFFFF0000;  // 9 bit
-            controllers.dacBitFilter = 0xFFFF0000;
+        case DEXED_ENGINE_OPL:
+            controllers.core = &engineOpl;
             break;
     }
-    
-    
-    engineResolution = rs;
+    engineType = tp;
 }
 
 // ====================================================================

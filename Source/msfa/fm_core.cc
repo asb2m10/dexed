@@ -25,26 +25,7 @@
 
 //using namespace std;
 
-struct FmOperatorInfo {
-  int in;
-  int out;
-};
-
-enum FmOperatorFlags {
-  OUT_BUS_ONE = 1 << 0,
-  OUT_BUS_TWO = 1 << 1,
-  OUT_BUS_ADD = 1 << 2,
-  IN_BUS_ONE = 1 << 4,
-  IN_BUS_TWO = 1 << 5,
-  FB_IN = 1 << 6,
-  FB_OUT = 1 << 7
-};
-
-struct FmAlgorithm {
-  int ops[6];
-};
-
-const FmAlgorithm algorithms[32] = {
+const FmAlgorithm FmCore::algorithms[32] = {
   { { 0xc1, 0x11, 0x11, 0x14, 0x01, 0x14 } }, // 1
   { { 0x01, 0x11, 0x11, 0x14, 0xc1, 0x14 } }, // 2
   { { 0xc1, 0x11, 0x14, 0x01, 0x11, 0x14 } }, // 3
@@ -109,68 +90,44 @@ void FmCore::dump() {
 }
 
 void FmCore::compute(int32_t *output, FmOpParams *params, int algorithm,
-                     int32_t *fb_buf, int feedback_shift, const Controllers *controllers) {
-  const int kLevelThresh = 1120;
-  const FmAlgorithm alg = algorithms[algorithm];
-  bool has_contents[3] = { true, false, false };
-  for (int op = 0; op < 6; op++) {
-    int flags = alg.ops[op];
-    bool add = (flags & OUT_BUS_ADD) != 0;
-    FmOpParams &param = params[op];
-    int inbus = (flags >> 4) & 3;
-    int outbus = flags & 3;
-    int32_t *outptr = (outbus == 0) ? output : buf_[outbus - 1].get();
-    int32_t gain1 = param.gain[0];
-    int32_t gain2 = param.gain[1];
-    if (gain1 >= kLevelThresh || gain2 >= kLevelThresh) {
-      if (!has_contents[outbus]) {
-        add = false;
-      }
-      if (inbus == 0 || !has_contents[inbus]) {
-        // PG: this is my 'dirty' implementation of FB for 2 and 3 operators...
-        // still needs some tuning...
-        if ((flags & 0xc0) == 0xc0 && feedback_shift < 16) {
-          switch ( algorithm ) {
-            // two operator feedback, process exception for ALGO 6
-          case 5 :
-            FmOpKernel::compute_fb2(outptr, params, fb_buf, feedback_shift, controllers);
-            param.phase += param.freq << LG_N;
-            params[1].phase += param.freq + params[1].freq << LG_N;  // yuk, hack, we already processed op-5
-            op++; // ignore next operator;
-            break;
-            // three operator feedback, process exception for ALGO 4
-          case 3 :
-            FmOpKernel::compute_fb3(outptr, params, fb_buf, feedback_shift, controllers);
-            param.phase += param.freq << LG_N;
-            params[1].phase += param.freq + params[1].freq << LG_N; // hack, we already processed op-5 - op-4
-            params[2].phase += param.freq + params[1].freq + params[2].freq << LG_N; // yuk yuk
-            op += 2; // ignore the 2 other operators
-            break;
-          default:
-            // one operator feedback, normal proces
-            //cout << "\t" << op << " fb " << inbus << outbus << add << endl;
-            FmOpKernel::compute_fb(outptr, param.phase, param.freq,
-                                   gain1, gain2,
-                                   fb_buf, feedback_shift, add, controllers);
-            param.phase += param.freq << LG_N;
-            break;
-          }
-          has_contents[outbus] = true;            
-          continue;
-        } else {
-          // cout << op << " pure " << inbus << outbus << add << endl;
-          FmOpKernel::compute_pure(outptr, param.phase, param.freq,
-                                   gain1, gain2, add, controllers);
+                     int32_t *fb_buf, int feedback_shift, const Controllers *controller) {
+    const int kLevelThresh = 1120;
+    const FmAlgorithm alg = algorithms[algorithm];
+    bool has_contents[3] = { true, false, false };
+    for (int op = 0; op < 6; op++) {
+        int flags = alg.ops[op];
+        bool add = (flags & OUT_BUS_ADD) != 0;
+        FmOpParams &param = params[op];
+        int inbus = (flags >> 4) & 3;
+        int outbus = flags & 3;
+        int32_t *outptr = (outbus == 0) ? output : buf_[outbus - 1].get();
+        int32_t gain1 = param.gain[0];
+        int32_t gain2 = param.gain[1];
+        if (gain1 >= kLevelThresh || gain2 >= kLevelThresh) {
+            if (!has_contents[outbus]) {
+                add = false;
+            }
+            if (inbus == 0 || !has_contents[inbus]) {
+                // todo: more than one op in a feedback loop
+                if ((flags & 0xc0) == 0xc0 && feedback_shift < 16) {
+                    // cout << op << " fb " << inbus << outbus << add << endl;
+                    FmOpKernel::compute_fb(outptr, param.phase, param.freq,
+                                           gain1, gain2,
+                                           fb_buf, feedback_shift, add);
+                } else {
+                    // cout << op << " pure " << inbus << outbus << add << endl;
+                    FmOpKernel::compute_pure(outptr, param.phase, param.freq,
+                                             gain1, gain2, add);
+                }
+            } else {
+                // cout << op << " normal " << inbus << outbus << " " << param.freq << add << endl;
+                FmOpKernel::compute(outptr, buf_[inbus - 1].get(),
+                                    param.phase, param.freq, gain1, gain2, add);
+            }
+            has_contents[outbus] = true;
+        } else if (!add) {
+            has_contents[outbus] = false;
         }
-      } else {
-        // cout << op << " normal " << inbus << outbus << " " << param.freq << add << endl;
-        FmOpKernel::compute(outptr, buf_[inbus - 1].get(),
-                            param.phase, param.freq, gain1, gain2, add, controllers);
-      }
-      has_contents[outbus] = true;
-    } else if (!add) {
-      has_contents[outbus] = false;
+        param.phase += param.freq << LG_N;
     }
-    param.phase += param.freq << LG_N;
-  }
 }

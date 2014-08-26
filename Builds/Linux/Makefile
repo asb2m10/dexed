@@ -51,9 +51,15 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/PluginProcessor_a059e380.o \
-  $(OBJDIR)/PluginParam_c683be7b.o \
-  $(OBJDIR)/PluginData_e9169086.o \
+  $(OBJDIR)/PluginFx_d84f776e.o \
+  $(OBJDIR)/EngineMkI_615efdaa.o \
+  $(OBJDIR)/EngineOpl_d5a0e5ea.o \
+  $(OBJDIR)/PluginEditor_94d4fb09.o \
+  $(OBJDIR)/GlobalEditor_4b9bc379.o \
+  $(OBJDIR)/ParamDialog_aca81c16.o \
+  $(OBJDIR)/OperatorEditor_b03d363a.o \
+  $(OBJDIR)/DXLookNFeel_cfc3afa2.o \
+  $(OBJDIR)/DXComponents_a6963633.o \
   $(OBJDIR)/freqlut_ca864b55.o \
   $(OBJDIR)/lfo_a7533573.o \
   $(OBJDIR)/dx7note_176ee213.o \
@@ -63,13 +69,9 @@ OBJECTS := \
   $(OBJDIR)/fm_op_kernel_f831cdd1.o \
   $(OBJDIR)/pitchenv_d3341dc7.o \
   $(OBJDIR)/sin_b36ef3f0.o \
-  $(OBJDIR)/PluginEditor_94d4fb09.o \
-  $(OBJDIR)/GlobalEditor_4b9bc379.o \
-  $(OBJDIR)/ParamDialog_aca81c16.o \
-  $(OBJDIR)/OperatorEditor_b03d363a.o \
-  $(OBJDIR)/DXLookNFeel_cfc3afa2.o \
-  $(OBJDIR)/DXComponents_a6963633.o \
-  $(OBJDIR)/PluginFx_d84f776e.o \
+  $(OBJDIR)/PluginProcessor_a059e380.o \
+  $(OBJDIR)/PluginParam_c683be7b.o \
+  $(OBJDIR)/PluginData_e9169086.o \
   $(OBJDIR)/SysexComm_f57b4ecd.o \
   $(OBJDIR)/BinaryData_ce4232d4.o \
   $(OBJDIR)/juce_audio_basics_2442e4ea.o \
@@ -104,19 +106,49 @@ strip:
 	@echo Stripping Dexed
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
 
-$(OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
+$(OBJDIR)/PluginFx_d84f776e.o: ../../Source/PluginFx.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling PluginProcessor.cpp"
+	@echo "Compiling PluginFx.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/PluginParam_c683be7b.o: ../../Source/PluginParam.cpp
+$(OBJDIR)/EngineMkI_615efdaa.o: ../../Source/EngineMkI.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling PluginParam.cpp"
+	@echo "Compiling EngineMkI.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/PluginData_e9169086.o: ../../Source/PluginData.cpp
+$(OBJDIR)/EngineOpl_d5a0e5ea.o: ../../Source/EngineOpl.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling PluginData.cpp"
+	@echo "Compiling EngineOpl.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling PluginEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/GlobalEditor_4b9bc379.o: ../../Source/GlobalEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling GlobalEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ParamDialog_aca81c16.o: ../../Source/ParamDialog.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ParamDialog.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OperatorEditor_b03d363a.o: ../../Source/OperatorEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OperatorEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/DXLookNFeel_cfc3afa2.o: ../../Source/DXLookNFeel.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling DXLookNFeel.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/DXComponents_a6963633.o: ../../Source/DXComponents.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling DXComponents.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/freqlut_ca864b55.o: ../../Source/msfa/freqlut.cc
@@ -164,39 +196,19 @@ $(OBJDIR)/sin_b36ef3f0.o: ../../Source/msfa/sin.cc
 	@echo "Compiling sin.cc"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp
+$(OBJDIR)/PluginProcessor_a059e380.o: ../../Source/PluginProcessor.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling PluginEditor.cpp"
+	@echo "Compiling PluginProcessor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/GlobalEditor_4b9bc379.o: ../../Source/GlobalEditor.cpp
+$(OBJDIR)/PluginParam_c683be7b.o: ../../Source/PluginParam.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling GlobalEditor.cpp"
+	@echo "Compiling PluginParam.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/ParamDialog_aca81c16.o: ../../Source/ParamDialog.cpp
+$(OBJDIR)/PluginData_e9169086.o: ../../Source/PluginData.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling ParamDialog.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OperatorEditor_b03d363a.o: ../../Source/OperatorEditor.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OperatorEditor.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/DXLookNFeel_cfc3afa2.o: ../../Source/DXLookNFeel.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling DXLookNFeel.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/DXComponents_a6963633.o: ../../Source/DXComponents.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling DXComponents.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/PluginFx_d84f776e.o: ../../Source/PluginFx.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling PluginFx.cpp"
+	@echo "Compiling PluginData.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/SysexComm_f57b4ecd.o: ../../Source/SysexComm.cpp

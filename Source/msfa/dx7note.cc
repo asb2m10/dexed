@@ -171,6 +171,7 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
     // cout << op << " freq: " << freq << endl;
     params_[op].phase = 0;
     params_[op].gain[1] = 0;
+    params_[op].level[1] = 0;
     ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
   }
   for (int i = 0; i < 4; i++) {
@@ -187,48 +188,55 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
 }
 
 void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
-  const Controllers *ctrls) {
-  int32_t pitchmod = pitchenv_.getsample();
-  uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
-  // TODO(PG) : make this integer friendly
-  uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
-  int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
-  uint32_t amd = ((int64_t)ampmoddepth_ * (int64_t)lfo_delay) >> 8;    // Q24 :D
-    
-  pitchmod += (((int64_t)pwmd) * (int64_t)senslfo) >> 39;
-  pitchmod += (((int64_t)pmd) * (int64_t)senslfo) >> 39;
+        const Controllers *ctrls) {
+    int32_t pitchmod = pitchenv_.getsample();
+    uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
+    // TODO(PG) : make this integer friendly
+    uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
+    int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
+    uint32_t amd = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
 
-  int pitchbend = ctrls->values_[kControllerPitch];
-  int32_t pb = (pitchbend - 0x2000);
-    
-  if ( pb != 0 ) {
-    if ( ctrls->values_[kControllerPitchStep] == 0 ) {
-        pb = ((float)(pb << 11)) * ((float)ctrls->values_[kControllerPitchRange]) / 12.0;
-    } else {
-        int stp = 12 / ctrls->values_[kControllerPitchStep];
-        pb = pb * stp / 8191;
-        pb = (pb * (8191/stp)) << 11;
+    pitchmod += (((int64_t) pwmd) * (int64_t) senslfo) >> 39;
+    pitchmod += (((int64_t) pmd) * (int64_t) senslfo) >> 39;
+
+    int pitchbend = ctrls->values_[kControllerPitch];
+    int32_t pb = (pitchbend - 0x2000);
+
+    if (pb != 0) {
+        if (ctrls->values_[kControllerPitchStep] == 0) {
+            pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRange]) / 12.0;
+        } else {
+            int stp = 12 / ctrls->values_[kControllerPitchStep];
+            pb = pb * stp / 8191;
+            pb = (pb * (8191 / stp)) << 11;
+        }
     }
-  }
-        
-  pitchmod += pb;
-  for (int op = 0; op < 6; op++) {
-    params_[op].gain[0] = params_[op].gain[1];
 
-    //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
-    params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
+    pitchmod += pb;
+    for (int op = 0; op < 6; op++) {
+        // PG: MEEEEEH, this needs to be cleanup. The amp mod is way better
+        // with the exp2 value than the original level that contains a fraction
+        // into the integer ?
+        //
+        // TODO: to clean up ! The AMD should be calculated on the level, not the gain
+        params_[op].gain[0] = params_[op].gain[1];
+        params_[op].level[0] = params_[op].level[1];
 
-    int32_t level = env_[op].getsample();
-    int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
-      if ( ampmodsens_[op] != 0 ) {
-          uint32_t sensamp = ((int64_t)ampmodsens_[op]) * ((int64_t)gain) >> 24;
-          sensamp = ((int64_t)sensamp) * ((int64_t)lfo_val) >> 24;
-          uint32_t amd_level = (((int64_t)amd) * (int64_t)sensamp) >> 24;
-          gain -= amd_level;
-      }
-    params_[op].gain[1] = gain;
-  }
-  core_.compute(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
+        //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
+        params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
+
+        int32_t level = env_[op].getsample();
+        params_[op].level[1] = level;
+        int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
+        if (ampmodsens_[op] != 0) {
+            uint32_t sensamp = ((int64_t) ampmodsens_[op]) * ((int64_t) gain) >> 24;
+            sensamp = ((int64_t) sensamp) * ((int64_t) lfo_val) >> 24;
+            uint32_t amd_level = (((int64_t) amd) * (int64_t) sensamp)  >> 24;
+            gain -= amd_level;
+        }
+        params_[op].gain[1] = gain;
+    }
+    ctrls->core->compute(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
 }
 
 void Dx7Note::keyup() {

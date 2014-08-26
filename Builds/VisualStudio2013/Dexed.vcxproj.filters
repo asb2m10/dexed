@@ -11,6 +11,12 @@
     <Filter Include="Dexed\Source">
       <UniqueIdentifier>{C5AF6998-922C-E781-8C7B-4ACFAA05FAAF}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dexed\Source\dsp">
+      <UniqueIdentifier>{EE0092B5-FA3D-099B-26E9-69F3D4015B6B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dexed\Source\ui">
+      <UniqueIdentifier>{E8836FFB-4C51-AB5B-8C6B-4E91BE22AB22}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Dexed\Source\msfa">
       <UniqueIdentifier>{9DB0CF5F-F6E7-E40E-5CE4-E122873AC45A}</UniqueIdentifier>
     </Filter>
@@ -271,14 +277,32 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
-      <Filter>Dexed\Source</Filter>
+    <ClCompile Include="..\..\Source\PluginFx.cpp">
+      <Filter>Dexed\Source\dsp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\PluginParam.cpp">
-      <Filter>Dexed\Source</Filter>
+    <ClCompile Include="..\..\Source\EngineMkI.cpp">
+      <Filter>Dexed\Source\dsp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\PluginData.cpp">
-      <Filter>Dexed\Source</Filter>
+    <ClCompile Include="..\..\Source\EngineOpl.cpp">
+      <Filter>Dexed\Source\dsp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\PluginEditor.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GlobalEditor.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ParamDialog.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OperatorEditor.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DXLookNFeel.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\DXComponents.cpp">
+      <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\msfa\freqlut.cc">
       <Filter>Dexed\Source\msfa</Filter>
@@ -307,25 +331,13 @@
     <ClCompile Include="..\..\Source\msfa\sin.cc">
       <Filter>Dexed\Source\msfa</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\PluginEditor.cpp">
+    <ClCompile Include="..\..\Source\PluginProcessor.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\GlobalEditor.cpp">
+    <ClCompile Include="..\..\Source\PluginParam.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\ParamDialog.cpp">
-      <Filter>Dexed\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\OperatorEditor.cpp">
-      <Filter>Dexed\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\DXLookNFeel.cpp">
-      <Filter>Dexed\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\DXComponents.cpp">
-      <Filter>Dexed\Source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\PluginFx.cpp">
+    <ClCompile Include="..\..\Source\PluginData.cpp">
       <Filter>Dexed\Source</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\SysexComm.cpp">
@@ -1419,17 +1431,32 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Source\Dexed.h">
-      <Filter>Dexed\Source</Filter>
+    <ClInclude Include="..\..\Source\PluginFx.h">
+      <Filter>Dexed\Source\dsp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\PluginProcessor.h">
-      <Filter>Dexed\Source</Filter>
+    <ClInclude Include="..\..\Source\EngineMkI.h">
+      <Filter>Dexed\Source\dsp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\PluginParam.h">
-      <Filter>Dexed\Source</Filter>
+    <ClInclude Include="..\..\Source\EngineOpl.h">
+      <Filter>Dexed\Source\dsp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\PluginData.h">
-      <Filter>Dexed\Source</Filter>
+    <ClInclude Include="..\..\Source\PluginEditor.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GlobalEditor.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ParamDialog.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OperatorEditor.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DXLookNFeel.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\DXComponents.h">
+      <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\msfa\freqlut.h">
       <Filter>Dexed\Source\msfa</Filter>
@@ -1470,25 +1497,16 @@
     <ClInclude Include="..\..\Source\msfa\synth.h">
       <Filter>Dexed\Source\msfa</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\PluginEditor.h">
+    <ClInclude Include="..\..\Source\Dexed.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\GlobalEditor.h">
+    <ClInclude Include="..\..\Source\PluginProcessor.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\ParamDialog.h">
+    <ClInclude Include="..\..\Source\PluginParam.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\OperatorEditor.h">
-      <Filter>Dexed\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\DXLookNFeel.h">
-      <Filter>Dexed\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\DXComponents.h">
-      <Filter>Dexed\Source</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\PluginFx.h">
+    <ClInclude Include="..\..\Source\PluginData.h">
       <Filter>Dexed\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\SysexComm.h">

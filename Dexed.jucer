@@ -16,15 +16,33 @@
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
     </GROUP>
     <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">
-      <FILE id="pBbZ9Y" name="Dexed.h" compile="0" resource="0" file="Source/Dexed.h"/>
-      <FILE id="Yp2cX4" name="PluginProcessor.cpp" compile="1" resource="0"
-            file="Source/PluginProcessor.cpp"/>
-      <FILE id="ob0Eek" name="PluginProcessor.h" compile="0" resource="0"
-            file="Source/PluginProcessor.h"/>
-      <FILE id="ZRipB1" name="PluginParam.cpp" compile="1" resource="0" file="Source/PluginParam.cpp"/>
-      <FILE id="uqNUvy" name="PluginParam.h" compile="0" resource="0" file="Source/PluginParam.h"/>
-      <FILE id="AvgZG4" name="PluginData.cpp" compile="1" resource="0" file="Source/PluginData.cpp"/>
-      <FILE id="M4UYNO" name="PluginData.h" compile="0" resource="0" file="Source/PluginData.h"/>
+      <GROUP id="{1B64F271-8E56-F19A-FF63-094159E5EF7B}" name="dsp">
+        <FILE id="bvvgdq" name="PluginFx.cpp" compile="1" resource="0" file="Source/PluginFx.cpp"/>
+        <FILE id="E4gace" name="PluginFx.h" compile="0" resource="0" file="Source/PluginFx.h"/>
+        <FILE id="Fyf1ag" name="EngineMkI.h" compile="0" resource="0" file="Source/EngineMkI.h"/>
+        <FILE id="gZfpcq" name="EngineMkI.cpp" compile="1" resource="0" file="Source/EngineMkI.cpp"/>
+        <FILE id="gY0vZ2" name="EngineOpl.cpp" compile="1" resource="0" file="Source/EngineOpl.cpp"/>
+        <FILE id="TF7JMc" name="EngineOpl.h" compile="0" resource="0" file="Source/EngineOpl.h"/>
+      </GROUP>
+      <GROUP id="{998D2187-B355-9C12-0FB2-2D048B83342D}" name="ui">
+        <FILE id="Ec211k" name="PluginEditor.cpp" compile="1" resource="0"
+              file="Source/PluginEditor.cpp"/>
+        <FILE id="lZFsG0" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+        <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
+              file="Source/GlobalEditor.cpp"/>
+        <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
+        <FILE id="eZN5P2" name="ParamDialog.cpp" compile="1" resource="0" file="Source/ParamDialog.cpp"/>
+        <FILE id="fijjBN" name="ParamDialog.h" compile="0" resource="0" file="Source/ParamDialog.h"/>
+        <FILE id="oUObPG" name="OperatorEditor.cpp" compile="1" resource="0"
+              file="Source/OperatorEditor.cpp"/>
+        <FILE id="ChJDca" name="OperatorEditor.h" compile="0" resource="0"
+              file="Source/OperatorEditor.h"/>
+        <FILE id="TgCdkS" name="DXLookNFeel.cpp" compile="1" resource="0" file="Source/DXLookNFeel.cpp"/>
+        <FILE id="V4bLcd" name="DXLookNFeel.h" compile="0" resource="0" file="Source/DXLookNFeel.h"/>
+        <FILE id="yOSLIH" name="DXComponents.cpp" compile="1" resource="0"
+              file="Source/DXComponents.cpp"/>
+        <FILE id="x2E8Zg" name="DXComponents.h" compile="0" resource="0" file="Source/DXComponents.h"/>
+      </GROUP>
       <GROUP id="{CEBA9AF6-1C73-85F6-A187-56A246098441}" name="msfa">
         <FILE id="wvG22S" name="freqlut.cc" compile="1" resource="0" file="Source/msfa/freqlut.cc"/>
         <FILE id="dulZMd" name="freqlut.h" compile="0" resource="0" file="Source/msfa/freqlut.h"/>
@@ -49,25 +67,15 @@
         <FILE id="TGO2sW" name="sin.h" compile="0" resource="0" file="Source/msfa/sin.h"/>
         <FILE id="SqG02X" name="synth.h" compile="0" resource="0" file="Source/msfa/synth.h"/>
       </GROUP>
-      <FILE id="Ec211k" name="PluginEditor.cpp" compile="1" resource="0"
-            file="Source/PluginEditor.cpp"/>
-      <FILE id="lZFsG0" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
-            file="Source/GlobalEditor.cpp"/>
-      <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
-      <FILE id="eZN5P2" name="ParamDialog.cpp" compile="1" resource="0" file="Source/ParamDialog.cpp"/>
-      <FILE id="fijjBN" name="ParamDialog.h" compile="0" resource="0" file="Source/ParamDialog.h"/>
-      <FILE id="oUObPG" name="OperatorEditor.cpp" compile="1" resource="0"
-            file="Source/OperatorEditor.cpp"/>
-      <FILE id="ChJDca" name="OperatorEditor.h" compile="0" resource="0"
-            file="Source/OperatorEditor.h"/>
-      <FILE id="TgCdkS" name="DXLookNFeel.cpp" compile="1" resource="0" file="Source/DXLookNFeel.cpp"/>
-      <FILE id="V4bLcd" name="DXLookNFeel.h" compile="0" resource="0" file="Source/DXLookNFeel.h"/>
-      <FILE id="yOSLIH" name="DXComponents.cpp" compile="1" resource="0"
-            file="Source/DXComponents.cpp"/>
-      <FILE id="x2E8Zg" name="DXComponents.h" compile="0" resource="0" file="Source/DXComponents.h"/>
-      <FILE id="bvvgdq" name="PluginFx.cpp" compile="1" resource="0" file="Source/PluginFx.cpp"/>
-      <FILE id="E4gace" name="PluginFx.h" compile="0" resource="0" file="Source/PluginFx.h"/>
+      <FILE id="pBbZ9Y" name="Dexed.h" compile="0" resource="0" file="Source/Dexed.h"/>
+      <FILE id="Yp2cX4" name="PluginProcessor.cpp" compile="1" resource="0"
+            file="Source/PluginProcessor.cpp"/>
+      <FILE id="ob0Eek" name="PluginProcessor.h" compile="0" resource="0"
+            file="Source/PluginProcessor.h"/>
+      <FILE id="ZRipB1" name="PluginParam.cpp" compile="1" resource="0" file="Source/PluginParam.cpp"/>
+      <FILE id="uqNUvy" name="PluginParam.h" compile="0" resource="0" file="Source/PluginParam.h"/>
+      <FILE id="AvgZG4" name="PluginData.cpp" compile="1" resource="0" file="Source/PluginData.cpp"/>
+      <FILE id="M4UYNO" name="PluginData.h" compile="0" resource="0" file="Source/PluginData.h"/>
       <FILE id="KLqlYP" name="SysexComm.cpp" compile="1" resource="0" file="Source/SysexComm.cpp"/>
       <FILE id="DWALdR" name="SysexComm.h" compile="0" resource="0" file="Source/SysexComm.h"/>
     </GROUP>

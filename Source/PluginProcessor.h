@@ -27,10 +27,13 @@
 #include "msfa/dx7note.h"
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
+#include "msfa/fm_core.h"
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
 #include "SysexComm.h"
+#include "EngineMkI.h"
+#include "EngineOpl.h"
 
 struct ProcessorVoice {
     int midi_note;
@@ -41,9 +44,9 @@ struct ProcessorVoice {
 };
 
 enum DexedEngineResolution {
-    DEXED_RESO_MODERN,
-    DEXED_RESO_MARKI,
-    DEXED_RESO_OPL
+    DEXED_ENGINE_MODERN,
+    DEXED_ENGINE_MARKI,
+    DEXED_ENGINE_OPL
 };
 
 //==============================================================================
@@ -104,7 +107,11 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
 	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
     
     void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message);
-    uint32_t engineResolution;
+    uint32_t engineType;
+    
+    FmCore engineMsfa;
+    EngineMkI engineMkI;
+    EngineOpl engineOpl;
     
 public :
     // in MIDI units (0x4000 is neutral)
@@ -122,8 +129,8 @@ public :
     
     float vuSignal;
 
-    int getEngineResolution();
-    void setEngineResolution(int rs);
+    int getEngineType();
+    void setEngineType(int rs);
     
     Array<Ctrl*> ctrl;
 
@@ -188,10 +195,11 @@ public :
     //==============================================================================
     int getNumPrograms();
     int getCurrentProgram();
-    void setCurrentProgram (int index);
+    void setCurrentProgram(int index);
     const String getProgramName (int index);
-    void changeProgramName (int index, const String& newName);
-
+    void changeProgramName(int index, const String& newName);
+    void resetToInitVoice();
+    
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
