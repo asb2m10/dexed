@@ -51,8 +51,9 @@ class Dx7Note {
 
   // PG:add the update
   void update(const char patch[156], int midinote);
-  void peekVoiceStatus(VoiceStatus &status); 
-
+  void peekVoiceStatus(VoiceStatus &status);
+  void transfertState(Dx7Note& src);
+    
  private:
   Env env_[6];
   FmOpParams params_[6];

@@ -170,8 +170,7 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
     basepitch_[op] = freq;
     // cout << op << " freq: " << freq << endl;
     params_[op].phase = 0;
-    params_[op].gain[1] = 0;
-    params_[op].level[1] = 0;
+    params_[op].gain_out = 0;
     ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
   }
   for (int i = 0; i < 4; i++) {
@@ -187,8 +186,7 @@ void Dx7Note::init(const char patch[156], int midinote, int velocity) {
   ampmoddepth_ = (patch[140] * 165) >> 6;
 }
 
-void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
-        const Controllers *ctrls) {
+void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Controllers *ctrls) {
     int32_t pitchmod = pitchenv_.getsample();
     uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
     // TODO(PG) : make this integer friendly
@@ -214,29 +212,19 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
 
     pitchmod += pb;
     for (int op = 0; op < 6; op++) {
-        // PG: MEEEEEH, this needs to be cleanup. The amp mod is way better
-        // with the exp2 value than the original level that contains a fraction
-        // into the integer ?
-        //
-        // TODO: to clean up ! The AMD should be calculated on the level, not the gain
-        params_[op].gain[0] = params_[op].gain[1];
-        params_[op].level[0] = params_[op].level[1];
-
         //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
         params_[op].freq = Freqlut::lookup(basepitch_[op] + pitchmod);
 
         int32_t level = env_[op].getsample();
-        params_[op].level[1] = level;
-        int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
         if (ampmodsens_[op] != 0) {
-            uint32_t sensamp = ((int64_t) ampmodsens_[op]) * ((int64_t) gain) >> 24;
+            /*uint32_t sensamp = ((int64_t) ampmodsens_[op]) * ((int64_t) gain) >> 24;
             sensamp = ((int64_t) sensamp) * ((int64_t) lfo_val) >> 24;
             uint32_t amd_level = (((int64_t) amd) * (int64_t) sensamp)  >> 24;
-            gain -= amd_level;
+            gain -= amd_level;*/
         }
-        params_[op].gain[1] = gain;
+        params_[op].level_in = level;
     }
-    ctrls->core->compute(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
+    ctrls->core->render(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
 }
 
 void Dx7Note::keyup() {
@@ -266,10 +254,18 @@ void Dx7Note::update(const char patch[156], int midinote) {
 
 void Dx7Note::peekVoiceStatus(VoiceStatus &status) {
   for(int i=0;i<6;i++) {
-    status.amp[i] = params_[i].gain[1];
+    status.amp[i] = Exp2::lookup(params_[i].level_in - (14 * (1 << 24)));
     env_[i].getPosition(&status.ampStep[i]);
   }
   pitchenv_.getPosition(&status.pitchStep);
 }
 
+/**
+ * Used in monophonic mode to transfert voice state from different notes
+ */
+void Dx7Note::transfertState(Dx7Note &src) {
+    for (int i=0;i<6;i++) {
+        env_[i] = src.env_[i];
+    }
+}
 

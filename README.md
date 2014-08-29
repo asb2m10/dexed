@@ -10,12 +10,12 @@ with 'float' value parameters, different waveform à la TX81z would be great but
 goes beyond the DX7 should and will be a fork of this project. This is to keep the compatibility with
 the original machine.
 
-Dexed is licensed on the GPL v2. The msfa component (acronym for music synthesizer for android, see msfa 
+Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa 
 in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
 
 Features
 --------
-* Multi platform (OS X, Windows or Linux) and multi format (VST, AU and others that I don't use); by using JUCE
+* Multi platform (OS X, Windows or Linux) and multi format (VST, *soon* AU and others that I don't use); by using JUCE
 * The sound engine [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) is closely modeled on the original DX7 characteristics
 * 144 DAW automatable DX7 parameters available from one single panel
 * Fully supports DX7 input and output Sysex messages; including controller change. This means that you can use this with a native DX7/TX7 as a patch editor and sysex manager
@@ -29,18 +29,20 @@ in normal operation it shouldn't crash and the VST state saving works. If you do
 new version here but you see it in the change log, it's because this version is in development 
 (current sprint). Only officials (tested) builds are listed here.
 
+* Version 0.7.0 OMG !
 * Version 0.6.1 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.1-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.1-osx.vst.zip)
 
 Changelog
 ---------
 #### Version 0.7.0 (current sprint)
 * Preliminary Algo 4 & 6 feedback support
-* DX Engine 'Dirty DX' emulation, including based on OPL chips
-* DX Engine LFO amplitude. This still needs some tunings
-* Fixed stucked notes when programs where changed
+* DX Engine 'Dirty DX' emulation, including one based on OPL chips
+* DX Engine LFO amplitude. This still needs some tunings :(
+* Monophonic mode
 * Added the 'INIT' button to re-initialize a program
-* Fixed engine envelop wrong timing if it was not 44100Khz
-* Filter only .syx files when using the Dexed_cart.zip file
+* Fixed stucked notes when programs where changed
+* Fixed engine envelopes wrong timing if it was not 44100Khz
+* Fixed only .syx are shown when we are using the Dexed_cart.zip cartridges collection
 
 #### Version 0.6.1
 * Mouse over + LFO type fix + pitch eg values
@@ -61,22 +63,17 @@ sysex content to where you have installed Dexed (VST plugins dir). Then rename t
 file is changed. Directories in the zip file will be transformed into submenu when you hit the 
 [CART] button. Watch out; Windows hides the .zip extension by default !
 
-Engine resolutions
-------------------
-Dexed can be configured to try to use the original math limitation of a DX synthesizer. And when I say
-math limitation, I'm not only talking about the DAC, it is also about the sin LUT lookup table, multiply
-resolution and original DX sampling rate. This is a work in progress and this might take time to be able
-to perfect.
+Engine Type
+-----------
+Dexed can be configured to try to use the original math limitation of a DX synthesizer. This does not
+only apply to the DAC, it also involves the bit resolution of the sine waves and the way that the 
+amplitude is applied to each operator. Since all of this is experimental, multiple engines will be 
+available to be able to compare them easily.
 
-If you look at the original DX7 and implementation a DX engine with 10-bit sin lookup and 12 mul possibility,
-you get something "not quite there". Yamaha did a lot of hacks to be able to squeeze this into something 
-musical and expressive. It is those 'hacks' that we need to recreate to be able to find that original
-DX sound.
-
-Dexed comes with 3 engine resolutions :
+Dexed comes with 3 engine types :
 * Modern : this is the original 24-bit music-synthesizer-for-android implementation.
-* Mark I : this is a pale implementation of the limitation of a Yamaha DX7 Mark I with the 12-bit (with the 4-bit attenuator hack) DAC.
-* OPL Series : this is a experimental implementation of Yamaha 4-ops that used the YM2151 chip. These chips were supposed to be even more limited to the DX7 but gave a very interesting distinctive sound.
+* Mark I : It is the music-synthesizer-for-android implementation reduced to 8-bit. It is used to be able to see the difference between the OPL series that also uses 8-bit but with sums of logs to avoid multiplications. It will be upgraded to 10-bit/12-bit later.
+* OPL Series : this is an experimental implementation of the [reversed engineered OPL family chips](http://sourceforge.net/projects/peepeeplayer). 8-bit. Keep in mind that the envelopes stills needs tuning.
 
 Using as a DX7 editor
 ---------------------
@@ -104,7 +101,6 @@ you edit.
 
 ### Troubleshooting
 * If you play on your DX7 keyboard, the |DX7 In| light should be flashing. Use this to test the midi in communication.
-* If you click/play on the Dexed virtual keyboard, it will send the corresponding midi out note to the DX7 port; if configured. Use this to test the midi out communication.
 * If the data sent is corrupted (wrong checksum, DX7 crash), it might be the midi interface implementation. Default Windows USB midi driver are known to send corrupt sysex data. If it is the case, use a third party device (like the midiman uno) that have his own USB driver.
 * If you are unable to open the interface (error message after the using the [PARM] dialog), it might be because the midi driver doesn't support multiple clients (common on Windows). Be sure that there are no other applications that are using the same midi interface. 
 
@@ -130,6 +126,7 @@ Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
+* PPPlay : Great [OPL3](http://sourceforge.net/projects/peepeeplayer) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * markusthegeek direct implication for this project
@@ -144,6 +141,7 @@ TODO - Dexed
 ------------
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
 * Various code cleanup
+* AU Version 
 
 TODO - msfa
 -----------

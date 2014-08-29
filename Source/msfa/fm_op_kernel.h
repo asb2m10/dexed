@@ -18,12 +18,10 @@
 #define __FM_OP_KERNEL_H
 
 struct FmOpParams {
-    int32_t gain[2];
+    int32_t level_in;      // value to be computed (from level to gain[0])
+    int32_t gain_out;      // computed value (gain[1] to gain[0])
     int32_t freq;
     int32_t phase;
-    
-    // PG: temporary code, only useful for engine that already calculate the exp value
-    int32_t level[2];
 };
 
 class FmOpKernel {

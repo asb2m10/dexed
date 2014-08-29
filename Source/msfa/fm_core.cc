@@ -19,6 +19,7 @@
 #endif
 
 #include "synth.h"
+#include "exp2.h"
 #include "fm_op_kernel.h"
 #include "fm_core.h"
 
@@ -89,8 +90,8 @@ void FmCore::dump() {
 #endif
 }
 
-void FmCore::compute(int32_t *output, FmOpParams *params, int algorithm,
-                     int32_t *fb_buf, int feedback_shift, const Controllers *controller) {
+void FmCore::render(int32_t *output, FmOpParams *params, int algorithm,
+                    int32_t *fb_buf, int feedback_shift, const Controllers *controller) {
     const int kLevelThresh = 1120;
     const FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
@@ -101,8 +102,10 @@ void FmCore::compute(int32_t *output, FmOpParams *params, int algorithm,
         int inbus = (flags >> 4) & 3;
         int outbus = flags & 3;
         int32_t *outptr = (outbus == 0) ? output : buf_[outbus - 1].get();
-        int32_t gain1 = param.gain[0];
-        int32_t gain2 = param.gain[1];
+        int32_t gain1 = param.gain_out;
+        int32_t gain2 = Exp2::lookup(param.level_in - (14 * (1 << 24)));
+        param.gain_out = gain2;
+        
         if (gain1 >= kLevelThresh || gain2 >= kLevelThresh) {
             if (!has_contents[outbus]) {
                 add = false;

@@ -19,8 +19,8 @@
       <GROUP id="{1B64F271-8E56-F19A-FF63-094159E5EF7B}" name="dsp">
         <FILE id="bvvgdq" name="PluginFx.cpp" compile="1" resource="0" file="Source/PluginFx.cpp"/>
         <FILE id="E4gace" name="PluginFx.h" compile="0" resource="0" file="Source/PluginFx.h"/>
-        <FILE id="Fyf1ag" name="EngineMkI.h" compile="0" resource="0" file="Source/EngineMkI.h"/>
         <FILE id="gZfpcq" name="EngineMkI.cpp" compile="1" resource="0" file="Source/EngineMkI.cpp"/>
+        <FILE id="Fyf1ag" name="EngineMkI.h" compile="0" resource="0" file="Source/EngineMkI.h"/>
         <FILE id="gY0vZ2" name="EngineOpl.cpp" compile="1" resource="0" file="Source/EngineOpl.cpp"/>
         <FILE id="TF7JMc" name="EngineOpl.h" compile="0" resource="0" file="Source/EngineOpl.h"/>
       </GROUP>

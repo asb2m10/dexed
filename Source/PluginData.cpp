@@ -2,20 +2,20 @@
  *
  * Copyright (c) 2014 Pascal Gauthier.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #include <time.h>
@@ -253,7 +253,7 @@ void DexedAudioProcessor::resetToInitVoice() {
         99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
         99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 99, 0, 1, 0, 7,
         99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
-        73, 78, 73, 84, 32, 86, 79, 73, 67, 69} ;
+        73, 78, 73, 84, 32, 86, 79, 73, 67, 69 };
     
     for(int i=0;i<sizeof(init_voice);i++) {
         data[i] = init_voice[i];
@@ -277,6 +277,8 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("reso", fx.uiReso);
     dexedState.setAttribute("gain", fx.uiGain);
     dexedState.setAttribute("currentProgram", currentProgram);
+    dexedState.setAttribute("monoMode", monoMode);
+    dexedState.setAttribute("engineType", (int) engineType);
 
     char sysex_blob[4104];
     exportSysexCart((char *) &sysex_blob, (char *) sysex, 0);
@@ -305,7 +307,10 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     fx.uiReso = root->getDoubleAttribute("reso");
     fx.uiGain = root->getDoubleAttribute("gain");
     currentProgram = root->getIntAttribute("currentProgram");
-
+    
+    setEngineType(root->getIntAttribute("engineType", 0));
+    monoMode = root->getIntAttribute("monoMode", 0);
+    
     XmlElement *dexedBlob = root->getChildByName("dexedBlob");
     if ( dexedBlob == NULL ) {
         TRACE("dexedBlob element not found");

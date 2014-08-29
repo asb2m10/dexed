@@ -19,12 +19,13 @@
 #include "synth.h"
 #include "env.h"
 
+#include "../Dexed.h"
 //using namespace std;
 
 uint32_t Env::sr_multiplier = (1<<24);
 
 void Env::init_sr(double sampleRate) {
-    sr_multiplier = (44100 / sampleRate) * (1<<23);
+    sr_multiplier = (44100.0 / sampleRate) * (1<<24);
 }
 
 void Env::init(const int r[4], const int l[4], int32_t ol, int rate_scaling) {
@@ -106,10 +107,28 @@ void Env::advance(int newix) {
     inc_ = (4 + (qrate & 3)) << (2 + LG_N + (qrate >> 2));
 
     // meh, this should be fixed elsewhere
-    inc_ = ((int64_t)inc_ * (int64_t)sr_multiplier) >> 23;
+    inc_ = ((int64_t)inc_ * (int64_t)sr_multiplier) >> 24;
   }
 }
 
 void Env::getPosition(char *step) {
     *step = ix_;
 }
+
+Env& Env::operator=(Env &src) {
+    for(int i=0;i<4;i++) {
+        rates_[i] = src.rates_[i];
+        levels_[i] = src.levels_[i];
+    }
+    outlevel_ = src.outlevel_;
+    rate_scaling_ = src.rate_scaling_;
+    level_ = src.level_;
+    targetlevel_ = src.targetlevel_;
+    rising_= src.rising_;
+    ix_ = src.ix_;
+    inc_ = src.inc_;
+    down_ = src.down_;
+    
+    return *this;
+}
+

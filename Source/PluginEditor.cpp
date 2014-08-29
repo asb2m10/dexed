@@ -2,20 +2,20 @@
  *
  * Copyright (c) 2013 Pascal Gauthier.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #include "PluginProcessor.h"
@@ -147,7 +147,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     initButton->addListener(this);
     initButton->setBounds(385, 6, 50, 18);
 
-    addAndMakeVisible(monoButton = new TextButton("MONO"));
+    addAndMakeVisible(monoButton = new ToggleButton("MONO"));
     monoButton->setButtonText("MONO");
     monoButton->addListener(this);
     monoButton->setBounds(439, 6, 50, 18);
@@ -212,6 +212,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     
     sendPopup.addItem(1, "Send program to DX7");
     sendPopup.addItem(2, "Send cartridge to DX7");
+    
+    monoButton->setState(processor->isMonoMode() ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal);
     
     updateUI();
     startTimer(100);
@@ -355,6 +357,12 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     
     if (buttonThatWasClicked == initButton ) {
         processor->resetToInitVoice();
+        return;
+    }
+    
+    if (buttonThatWasClicked == monoButton ) {
+        processor->setMonoMode(!processor->isMonoMode());
+        monoButton->setState(processor->isMonoMode() ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal);
         return;
     }
     

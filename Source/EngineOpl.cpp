@@ -1,31 +1,31 @@
- /*
-  * Copyright (C) 2014  Pascal Gauthier
-  * Copyright (C) 2012  Steffen Ohrendorf <steffen.ohrendorf@gmx.de>
-  *
-  * This library is free software; you can redistribute it and/or
-  * modify it under the terms of the GNU Lesser General Public
-  * License as published by the Free Software Foundation; either
-  * version 3 of the License, or (at your option) any later version.
-  *
-  * This library is distributed in the hope that it will be useful,
-  * but WITHOUT ANY WARRANTY; without even the implied warranty of
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  * Lesser General Public License for more details.
-  *
-  * You should have received a copy of the GNU Lesser General Public
-  * License along with this library; if not, write to the Free Software
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  *
-  * Original Java Code: Copyright (C) 2008 Robson Cozendey <robson@cozendey.com>
-  *
-  * Some code based on forum posts in: http://forums.submarine.org.uk/phpBB/viewforum.php?f=9,
-  * Copyright (C) 2010-2013 by carbon14 and opl3
-*/
+/*
+ * Copyright (C) 2014  Pascal Gauthier.
+ * Copyright (C) 2012  Steffen Ohrendorf <steffen.ohrendorf@gmx.de>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
+ * Original Java Code: Copyright (C) 2008 Robson Cozendey <robson@cozendey.com>
+ *
+ * Some code based on forum posts in: http://forums.submarine.org.uk/phpBB/viewforum.php?f=9,
+ * Copyright (C) 2010-2013 by carbon14 and opl3
+ *
+ */
 
-#include "PluginProcessor.h"
+#include "EngineOpl.h"
 
 const int32_t __attribute__ ((aligned(16))) zeros[N] = {0};
-
 
 uint16_t SignBit = 0x8000;
 
@@ -80,11 +80,10 @@ inline uint16_t sinLog( uint16_t phi ) {
         case 0x0200:
             // rising quarter wave -ve  Shape C
             return sinLogTable[index] | SignBit;
-        case 0x0300:
+        default:
             // falling quarter wave -ve  Shape D
             return sinLogTable[index ^ 0xFF] | SignBit;
     }
-    return 0;
 }
 
 // 16 env units are ~3dB and halve the output
@@ -95,7 +94,7 @@ inline uint16_t sinLog( uint16_t phi ) {
  * @warning @a env will not be checked for correct values.
  */
 inline int16_t oplSin( uint16_t phase, uint16_t env ) {
-	uint16_t expVal = sinLog(phase) + (env << 3);
+    uint16_t expVal = sinLog(phase) + (env << 3);
     const bool isSigned = expVal & SignBit;
 
     expVal &= ~SignBit;
@@ -113,61 +112,61 @@ inline int16_t oplSin( uint16_t phase, uint16_t env ) {
     }    
 }
 
-void EngineOpl::computeOpl(int32_t *output, const int32_t *input, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2, bool add) {
-	int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
-	int32_t gain = gain1;
-	int32_t phase = phase0;
-	const int32_t *adder = add ? output : zeros;
+void EngineOpl::compute(int32_t *output, const int32_t *input, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2, bool add) {
+    int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
+    int32_t gain = gain1;
+    int32_t phase = phase0;
+    const int32_t *adder = add ? output : zeros;
 
-	for (int i = 0; i < N; i++) {
-		gain += dgain;
-		int32_t y = oplSin( (phase+input[i]) >> 14, gain1);
-		output[i] = (y << 15) + adder[i];
-		phase += freq;
-	}
+    for (int i = 0; i < N; i++) {
+        gain += dgain;
+        int32_t y = oplSin( (phase+input[i]) >> 14, gain);
+        output[i] = (y << 14) + adder[i];
+        phase += freq;
+    }
 
 }
-void EngineOpl::computeOpl_pure(int32_t *output, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2, bool add) {
-	int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
-	int32_t gain = gain1;
-	int32_t phase = phase0;
-	const int32_t *adder = add ? output : zeros;
+void EngineOpl::compute_pure(int32_t *output, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2, bool add) {
+    int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
+    int32_t gain = gain1;
+    int32_t phase = phase0;
+    const int32_t *adder = add ? output : zeros;
 
-	for (int i = 0; i < N; i++) {
-		gain += dgain;
-		int32_t y = oplSin( phase >> 14, gain1);
-		output[i] = (y << 15) + adder[i];
-		phase += freq;
-	}
+    for (int i = 0; i < N; i++) {
+        gain += dgain;
+        int32_t y = oplSin( phase >> 14, gain);
+        output[i] = (y << 14) + adder[i];
+        phase += freq;
+    }
 }
 
-void EngineOpl::computeOpl_fb(int32_t *output, int32_t phase0, int32_t freq,
+void EngineOpl::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
                                     int32_t gain1, int32_t gain2,
                               int32_t *fb_buf, int fb_shift, bool add) {
-	int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
-	int32_t gain = gain1;
-	int32_t phase = phase0;
-	const int32_t *adder = add ? output : zeros;
+    int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
+    int32_t gain = gain1;
+    int32_t phase = phase0;
+    const int32_t *adder = add ? output : zeros;
     int32_t y0 = fb_buf[0];
     int32_t y = fb_buf[1];
     
-	for (int i = 0; i < N; i++) {
-		gain += dgain;
+    for (int i = 0; i < N; i++) {
+        gain += dgain;
         int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
         y0 = y;
-		int32_t y = oplSin( (phase+scaled_fb) >> 14, gain1);
-		output[i] = (y << 15) + adder[i];
-		phase += freq;
-	}
+        int32_t y = oplSin( (phase+scaled_fb) >> 14, gain) << 14;
+        output[i] = y + adder[i];
+        phase += freq;
+    }
     
     fb_buf[0] = y0;
     fb_buf[1] = y;
 }
 
 
-void EngineOpl::compute(int32_t *output, FmOpParams *params, int algorithm,
+void EngineOpl::render(int32_t *output, FmOpParams *params, int algorithm,
                         int32_t *fb_buf, int feedback_shift, const Controllers *controllers) {
-    const int kLevelThresh = 505;  // really ????
+    const int kLevelThresh = 507;  // really ????
     const FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
     for (int op = 0; op < 6; op++) {
@@ -177,8 +176,10 @@ void EngineOpl::compute(int32_t *output, FmOpParams *params, int algorithm,
         int inbus = (flags >> 4) & 3;
         int outbus = flags & 3;
         int32_t *outptr = (outbus == 0) ? output : buf_[outbus - 1].get();
-        int32_t gain1 = 512-(param.level[0] >> 19);
-        int32_t gain2 = 512-(param.level[1] >> 19);
+        int32_t gain1 = param.gain_out == 0 ? 511 : param.gain_out;
+        int32_t gain2 = 512-(param.level_in >> 19);
+        param.gain_out = gain2;
+        
         if (gain1 <= kLevelThresh || gain2 <= kLevelThresh) {
             if (!has_contents[outbus]) {
                 add = false;
@@ -187,17 +188,17 @@ void EngineOpl::compute(int32_t *output, FmOpParams *params, int algorithm,
                 // todo: more than one op in a feedback loop
                 if ((flags & 0xc0) == 0xc0 && feedback_shift < 16) {
                     // cout << op << " fb " << inbus << outbus << add << endl;
-                    computeOpl_fb(outptr, param.phase, param.freq,
+                    compute_fb(outptr, param.phase, param.freq,
                                            gain1, gain2,
                                            fb_buf, feedback_shift, add);
                 } else {
                     // cout << op << " pure " << inbus << outbus << add << endl;
-                    computeOpl_pure(outptr, param.phase, param.freq,
+                    compute_pure(outptr, param.phase, param.freq,
                                              gain1, gain2, add);
                 }
             } else {
                 // cout << op << " normal " << inbus << outbus << " " << param.freq << add << endl;
-                computeOpl(outptr, buf_[inbus - 1].get(),
+                compute(outptr, buf_[inbus - 1].get(),
                                     param.phase, param.freq, gain1, gain2, add);
             }
             has_contents[outbus] = true;

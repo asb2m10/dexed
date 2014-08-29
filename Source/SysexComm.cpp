@@ -2,20 +2,20 @@
  *
  * Copyright (c) 2014 Pascal Gauthier.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #include "SysexComm.h"
@@ -30,6 +30,7 @@ SysexComm::SysexComm() {
     
     input = NULL;
     output = NULL;
+    inputOutput = false;
 }
 
 SysexComm::~SysexComm() {
@@ -51,7 +52,9 @@ bool SysexComm::setInput(String target) {
         input->stop();
         delete input;
         input = NULL;
+
     }
+    inputOutput = false;
     
     if ( listener == NULL )
         return true;
@@ -76,6 +79,10 @@ bool SysexComm::setInput(String target) {
     inputName = target;
     TRACE("sysex %s opened", target.toRawUTF8());
     input->start();
+    
+    if ( output )
+        inputOutput = true;
+    
     return true;
 }
 
@@ -88,6 +95,7 @@ bool SysexComm::setOutput(String target) {
         delete output;
         output = NULL;
     }
+    inputOutput = false;
     
     StringArray devices = MidiOutput::getDevices();
     int idx = devices.indexOf(target);
@@ -107,6 +115,10 @@ bool SysexComm::setOutput(String target) {
     }
 
     outputName = target;
+    
+    if ( input )
+        inputOutput = true;
+    
     TRACE("sysex %s opened", target.toRawUTF8());
     return true;
 }
@@ -136,17 +148,11 @@ int SysexComm::send(const MidiMessage &message) {
     return 0;
 }
 
-// This is called from the UI Keyboard...
-void SysexComm::handleNoteOn(MidiKeyboardState*, int, int midiNoteNumber, float velocity) {
-    if ( output == NULL )
-        return;
-
-    outActivity = true;
-    char iVelo = velocity * 100;
-    MidiMessage msg(0x90 + sysexChl, midiNoteNumber, iVelo);
-    output->sendMessageNow(msg);
+void SysexComm::playBuffer(MidiBuffer &keyboardEvents, int numSamples ) {
+    noteOutput.addEvents(keyboardEvents, 0, numSamples, 0);
 }
 
-void SysexComm::handleNoteOff(MidiKeyboardState* source, int midiChannel, int midiNoteNumber) {
-    handleNoteOn(source, midiChannel, midiNoteNumber, 0);
+void SysexComm::handleAsyncUpdate() {
+    
 }
+

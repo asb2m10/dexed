@@ -2,20 +2,20 @@
  *
  * Copyright (c) 2013 Pascal Gauthier.
  *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License as
- * published by the Free Software Foundation; either version 2 of
- * the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be
- * useful, but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- * PURPOSE.  See the GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public
- * License along with this program; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
  */
 
 #include "PluginProcessor.h"
@@ -55,7 +55,6 @@ DexedAudioProcessor::DexedAudioProcessor() {
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
-    keyboardState.addListener(&sysexComm);
     engineType = -1;
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
@@ -148,9 +147,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         refreshVoice = false;
     }
 
-    // Now pass any incoming midi messages to our keyboard state object, and let it
-    // add messages to the buffer if the user is clicking on the on-screen keys
-    keyboardState.processNextMidiBuffer (midiMessages, 0, numSamples, true);
+    keyboardState.processNextMidiBuffer(midiMessages, 0, numSamples, true);
     
     MidiBuffer::Iterator it(midiMessages);
     hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
@@ -322,41 +319,85 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
         return;
     }
 
-    pitch += (data[144] - 24);
+    pitch += data[144] - 24;
     
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
     
     int note = currentNote;
-    for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
+    for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
         if (!voices[note].keydown) {
             currentNote = (note + 1) % MAX_ACTIVE_NOTES;
             lfo.keydown();  // TODO: should only do this if # keys down was 0
             voices[note].midi_note = pitch;
-            voices[note].keydown = true;
             voices[note].sustained = sustain;
-            voices[note].live = true;
+            voices[note].keydown = true;
             voices[note].dx7_note->init(data, pitch, velo);
-            return;
+            break;
         }
         note = (note + 1) % MAX_ACTIVE_NOTES;
     }
+    
+    if ( monoMode ) {
+        for(int i=0; i<MAX_ACTIVE_NOTES; i++) {            
+            if ( voices[i].live ) {
+                // all keys are up, don't transfert anything
+                if ( ! voices[i].keydown ) {
+                    voices[i].live = false;
+                    break;
+                }
+                if ( voices[i].midi_note < pitch ) {
+                    voices[i].live = false;
+                    voices[note].dx7_note->transfertState(*voices[i].dx7_note);
+                    break;
+                }
+                return;
+            }
+        }
+    }
 
+    voices[note].live = true;
 }
 
 void DexedAudioProcessor::keyup(uint8_t pitch) {
-    pitch += (data[144] - 24);
-    
-    for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        if (voices[note].midi_note == pitch && voices[note].keydown) {
-            if (sustain) {
-                voices[note].sustained = true;
-            } else {
-                voices[note].dx7_note->keyup();
-            }
+    pitch += data[144] - 24;
+
+    int note;
+    for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
+        if ( voices[note].midi_note == pitch && voices[note].keydown ) {
             voices[note].keydown = false;
+            break;
         }
+    }
+    
+    // note not found ?
+    if ( note == 16 ) {
+        TRACE("note-off not found???");
+        return;
+    }
+    
+    if ( monoMode ) {
+        int highNote = -1;
+        int target = 0;
+        for (int i=0; i<MAX_ACTIVE_NOTES;i++) {
+            if ( voices[i].keydown && voices[i].midi_note > highNote  ) {
+                target = i;
+                highNote = voices[i].midi_note;
+            }
+        }
+        
+        if ( highNote != -1 ) {
+            voices[note].live = false;
+            voices[target].live = true;
+            voices[target].dx7_note->transfertState(*voices[note].dx7_note);
+        }
+    }
+    
+    if ( sustain ) {
+        voices[note].sustained = true;
+    } else {
+        voices[note].dx7_note->keyup();
     }
 }
 
@@ -421,7 +462,6 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
     forceRefreshUI = true;
 }
 
-
 int DexedAudioProcessor::getEngineType() {
     return engineType;
 }
@@ -441,6 +481,11 @@ void DexedAudioProcessor::setEngineType(int tp) {
             break;
     }
     engineType = tp;
+}
+
+void DexedAudioProcessor::setMonoMode(bool mode) {
+    panic();
+    monoMode = mode;
 }
 
 // ====================================================================
