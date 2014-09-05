@@ -45,7 +45,7 @@ class Env {
   void getPosition(char *step);
     
   static void init_sr(double sample_rate);
-  Env& operator=(Env &src);
+  void transfert(Env &src);
     
  private:
   // PG: This code is normalized to 44100, need to put a multiplier

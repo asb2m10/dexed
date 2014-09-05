@@ -37,12 +37,13 @@ Changelog
 #### Version 0.7.0 (current sprint)
 * Preliminary Algo 4 & 6 feedback support
 * DX Engine 'Dirty DX' emulation, including one based on OPL chips
-* DX Engine LFO amplitude. This still needs some tunings :(
+* DX Engine LFO amplitude. This still needs tuning.
 * Monophonic mode
 * Added the 'INIT' button to re-initialize a program
 * Fixed stucked notes when programs where changed
 * Fixed engine envelopes wrong timing if it was not 44100Khz
 * Fixed only .syx are shown when we are using the Dexed_cart.zip cartridges collection
+* The DX7 Sysex port are now only used for sysex messages. This is to avoid any midi note feedback.
 
 #### Version 0.6.1
 * Mouse over + LFO type fix + pitch eg values
@@ -146,4 +147,5 @@ TODO - Dexed
 TODO - msfa
 -----------
 * Portamento implementation
-* Feedback tuning
+* Better Amplitude Modulation
+* Test maximum delay lfo values that seems to be reset

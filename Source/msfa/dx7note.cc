@@ -192,8 +192,10 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     // TODO(PG) : make this integer friendly
     uint32_t pwmd = (ctrls->values_[kControllerModWheel] * 0.7874) * (1 << 24);
     int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
+    
     uint32_t amd = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
-
+    amd = ((int64_t) amd * (int64_t) lfo_val) >> 24;
+    
     pitchmod += (((int64_t) pwmd) * (int64_t) senslfo) >> 39;
     pitchmod += (((int64_t) pmd) * (int64_t) senslfo) >> 39;
 
@@ -217,10 +219,12 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
 
         int32_t level = env_[op].getsample();
         if (ampmodsens_[op] != 0) {
-            /*uint32_t sensamp = ((int64_t) ampmodsens_[op]) * ((int64_t) gain) >> 24;
-            sensamp = ((int64_t) sensamp) * ((int64_t) lfo_val) >> 24;
-            uint32_t amd_level = (((int64_t) amd) * (int64_t) sensamp)  >> 24;
-            gain -= amd_level;*/
+            uint32_t sensamp = ((uint64_t) amd) * ((uint64_t) ampmodsens_[op]) >> 24;
+            
+            // TODO: mehhh.. this needs some real tuning.
+            uint32_t pt = exp(((float)sensamp)/262144 * 0.07 + 12.2);
+            uint32_t ldiff = ((uint64_t)level) * (((uint64_t)pt<<4)) >> 28;
+            level -= ldiff;
         }
         params_[op].level_in = level;
     }
@@ -265,7 +269,9 @@ void Dx7Note::peekVoiceStatus(VoiceStatus &status) {
  */
 void Dx7Note::transfertState(Dx7Note &src) {
     for (int i=0;i<6;i++) {
-        env_[i] = src.env_[i];
+        env_[i].transfert(src.env_[i]);
+        params_[i].gain_out = src.params_[i].gain_out;
     }
+    
 }
 

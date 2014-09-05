@@ -361,7 +361,7 @@ void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
     }
     
     if (buttonThatWasClicked == monoButton ) {
-        processor->setMonoMode(!processor->isMonoMode());
+        processor->setMonoMode(monoButton->getToggleState());
         monoButton->setState(processor->isMonoMode() ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal);
         return;
     }

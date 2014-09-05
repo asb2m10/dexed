@@ -154,7 +154,7 @@ void EngineOpl::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
         gain += dgain;
         int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
         y0 = y;
-        int32_t y = oplSin( (phase+scaled_fb) >> 14, gain) << 14;
+        y = oplSin( (phase+scaled_fb) >> 14, gain) << 14;
         output[i] = y + adder[i];
         phase += freq;
     }

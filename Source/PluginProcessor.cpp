@@ -185,6 +185,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             }
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
+            
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
@@ -372,7 +373,7 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
     }
     
     // note not found ?
-    if ( note == 16 ) {
+    if ( note >= MAX_ACTIVE_NOTES ) {
         TRACE("note-off not found???");
         return;
     }
@@ -381,7 +382,7 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
         int highNote = -1;
         int target = 0;
         for (int i=0; i<MAX_ACTIVE_NOTES;i++) {
-            if ( voices[i].keydown && voices[i].midi_note > highNote  ) {
+            if ( voices[i].keydown && voices[i].midi_note > highNote ) {
                 target = i;
                 highNote = voices[i].midi_note;
             }
