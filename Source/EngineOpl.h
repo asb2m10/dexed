@@ -1,21 +1,31 @@
-/*
-  ==============================================================================
-
-    ExtraKernels.h
-    Created: 20 Aug 2014 8:21:43pm
-    Author:  Pascal Gauthier
-
-  ==============================================================================
-*/
+/**
+ *
+ * Copyright (c) 2014 Pascal Gauthier.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
+ */
 
 #ifndef ENGINEOPL_H_INCLUDED
 #define ENGINEOPL_H_INCLUDED
 
-#include "synth.h"
-#include "aligned_buf.h"
-#include "fm_op_kernel.h"
-#include "controllers.h"
-#include "fm_core.h"
+#include "msfa/synth.h"
+#include "msfa/aligned_buf.h"
+#include "msfa/fm_op_kernel.h"
+#include "msfa/controllers.h"
+#include "msfa/fm_core.h"
 
 
 class EngineOpl : public FmCore {

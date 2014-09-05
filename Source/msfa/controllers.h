@@ -17,6 +17,8 @@
 #ifndef __CONTROLLERS_H
 #define __CONTROLLERS_H
 
+#include "synth.h"
+
 // State of MIDI controllers
 const int kControllerModWheel = 1;
 const int kControllerPitch = 128;

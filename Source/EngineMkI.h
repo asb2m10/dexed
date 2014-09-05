@@ -18,11 +18,11 @@
 #ifndef ENGINEMKI_H_INCLUDED
 #define ENGINEMKI_H_INCLUDED
 
-#include "synth.h"
-#include "aligned_buf.h"
-#include "fm_op_kernel.h"
-#include "controllers.h"
-#include "fm_core.h"
+#include "msfa/synth.h"
+#include "msfa/aligned_buf.h"
+#include "msfa/fm_op_kernel.h"
+#include "msfa/controllers.h"
+#include "msfa/fm_core.h"
 
 
 class EngineMkI : public FmCore {
