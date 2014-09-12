@@ -29,12 +29,12 @@ in normal operation it shouldn't crash and the VST state saving works. If you do
 new version here but you see it in the change log, it's because this version is in development 
 (current sprint). Only officials (tested) builds are listed here.
 
-* Version 0.7.0 OMG !
+* Version 0.7.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.7.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.7.0-osx.vst.zip)
 * Version 0.6.1 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.1-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.1-osx.vst.zip)
 
 Changelog
 ---------
-#### Version 0.7.0 (current sprint)
+#### Version 0.7.0
 * Preliminary Algo 4 & 6 feedback support
 * DX Engine 'Dirty DX' emulation, including one based on OPL chips
 * DX Engine LFO amplitude. This still needs tuning.
@@ -43,7 +43,7 @@ Changelog
 * Fixed stucked notes when programs where changed
 * Fixed engine envelopes wrong timing if it was not 44100Khz
 * Fixed only .syx are shown when we are using the Dexed_cart.zip cartridges collection
-* The DX7 Sysex port are now only used for sysex messages. This is to avoid any midi note feedback.
+* The DX7 Sysex port are now only used for sysex messages. This is used to avoid any midi note feedback.
 
 #### Version 0.6.1
 * Mouse over + LFO type fix + pitch eg values
