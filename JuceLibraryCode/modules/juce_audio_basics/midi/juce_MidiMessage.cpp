@@ -129,7 +129,7 @@ MidiMessage::MidiMessage (const MidiMessage& other)
 {
     if (other.allocatedData != nullptr)
     {
-        allocatedData.malloc (size);
+        allocatedData.malloc ((size_t) size);
         memcpy (allocatedData, other.allocatedData, (size_t) size);
     }
     else
@@ -143,7 +143,7 @@ MidiMessage::MidiMessage (const MidiMessage& other, const double newTimeStamp)
 {
     if (other.allocatedData != nullptr)
     {
-        allocatedData.malloc (size);
+        allocatedData.malloc ((size_t) size);
         memcpy (allocatedData, other.allocatedData, (size_t) size);
     }
     else
@@ -152,7 +152,8 @@ MidiMessage::MidiMessage (const MidiMessage& other, const double newTimeStamp)
     }
 }
 
-MidiMessage::MidiMessage (const void* srcData, int sz, int& numBytesUsed, const uint8 lastStatusByte, double t)
+MidiMessage::MidiMessage (const void* srcData, int sz, int& numBytesUsed, const uint8 lastStatusByte,
+                          double t, bool sysexHasEmbeddedLength)
     : timeStamp (t)
 {
     const uint8* src = static_cast<const uint8*> (srcData);
@@ -175,7 +176,7 @@ MidiMessage::MidiMessage (const void* srcData, int sz, int& numBytesUsed, const 
         if (byte == 0xf0)
         {
             const uint8* d = src;
-            bool haveReadAllLengthBytes = false;
+            bool haveReadAllLengthBytes = ! sysexHasEmbeddedLength;
             int numVariableLengthSysexBytes = 0;
 
             while (d < src + sz)
@@ -254,7 +255,7 @@ MidiMessage& MidiMessage::operator= (const MidiMessage& other)
 
         if (other.allocatedData != nullptr)
         {
-            allocatedData.malloc (size);
+            allocatedData.malloc ((size_t) size);
             memcpy (allocatedData, other.allocatedData, (size_t) size);
         }
         else
@@ -296,7 +297,7 @@ uint8* MidiMessage::allocateSpace (int bytes)
 {
     if (bytes > 4)
     {
-        allocatedData.malloc (bytes);
+        allocatedData.malloc ((size_t) bytes);
         return allocatedData;
     }
 

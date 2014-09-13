@@ -95,7 +95,6 @@ AudioDeviceManager::AudioDeviceManager()
       useInputNames (false),
       inputLevel (0),
       testSoundPosition (0),
-      tempBuffer (2, 2),
       cpuUsageMs (0),
       timeToCpuScale (0)
 {
@@ -728,7 +727,7 @@ void AudioDeviceManager::audioDeviceIOCallbackInt (const float** inputChannelDat
         callbacks.getUnchecked(0)->audioDeviceIOCallback (inputChannelData, numInputChannels,
                                                           outputChannelData, numOutputChannels, numSamples);
 
-        float** const tempChans = tempBuffer.getArrayOfChannels();
+        float** const tempChans = tempBuffer.getArrayOfWritePointers();
 
         for (int i = callbacks.size(); --i > 0;)
         {
@@ -757,7 +756,7 @@ void AudioDeviceManager::audioDeviceIOCallbackInt (const float** inputChannelDat
     if (testSound != nullptr)
     {
         const int numSamps = jmin (numSamples, testSound->getNumSamples() - testSoundPosition);
-        const float* const src = testSound->getSampleData (0, testSoundPosition);
+        const float* const src = testSound->getReadPointer (0, testSoundPosition);
 
         for (int i = 0; i < numOutputChannels; ++i)
             for (int j = 0; j < numSamps; ++j)
@@ -860,8 +859,11 @@ void AudioDeviceManager::addMidiInputCallback (const String& name, MidiInputCall
     if (name.isEmpty() || isMidiInputEnabled (name))
     {
         const ScopedLock sl (midiCallbackLock);
-        midiCallbacks.add (callbackToAdd);
-        midiCallbackDevices.add (name);
+
+        MidiCallbackInfo mc;
+        mc.deviceName = name;
+        mc.callback = callbackToAdd;
+        midiCallbacks.add (mc);
     }
 }
 
@@ -869,11 +871,12 @@ void AudioDeviceManager::removeMidiInputCallback (const String& name, MidiInputC
 {
     for (int i = midiCallbacks.size(); --i >= 0;)
     {
-        if (midiCallbackDevices[i] == name && midiCallbacks.getUnchecked(i) == callbackToRemove)
+        const MidiCallbackInfo& mc = midiCallbacks.getReference(i);
+
+        if (mc.callback == callbackToRemove && mc.deviceName == name)
         {
             const ScopedLock sl (midiCallbackLock);
             midiCallbacks.remove (i);
-            midiCallbackDevices.remove (i);
         }
     }
 }
@@ -882,16 +885,14 @@ void AudioDeviceManager::handleIncomingMidiMessageInt (MidiInput* source, const 
 {
     if (! message.isActiveSense())
     {
-        const bool isDefaultSource = (source == nullptr || source == enabledMidiInputs.getFirst());
-
         const ScopedLock sl (midiCallbackLock);
 
-        for (int i = midiCallbackDevices.size(); --i >= 0;)
+        for (int i = 0; i < midiCallbacks.size(); ++i)
         {
-            const String name (midiCallbackDevices[i]);
+            const MidiCallbackInfo& mc = midiCallbacks.getReference(i);
 
-            if ((isDefaultSource && name.isEmpty()) || (name.isNotEmpty() && name == source->getName()))
-                midiCallbacks.getUnchecked(i)->handleIncomingMidiMessage (source, message);
+            if (mc.deviceName.isEmpty() || mc.deviceName == source->getName())
+                mc.callback->handleIncomingMidiMessage (source, message);
         }
     }
 }
@@ -951,16 +952,15 @@ void AudioDeviceManager::playTestSound()
         const double sampleRate = currentAudioDevice->getCurrentSampleRate();
         const int soundLength = (int) sampleRate;
 
-        AudioSampleBuffer* const newSound = new AudioSampleBuffer (1, soundLength);
-        float* samples = newSound->getSampleData (0);
-
         const double frequency = 440.0;
         const float amplitude = 0.5f;
 
         const double phasePerSample = double_Pi * 2.0 / (sampleRate / frequency);
 
+        AudioSampleBuffer* const newSound = new AudioSampleBuffer (1, soundLength);
+
         for (int i = 0; i < soundLength; ++i)
-            samples[i] = amplitude * (float) std::sin (i * phasePerSample);
+            newSound->setSample (0, i, amplitude * (float) std::sin (i * phasePerSample));
 
         newSound->applyGainRamp (0, 0, soundLength / 10, 0.0f, 1.0f);
         newSound->applyGainRamp (0, soundLength - soundLength / 4, soundLength / 4, 1.0f, 0.0f);

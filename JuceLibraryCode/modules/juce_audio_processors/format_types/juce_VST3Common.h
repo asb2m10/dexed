@@ -43,16 +43,16 @@ static bool doUIDsMatch (const Steinberg::TUID a, const Steinberg::TUID b) noexc
     return std::memcmp (a, b, sizeof (Steinberg::TUID)) == 0;
 }
 
-#define TEST_FOR_AND_RETURN_IF_VALID(ClassType) \
-    if (doUIDsMatch (iid, ClassType::iid)) \
+#define TEST_FOR_AND_RETURN_IF_VALID(iidToTest, ClassType) \
+    if (doUIDsMatch (iidToTest, ClassType::iid)) \
     { \
         addRef(); \
         *obj = dynamic_cast<ClassType*> (this); \
         return Steinberg::kResultOk; \
     }
 
-#define TEST_FOR_COMMON_BASE_AND_RETURN_IF_VALID(CommonClassType, SourceClassType) \
-    if (doUIDsMatch (iid, CommonClassType::iid)) \
+#define TEST_FOR_COMMON_BASE_AND_RETURN_IF_VALID(iidToTest, CommonClassType, SourceClassType) \
+    if (doUIDsMatch (iidToTest, CommonClassType::iid)) \
     { \
         addRef(); \
         *obj = (CommonClassType*) static_cast<SourceClassType*> (this); \
@@ -85,6 +85,18 @@ static Steinberg::Vst::TChar* toString (const juce::String& source) noexcept
 
 
 //==============================================================================
+static Steinberg::Vst::SpeakerArrangement getArrangementForBus (Steinberg::Vst::IAudioProcessor* processor,
+                                                                bool isInput, int busIndex)
+{
+    Steinberg::Vst::SpeakerArrangement arrangement = Steinberg::Vst::SpeakerArr::kEmpty;
+
+    if (processor != nullptr)
+        processor->getBusArrangement (isInput ? Steinberg::Vst::kInput : Steinberg::Vst::kOutput,
+                                      (Steinberg::int32) busIndex, arrangement);
+
+    return arrangement;
+}
+
 /** For the sake of simplicity, there can only be 1 arrangement type per channel count.
     i.e.: 4 channels == k31Cine OR k40Cine
 */
@@ -126,9 +138,9 @@ class ComSmartPtr
 {
 public:
     ComSmartPtr() noexcept : source (nullptr) {}
-    ComSmartPtr (ObjectType* object) noexcept  : source (object)              { if (source != nullptr) source->addRef(); }
-    ComSmartPtr (const ComSmartPtr& other) noexcept : source (other.source)   { if (source != nullptr) source->addRef(); }
-    ~ComSmartPtr()                                                            { if (source != nullptr) source->release(); }
+    ComSmartPtr (ObjectType* object, bool autoAddRef = true) noexcept  : source (object)    { if (source != nullptr && autoAddRef) source->addRef(); }
+    ComSmartPtr (const ComSmartPtr& other) noexcept : source (other.source)                 { if (source != nullptr) source->addRef(); }
+    ~ComSmartPtr()                                                                          { if (source != nullptr) source->release(); }
 
     operator ObjectType*() const noexcept    { return source; }
     ObjectType* get() const noexcept         { return source; }
@@ -339,9 +351,9 @@ namespace VST3BufferExchange
     */
     void associateBufferTo (Steinberg::Vst::AudioBusBuffers& vstBuffers,
                             Bus& bus,
-                            const AudioSampleBuffer& buffer,
+                            AudioSampleBuffer& buffer,
                             int numChannels, int channelStartOffset,
-                            int sampleOffset = 0) noexcept
+                            int sampleOffset = 0)
     {
         const int channelEnd = numChannels + channelStartOffset;
         jassert (channelEnd >= 0 && channelEnd <= buffer.getNumChannels());
@@ -349,44 +361,59 @@ namespace VST3BufferExchange
         bus.clearQuick();
 
         for (int i = channelStartOffset; i < channelEnd; ++i)
-            bus.add (buffer.getSampleData (i, sampleOffset));
+            bus.add (buffer.getWritePointer (i, sampleOffset));
 
         vstBuffers.channelBuffers32 = bus.getRawDataPointer();
         vstBuffers.numChannels      = numChannels;
         vstBuffers.silenceFlags     = 0;
     }
 
+    static void mapArrangementToBusses (int& channelIndexOffset, int index,
+                                        Array<Steinberg::Vst::AudioBusBuffers>& result,
+                                        BusMap& busMapToUse, Steinberg::Vst::SpeakerArrangement arrangement,
+                                        AudioSampleBuffer& source)
+    {
+        const int numChansForBus = BigInteger ((juce::int64) arrangement).countNumberOfSetBits();
+
+        if (index >= result.size())
+            result.add (Steinberg::Vst::AudioBusBuffers());
+
+        if (index >= busMapToUse.size())
+            busMapToUse.add (Bus());
+
+        if (numChansForBus > 0)
+        {
+            associateBufferTo (result.getReference (index),
+                               busMapToUse.getReference (index),
+                               source, numChansForBus, channelIndexOffset);
+        }
+
+        channelIndexOffset += numChansForBus;
+    }
+
+    static void mapBufferToBusses (Array<Steinberg::Vst::AudioBusBuffers>& result, BusMap& busMapToUse,
+                                   const Array<Steinberg::Vst::SpeakerArrangement>& arrangements,
+                                   AudioSampleBuffer& source)
+    {
+        int channelIndexOffset = 0;
+
+        for (int i = 0; i < arrangements.size(); ++i)
+            mapArrangementToBusses (channelIndexOffset, i, result, busMapToUse,
+                                    arrangements.getUnchecked (i), source);
+    }
+
     static void mapBufferToBusses (Array<Steinberg::Vst::AudioBusBuffers>& result,
                                    Steinberg::Vst::IAudioProcessor& processor,
-                                   BusMap& busMapToUse,
-                                   bool isInput, int numBusses,
+                                   BusMap& busMapToUse, bool isInput, int numBusses,
                                    AudioSampleBuffer& source)
     {
         int channelIndexOffset = 0;
 
         for (int i = 0; i < numBusses; ++i)
-        {
-            Steinberg::Vst::SpeakerArrangement arrangement = 0;
-            processor.getBusArrangement (isInput ? Steinberg::Vst::kInput : Steinberg::Vst::kOutput,
-                                         (Steinberg::int32) i, arrangement);
-
-            const int numChansForBus = BigInteger ((juce::int64) arrangement).countNumberOfSetBits();
-
-            if (i >= result.size())
-                result.add (Steinberg::Vst::AudioBusBuffers());
-
-            if (i >= busMapToUse.size())
-                busMapToUse.add (Bus());
-
-            if (numChansForBus > 0)
-            {
-                associateBufferTo (result.getReference (i),
-                                   busMapToUse.getReference (i),
-                                   source, numChansForBus, channelIndexOffset);
-            }
-
-            channelIndexOffset += numChansForBus;
-        }
+            mapArrangementToBusses (channelIndexOffset, i,
+                                    result, busMapToUse,
+                                    getArrangementForBus (&processor, isInput, i),
+                                    source);
     }
 }
 

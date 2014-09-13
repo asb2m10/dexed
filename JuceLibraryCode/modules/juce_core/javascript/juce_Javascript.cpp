@@ -543,14 +543,14 @@ struct JavascriptEngine::RootObject   : public DynamicObject
     struct DivideOp  : public BinaryOperator
     {
         DivideOp (const CodeLocation& l, ExpPtr& a, ExpPtr& b) noexcept : BinaryOperator (l, a, b, TokenTypes::divide) {}
-        var getWithDoubles (double a, double b) const override  { return a / b; }
-        var getWithInts (int64 a, int64 b) const override       { return a / b; }
+        var getWithDoubles (double a, double b) const override  { return b != 0 ? a / b : std::numeric_limits<double>::infinity(); }
+        var getWithInts (int64 a, int64 b) const override       { return b != 0 ? var (a / (double) b) : var (std::numeric_limits<double>::infinity()); }
     };
 
     struct ModuloOp  : public BinaryOperator
     {
         ModuloOp (const CodeLocation& l, ExpPtr& a, ExpPtr& b) noexcept : BinaryOperator (l, a, b, TokenTypes::modulo) {}
-        var getWithInts (int64 a, int64 b) const override   { return a % b; }
+        var getWithInts (int64 a, int64 b) const override   { return b != 0 ? var (a % b) : var (std::numeric_limits<double>::infinity()); }
     };
 
     struct BitwiseOrOp  : public BinaryOperator
@@ -768,7 +768,7 @@ struct JavascriptEngine::RootObject   : public DynamicObject
     {
         FunctionObject() noexcept {}
 
-        FunctionObject (const FunctionObject& other)  : functionCode (other.functionCode)
+        FunctionObject (const FunctionObject& other)  : DynamicObject(), functionCode (other.functionCode)
         {
             ExpressionTreeBuilder tb (functionCode);
             tb.parseFunctionParamsAndBody (*this);
@@ -843,7 +843,7 @@ struct JavascriptEngine::RootObject   : public DynamicObject
                 String::CharPointerType end (p);
                 while (isIdentifierBody (*++end)) {}
 
-                const size_t len = end - p;
+                const size_t len = (size_t) (end - p);
                 #define JUCE_JS_COMPARE_KEYWORD(name, str) if (len == sizeof (str) - 1 && matchToken (TokenTypes::name, len)) return TokenTypes::name;
                 JUCE_JS_KEYWORDS (JUCE_JS_COMPARE_KEYWORD)
 
@@ -1145,8 +1145,14 @@ struct JavascriptEngine::RootObject   : public DynamicObject
                 match (TokenTypes::semicolon);
             }
 
-            s->iterator = parseExpression();
-            match (TokenTypes::closeParen);
+            if (matchIf (TokenTypes::closeParen))
+                s->iterator = new Statement (location);
+            else
+            {
+                s->iterator = parseExpression();
+                match (TokenTypes::closeParen);
+            }
+
             s->body = parseStatement();
             return s.release();
         }
@@ -1555,6 +1561,7 @@ struct JavascriptEngine::RootObject   : public DynamicObject
             setMethod ("log",       Math_log);              setMethod ("log10",     Math_log10);
             setMethod ("exp",       Math_exp);              setMethod ("pow",       Math_pow);
             setMethod ("sqr",       Math_sqr);              setMethod ("sqrt",      Math_sqrt);
+            setMethod ("ceil",      Math_ceil);             setMethod ("floor",     Math_floor);
         }
 
         static var Math_pi        (Args)   { return double_Pi; }
@@ -1587,6 +1594,8 @@ struct JavascriptEngine::RootObject   : public DynamicObject
         static var Math_pow       (Args a) { return pow   (getDouble (a, 0), getDouble (a, 1)); }
         static var Math_sqr       (Args a) { double x = getDouble (a, 0); return x * x; }
         static var Math_sqrt      (Args a) { return std::sqrt  (getDouble (a, 0)); }
+        static var Math_ceil      (Args a) { return std::ceil  (getDouble (a, 0)); }
+        static var Math_floor     (Args a) { return std::floor (getDouble (a, 0)); }
 
         static Identifier getClassName()   { static const Identifier i ("Math"); return i; }
         template <typename Type> static Type sign (Type n) noexcept  { return n > 0 ? (Type) 1 : (n < 0 ? (Type) -1 : 0); }

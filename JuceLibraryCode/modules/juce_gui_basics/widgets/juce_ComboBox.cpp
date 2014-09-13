@@ -44,10 +44,12 @@ ComboBox::ComboBox (const String& name)
       isButtonDown (false),
       separatorPending (false),
       menuActive (false),
+      scrollWheelEnabled (false),
+      mouseWheelAccumulator (0),
       noChoicesMessage (TRANS("(no choices)"))
 {
     setRepaintsOnMouseActivity (true);
-    ComboBox::lookAndFeelChanged();
+    lookAndFeelChanged();
     currentId.addListener (this);
 }
 
@@ -408,12 +410,22 @@ void ComboBox::enablementChanged()
     repaint();
 }
 
+void ComboBox::colourChanged()
+{
+    lookAndFeelChanged();
+}
+
+void ComboBox::parentHierarchyChanged()
+{
+    lookAndFeelChanged();
+}
+
 void ComboBox::lookAndFeelChanged()
 {
     repaint();
 
     {
-        ScopedPointer <Label> newLabel (getLookAndFeel().createComboBoxTextBox (*this));
+        ScopedPointer<Label> newLabel (getLookAndFeel().createComboBoxTextBox (*this));
         jassert (newLabel != nullptr);
 
         if (label != nullptr)
@@ -442,11 +454,6 @@ void ComboBox::lookAndFeelChanged()
     label->setColour (TextEditor::outlineColourId, Colours::transparentBlack);
 
     resized();
-}
-
-void ComboBox::colourChanged()
-{
-    lookAndFeelChanged();
 }
 
 //==============================================================================
@@ -579,14 +586,24 @@ void ComboBox::mouseUp (const MouseEvent& e2)
 
 void ComboBox::mouseWheelMove (const MouseEvent& e, const MouseWheelDetails& wheel)
 {
-   #if 0
-    // NB: this is far too irritating if enabled, because on scrollable pages containing
-    // comboboxes (e.g. introjucer settings pages), you can easily nudge them when trying to scroll
-    if (! menuActive && wheel.deltaY != 0)
-        nudgeSelectedItem (wheel.deltaY > 0 ? -1 : 1);
+    if (! menuActive && scrollWheelEnabled && e.eventComponent == this && wheel.deltaY != 0)
+    {
+        const int oldPos = (int) mouseWheelAccumulator;
+        mouseWheelAccumulator += wheel.deltaY * 5.0f;
+        const int delta = oldPos - (int) mouseWheelAccumulator;
+
+        if (delta != 0)
+            nudgeSelectedItem (delta);
+    }
     else
-   #endif
+    {
         Component::mouseWheelMove (e, wheel);
+    }
+}
+
+void ComboBox::setScrollWheelEnabled (bool enabled) noexcept
+{
+    scrollWheelEnabled = enabled;
 }
 
 //==============================================================================

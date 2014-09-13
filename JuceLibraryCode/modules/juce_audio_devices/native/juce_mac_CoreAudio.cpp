@@ -144,6 +144,7 @@ public:
        : owner (d),
          inputLatency (0),
          outputLatency (0),
+         bitDepth (32),
          callback (nullptr),
         #if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5
          audioProcID (0),
@@ -232,7 +233,7 @@ public:
                         size = sizeof (nameNSString);
 
                         pa.mSelector = kAudioObjectPropertyElementName;
-                        pa.mElement = chanNum + 1;
+                        pa.mElement = (AudioObjectPropertyElement) chanNum + 1;
 
                         if (AudioObjectGetPropertyData (deviceID, &pa, 0, nullptr, &size, &nameNSString) == noErr)
                         {
@@ -352,6 +353,22 @@ public:
         return (int) lat;
     }
 
+    int getBitDepthFromDevice (AudioObjectPropertyScope scope) const
+    {
+        AudioObjectPropertyAddress pa;
+        pa.mElement = kAudioObjectPropertyElementMaster;
+        pa.mSelector = kAudioStreamPropertyPhysicalFormat;
+        pa.mScope = scope;
+
+        AudioStreamBasicDescription asbd;
+        UInt32 size = sizeof (asbd);
+
+        if (OK (AudioObjectGetPropertyData (deviceID, &pa, 0, nullptr, &size, &asbd)))
+            return (int) asbd.mBitsPerChannel;
+
+        return 0;
+    }
+
     void updateDetailsFromDevice()
     {
         stopTimer();
@@ -377,7 +394,7 @@ public:
         if (OK (AudioObjectGetPropertyData (deviceID, &pa, 0, nullptr, &size, &sr)))
             sampleRate = sr;
 
-        UInt32 framesPerBuf = bufferSize;
+        UInt32 framesPerBuf = (UInt32) bufferSize;
         size = sizeof (framesPerBuf);
         pa.mSelector = kAudioDevicePropertyBufferFrameSize;
         AudioObjectGetPropertyData (deviceID, &pa, 0, nullptr, &size, &framesPerBuf);
@@ -391,6 +408,13 @@ public:
         Array<CallbackDetailsForChannel> newInChans, newOutChans;
         StringArray newInNames  (getChannelInfo (true,  newInChans));
         StringArray newOutNames (getChannelInfo (false, newOutChans));
+
+        const int inputBitDepth = getBitDepthFromDevice (kAudioDevicePropertyScopeInput);
+        const int outputBitDepth = getBitDepthFromDevice (kAudioDevicePropertyScopeOutput);
+
+        bitDepth = jmax (inputBitDepth, outputBitDepth);
+        if (bitDepth <= 0)
+            bitDepth = 32;
 
         // after getting the new values, lock + apply them
         const ScopedLock sl (callbackLock);
@@ -728,6 +752,7 @@ public:
     //==============================================================================
     CoreAudioIODevice& owner;
     int inputLatency, outputLatency;
+    int bitDepth;
     BigInteger activeInputChans, activeOutputChans;
     StringArray inChanNames, outChanNames;
     Array<double> sampleRates;
@@ -886,7 +911,7 @@ public:
     Array<int> getAvailableBufferSizes() override       { return internal->bufferSizes; }
 
     double getCurrentSampleRate() override              { return internal->getSampleRate(); }
-    int getCurrentBitDepth() override                   { return 32; }  // no way to find out, so just assume it's high..
+    int getCurrentBitDepth() override                   { return internal->bitDepth; }
     int getCurrentBufferSizeSamples() override          { return internal->getBufferSize(); }
 
     int getDefaultBufferSize() override
@@ -1026,8 +1051,7 @@ public:
     AudioIODeviceCombiner (const String& deviceName)
         : AudioIODevice (deviceName, "CoreAudio"),
           Thread (deviceName), callback (nullptr),
-          currentSampleRate (0), currentBufferSize (0), active (false),
-          fifos (1, 1)
+          currentSampleRate (0), currentBufferSize (0), active (false)
     {
     }
 
@@ -1319,14 +1343,15 @@ private:
         AudioSampleBuffer buffer (fifos.getNumChannels(), numSamples);
         buffer.clear();
 
-        Array<float*> inputChans, outputChans;
+        Array<const float*> inputChans;
+        Array<float*> outputChans;
 
         for (int i = 0; i < devices.size(); ++i)
         {
             DeviceWrapper& d = *devices.getUnchecked(i);
 
-            for (int j = 0; j < d.numInputChans; ++j)   inputChans.add  (buffer.getSampleData (d.inputIndex  + j));
-            for (int j = 0; j < d.numOutputChans; ++j)  outputChans.add (buffer.getSampleData (d.outputIndex + j));
+            for (int j = 0; j < d.numInputChans; ++j)   inputChans.add  (buffer.getReadPointer  (d.inputIndex  + j));
+            for (int j = 0; j < d.numOutputChans; ++j)  outputChans.add (buffer.getWritePointer (d.outputIndex + j));
         }
 
         const int numInputChans  = inputChans.size();
@@ -1387,7 +1412,7 @@ private:
             d.done = (d.numInputChans == 0);
         }
 
-        for (int tries = 3;;)
+        for (int tries = 5;;)
         {
             bool anyRemaining = false;
 
@@ -1434,7 +1459,7 @@ private:
             d.done = (d.numOutputChans == 0);
         }
 
-        for (int tries = 3;;)
+        for (int tries = 5;;)
         {
             bool anyRemaining = false;
 
@@ -1535,8 +1560,8 @@ private:
             for (int i = 0; i < numInputChans; ++i)
             {
                 const int index = inputIndex + i;
-                float* const dest = destBuffer.getSampleData (index);
-                const float* const src = owner.fifos.getSampleData (index);
+                float* const dest = destBuffer.getWritePointer (index);
+                const float* const src = owner.fifos.getReadPointer (index);
 
                 if (size1 > 0)  FloatVectorOperations::copy (dest,         src + start1, size1);
                 if (size2 > 0)  FloatVectorOperations::copy (dest + size1, src + start2, size2);
@@ -1561,8 +1586,8 @@ private:
             for (int i = 0; i < numOutputChans; ++i)
             {
                 const int index = outputIndex + i;
-                float* const dest = owner.fifos.getSampleData (index);
-                const float* const src = srcBuffer.getSampleData (index);
+                float* const dest = owner.fifos.getWritePointer (index);
+                const float* const src = srcBuffer.getReadPointer (index);
 
                 if (size1 > 0)  FloatVectorOperations::copy (dest + start1, src,         size1);
                 if (size2 > 0)  FloatVectorOperations::copy (dest + start2, src + size1, size2);
@@ -1590,7 +1615,7 @@ private:
 
                 for (int i = 0; i < numInputChannels; ++i)
                 {
-                    float* const dest = buf.getSampleData (inputIndex + i);
+                    float* const dest = buf.getWritePointer (inputIndex + i);
                     const float* const src = inputChannelData[i];
 
                     if (size1 > 0)  FloatVectorOperations::copy (dest + start1, src,         size1);
@@ -1622,7 +1647,7 @@ private:
                 for (int i = 0; i < numOutputChannels; ++i)
                 {
                     float* const dest = outputChannelData[i];
-                    const float* const src = buf.getSampleData (outputIndex + i);
+                    const float* const src = buf.getReadPointer (outputIndex + i);
 
                     if (size1 > 0)  FloatVectorOperations::copy (dest,         src + start1, size1);
                     if (size2 > 0)  FloatVectorOperations::copy (dest + size1, src + start2, size2);

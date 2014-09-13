@@ -41,8 +41,9 @@
 
 //==============================================================================
 #if JUCE_MAC
- #if (JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_AU) \
-       || ! (defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6)
+ #if JUCE_SUPPORT_CARBON \
+      && ((JUCE_PLUGINHOST_VST || JUCE_PLUGINHOST_AU) \
+           || ! (defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6))
   #define Point CarbonDummyPointName // (workaround to avoid definition of "Point" by old Carbon headers)
   #define Component CarbonDummyCompName
   #include <Carbon/Carbon.h>
@@ -112,27 +113,24 @@ struct AutoResizingNSViewComponentWithParent  : public AutoResizingNSViewCompone
         setView (v);
         [v release];
 
-        startTimer (100);
+        startTimer (30);
+    }
+
+    NSView* getChildView() const
+    {
+        if (NSView* parent = (NSView*) getView())
+            if ([[parent subviews] count] > 0)
+                return [[parent subviews] objectAtIndex: 0];
+
+        return nil;
     }
 
     void timerCallback() override
     {
-        if (NSView* parent = (NSView*) getView())
+        if (NSView* child = getChildView())
         {
-            if ([[parent subviews] count] > 0)
-            {
-                if (NSView* child = [[parent subviews] objectAtIndex: 0])
-                {
-                    NSRect f = [parent frame];
-                    NSSize newSize = [child frame].size;
-
-                    if (f.size.width != newSize.width || f.size.height != newSize.height)
-                    {
-                        f.size = newSize;
-                        [parent setFrame: f];
-                    }
-                }
-            }
+            stopTimer();
+            setView (child);
         }
     }
 };

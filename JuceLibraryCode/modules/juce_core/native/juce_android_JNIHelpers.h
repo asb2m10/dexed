@@ -271,26 +271,33 @@ public:
 
     JNIEnv* attach() noexcept
     {
-        if (JNIEnv* env = attachToCurrentThread())
+        if (android.activity != nullptr)
         {
-            SpinLock::ScopedLockType sl (addRemoveLock);
-            return addEnv (env);
+            if (JNIEnv* env = attachToCurrentThread())
+            {
+                SpinLock::ScopedLockType sl (addRemoveLock);
+                return addEnv (env);
+            }
+
+            jassertfalse;
         }
 
-        jassertfalse;
         return nullptr;
     }
 
     void detach() noexcept
     {
-        jvm->DetachCurrentThread();
+        if (android.activity != nullptr)
+        {
+            jvm->DetachCurrentThread();
 
-        const pthread_t thisThread = pthread_self();
+            const pthread_t thisThread = pthread_self();
 
-        SpinLock::ScopedLockType sl (addRemoveLock);
-        for (int i = 0; i < maxThreads; ++i)
-            if (threads[i] == thisThread)
-                threads[i] = 0;
+            SpinLock::ScopedLockType sl (addRemoveLock);
+            for (int i = 0; i < maxThreads; ++i)
+                if (threads[i] == thisThread)
+                    threads[i] = 0;
+        }
     }
 
     JNIEnv* getOrAttach() noexcept
@@ -355,6 +362,12 @@ private:
 
 extern ThreadLocalJNIEnvHolder threadLocalJNIEnvHolder;
 
+struct AndroidThreadScope
+{
+    AndroidThreadScope()   { threadLocalJNIEnvHolder.attach(); }
+    ~AndroidThreadScope()  { threadLocalJNIEnvHolder.detach(); }
+};
+
 //==============================================================================
 #define JNI_CLASS_MEMBERS(METHOD, STATICMETHOD, FIELD, STATICFIELD) \
  METHOD (createNewView,          "createNewView",        "(ZJ)L" JUCE_ANDROID_ACTIVITY_CLASSPATH "$ComponentPeerView;") \
@@ -365,7 +378,7 @@ extern ThreadLocalJNIEnvHolder threadLocalJNIEnvHolder;
  METHOD (setClipboardContent,    "setClipboardContent",  "(Ljava/lang/String;)V") \
  METHOD (excludeClipRegion,      "excludeClipRegion",    "(Landroid/graphics/Canvas;FFFF)V") \
  METHOD (renderGlyph,            "renderGlyph",          "(CLandroid/graphics/Paint;Landroid/graphics/Matrix;Landroid/graphics/Rect;)[I") \
- STATICMETHOD (createHTTPStream, "createHTTPStream",     "(Ljava/lang/String;Z[BLjava/lang/String;ILjava/lang/StringBuffer;)L" JUCE_ANDROID_ACTIVITY_CLASSPATH "$HTTPStream;") \
+ STATICMETHOD (createHTTPStream, "createHTTPStream",     "(Ljava/lang/String;Z[BLjava/lang/String;I[ILjava/lang/StringBuffer;)L" JUCE_ANDROID_ACTIVITY_CLASSPATH "$HTTPStream;") \
  METHOD (launchURL,              "launchURL",            "(Ljava/lang/String;)V") \
  METHOD (showMessageBox,         "showMessageBox",       "(Ljava/lang/String;Ljava/lang/String;J)V") \
  METHOD (showOkCancelBox,        "showOkCancelBox",      "(Ljava/lang/String;Ljava/lang/String;J)V") \

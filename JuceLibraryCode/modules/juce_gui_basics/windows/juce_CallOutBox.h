@@ -118,6 +118,11 @@ public:
                                              const Rectangle<int>& areaToPointTo,
                                              Component* parentComponent);
 
+    /** Posts a message which will dismiss the callout box asynchronously.
+        NB: it's safe to call this method from any thread.
+    */
+    void dismiss();
+
     //==============================================================================
     /** This abstract base class is implemented by LookAndFeel classes. */
     struct JUCE_API  LookAndFeelMethods
@@ -125,6 +130,7 @@ public:
         virtual ~LookAndFeelMethods() {}
 
         virtual void drawCallOutBoxBackground (CallOutBox&, Graphics&, const Path&, Image& cachedImage) = 0;
+        virtual int getCallOutBoxBorderSize (const CallOutBox&) = 0;
     };
 
     //==============================================================================
@@ -144,10 +150,11 @@ public:
     bool keyPressed (const KeyPress&) override;
     /** @internal */
     void handleCommandMessage (int) override;
+    /** @internal */
+    int getBorderSize() const noexcept;
 
 private:
     //==============================================================================
-    int borderSpace;
     float arrowSize;
     Component& content;
     Path outline;

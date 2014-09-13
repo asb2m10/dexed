@@ -34,6 +34,7 @@ struct DownloadClickDetectorClass  : public ObjCClass <NSObject>
                    decidePolicyForNavigationAction, "v@:@@@@@");
         addMethod (@selector (webView:didFinishLoadForFrame:), didFinishLoadForFrame, "v@:@@");
         addMethod (@selector (webView:willCloseFrame:), willCloseFrame, "v@:@@");
+        addMethod (@selector (webView:runOpenPanelForFileButtonWithResultListener:allowMultipleFiles:), runOpenPanel, "v@:@@", @encode (BOOL));
 
         registerClass();
     }
@@ -65,6 +66,26 @@ private:
     static void willCloseFrame (id self, SEL, WebView*, WebFrame*)
     {
         getOwner (self)->windowCloseRequest();
+    }
+
+    static void runOpenPanel (id, SEL, WebView*, id<WebOpenPanelResultListener> resultListener, BOOL allowMultipleFiles)
+    {
+       #if JUCE_MODAL_LOOPS_PERMITTED
+        FileChooser chooser (TRANS("Select the file you want to upload..."),
+                             File::getSpecialLocation (File::userHomeDirectory), "*");
+
+        if (allowMultipleFiles ? chooser.browseForMultipleFilesToOpen()
+                               : chooser.browseForFileToOpen())
+        {
+            const Array<File>& files = chooser.getResults();
+
+            for (int i = 0; i < files.size(); ++i)
+                [resultListener chooseFilename: juceStringToNS (files.getReference(i).getFullPathName())];
+        }
+       #else
+        (void) resultListener; (void) allowMultipleFiles;
+        jassertfalse; // Can't use this without modal loops being enabled!
+       #endif
     }
 };
 
@@ -146,6 +167,7 @@ public:
         DownloadClickDetectorClass::setOwner (clickListener, owner);
         [webView setPolicyDelegate: clickListener];
         [webView setFrameLoadDelegate: clickListener];
+        [webView setUIDelegate: clickListener];
        #else
         webView = [[UIWebView alloc] initWithFrame: CGRectMake (0, 0, 1.0f, 1.0f)];
         setView (webView);
@@ -162,6 +184,7 @@ public:
        #if JUCE_MAC
         [webView setPolicyDelegate: nil];
         [webView setFrameLoadDelegate: nil];
+        [webView setUIDelegate: nil];
         [clickListener release];
        #else
         webView.delegate = nil;
@@ -265,13 +288,15 @@ void WebBrowserComponent::goToURL (const String& url,
 {
     lastURL = url;
 
-    lastHeaders.clear();
     if (headers != nullptr)
         lastHeaders = *headers;
+    else
+        lastHeaders.clear();
 
-    lastPostData.setSize (0);
     if (postData != nullptr)
         lastPostData = *postData;
+    else
+        lastPostData.reset();
 
     blankPageShown = false;
 

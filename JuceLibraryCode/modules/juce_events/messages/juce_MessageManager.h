@@ -128,7 +128,7 @@ public:
     */
     Thread::ThreadID getCurrentMessageThread() const noexcept            { return messageThreadId; }
 
-    /** Returns true if the caller thread has currenltly got the message manager locked.
+    /** Returns true if the caller thread has currently got the message manager locked.
 
         see the MessageManagerLock class for more info about this.
 
@@ -170,7 +170,7 @@ public:
         virtual ~MessageBase() {}
 
         virtual void messageCallback() = 0;
-        void post();
+        bool post();
 
         typedef ReferenceCountedObjectPtr<MessageBase> Ptr;
 

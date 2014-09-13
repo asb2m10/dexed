@@ -173,13 +173,6 @@ public:
                                   int startSample,
                                   int numSamples) = 0;
 
-    /** Returns true if the voice is currently playing a sound which is mapped to the given
-        midi channel.
-
-        If it's not currently playing, this will return false.
-    */
-    bool isPlayingChannel (int midiChannel) const;
-
     /** Changes the voice's reference sample rate.
 
         The rate is set so that subclasses know the output rate and can set their pitch
@@ -188,7 +181,14 @@ public:
         This method is called by the synth, and subclasses can access the current rate with
         the currentSampleRate member.
     */
-    void setCurrentPlaybackSampleRate (double newRate);
+    virtual void setCurrentPlaybackSampleRate (double newRate);
+
+    /** Returns true if the voice is currently playing a sound which is mapped to the given
+        midi channel.
+
+        If it's not currently playing, this will return false.
+    */
+    bool isPlayingChannel (int midiChannel) const;
 
     /** Returns true if the key that triggered this voice is still held down.
         Note that the voice may still be playing after the key was released (e.g because the
@@ -198,6 +198,9 @@ public:
 
     /** Returns true if the sostenuto pedal is currently active for this voice. */
     bool isSostenutoPedalDown() const noexcept                  { return sostenutoPedalDown; }
+
+    /** Returns true if this voice started playing its current note before the other voice did. */
+    bool wasStartedBefore (const SynthesiserVoice& other) const noexcept;
 
 protected:
     //==============================================================================
@@ -291,7 +294,7 @@ public:
         it later on when no longer needed. The caller should not retain a pointer to the
         voice.
     */
-    void addVoice (SynthesiserVoice* newVoice);
+    SynthesiserVoice* addVoice (SynthesiserVoice* newVoice);
 
     /** Deletes one of the voices. */
     void removeVoice (int index);
@@ -308,10 +311,10 @@ public:
 
     /** Adds a new sound to the synthesiser.
 
-        The object passed in is reference counted, so will be deleted when it is removed
-        from the synthesiser, and when no voices are still using it.
+        The object passed in is reference counted, so will be deleted when the
+        synthesiser and all voices are no longer using it.
     */
-    void addSound (const SynthesiserSound::Ptr& newSound);
+    SynthesiserSound* addSound (const SynthesiserSound::Ptr& newSound);
 
     /** Removes and deletes one of the sounds. */
     void removeSound (int index);
@@ -441,7 +444,7 @@ public:
         This value is propagated to the voices so that they can use it to render the correct
         pitches.
     */
-    void setCurrentPlaybackSampleRate (double sampleRate);
+    virtual void setCurrentPlaybackSampleRate (double sampleRate);
 
     /** Creates the next block of audio output.
 
@@ -480,6 +483,12 @@ protected:
     */
     virtual SynthesiserVoice* findFreeVoice (SynthesiserSound* soundToPlay,
                                              const bool stealIfNoneAvailable) const;
+
+    /** Chooses a voice that is most suitable for being re-used.
+        The default method returns the one that has been playing for the longest, but
+        you may want to override this and do something more cunning instead.
+    */
+    virtual SynthesiserVoice* findVoiceToSteal (SynthesiserSound* soundToPlay) const;
 
     /** Starts a specified voice playing a particular sound.
 

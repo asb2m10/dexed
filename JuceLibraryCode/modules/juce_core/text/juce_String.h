@@ -167,7 +167,7 @@ public:
     typedef CharPointer_UTF32 CharPointerType;
    #elif (JUCE_STRING_UTF_TYPE == 16)
     typedef CharPointer_UTF16 CharPointerType;
-   #elif (JUCE_STRING_UTF_TYPE == 8)
+   #elif (DOXYGEN || JUCE_STRING_UTF_TYPE == 8)
     typedef CharPointer_UTF8  CharPointerType;
    #else
     #error "You must set the value of JUCE_STRING_UTF_TYPE to be either 8, 16, or 32!"
@@ -346,15 +346,15 @@ public:
     */
     int compareIgnoreCase (const String& other) const noexcept;
 
-    /** Lexicographic comparison with another string.
+    /** Compares two strings, taking into account textual characteristics like numbers and spaces.
 
-        The comparison used here is case-insensitive and ignores leading non-alphanumeric
-        characters, making it good for sorting human-readable strings.
+        This comparison is case-insensitive and can detect words and embedded numbers in the
+        strings, making it good for sorting human-readable lists of things like filenames.
 
         @returns     0 if the two strings are identical; negative if this string comes before
                      the other one alphabetically, or positive if it comes after it.
     */
-    int compareLexicographically (const String& other) const noexcept;
+    int compareNatural (StringRef other) const noexcept;
 
     /** Tests whether the string begins with another string.
         If the parameter is an empty string, this will always return true.
@@ -1204,19 +1204,24 @@ public:
 
     //==============================================================================
    #if JUCE_MAC || JUCE_IOS || DOXYGEN
-    /** MAC ONLY - Creates a String from an OSX CFString. */
+    /** OSX ONLY - Creates a String from an OSX CFString. */
     static String fromCFString (CFStringRef cfString);
 
-    /** MAC ONLY - Converts this string to a CFString.
+    /** OSX ONLY - Converts this string to a CFString.
         Remember that you must use CFRelease() to free the returned string when you're
         finished with it.
     */
     CFStringRef toCFString() const;
 
-    /** MAC ONLY - Returns a copy of this string in which any decomposed unicode characters have
+    /** OSX ONLY - Returns a copy of this string in which any decomposed unicode characters have
         been converted to their precomposed equivalents. */
     String convertToPrecomposedUnicode() const;
    #endif
+
+    /** Returns the number of String objects which are currently sharing the same internal
+        data as this one.
+    */
+    int getReferenceCount() const noexcept;
 
 private:
     //==============================================================================
@@ -1225,7 +1230,7 @@ private:
     //==============================================================================
     struct PreallocationBytes
     {
-        explicit PreallocationBytes (size_t);
+        explicit PreallocationBytes (size_t) noexcept;
         size_t numBytes;
     };
 
