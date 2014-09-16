@@ -25,10 +25,14 @@
 
 class DXLookNFeel : public LookAndFeel_V3 {
 public:
+    static Colour background;
+    static Colour fillColour;
+    DXLookNFeel();
+
+    virtual void drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,  Slider &slider );
+
     static Colour dxDarkBrown;
     static Colour dxLightBrown;
-    
-    DXLookNFeel();
 };
 
 #endif  // DXLOOKNFEEL_H_INCLUDED

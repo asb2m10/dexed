@@ -25,6 +25,7 @@
 #include "SysexComm.h"
 #include "Dexed.h"
 #include "math.h"
+#include "DXLookNFeel.h"
 #include <fstream>
 
 #include "msfa/fm_op_kernel.h"
@@ -226,11 +227,8 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 
 //==============================================================================
 void DexedAudioProcessorEditor::paint (Graphics& g) {    
-    g.setColour(Colour(0xFF47260D));
+    g.setColour(DXLookNFeel::background);
     g.fillRoundedRectangle(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 0);
-    
-    g.setColour(Colour(0xFF4D3828));
-    g.fillRoundedRectangle(0.0f, 30, (float) getWidth(), 200, 0);
 }
 
 void DexedAudioProcessorEditor::buttonClicked(Button *buttonThatWasClicked) {
