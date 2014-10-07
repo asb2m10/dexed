@@ -179,7 +179,7 @@ void CtrlDX::updateDisplayName() {
     }
     String msg;
     msg << label << " = " << getValueDisplay();
-    editor->global.setParamMessage(msg);
+    //editor->global.setParamMessage(msg);
     editor->global.repaint();
 }
 

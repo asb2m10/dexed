@@ -24,6 +24,9 @@
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 #include "DXComponents.h"
+#include "AlgoDisplay.h"
+
+class DexedAudioProcessorEditor;
 //[/Headers]
 
 
@@ -37,8 +40,8 @@
                                                                     //[/Comments]
 */
 class GlobalEditor  : public Component,
-                      public ComboBoxListener,
-                      public SliderListener
+                      public SliderListener,
+                      public ButtonListener
 {
 public:
     //==============================================================================
@@ -54,13 +57,22 @@ public:
     void updateVu(float v);
     void updateDisplay();
     void repaintMsg();
+
+    DexedAudioProcessorEditor *editor;
+
+    void setMonoState(bool state);
+
+    ProgramSelector *programs;
     //[/UserMethods]
 
     void paint (Graphics& g);
     void resized();
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
     void sliderValueChanged (Slider* sliderThatWasMoved);
+    void buttonClicked (Button* buttonThatWasClicked);
 
+    // Binary resources:
+    static const char* globalEditor_864x144_png;
+    static const int globalEditor_864x144_pngSize;
 
 
 private:
@@ -69,7 +81,6 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<ComboBox> lfoType;
     ScopedPointer<Slider> lfoSpeed;
     ScopedPointer<Slider> lfoAmDepth;
     ScopedPointer<Slider> lfoPitchDepth;
@@ -95,6 +106,17 @@ private:
     ScopedPointer<LcdDisplay> lcdDisplay;
     ScopedPointer<Slider> output;
     ScopedPointer<VuMeter> vuOutput;
+    ScopedPointer<TextButton> initButton;
+    ScopedPointer<TextButton> parmButton;
+    ScopedPointer<TextButton> sendButton;
+    ScopedPointer<TextButton> cartButton;
+    ScopedPointer<TextButton> loadButton;
+    ScopedPointer<TextButton> saveButton;
+    ScopedPointer<TextButton> storeButton;
+    ScopedPointer<ToggleButton> monoMode;
+    ScopedPointer<ComboBoxImage> lfoType;
+    ScopedPointer<ProgramSelector> programSelector;
+    Image cachedImage_globalEditor_864x144_png;
 
 
     //==============================================================================

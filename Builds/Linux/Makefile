@@ -58,6 +58,7 @@ OBJECTS := \
   $(OBJDIR)/GlobalEditor_4b9bc379.o \
   $(OBJDIR)/ParamDialog_aca81c16.o \
   $(OBJDIR)/OperatorEditor_b03d363a.o \
+  $(OBJDIR)/AlgoDisplay_895ecdd0.o \
   $(OBJDIR)/DXLookNFeel_cfc3afa2.o \
   $(OBJDIR)/DXComponents_a6963633.o \
   $(OBJDIR)/freqlut_ca864b55.o \
@@ -139,6 +140,11 @@ $(OBJDIR)/ParamDialog_aca81c16.o: ../../Source/ParamDialog.cpp
 $(OBJDIR)/OperatorEditor_b03d363a.o: ../../Source/OperatorEditor.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling OperatorEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/AlgoDisplay_895ecdd0.o: ../../Source/AlgoDisplay.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling AlgoDisplay.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/DXLookNFeel_cfc3afa2.o: ../../Source/DXLookNFeel.cpp

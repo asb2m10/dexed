@@ -40,20 +40,10 @@ public:
     void paint(Graphics &g);
 };
 
-class AlgoDisplay : public Component {
-    void drawOp(Graphics &g, int x, int y, int num);
-public:
-	AlgoDisplay();
-    char *algo;
-	void paint(Graphics &g);
-};
-
 class VuMeter: public Component {
     void paint(Graphics &g);
-public :
-    VuMeter();    
+public : 
     float v;
-    int totalBlocks;
 };
 
 class LcdDisplay : public Component, public Timer, public AsyncUpdater {
@@ -65,6 +55,24 @@ public:
     String systemMsg;
     String paramMsg;
     void paint(Graphics &g);    
+};
+
+class ComboBoxImage : public ComboBox {
+    Image items;
+    int itemHeight;
+    PopupMenu popup;
+public:
+    virtual void paint(Graphics &g);
+    virtual void showPopup() override;
+    void setImage(Image image);
+};
+
+class ProgramSelector : public ComboBox {
+    bool isInInit;
+    
+public:
+    void setInit();
+    virtual void paint(Graphics &g) override;
 };
 
 #endif  // DXCOMPONENTS_H_INCLUDED

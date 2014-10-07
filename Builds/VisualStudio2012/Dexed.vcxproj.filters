@@ -298,6 +298,9 @@
     <ClCompile Include="..\..\Source\OperatorEditor.cpp">
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\AlgoDisplay.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\DXLookNFeel.cpp">
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
@@ -1423,6 +1426,9 @@
       <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\OperatorEditor.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AlgoDisplay.h">
       <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\DXLookNFeel.h">
@@ -2666,10 +2672,37 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resources\about.png">
+    <None Include="..\..\Resources\ui\Switch_48x26.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\ButtonUnlabeled_50x30.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\Knob_34x34.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\LFO_36_26.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\Light_14x14.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\Meter_140x8.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\Scaling_36_26.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\Slider_26x26.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\ui\NotoSans-Regular.ttf">
       <Filter>Dexed\Resources</Filter>
     </None>
     <None Include="..\..\Resources\builtin_pgm.zip">
+      <Filter>Dexed\Resources</Filter>
+    </None>
+    <None Include="..\..\Resources\about.png">
       <Filter>Dexed\Resources</Filter>
     </None>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_basics\juce_module_info">

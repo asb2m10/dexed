@@ -139,6 +139,7 @@
     <ClCompile Include="..\..\Source\GlobalEditor.cpp"/>
     <ClCompile Include="..\..\Source\ParamDialog.cpp"/>
     <ClCompile Include="..\..\Source\OperatorEditor.cpp"/>
+    <ClCompile Include="..\..\Source\AlgoDisplay.cpp"/>
     <ClCompile Include="..\..\Source\DXLookNFeel.cpp"/>
     <ClCompile Include="..\..\Source\DXComponents.cpp"/>
     <ClCompile Include="..\..\Source\msfa\freqlut.cc"/>
@@ -1112,6 +1113,7 @@
     <ClInclude Include="..\..\Source\GlobalEditor.h"/>
     <ClInclude Include="..\..\Source\ParamDialog.h"/>
     <ClInclude Include="..\..\Source\OperatorEditor.h"/>
+    <ClInclude Include="..\..\Source\AlgoDisplay.h"/>
     <ClInclude Include="..\..\Source\DXLookNFeel.h"/>
     <ClInclude Include="..\..\Source\DXComponents.h"/>
     <ClInclude Include="..\..\Source\msfa\freqlut.h"/>
@@ -1527,8 +1529,17 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Resources\about.png"/>
+    <None Include="..\..\Resources\ui\Switch_48x26.png"/>
+    <None Include="..\..\Resources\ui\ButtonUnlabeled_50x30.png"/>
+    <None Include="..\..\Resources\ui\Knob_34x34.png"/>
+    <None Include="..\..\Resources\ui\LFO_36_26.png"/>
+    <None Include="..\..\Resources\ui\Light_14x14.png"/>
+    <None Include="..\..\Resources\ui\Meter_140x8.png"/>
+    <None Include="..\..\Resources\ui\Scaling_36_26.png"/>
+    <None Include="..\..\Resources\ui\Slider_26x26.png"/>
+    <None Include="..\..\Resources\ui\NotoSans-Regular.ttf"/>
     <None Include="..\..\Resources\builtin_pgm.zip"/>
+    <None Include="..\..\Resources\about.png"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_basics\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_plugin_client\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_processors\juce_module_info"/>

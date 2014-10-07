@@ -12,8 +12,22 @@
               buildRTAS="0" buildAAX="0" pluginManufacturerEmail="support@yourcompany.com">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
-      <FILE id="xxGEA4" name="about.png" compile="0" resource="1" file="Resources/about.png"/>
+      <FILE id="SXelfa" name="Switch_48x26.png" compile="0" resource="1"
+            file="Resources/ui/Switch_48x26.png"/>
+      <FILE id="AjTNZm" name="ButtonUnlabeled_50x30.png" compile="0" resource="1"
+            file="Resources/ui/ButtonUnlabeled_50x30.png"/>
+      <FILE id="SYWwxx" name="Knob_34x34.png" compile="0" resource="1" file="Resources/ui/Knob_34x34.png"/>
+      <FILE id="b6nSDy" name="LFO_36_26.png" compile="0" resource="1" file="Resources/ui/LFO_36_26.png"/>
+      <FILE id="zrVtLp" name="Light_14x14.png" compile="0" resource="1" file="Resources/ui/Light_14x14.png"/>
+      <FILE id="GRsIdT" name="Meter_140x8.png" compile="0" resource="1" file="Resources/ui/Meter_140x8.png"/>
+      <FILE id="uB8nRA" name="Scaling_36_26.png" compile="0" resource="1"
+            file="Resources/ui/Scaling_36_26.png"/>
+      <FILE id="kmkZne" name="Slider_26x26.png" compile="0" resource="1"
+            file="Resources/ui/Slider_26x26.png"/>
+      <FILE id="g1Wwz3" name="NotoSans-Regular.ttf" compile="0" resource="1"
+            file="Resources/ui/NotoSans-Regular.ttf"/>
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
+      <FILE id="xxGEA4" name="about.png" compile="0" resource="1" file="Resources/about.png"/>
     </GROUP>
     <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">
       <GROUP id="{1B64F271-8E56-F19A-FF63-094159E5EF7B}" name="dsp">
@@ -37,6 +51,8 @@
               file="Source/OperatorEditor.cpp"/>
         <FILE id="ChJDca" name="OperatorEditor.h" compile="0" resource="0"
               file="Source/OperatorEditor.h"/>
+        <FILE id="mlAFW9" name="AlgoDisplay.cpp" compile="1" resource="0" file="Source/AlgoDisplay.cpp"/>
+        <FILE id="ZsRqfW" name="AlgoDisplay.h" compile="0" resource="0" file="Source/AlgoDisplay.h"/>
         <FILE id="TgCdkS" name="DXLookNFeel.cpp" compile="1" resource="0" file="Source/DXLookNFeel.cpp"/>
         <FILE id="V4bLcd" name="DXLookNFeel.h" compile="0" resource="0" file="Source/DXLookNFeel.h"/>
         <FILE id="yOSLIH" name="DXComponents.cpp" compile="1" resource="0"

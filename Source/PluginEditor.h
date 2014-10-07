@@ -32,48 +32,35 @@
 /**
 */
 class DexedAudioProcessorEditor  : public AudioProcessorEditor,
-        public ButtonListener,
         public ComboBoxListener,
         public Timer {
-    DexedAudioProcessor *processor;
-    ComboBox programs;
     PopupMenu cartPopup;
     PopupMenu sendPopup;
             
     MidiKeyboardComponent midiKeyboard;
     DXLookNFeel dx_lnf;
-
-    ScopedPointer<TextButton> cartButton;
-    ScopedPointer<TextButton> loadButton;
-    ScopedPointer<TextButton> saveButton;
-    ScopedPointer<TextButton> storeButton;
-    ScopedPointer<TextButton> aboutButton;
-    ScopedPointer<TextButton> settingsButton;
-    ScopedPointer<TextButton> sendButton;
-    ScopedPointer<TextButton> initButton;
-    ScopedPointer<ToggleButton> monoButton;
-            
     ScopedPointer<Component> midiMonitor;
-    void storeProgram();
+    OperatorEditor operators[6];
 
 public:
-
+    DexedAudioProcessor *processor;
+    GlobalEditor global;
+            
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
-
     void timerCallback();
-            
-    //==============================================================================
-    // This is just a standard Juce paint method...
+
     void paint (Graphics& g);
-    void buttonClicked (Button* buttonThatWasClicked);
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
-
-    OperatorEditor operators[6];
-    GlobalEditor global;
-
     void updateUI();
     void rebuildProgramCombobox();
+    void loadCart();
+    void saveCart();
+    void initProgram();
+    void storeProgram();
+    void sendToDx7();
+    void cartShow();
+    void parmShow();
 };
 
 

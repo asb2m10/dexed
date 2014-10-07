@@ -166,7 +166,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         }
         extra_buf_size -= numSamples;
         
-        // flush the event, they will be process in next cycle
+        // flush the events, they will be process in the next cycle
         while(getNextEvent(&it, numSamples)) {
             processMidiMessage(midiMsg);
         }
@@ -350,14 +350,14 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
                 }
                 if ( voices[i].midi_note < pitch ) {
                     voices[i].live = false;
-                    voices[note].dx7_note->transfertState(*voices[i].dx7_note);
+                    voices[note].dx7_note->transferState(*voices[i].dx7_note);
                     break;
                 }
                 return;
             }
         }
     }
-
+ 
     voices[note].live = true;
 }
 
@@ -391,7 +391,7 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
         if ( highNote != -1 ) {
             voices[note].live = false;
             voices[target].live = true;
-            voices[target].dx7_note->transfertState(*voices[note].dx7_note);
+            voices[target].dx7_note->transferState(*voices[note].dx7_note);
         }
     }
     

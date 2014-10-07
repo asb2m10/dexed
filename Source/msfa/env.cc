@@ -115,7 +115,7 @@ void Env::getPosition(char *step) {
     *step = ix_;
 }
 
-void Env::transfert(Env &src) {
+void Env::transfer(Env &src) {
     for(int i=0;i<4;i++) {
         rates_[i] = src.rates_[i];
         levels_[i] = src.levels_[i];
