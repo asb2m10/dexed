@@ -34,6 +34,11 @@ new version here but you see it in the change log, it's because this version is 
 
 Changelog
 ---------
+#### Version 0.8.0
+* New UI
+* Fixed mono mode ticks on lower frequencies
+* SynprezFM preset are now in a submenu
+
 #### Version 0.7.0
 * Preliminary Algo 4 & 6 feedback support
 * DX Engine 'Dirty DX' emulation, including one based on OPL chips
@@ -126,6 +131,7 @@ FAQ (possibly)
 Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
+* AZur Studio - Graphical design
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
 * PPPlay : Great [OPL3](http://sourceforge.net/projects/peepeeplayer) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
@@ -134,9 +140,9 @@ Credits & thanks
 
 Planned milestones 
 ------------------
-* 0.6 DX7 editor + user cartridges
 * 0.7 msfa engine tuning
 * 0.8 UI redesign
+* 0.8.1 Cartridge browser/editor
 
 TODO - Dexed 
 ------------

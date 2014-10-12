@@ -72,6 +72,9 @@ ParamDialog::ParamDialog ()
     engineReso->addItem (TRANS("OPL Series"), 3);
     engineReso->addListener (this);
 
+    addAndMakeVisible (showKeyboard = new ToggleButton ("showKeyboard"));
+    showKeyboard->setButtonText (String::empty);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -106,6 +109,7 @@ ParamDialog::~ParamDialog()
     sysexOut = nullptr;
     sysexChl = nullptr;
     engineReso = nullptr;
+    showKeyboard = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -118,7 +122,7 @@ void ParamDialog::paint (Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xff4e270d));
+    g.fillAll (Colour (0xff3c322f));
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
@@ -135,13 +139,13 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 In"),
-                28, 226, 131, 23,
+                27, 221, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 Out"),
-                30, 267, 131, 23,
+                27, 261, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
@@ -162,6 +166,12 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::black);
     g.fillRect (22, 194, 306, 1);
 
+    g.setColour (Colours::white);
+    g.setFont (Font (15.00f, Font::plain));
+    g.drawText (TRANS("Show Keyboard"),
+                19, 101, 276, 23,
+                Justification::centredLeft, true);
+
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
 }
@@ -174,6 +184,7 @@ void ParamDialog::resized()
     sysexOut->setBounds (104, 264, 224, 24);
     sysexChl->setBounds (264, 304, 72, 24);
     engineReso->setBounds (160, 152, 168, 24);
+    showKeyboard->setBounds (264, 96, 56, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -233,7 +244,7 @@ void ParamDialog::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso) {
+void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey) {
     pitchRange->setValue(c.values_[kControllerPitchRange]);
     pitchStep->setValue(c.values_[kControllerPitchStep]);
     sysexChl->setValue(mgr.getChl() + 1);
@@ -249,9 +260,10 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso) {
     sysexOut->setSelectedItemIndex(idx);
 
     engineReso->setSelectedItemIndex(reso);
+    showKeyboard->setToggleState(showKey, false);
 }
 
-bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso) {
+bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey) {
     bool ret = true;
 
     c.values_[kControllerPitchRange] = pitchRange->getValue();
@@ -261,7 +273,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso) {
     mgr.setChl(sysexChl->getValue() - 1);
 
     *reso = engineReso->getSelectedItemIndex();
-
+    *showKey = showKeyboard->getToggleState();
     return ret;
 }
 
@@ -281,14 +293,14 @@ BEGIN_JUCER_METADATA
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="350" initialHeight="350">
-  <BACKGROUND backgroundColour="ff4e270d">
+  <BACKGROUND backgroundColour="ff3c322f">
     <TEXT pos="20 18 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <TEXT pos="20 58 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="28 226 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
+    <TEXT pos="27 221 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="30 267 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
+    <TEXT pos="27 261 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <TEXT pos="27 306 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
@@ -296,6 +308,8 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <RECT pos="22 138 306 1" fill="solid: ff000000" hasStroke="0"/>
     <RECT pos="22 194 306 1" fill="solid: ff000000" hasStroke="0"/>
+    <TEXT pos="19 101 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
           virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0"
@@ -319,6 +333,9 @@ BEGIN_JUCER_METADATA
             virtualName="" explicitFocusOrder="0" pos="160 152 168 24" editable="0"
             layout="33" items="Modern (Direct)&#10;Mark I&#10;OPL Series"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <TOGGLEBUTTON name="showKeyboard" id="c963d2cb8e49ffd7" memberName="showKeyboard"
+                virtualName="" explicitFocusOrder="0" pos="264 96 56 24" buttonText=""
+                connectedEdges="0" needsCallback="0" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -116,7 +116,7 @@ GlobalEditor::GlobalEditor ()
 
     addAndMakeVisible (transpose = new Slider ("transpose"));
     transpose->setRange (0, 48, 0);
-    transpose->setSliderStyle (Slider::Rotary);
+    transpose->setSliderStyle (Slider::RotaryVerticalDrag);
     transpose->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     transpose->addListener (this);
 
@@ -274,30 +274,13 @@ void GlobalEditor::paint (Graphics& g)
     //[/UserPrePaint]
 
     g.setColour (Colours::black);
-    g.setFont (Font (10.00f, Font::plain));
-    g.drawText (TRANS("Volume"),
-                27, 73, 45, 15,
-                Justification::centred, true);
-
-    g.setColour (Colours::black);
-    g.setFont (Font (10.00f, Font::plain));
-    g.drawText (TRANS("Cutoff"),
-                75, 73, 45, 15,
-                Justification::centred, true);
-
-    g.setColour (Colours::black);
-    g.setFont (Font (10.00f, Font::plain));
-    g.drawText (TRANS("Resonance"),
-                123, 73, 45, 15,
-                Justification::centred, true);
-
-    g.setColour (Colours::black);
     g.drawImage (cachedImage_globalEditor_864x144_png,
                  0, 0, 864, 144,
                  0, 0, cachedImage_globalEditor_864x144_png.getWidth(), cachedImage_globalEditor_864x144_png.getHeight());
 
     //[UserPaint] Add your own custom painting code here..
-
+    Image myStrip = ImageCache::getFromMemory(BinaryData::Light_14x14_png, BinaryData::Light_14x14_pngSize);
+    g.drawImage(myStrip, 300, 70, 14, 14, 0, monoMode->getToggleState() ? 14 : 0, 14, 14);
     //[/UserPaint]
 }
 
@@ -318,13 +301,13 @@ void GlobalEditor::resized()
     pitchLevel4->setBounds (823, 56, 34, 34);
     pitchLevel1->setBounds (739, 57, 34, 34);
     transpose->setBounds (202, 60, 34, 34);
-    oscSync->setBounds (662, 96, 48, 26);
+    oscSync->setBounds (652, 95, 48, 26);
     pitchModSens->setBounds (666, 5, 34, 34);
-    lfoSync->setBounds (575, 96, 48, 26);
+    lfoSync->setBounds (571, 96, 48, 26);
     pitchEnvDisplay->setBounds (751, 10, 93, 30);
-    algoDisplay->setBounds (331, 24, 153, 98);
-    feedback->setBounds (500, 76, 34, 34);
-    algo->setBounds (500, 16, 34, 34);
+    algoDisplay->setBounds (338, 30, 146, 91);
+    feedback->setBounds (501, 80, 34, 34);
+    algo->setBounds (501, 22, 34, 34);
     lcdDisplay->setBounds (6, 87, 140, 13);
     output->setBounds (157, 60, 34, 34);
     vuOutput->setBounds (6, 103, 140, 8);
@@ -506,6 +489,7 @@ void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
     {
         //[UserButtonCode_monoMode] -- add your button handler code here..
         editor->processor->setMonoMode(monoMode->getToggleState());
+        repaint();
         //[/UserButtonCode_monoMode]
     }
 
@@ -551,7 +535,7 @@ void GlobalEditor::setSystemMessage(String msg) {
 }
 
 void GlobalEditor::setParamMessage(String msg) {
-    //lcdDisplay->paramMsg = msg;
+    lcdDisplay->paramMsg = msg;
 }
 
 void GlobalEditor::updateDisplay() {
@@ -590,12 +574,6 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="0" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="864" initialHeight="144">
   <BACKGROUND backgroundColour="ffffff">
-    <TEXT pos="27 73 45 15" fill="solid: ff000000" hasStroke="0" text="Volume"
-          fontname="Default font" fontsize="10" bold="0" italic="0" justification="36"/>
-    <TEXT pos="75 73 45 15" fill="solid: ff000000" hasStroke="0" text="Cutoff"
-          fontname="Default font" fontsize="10" bold="0" italic="0" justification="36"/>
-    <TEXT pos="123 73 45 15" fill="solid: ff000000" hasStroke="0" text="Resonance"
-          fontname="Default font" fontsize="10" bold="0" italic="0" justification="36"/>
     <IMAGE pos="0 0 864 144" resource="globalEditor_864x144_png" opacity="1"
            mode="0"/>
   </BACKGROUND>
@@ -657,30 +635,30 @@ BEGIN_JUCER_METADATA
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
           virtualName="" explicitFocusOrder="0" pos="202 60 34 34" min="0"
-          max="48" int="0" style="Rotary" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          max="48" int="0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="oscSync" id="8f3fe641537cd00" memberName="oscSync" virtualName=""
-                explicitFocusOrder="0" pos="662 96 48 26" buttonText="" connectedEdges="0"
+                explicitFocusOrder="0" pos="652 95 48 26" buttonText="" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="0"/>
   <SLIDER name="pitchModSens" id="904f73df85a9f886" memberName="pitchModSens"
           virtualName="" explicitFocusOrder="0" pos="666 5 34 34" min="0"
           max="7" int="0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
-                explicitFocusOrder="0" pos="575 96 48 26" buttonText="" connectedEdges="0"
+                explicitFocusOrder="0" pos="571 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="0" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="pitchEnvDisplay" id="9ddaae8ef924a038" memberName="pitchEnvDisplay"
                     virtualName="" explicitFocusOrder="0" pos="751 10 93 30" class="PitchEnvDisplay"
                     params=""/>
   <GENERICCOMPONENT name="algoDisplay" id="b26fb9e3b5f0bc37" memberName="algoDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="331 24 153 98" class="AlgoDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="338 30 146 91" class="AlgoDisplay"
                     params=""/>
   <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
-          explicitFocusOrder="0" pos="500 76 34 34" min="0" max="7" int="1"
+          explicitFocusOrder="0" pos="501 80 34 34" min="0" max="7" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="algo" id="8a226ddf9bbff752" memberName="algo" virtualName=""
-          explicitFocusOrder="0" pos="500 16 34 34" min="1" max="32" int="1"
+          explicitFocusOrder="0" pos="501 22 34 34" min="1" max="32" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="lcdDisplay" id="30c7bb8f114cbbe3" memberName="lcdDisplay"

@@ -381,6 +381,7 @@
 		588255FD68989F1A03FDF31C = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "juce_CPlusPlusCodeTokeniserFunctions.h"; path = "../../JuceLibraryCode/modules/juce_gui_extra/code_editor/juce_CPlusPlusCodeTokeniserFunctions.h"; sourceTree = "SOURCE_ROOT"; };
 		59D15F780D468B587F9C7E78 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PluginParam.cpp; path = ../../Source/PluginParam.cpp; sourceTree = "SOURCE_ROOT"; };
 		5A1BD822F8CB7D42BB0EAF7A = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_PluginListComponent.cpp"; path = "../../JuceLibraryCode/modules/juce_audio_processors/scanning/juce_PluginListComponent.cpp"; sourceTree = "SOURCE_ROOT"; };
+		5A366F36F3B4E50587A30351 = {isa = PBXFileReference; lastKnownFileType = file.ttf; name = "NotoSans-Bold.ttf"; path = "../../Resources/ui/NotoSans-Bold.ttf"; sourceTree = "SOURCE_ROOT"; };
 		5B12686E2808FCCB8BBE0E24 = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_android_GraphicsContext.cpp"; path = "../../JuceLibraryCode/modules/juce_graphics/native/juce_android_GraphicsContext.cpp"; sourceTree = "SOURCE_ROOT"; };
 		5BA236D62129EFE13A9EAB1B = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_MixerAudioSource.cpp"; path = "../../JuceLibraryCode/modules/juce_audio_basics/sources/juce_MixerAudioSource.cpp"; sourceTree = "SOURCE_ROOT"; };
 		5BC311F801FE9D018A7B231C = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "juce_ComponentDragger.cpp"; path = "../../JuceLibraryCode/modules/juce_gui_basics/mouse/juce_ComponentDragger.cpp"; sourceTree = "SOURCE_ROOT"; };
@@ -910,6 +911,7 @@
 					66E042C6FFE93F0E19B32F09,
 					C7577AF98915C39EDCEC259A,
 					1D72CD485011A4EA3E6B0FD5,
+					5A366F36F3B4E50587A30351,
 					15B75D829C40872D542A38B8,
 					0E3FA3D7B11FC7D19CC634BE, ); name = Resources; sourceTree = "<group>"; };
 		0652CE27AE4971C99654E3BF = {isa = PBXGroup; children = (

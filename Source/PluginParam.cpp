@@ -179,7 +179,7 @@ void CtrlDX::updateDisplayName() {
     }
     String msg;
     msg << label << " = " << getValueDisplay();
-    //editor->global.setParamMessage(msg);
+    editor->global.setParamMessage(msg);
     editor->global.repaint();
 }
 
@@ -516,6 +516,10 @@ void DexedAudioProcessor::loadPreference() {
     if ( prop.containsKey( String("engineType" ) ) ) {
         engineType = prop.getIntValue( String("engineType") );
     }
+
+    if ( prop.containsKey( String("showKeyboard") ) ) {
+        showKeyboard = prop.getIntValue( String("showKeyboard") );
+    }
 }
 
 void DexedAudioProcessor::savePreference() {
@@ -529,6 +533,8 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("sysexOut"), sysexComm.getOutput());
     prop.setValue(String("sysexChl"), sysexComm.getChl());
     
+    prop.setValue(String("showKeyboard"), showKeyboard);
+
     //prop.setValue(String("engineResolution"), engineResolution);
     
     prop.save();

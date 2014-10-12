@@ -24,18 +24,22 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class DXLookNFeel : public LookAndFeel_V3 {
-    Typeface::Ptr defaultFont;
 public:
+    Typeface::Ptr defaultFont;
+    Typeface::Ptr defaultFontBold;
+
     static Colour comboBoxBackground;
     static Colour background;
+    static Colour lightBackground;
     static Colour fillColour;
+    static Colour ctrlBackground;
+
     DXLookNFeel();
 
     virtual void drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,  Slider &slider );
 
     virtual void drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown);
-    static Colour dxDarkBrown;
-    static Colour dxLightBrown;
+
     
     virtual void drawLinearSliderBackground (Graphics&, int x, int y, int width, int height,
                                      float sliderPos, float minSliderPos, float maxSliderPos,
@@ -48,7 +52,11 @@ public:
     virtual void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown) override;
     
+    virtual Font getTextButtonFont(TextButton&, int buttonHeight) override;
+
     virtual Typeface::Ptr getTypefaceForFont(const Font &);
+
+    virtual void positionComboBoxText (ComboBox& box, Label& label);
 };
 
 #endif  // DXLOOKNFEEL_H_INCLUDED

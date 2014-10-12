@@ -1538,6 +1538,7 @@
     <None Include="..\..\Resources\ui\Scaling_36_26.png"/>
     <None Include="..\..\Resources\ui\Slider_26x26.png"/>
     <None Include="..\..\Resources\ui\NotoSans-Regular.ttf"/>
+    <None Include="..\..\Resources\ui\NotoSans-Bold.ttf"/>
     <None Include="..\..\Resources\builtin_pgm.zip"/>
     <None Include="..\..\Resources\about.png"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_basics\juce_module_info"/>

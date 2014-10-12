@@ -115,6 +115,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     EngineOpl engineOpl;
     
 public :
+
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
     StringArray programNames;    
@@ -129,6 +130,8 @@ public :
     bool forceRefreshUI;
     
     float vuSignal;
+
+    bool showKeyboard;
 
     int getEngineType();
     void setEngineType(int rs);

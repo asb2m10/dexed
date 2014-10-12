@@ -243,7 +243,6 @@ void EnvDisplay::paint(Graphics &g) {
     p.lineTo(0, 32);
 
     g.setColour(DXLookNFeel::fillColour);
-    //g.setColour(Colour(0xFF0FC00F).withAlpha(0.3f));
     g.fillPath(p);
     
     g.setColour(Colour(0xFFFFFFFF));
@@ -258,8 +257,6 @@ PitchEnvDisplay::PitchEnvDisplay() {
 }
 
 void PitchEnvDisplay::paint(Graphics &g) {
-    g.setColour(Colours::black.withAlpha(0.1f));
-    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
     g.setColour(Colours::white);
     
     char *levels = pvalues + 4;
@@ -269,8 +266,8 @@ void PitchEnvDisplay::paint(Graphics &g) {
     float total = 0;
     
     int old = pitchenv_tab[levels[3]] + 128;
-    // find the scale
     
+    // find the scale
     for(int i=0;i<4;i++) {
         int nw = pitchenv_tab[levels[i]] + 128;
         dist[i] = ((float)abs(nw - old)) / pitchenv_rate[rates[i]];
@@ -283,30 +280,42 @@ void PitchEnvDisplay::paint(Graphics &g) {
         total = 4;
     }
         
-    // TODO : this is WIP
     float ratio =  96 / total;
-    
-    int oldx = 0;
-    int oldy = 25 - (pitchenv_tab[levels[3]] + 128) / 10;
-    
+
+    Path p;
+    p.startNewSubPath(0, 32);
+
+    int x = 0;
+    int y = 25 - (pitchenv_tab[levels[3]] + 128) / 10;
+    p.lineTo(0,y);
+
+    int dx = x;
+    int dy = y;
+
     int i;
     for(i=0;i<4;i++) {
-        int newx = dist[i] * ratio + oldx;
-        int newy = 25 - (pitchenv_tab[levels[i]] + 128) / 10;
-        
-        g.drawLine(oldx, oldy, newx, newy, 2);
-        
         if ( vPos == i ) {
-            g.fillEllipse(oldx-2, oldy-2, 4, 4);
+            dx = x;
+            dy = y;
         }
-        
-        oldx = newx;
-        oldy = newy;
+
+        x = dist[i] * ratio + x;
+        y = 25 - (pitchenv_tab[levels[i]] + 128) / 10;
+        p.lineTo(x, y);
     }
     
     if ( vPos == i ) {
-        g.fillEllipse(oldx-2, oldy-2, 4, 4);
+        dx = x;
+        dy = y;
     }
+
+    p.lineTo(96,32);
+    p.lineTo(0, 32);
+    g.setColour(DXLookNFeel::fillColour);
+    g.fillPath(p);
+
+    g.setColour(Colours::white);
+    g.fillEllipse(dx-2, dy-2, 4, 4);
 }
 
 void VuMeter::paint(Graphics &g) {
@@ -373,11 +382,20 @@ void ComboBoxImage::paint(Graphics &g) {
     g.drawImage(items, 0, 0, items.getWidth(), itemHeight, 0, idx * itemHeight, items.getWidth(), itemHeight);
 }
 
+ComboBoxImage::ComboBoxImage() {
+    onPopup = false;
+}
+
 void ComboBoxImage::showPopup() {
-    int idx = popup.show() - 1;
-    if ( idx < 0 )
-        return;
-    setSelectedItemIndex(idx);
+    if ( !onPopup ) { 
+        onPopup = true;
+        int idx = popup.show() - 1;
+        onPopup = false;
+        if ( idx < 0 )
+            return;
+        setSelectedItemIndex(idx);
+
+    }
 }
 
 void ComboBoxImage::setImage(Image image) {
@@ -388,6 +406,18 @@ void ComboBoxImage::setImage(Image image) {
 
     for(int i=0;i<numItems;i++) {
         Image tmp = image.getClippedImage(Rectangle<int>(0,itemHeight*i, image.getWidth(), itemHeight));
+        popup.addItem(i+1, getItemText(i), true, false, tmp);
+    }
+}
+
+void ComboBoxImage::setImage(Image image, int pos[]) {
+    items = image;
+
+    int numItems = getNumItems();
+    itemHeight = 26;
+
+    for(int i=0;i<numItems;i++) {
+        Image tmp = image.getClippedImage(Rectangle<int>(0,itemHeight*pos[i], image.getWidth(), itemHeight));
         popup.addItem(i+1, getItemText(i), true, false, tmp);
     }
 }

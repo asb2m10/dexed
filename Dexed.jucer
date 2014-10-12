@@ -26,6 +26,8 @@
             file="Resources/ui/Slider_26x26.png"/>
       <FILE id="g1Wwz3" name="NotoSans-Regular.ttf" compile="0" resource="1"
             file="Resources/ui/NotoSans-Regular.ttf"/>
+      <FILE id="A3xTGc" name="NotoSans-Bold.ttf" compile="0" resource="1"
+            file="Resources/ui/NotoSans-Bold.ttf"/>
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
       <FILE id="xxGEA4" name="about.png" compile="0" resource="1" file="Resources/about.png"/>
     </GROUP>

@@ -390,6 +390,13 @@ void CartridgeManager::rebuildMenu() {
     
     completeCarts.clear();
     
+    completeCarts.addItem(1, cartNames[0]);
+    PopupMenu synprez;
+    for(int i=1;i<cartNames.size();i++) {
+        synprez.addItem(i+1, cartNames[i]);
+    }
+    completeCarts.addSubMenu("SynprezFM", synprez, true);
+
     if ( userCartFile.exists() ) {
         zipIdx = 0;
         ZipFile userZip(userCartFile);
@@ -404,18 +411,11 @@ void CartridgeManager::rebuildMenu() {
     } else {
         lastModifiedUserCartFile = Time(0);
     }
-    
-    for(int i=0;i<cartNames.size();i++) {
-        completeCarts.addItem(i+1, cartNames[i]);
-    }
 }
 
 PopupMenu *CartridgeManager::getCarts() {
     Time t = userCartFile.getLastModificationTime();
-    
-    TRACE("Usercart file %s exists: %d", userCartFile.getFullPathName().toRawUTF8(), userCartFile.exists());
-    TRACE("DIFF TM: %s %s", t.toString(true, true).toRawUTF8(), lastModifiedUserCartFile.toString(true, true).toRawUTF8());
-    
+
     if ( t != lastModifiedUserCartFile || completeCarts.getNumItems() == 0 ) {
         rebuildMenu();
     }

@@ -72,7 +72,7 @@ public:
         if ( ! (midi->isInputActive() || midi->isOutputActive() ) ) 
             return;
 
-        g.setColour(DXLookNFeel::dxDarkBrown);
+        //g.setColour(DXLookNFeel::dxDarkBrown);
         g.fillRect(0, 0, getWidth(), getHeight());
         g.setColour(Colours::black);
         g.drawSingleLineText("DX7 ", 0, 13);
@@ -114,13 +114,6 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     setSize (866, 677);
 
     processor = ownerFilter;
-
-    //addAndMakeVisible (&programs);
-    //programs.setEditableText(false);
-    //programs.setJustificationType (Justification::centredLeft);
-    //programs.setTextWhenNothingSelected (String::empty);
-//    programs.setBounds(167, 6, 160, 18);
-
     
     addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
     midiMonitor->setBounds(645, 6, 110, 18);
@@ -278,7 +271,7 @@ void DexedAudioProcessorEditor::parmShow() {
     AlertWindow window("","", AlertWindow::NoIcon, this);
     ParamDialog param;
     param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
-    param.setDialogValues(processor->controllers, processor->sysexComm, tp);
+    param.setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
     
     window.addCustomComponent(&param);
     window.addButton("OK", 0);
@@ -286,7 +279,7 @@ void DexedAudioProcessorEditor::parmShow() {
     if ( window.runModalLoop() != 0 )
         return;
     
-    bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &tp);
+    bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &tp, &processor->showKeyboard);
     processor->setEngineType(tp);
     processor->savePreference();
     
@@ -385,8 +378,8 @@ void DexedAudioProcessorEditor::storeProgram() {
 
         dialog.addComboBox(String("Dest"), programs);
         dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
-        dialog.addButton("Cancel", 1, KeyPress(KeyPress::escapeKey));
-        dialog.addButton("External File", 2, KeyPress());
+        dialog.addButton("CANCEL", 1, KeyPress(KeyPress::escapeKey));
+        dialog.addButton("EXTERNAL FILE", 2, KeyPress());
         int response = dialog.runModalLoop();
 
         if ( response == 2 ) {

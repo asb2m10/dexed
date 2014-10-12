@@ -47,8 +47,8 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setDialogValues(Controllers &c, SysexComm &mgr, int reso);
-    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso);
+    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard);
+    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard);
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -69,6 +69,7 @@ private:
     ScopedPointer<ComboBox> sysexOut;
     ScopedPointer<Slider> sysexChl;
     ScopedPointer<ComboBox> engineReso;
+    ScopedPointer<ToggleButton> showKeyboard;
 
 
     //==============================================================================

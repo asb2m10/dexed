@@ -2699,6 +2699,9 @@
     <None Include="..\..\Resources\ui\NotoSans-Regular.ttf">
       <Filter>Dexed\Resources</Filter>
     </None>
+    <None Include="..\..\Resources\ui\NotoSans-Bold.ttf">
+      <Filter>Dexed\Resources</Filter>
+    </None>
     <None Include="..\..\Resources\builtin_pgm.zip">
       <Filter>Dexed\Resources</Filter>
     </None>

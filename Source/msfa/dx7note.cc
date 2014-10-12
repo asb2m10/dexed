@@ -127,7 +127,6 @@ static const uint8_t pitchmodsenstab[] = {
   0, 10, 20, 33, 55, 92, 153, 255
 };
 
-
 // 0, 66, 109, 255
 static const uint32_t ampmodsenstab[] = {
     0, 4342338, 7171437, 16777216
@@ -271,6 +270,7 @@ void Dx7Note::transferState(Dx7Note &src) {
     for (int i=0;i<6;i++) {
         env_[i].transfer(src.env_[i]);
         params_[i].gain_out = src.params_[i].gain_out;
+        params_[i].phase = src.params_[i].phase;
     }
 }
 

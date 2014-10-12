@@ -108,7 +108,7 @@ OperatorEditor::OperatorEditor ()
 
     addAndMakeVisible (detune = new Slider ("detune"));
     detune->setRange (-7, 7, 1);
-    detune->setSliderStyle (Slider::Rotary);
+    detune->setSliderStyle (Slider::RotaryVerticalDrag);
     detune->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     detune->addListener (this);
 
@@ -183,13 +183,15 @@ OperatorEditor::OperatorEditor ()
     kbdLeftCurve->addItem("-EX", 2);
     kbdLeftCurve->addItem("+EX", 3);
     kbdLeftCurve->addItem("+LN", 4);
-    kbdLeftCurve->setImage(tmp);
+    int posLeft[] = {0,5,4,3};
+    kbdLeftCurve->setImage(tmp, posLeft);
 
     kbdRightCurve->addItem("-LN", 1);
     kbdRightCurve->addItem("-EX", 2);
     kbdRightCurve->addItem("+EX", 3);
     kbdRightCurve->addItem("+LN", 4);
-    kbdRightCurve->setImage(tmp);
+    int posRight[] = {3,2,1,0};
+    kbdRightCurve->setImage(tmp, posRight);
     //[/Constructor]
 }
 
@@ -250,7 +252,7 @@ void OperatorEditor::paint (Graphics& g)
 
     // 129 x 24
     g.drawImage(myStrip, 128, 24, 14, 14, 0, state ? 0 : 14, 14, 14);
-    // 198 x 24
+    // 199 x 24
     g.drawImage(myStrip, 199, 24, 14, 14, 0, !state ? 0 : 14, 14, 14);
 
     //[/UserPaint]
@@ -271,7 +273,7 @@ void OperatorEditor::resized()
     opCoarse->setBounds (41, 24, 34, 34);
     khzDisplay->setBounds (15, 10, 95, 10);
     detune->setBounds (6, 24, 34, 34);
-    envDisplay->setBounds (16, 82, 94, 30);
+    envDisplay->setBounds (16, 83, 94, 30);
     sclLeftLevel->setBounds (131, 115, 34, 34);
     sclRightLevel->setBounds (241, 115, 34, 34);
     sclLvlBrkPt->setBounds (178, 130, 54, 24);
@@ -549,14 +551,13 @@ BEGIN_JUCER_METADATA
          explicitFocusOrder="0" pos="15 10 95 10" bkgCol="6a000000" textCol="ffffffff"
          outlineCol="0" edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="12.599999999999999645" bold="0"
-         italic="0" justification="36"/>
+         fontname="Default font" fontsize="12.6" bold="0" italic="0" justification="36"/>
   <SLIDER name="detune" id="f093ec8defca2fc2" memberName="detune" virtualName=""
           explicitFocusOrder="0" pos="6 24 34 34" min="-7" max="7" int="1"
-          style="Rotary" textBoxPos="NoTextBox" textBoxEditable="0" textBoxWidth="80"
-          textBoxHeight="20" skewFactor="1"/>
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="envDisplay" id="b18856de924c6340" memberName="envDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="16 82 94 30" class="EnvDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="16 83 94 30" class="EnvDisplay"
                     params=""/>
   <SLIDER name="sclLeftLevel" id="bd6f338ae68e454f" memberName="sclLeftLevel"
           virtualName="" explicitFocusOrder="0" pos="131 115 34 34" tooltip="Keyboard Scale Level Left Depth "
