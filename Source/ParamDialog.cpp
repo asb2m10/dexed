@@ -127,49 +127,49 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Pitch Bend Range"),
-                20, 18, 276, 23,
+                20, 16, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Pitch Bend Step"),
-                20, 58, 276, 23,
+                20, 56, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 In"),
-                27, 221, 131, 23,
+                20, 224, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 Out"),
-                27, 261, 131, 23,
+                20, 264, 131, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 Channel"),
-                27, 306, 245, 23,
+                20, 304, 245, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Engine Resolution"),
-                22, 154, 276, 23,
+                20, 156, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::black);
     g.fillRect (22, 138, 306, 1);
 
     g.setColour (Colours::black);
-    g.fillRect (22, 194, 306, 1);
+    g.fillRect (22, 195, 306, 1);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Show Keyboard"),
-                19, 101, 276, 23,
+                20, 96, 276, 23,
                 Justification::centredLeft, true);
 
     //[UserPaint] Add your own custom painting code here..
@@ -183,7 +183,7 @@ void ParamDialog::resized()
     sysexIn->setBounds (104, 224, 224, 24);
     sysexOut->setBounds (104, 264, 224, 24);
     sysexChl->setBounds (264, 304, 72, 24);
-    engineReso->setBounds (160, 152, 168, 24);
+    engineReso->setBounds (160, 156, 168, 24);
     showKeyboard->setBounds (264, 96, 56, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -294,21 +294,21 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="350" initialHeight="350">
   <BACKGROUND backgroundColour="ff3c322f">
-    <TEXT pos="20 18 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
+    <TEXT pos="20 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="20 58 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
+    <TEXT pos="20 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="27 221 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
+    <TEXT pos="20 224 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="27 261 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
+    <TEXT pos="20 264 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="27 306 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
+    <TEXT pos="20 304 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="22 154 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
+    <TEXT pos="20 156 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <RECT pos="22 138 306 1" fill="solid: ff000000" hasStroke="0"/>
-    <RECT pos="22 194 306 1" fill="solid: ff000000" hasStroke="0"/>
-    <TEXT pos="19 101 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
+    <RECT pos="22 195 306 1" fill="solid: ff000000" hasStroke="0"/>
+    <TEXT pos="20 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
@@ -330,7 +330,7 @@ BEGIN_JUCER_METADATA
           style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="new combo box" id="4087ff978c3d9e8d" memberName="engineReso"
-            virtualName="" explicitFocusOrder="0" pos="160 152 168 24" editable="0"
+            virtualName="" explicitFocusOrder="0" pos="160 156 168 24" editable="0"
             layout="33" items="Modern (Direct)&#10;Mark I&#10;OPL Series"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <TOGGLEBUTTON name="showKeyboard" id="c963d2cb8e49ffd7" memberName="showKeyboard"

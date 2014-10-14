@@ -63,7 +63,7 @@ public:
     void setMonoState(bool state);
 
     ProgramSelector *programs;
-    
+
     ScopedPointer<Component> midiMonitor;
     //[/UserMethods]
 

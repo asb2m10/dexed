@@ -37,25 +37,25 @@ public:
     MidiMonitor(SysexComm *sysexComm) {
         midi = sysexComm;
     }
-    
+
     void paint(Graphics &g) {
         if ( ! (midi->isInputActive() || midi->isOutputActive() ) )
             return;
-        
+
         /*g.setColour(DXLookNFeel::lightBackground);
         g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 3);
         */
         g.setColour(Colours::white);
 //        g.drawSingleLineText("DX7 ACT ", 0, 13);
-        
+
         Image myStrip = ImageCache::getFromMemory(BinaryData::Light_14x14_png, BinaryData::Light_14x14_pngSize);
-        
+
         if ( midi->isInputActive() ) {
             g.drawSingleLineText("DX7 IN", 17,14);
             g.drawImage(myStrip, 0, 3, 14, 14, 0, midi->inActivity ? 14 : 0, 14, 14);
             midi->inActivity = false;
         }
-        
+
         if ( midi->isOutputActive() ) {
             g.drawSingleLineText("DX7 OUT", 17, 28);
             g.drawImage(myStrip, 0, 17, 14, 14, 0, midi->outActivity ? 14 : 0, 14, 14);
@@ -258,7 +258,7 @@ GlobalEditor::GlobalEditor ()
     lfoType->setImage(ImageCache::getFromMemory(BinaryData::LFO_36_26_png, BinaryData::LFO_36_26_pngSize));
 
     programs = programSelector;
-    
+
     //[/Constructor]
 }
 
@@ -583,11 +583,11 @@ void GlobalEditor::bind(DexedAudioProcessor *parent) {
     algoDisplay->algo = &(parent->data[134]);
     pitchEnvDisplay->pvalues = &(parent->data[126]);
     processor = parent;
-    
+
     midiMonitor = new MidiMonitor(&(processor->sysexComm));
     addAndMakeVisible(midiMonitor);
     midiMonitor->setBounds(155, 21, 80, 80);
-    
+
     repaint();
 }
 
