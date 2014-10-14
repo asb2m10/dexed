@@ -22,6 +22,7 @@
  *
  */
 
+#include "Dexed.h"
 #include "DXComponents.h"
 #include "DXLookNFeel.h"
 #include "PluginProcessor.h"
@@ -337,41 +338,15 @@ void VuMeter::paint(Graphics &g) {
 }
 
 LcdDisplay::LcdDisplay() {
-    systemMsg = "*** DEXED FM synthesizer ***";
-    paramMsg = "";
-}
-
-void LcdDisplay::timerCallback() {
-    //systemMsg = "*** DEXED FM synthesizer ***";
-    //repaint();
-    //stopTimer();
+    paramMsg = "DEXED " DEXED_VERSION;
 }
 
 void LcdDisplay::setSystemMsg(String msg) {
-    //systemMsg = msg;
-    //triggerAsyncUpdate();
+    paramMsg = msg;
 }
-
-void LcdDisplay::handleAsyncUpdate() {
-    repaint();
-    startTimer(5000);
-}
-
-#ifdef _WIN32 
-    const float LCD_FONTSIZE = 13.0f;
-#else 
-    const float LCD_FONTSIZE = 15.0f;
-#endif
 
 void LcdDisplay::paint(Graphics &g) {
     g.setColour (Colours::white);    
-    /*
-    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
-
-    g.setFont (Font (Font::getDefaultMonospacedFontName(), LCD_FONTSIZE, Font::plain));
-    g.drawText (systemMsg,
-                7, 4, 300, 8,
-                Justification::centredLeft, true);*/
     g.drawText (paramMsg,
                 0, 0, 140, 14,
                 Justification::centred, true);

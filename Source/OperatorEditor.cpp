@@ -244,14 +244,14 @@ void OperatorEditor::paint (Graphics& g)
     //[UserPaint] Add your own custom painting code here..
     g.setColour (Colours::white);
     g.setFont(Font (30.00f, Font::plain));
-    g.drawText(opNum, 242, 9, 30, 30, Justification::centred, true);
+    g.drawText(opNum, 242, 10, 30, 30, Justification::centred, true);
 
     Image myStrip = ImageCache::getFromMemory(BinaryData::Light_14x14_png, BinaryData::Light_14x14_pngSize);
 
     bool state = opMode->getToggleState();
 
     // 129 x 24
-    g.drawImage(myStrip, 128, 24, 14, 14, 0, state ? 0 : 14, 14, 14);
+    g.drawImage(myStrip, 127, 24, 14, 14, 0, state ? 0 : 14, 14, 14);
     // 199 x 24
     g.drawImage(myStrip, 199, 24, 14, 14, 0, !state ? 0 : 14, 14, 14);
 

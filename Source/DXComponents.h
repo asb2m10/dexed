@@ -46,13 +46,10 @@ public :
     float v;
 };
 
-class LcdDisplay : public Component, public Timer, public AsyncUpdater {
-    void timerCallback();
-    void handleAsyncUpdate();
+class LcdDisplay : public Component {
 public:
     LcdDisplay();
     void setSystemMsg(String msg);
-    String systemMsg;
     String paramMsg;
     void paint(Graphics &g);    
 };

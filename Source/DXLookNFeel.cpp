@@ -30,17 +30,24 @@ Colour DXLookNFeel::comboBoxBackground = Colour(20,18,18);
 
 DXLookNFeel::DXLookNFeel() {
     setColour(TextButton::buttonColourId,Colour(0xFF0FC00F));
+    setColour(TextButton::textColourOnId, Colours::white);
+    setColour(TextButton::textColourOffId, Colours::white);
+    
     setColour(Slider::rotarySliderOutlineColourId,Colour(0xFF0FC00F));
     setColour(Slider::rotarySliderFillColourId,Colour(0xFFFFFFFF));
+    
     setColour(AlertWindow::backgroundColourId,lightBackground);
+    setColour(AlertWindow::textColourId, Colours::white);
+    
     setColour(TextEditor::backgroundColourId,ctrlBackground);
     setColour(TextEditor::textColourId, Colours::white);
+    setColour(TextEditor::highlightColourId, fillColour);
     setColour(TextEditor::outlineColourId, Colours::transparentBlack);
+    
     setColour(ComboBox::backgroundColourId,ctrlBackground);
     setColour(ComboBox::textColourId, Colours::white);
     setColour(ComboBox::buttonColourId, Colours::white);
-    setColour(TextButton::textColourOnId, Colours::white);
-    setColour(TextButton::textColourOffId, Colours::white);
+
     setColour(PopupMenu::backgroundColourId, background);
     setColour(PopupMenu::textColourId, Colours::white);
     setColour(PopupMenu::highlightedTextColourId, Colours::white);
@@ -108,6 +115,7 @@ Font DXLookNFeel::getTextButtonFont(TextButton& button, int buttonHeight) {
 void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
     ComboBox *src = &box;
 
+    // I'm not proud of this one, but really... it must be another way to do this....
     ComboBoxImage* img = dynamic_cast<ComboBoxImage*>(src);
     if(img != 0) { 
         return;

@@ -57,53 +57,6 @@ public:
     }
 };
 
-/**
- * Ugly but usefull midi monitor to know if you are really sending/receiving something from the DX7
- * If the midi is not configured this component wont show up
- */
-class MidiMonitor : public Component {
-    SysexComm *midi;
-public:
-    MidiMonitor(SysexComm *sysexComm) {
-        midi = sysexComm;
-    }
-
-    void paint(Graphics &g) {
-        if ( ! (midi->isInputActive() || midi->isOutputActive() ) ) 
-            return;
-
-        //g.setColour(DXLookNFeel::dxDarkBrown);
-        g.fillRect(0, 0, getWidth(), getHeight());
-        g.setColour(Colours::black);
-        g.drawSingleLineText("DX7 ", 0, 13);
-
-        if ( midi->isInputActive() ) {
-            g.drawSingleLineText("IN", 27,13);
-            if ( midi->inActivity ) {
-                g.setColour(Colours::red);
-            } else {
-                g.setColour(Colours::darkgrey);
-            }
-            g.fillRect(44, 4, 7, 9);
-
-            midi->inActivity = false;
-        }
-
-        if ( midi->isOutputActive() ) {
-            g.setColour(Colours::black);
-            g.drawSingleLineText("OUT", 55, 13);
-            if ( midi->outActivity ) {
-                g.setColour(Colours::red);
-            } else {
-                g.setColour(Colours::darkgrey);
-            }
-            g.fillRect(83, 4, 7, 9);
-
-            midi->outActivity = false;
-        }
-    }
-};
-
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
@@ -111,12 +64,12 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 {
     LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
 
-    setSize (866, 677);
+    setSize (866, ownerFilter->showKeyboard ? 677 : 583);
 
     processor = ownerFilter;
     
-    addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
-    midiMonitor->setBounds(645, 6, 110, 18);
+    /*addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
+    midiMonitor->setBounds(645, 6, 110, 18);*/
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
@@ -149,8 +102,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     // The DX7 is a badass on the bass, keep it that way
     midiKeyboard.setLowestVisibleKey(24);
 
-    const int keyboardHeight = 90;
-    midiKeyboard.setBounds(4, getHeight() - keyboardHeight - 4, getWidth() - 8, keyboardHeight);
+    midiKeyboard.setBounds(4, 583, getWidth() - 8, 90);
 
     global.editor = this;
     addAndMakeVisible(&global);
@@ -283,32 +235,17 @@ void DexedAudioProcessorEditor::parmShow() {
     processor->setEngineType(tp);
     processor->savePreference();
     
+    setSize (866, processor->showKeyboard ? 677 : 583);
+    midiKeyboard.repaint();
+    
     if ( ret == false ) {
         AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
     }
-    
-    //sendButton->setVisible(processor->sysexComm.isOutputActive());
 }
 
 void DexedAudioProcessorEditor::initProgram() {
     processor->resetToInitVoice();
 }
-
-/*
-    if (buttonThatWasClicked == monoButton ) {
-        processor->setMonoMode(monoButton->getToggleState());
-        monoButton->setState(processor->isMonoMode() ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal);
-        return;
-    }
-    
-    if (buttonThatWasClicked == aboutButton) {
-        AboutBox about(this);
-        about.runModalLoop();
-        return;
-    }
-
-    AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Sorry", "Soon !");
-}*/
 
 void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged) {
     processor->setCurrentProgram(global.programs->getSelectedId()-1);
@@ -330,7 +267,6 @@ void DexedAudioProcessorEditor::timerCallback() {
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
     global.updateVu(processor->vuSignal);
-    midiMonitor->repaint();
 }   
 
 void DexedAudioProcessorEditor::updateUI() {

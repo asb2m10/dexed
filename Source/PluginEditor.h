@@ -39,7 +39,6 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
             
     MidiKeyboardComponent midiKeyboard;
     DXLookNFeel dx_lnf;
-    ScopedPointer<Component> midiMonitor;
     OperatorEditor operators[6];
 
 public:

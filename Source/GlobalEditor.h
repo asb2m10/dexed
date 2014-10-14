@@ -63,6 +63,8 @@ public:
     void setMonoState(bool state);
 
     ProgramSelector *programs;
+    
+    ScopedPointer<Component> midiMonitor;
     //[/UserMethods]
 
     void paint (Graphics& g);

@@ -131,7 +131,7 @@ FAQ (possibly)
 Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
-* AZur Studio - Graphical design
+* AZur Studio : Graphical design
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
 * PPPlay : Great [OPL3](http://sourceforge.net/projects/peepeeplayer) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
@@ -147,6 +147,7 @@ Planned milestones
 TODO - Dexed 
 ------------
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
+* UI threaded messaging to avoid DAW automation 'clicks'
 * Various code cleanup
 * AU Version 
 
