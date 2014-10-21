@@ -41,12 +41,7 @@ public:
     void paint(Graphics &g) {
         if ( ! (midi->isInputActive() || midi->isOutputActive() ) )
             return;
-
-        /*g.setColour(DXLookNFeel::lightBackground);
-        g.fillRoundedRectangle(0, 0, getWidth(), getHeight(), 3);
-        */
         g.setColour(Colours::white);
-//        g.drawSingleLineText("DX7 ACT ", 0, 13);
 
         Image myStrip = ImageCache::getFromMemory(BinaryData::Light_14x14_png, BinaryData::Light_14x14_pngSize);
 
@@ -95,13 +90,13 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (cutoff = new Slider ("cutoff"));
     cutoff->setRange (0, 1, 0);
     cutoff->setSliderStyle (Slider::RotaryVerticalDrag);
-    cutoff->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    cutoff->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     cutoff->addListener (this);
 
     addAndMakeVisible (reso = new Slider ("reso"));
     reso->setRange (0, 1, 0);
     reso->setSliderStyle (Slider::RotaryVerticalDrag);
-    reso->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    reso->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     reso->addListener (this);
 
     addAndMakeVisible (pitchRate2 = new Slider ("pitchRate2"));
@@ -153,9 +148,9 @@ GlobalEditor::GlobalEditor ()
     pitchLevel1->addListener (this);
 
     addAndMakeVisible (transpose = new Slider ("transpose"));
-    transpose->setRange (0, 48, 0);
+    transpose->setRange (0, 48, 1);
     transpose->setSliderStyle (Slider::RotaryVerticalDrag);
-    transpose->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    transpose->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     transpose->addListener (this);
 
     addAndMakeVisible (oscSync = new ToggleButton ("oscSync"));
@@ -163,7 +158,7 @@ GlobalEditor::GlobalEditor ()
     oscSync->addListener (this);
 
     addAndMakeVisible (pitchModSens = new Slider ("pitchModSens"));
-    pitchModSens->setRange (0, 7, 0);
+    pitchModSens->setRange (0, 7, 1);
     pitchModSens->setSliderStyle (Slider::RotaryVerticalDrag);
     pitchModSens->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
     pitchModSens->addListener (this);
@@ -193,10 +188,10 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (lcdDisplay = new LcdDisplay());
     lcdDisplay->setName ("lcdDisplay");
 
-    addAndMakeVisible (output = new Slider ("cutoff"));
+    addAndMakeVisible (output = new Slider ("output"));
     output->setRange (0, 1, 0);
     output->setSliderStyle (Slider::RotaryVerticalDrag);
-    output->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    output->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
     output->addListener (this);
 
     addAndMakeVisible (vuOutput = new VuMeter());
@@ -349,7 +344,7 @@ void GlobalEditor::resized()
     pitchModSens->setBounds (666, 5, 34, 34);
     lfoSync->setBounds (567, 96, 48, 26);
     pitchEnvDisplay->setBounds (751, 10, 93, 30);
-    algoDisplay->setBounds (338, 30, 146, 91);
+    algoDisplay->setBounds (335, 30, 152, 91);
     feedback->setBounds (501, 81, 34, 34);
     algo->setBounds (501, 22, 34, 34);
     lcdDisplay->setBounds (6, 87, 140, 13);
@@ -557,36 +552,38 @@ void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void GlobalEditor::bind(DexedAudioProcessor *parent) {
-	parent->algo->bind(algo);
-	parent->lfoRate->bind(lfoSpeed);
-	parent->lfoDelay->bind(lfoDelay);
-	parent->lfoWaveform->bind(lfoType);
-	parent->lfoAmpDepth->bind(lfoAmDepth);
-	parent->lfoPitchDepth->bind(lfoPitchDepth);
-    parent->lfoSync->bind(lfoSync);
-    parent->oscSync->bind(oscSync);
-    parent->transpose->bind(transpose);
-    parent->feedback->bind(feedback);
-    parent->pitchModSens->bind(pitchModSens);
-    parent->pitchEgLevel[0]->bind(pitchLevel1);
-    parent->pitchEgLevel[1]->bind(pitchLevel2);
-    parent->pitchEgLevel[2]->bind(pitchLevel3);
-    parent->pitchEgLevel[3]->bind(pitchLevel4);
-    parent->pitchEgRate[0]->bind(pitchRate1);
-    parent->pitchEgRate[1]->bind(pitchRate2);
-    parent->pitchEgRate[2]->bind(pitchRate3);
-    parent->pitchEgRate[3]->bind(pitchRate4);
-    parent->fxCutoff->bind(cutoff);
-    parent->fxReso->bind(reso);
-    parent->output->bind(output);
-    algoDisplay->algo = &(parent->data[134]);
-    pitchEnvDisplay->pvalues = &(parent->data[126]);
-    processor = parent;
+void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
+    processor = edit->processor;
+	processor->algo->bind(algo);
+	processor->lfoRate->bind(lfoSpeed);
+	processor->lfoDelay->bind(lfoDelay);
+	processor->lfoWaveform->bind(lfoType);
+	processor->lfoAmpDepth->bind(lfoAmDepth);
+	processor->lfoPitchDepth->bind(lfoPitchDepth);
+    processor->lfoSync->bind(lfoSync);
+    processor->oscSync->bind(oscSync);
+    processor->transpose->bind(transpose);
+    processor->feedback->bind(feedback);
+    processor->pitchModSens->bind(pitchModSens);
+    processor->pitchEgLevel[0]->bind(pitchLevel1);
+    processor->pitchEgLevel[1]->bind(pitchLevel2);
+    processor->pitchEgLevel[2]->bind(pitchLevel3);
+    processor->pitchEgLevel[3]->bind(pitchLevel4);
+    processor->pitchEgRate[0]->bind(pitchRate1);
+    processor->pitchEgRate[1]->bind(pitchRate2);
+    processor->pitchEgRate[2]->bind(pitchRate3);
+    processor->pitchEgRate[3]->bind(pitchRate4);
+    processor->fxCutoff->bind(cutoff);
+    processor->fxReso->bind(reso);
+    processor->output->bind(output);
+    algoDisplay->algo = &(processor->data[134]);
+    pitchEnvDisplay->pvalues = &(processor->data[126]);
+
+    editor = edit;
 
     midiMonitor = new MidiMonitor(&(processor->sysexComm));
     addAndMakeVisible(midiMonitor);
-    midiMonitor->setBounds(155, 21, 80, 80);
+    midiMonitor->setBounds(155, 21, 80, 45);
 
     repaint();
 }
@@ -656,11 +653,11 @@ BEGIN_JUCER_METADATA
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="cutoff" id="40531f16bb0bd225" memberName="cutoff" virtualName=""
           explicitFocusOrder="0" pos="234 9 34 34" min="0" max="1" int="0"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="reso" id="c8c13464e81a8d83" memberName="reso" virtualName=""
           explicitFocusOrder="0" pos="277 9 34 34" min="0" max="1" int="0"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
           virtualName="" explicitFocusOrder="0" pos="767 96 34 34" min="0"
@@ -696,14 +693,14 @@ BEGIN_JUCER_METADATA
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
           virtualName="" explicitFocusOrder="0" pos="202 60 34 34" min="0"
-          max="48" int="0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          max="48" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="oscSync" id="8f3fe641537cd00" memberName="oscSync" virtualName=""
                 explicitFocusOrder="0" pos="650 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <SLIDER name="pitchModSens" id="904f73df85a9f886" memberName="pitchModSens"
           virtualName="" explicitFocusOrder="0" pos="666 5 34 34" min="0"
-          max="7" int="0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
                 explicitFocusOrder="0" pos="567 96 48 26" buttonText="" connectedEdges="0"
@@ -712,7 +709,7 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="751 10 93 30" class="PitchEnvDisplay"
                     params=""/>
   <GENERICCOMPONENT name="algoDisplay" id="b26fb9e3b5f0bc37" memberName="algoDisplay"
-                    virtualName="" explicitFocusOrder="0" pos="338 30 146 91" class="AlgoDisplay"
+                    virtualName="" explicitFocusOrder="0" pos="335 30 152 91" class="AlgoDisplay"
                     params=""/>
   <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
           explicitFocusOrder="0" pos="501 81 34 34" min="0" max="7" int="1"
@@ -725,9 +722,9 @@ BEGIN_JUCER_METADATA
   <GENERICCOMPONENT name="lcdDisplay" id="30c7bb8f114cbbe3" memberName="lcdDisplay"
                     virtualName="" explicitFocusOrder="0" pos="6 87 140 13" class="LcdDisplay"
                     params=""/>
-  <SLIDER name="cutoff" id="7697fdd54fd1593e" memberName="output" virtualName=""
+  <SLIDER name="output" id="7697fdd54fd1593e" memberName="output" virtualName=""
           explicitFocusOrder="0" pos="157 60 34 34" min="0" max="1" int="0"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
                     explicitFocusOrder="0" pos="6 103 140 8" class="VuMeter" params=""/>

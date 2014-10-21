@@ -76,6 +76,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     nextMidi = NULL;
     midiMsg = NULL;
 
+    clipboardContent = -1;
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {

@@ -104,10 +104,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
     midiKeyboard.setBounds(4, 583, getWidth() - 8, 90);
 
-    global.editor = this;
     addAndMakeVisible(&global);
     global.setBounds(2,437,864,144);
-    global.bind(processor);
+    global.bind(this);
     
     sendPopup.addItem(1, "Send program to DX7");
     sendPopup.addItem(2, "Send cartridge to DX7");

@@ -114,6 +114,9 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     EngineMkI engineMkI;
     EngineOpl engineOpl;
     
+    char clipboard[161];
+    char clipboardContent;
+    
 public :
 
     // in MIDI units (0x4000 is neutral)
@@ -121,6 +124,7 @@ public :
     StringArray programNames;    
     char sysex[4096];    
     char data[161];
+
     
     CartridgeManager cartManager;
     SysexComm sysexComm;
@@ -173,6 +177,11 @@ public :
         return monoMode;
     }
     void setMonoMode(bool mode);
+    
+    void copyToClipboard(int srcOp);
+    void pasteOpFromClipboard(int destOp);
+    void pasteEnvFromClipboard(int destOp);
+    bool hasClipboardContent();
     
     //==============================================================================
     AudioProcessorEditor* createEditor();

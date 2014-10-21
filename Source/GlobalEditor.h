@@ -50,7 +50,7 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void bind(DexedAudioProcessor *processor);
+    void bind(DexedAudioProcessorEditor *processor);
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
     void updatePitchPos(int pos);
@@ -58,12 +58,8 @@ public:
     void updateDisplay();
     void repaintMsg();
 
-    DexedAudioProcessorEditor *editor;
-
     void setMonoState(bool state);
-
     ProgramSelector *programs;
-
     ScopedPointer<Component> midiMonitor;
     //[/UserMethods]
 
@@ -79,6 +75,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    DexedAudioProcessorEditor *editor;
     DexedAudioProcessor *processor;
     //[/UserVariables]
 

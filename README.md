@@ -35,7 +35,7 @@ new version here but you see it in the change log, it's because this version is 
 Changelog
 ---------
 #### Version 0.8.0
-* New UI
+* New UI by [AZur Studio](http://bji.yukihotaru.com/)
 * Fixed mono mode ticks on lower frequencies
 * SynprezFM preset are now in a submenu
 
@@ -131,7 +131,7 @@ FAQ (possibly)
 Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
-* AZur Studio : Graphical design
+* Graphical design : [AZur Studio](http://bji.yukihotaru.com/)
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
 * PPPlay : Great [OPL3](http://sourceforge.net/projects/peepeeplayer) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
@@ -147,7 +147,8 @@ Planned milestones
 TODO - Dexed 
 ------------
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
-* UI threaded messaging to avoid DAW automation 'clicks'
+* UI threaded messaging to avoid DAW automation 'clicks' 
+* Zomby UI changes: this occurs in Live and will be fixed in the 0.8.1 version.
 * Various code cleanup
 * AU Version 
 

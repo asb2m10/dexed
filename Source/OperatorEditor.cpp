@@ -443,8 +443,10 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
 
     int offset = parent->opCtrl[op].egRate[0]->getOffset();
     envDisplay->pvalues = &(parent->data[offset]);
-
+    processor = parent;
+    
     opNum << op + 1;
+    internalOp = 5-op;
 }
 
 void OperatorEditor::updateGain(float v) {
@@ -483,6 +485,32 @@ void OperatorEditor::updateEnvPos(char pos) {
     envDisplay->vPos = pos;
     envDisplay->repaint();
 }
+
+void OperatorEditor::mouseDown(const MouseEvent &event) {
+    if ( event.mods.isRightButtonDown() ) {
+        PopupMenu popup;
+        
+        popup.addItem(1, "Copy Operator Values");
+        popup.addItem(2, "Paste Enveloppes Values", processor->hasClipboardContent());
+        popup.addItem(3, "Paste Operator Values", processor->hasClipboardContent());
+        
+        switch(popup.show()) {
+            case 1:
+                processor->copyToClipboard(internalOp);
+            break;
+                
+            case 2:
+                processor->pasteEnvFromClipboard(internalOp);
+            break;
+
+            case 3:
+                processor->pasteOpFromClipboard(internalOp);
+            break;
+        }
+        
+    }
+}
+
 //[/MiscUserCode]
 
 

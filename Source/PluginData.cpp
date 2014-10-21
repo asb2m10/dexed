@@ -262,6 +262,25 @@ void DexedAudioProcessor::resetToInitVoice() {
     triggerAsyncUpdate();
 }
 
+void DexedAudioProcessor::copyToClipboard(int srcOp) {
+    memcpy(clipboard, data, 161);
+    clipboardContent = srcOp;
+}
+
+void DexedAudioProcessor::pasteOpFromClipboard(int destOp) {
+    memcpy(data+(destOp*21), clipboard+(clipboardContent*21), 21);
+    triggerAsyncUpdate();
+}
+
+void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
+    memcpy(data+(destOp*21), clipboard+(clipboardContent*21), 8);
+    triggerAsyncUpdate();
+}
+
+bool DexedAudioProcessor::hasClipboardContent() {
+    return clipboardContent != -1;
+}
+
 //==============================================================================
 void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     // You should use this method to store your parameters in the memory block.

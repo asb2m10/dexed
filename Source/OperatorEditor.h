@@ -53,6 +53,7 @@ public:
     void updateGain(float v);
     void updateDisplay();
     void updateEnvPos(char pos);
+    void mouseDown(const MouseEvent& e) override;
     //[/UserMethods]
 
     void paint (Graphics& g);
@@ -68,6 +69,9 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     String opNum;
+    int internalOp;
+    
+    DexedAudioProcessor *processor;
     //[/UserVariables]
 
     //==============================================================================
