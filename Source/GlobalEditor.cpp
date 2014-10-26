@@ -613,7 +613,7 @@ void GlobalEditor::updateVu(float f) {
 }
 
 void GlobalEditor::setMonoState(bool state)  {
-    monoMode->setToggleState(state ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal, dontSendNotification);
+    monoMode->setToggleState(state ? Button::buttonDown : Button::buttonNormal, dontSendNotification);
 }
 //[/MiscUserCode]
 
