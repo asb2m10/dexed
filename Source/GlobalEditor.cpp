@@ -318,7 +318,7 @@ void GlobalEditor::paint (Graphics& g)
     Image myStrip = ImageCache::getFromMemory(BinaryData::Light_14x14_png, BinaryData::Light_14x14_pngSize);
     g.drawImage(myStrip, 300, 70, 14, 14, 0, monoMode->getToggleState() ? 14 : 0, 14, 14);
 
-    g.drawImage(myStrip, 621, 102, 14, 14, 0, lfoSync->getToggleState() ? 14 : 0, 14, 14);
+    g.drawImage(myStrip, 619, 102, 14, 14, 0, lfoSync->getToggleState() ? 14 : 0, 14, 14);
     g.drawImage(myStrip, 705, 102, 14, 14, 0, oscSync->getToggleState() ? 14 : 0, 14, 14);
     //[/UserPaint]
 }
@@ -330,7 +330,7 @@ void GlobalEditor::resized()
     lfoPitchDepth->setBounds (646, 50, 34, 34);
     lfoDelay->setBounds (603, 50, 34, 34);
     cutoff->setBounds (234, 9, 34, 34);
-    reso->setBounds (277, 9, 34, 34);
+    reso->setBounds (278, 9, 34, 34);
     pitchRate2->setBounds (767, 96, 34, 34);
     pitchRate3->setBounds (795, 96, 35, 34);
     pitchRate4->setBounds (823, 96, 34, 34);
@@ -342,7 +342,7 @@ void GlobalEditor::resized()
     transpose->setBounds (202, 60, 34, 34);
     oscSync->setBounds (650, 96, 48, 26);
     pitchModSens->setBounds (666, 5, 34, 34);
-    lfoSync->setBounds (567, 96, 48, 26);
+    lfoSync->setBounds (565, 96, 48, 26);
     pitchEnvDisplay->setBounds (751, 10, 93, 30);
     algoDisplay->setBounds (335, 30, 152, 91);
     feedback->setBounds (501, 81, 34, 34);
@@ -350,15 +350,15 @@ void GlobalEditor::resized()
     lcdDisplay->setBounds (6, 87, 140, 13);
     output->setBounds (157, 60, 34, 34);
     vuOutput->setBounds (6, 103, 140, 8);
-    initButton->setBounds (3, 53, 50, 30);
-    parmButton->setBounds (51, 53, 50, 30);
-    sendButton->setBounds (99, 53, 50, 30);
+    initButton->setBounds (3, 56, 50, 30);
+    parmButton->setBounds (51, 56, 50, 30);
+    sendButton->setBounds (99, 56, 50, 30);
     cartButton->setBounds (3, 111, 50, 30);
     loadButton->setBounds (50, 111, 50, 30);
     saveButton->setBounds (98, 111, 50, 30);
     storeButton->setBounds (270, 109, 50, 30);
     monoMode->setBounds (249, 65, 48, 26);
-    lfoType->setBounds (584, 8, 36, 26);
+    lfoType->setBounds (583, 8, 36, 26);
     programSelector->setBounds (153, 115, 112, 18);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
@@ -613,7 +613,7 @@ void GlobalEditor::updateVu(float f) {
 }
 
 void GlobalEditor::setMonoState(bool state)  {
-    monoMode->setState(state ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal);
+    monoMode->setToggleState(state ? Button::ButtonState::buttonDown : Button::ButtonState::buttonNormal, dontSendNotification);
 }
 //[/MiscUserCode]
 
@@ -656,7 +656,7 @@ BEGIN_JUCER_METADATA
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="reso" id="c8c13464e81a8d83" memberName="reso" virtualName=""
-          explicitFocusOrder="0" pos="277 9 34 34" min="0" max="1" int="0"
+          explicitFocusOrder="0" pos="278 9 34 34" min="0" max="1" int="0"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
@@ -703,7 +703,7 @@ BEGIN_JUCER_METADATA
           max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
-                explicitFocusOrder="0" pos="567 96 48 26" buttonText="" connectedEdges="0"
+                explicitFocusOrder="0" pos="565 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="pitchEnvDisplay" id="9ddaae8ef924a038" memberName="pitchEnvDisplay"
                     virtualName="" explicitFocusOrder="0" pos="751 10 93 30" class="PitchEnvDisplay"
@@ -729,13 +729,13 @@ BEGIN_JUCER_METADATA
   <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
                     explicitFocusOrder="0" pos="6 103 140 8" class="VuMeter" params=""/>
   <TEXTBUTTON name="initButton" id="92b278163c42e21d" memberName="initButton"
-              virtualName="" explicitFocusOrder="0" pos="3 53 50 30" buttonText="INIT"
+              virtualName="" explicitFocusOrder="0" pos="3 56 50 30" buttonText="INIT"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="parmButton" id="d5cd6260b34be817" memberName="parmButton"
-              virtualName="" explicitFocusOrder="0" pos="51 53 50 30" buttonText="PARM"
+              virtualName="" explicitFocusOrder="0" pos="51 56 50 30" buttonText="PARM"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="sendButton" id="9b45b291c75c7b3f" memberName="sendButton"
-              virtualName="" explicitFocusOrder="0" pos="99 53 50 30" buttonText="SEND"
+              virtualName="" explicitFocusOrder="0" pos="99 56 50 30" buttonText="SEND"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="cartButton" id="465a101c3a0e744" memberName="cartButton"
               virtualName="" explicitFocusOrder="0" pos="3 111 50 30" buttonText="CART"
@@ -753,7 +753,7 @@ BEGIN_JUCER_METADATA
                 explicitFocusOrder="0" pos="249 65 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="lfoType" id="62f61dda9f76c8f" memberName="lfoType" virtualName=""
-                    explicitFocusOrder="0" pos="584 8 36 26" class="ComboBoxImage"
+                    explicitFocusOrder="0" pos="583 8 36 26" class="ComboBoxImage"
                     params=""/>
   <GENERICCOMPONENT name="programSelector" id="990bbcccae72dbe6" memberName="programSelector"
                     virtualName="" explicitFocusOrder="0" pos="153 115 112 18" class="ProgramSelector"

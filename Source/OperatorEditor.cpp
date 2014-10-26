@@ -244,7 +244,7 @@ void OperatorEditor::paint (Graphics& g)
     //[UserPaint] Add your own custom painting code here..
     g.setColour (Colours::white);
     g.setFont(Font (30.00f, Font::plain));
-    g.drawText(opNum, 242, 10, 30, 30, Justification::centred, true);
+    g.drawText(opNum, 242, 8, 30, 30, Justification::centred, true);
 
     Image myStrip = ImageCache::getFromMemory(BinaryData::Light_14x14_png, BinaryData::Light_14x14_pngSize);
 
@@ -253,7 +253,7 @@ void OperatorEditor::paint (Graphics& g)
     // 129 x 24
     g.drawImage(myStrip, 127, 24, 14, 14, 0, state ? 0 : 14, 14, 14);
     // 199 x 24
-    g.drawImage(myStrip, 199, 24, 14, 14, 0, !state ? 0 : 14, 14, 14);
+    g.drawImage(myStrip, 198, 24, 14, 14, 0, !state ? 0 : 14, 14, 14);
 
     //[/UserPaint]
 }
@@ -268,9 +268,9 @@ void OperatorEditor::resized()
     s_egv2->setBounds (33, 169, 34, 34);
     s_egv3->setBounds (61, 169, 34, 34);
     s_egv4->setBounds (89, 169, 34, 34);
-    opLevel->setBounds (244, 74, 34, 34);
+    opLevel->setBounds (245, 76, 34, 34);
     opFine->setBounds (78, 24, 34, 34);
-    opCoarse->setBounds (41, 24, 34, 34);
+    opCoarse->setBounds (43, 24, 34, 34);
     khzDisplay->setBounds (15, 10, 95, 10);
     detune->setBounds (6, 24, 34, 34);
     envDisplay->setBounds (16, 83, 94, 30);
@@ -278,12 +278,12 @@ void OperatorEditor::resized()
     sclRightLevel->setBounds (241, 115, 34, 34);
     sclLvlBrkPt->setBounds (178, 130, 54, 24);
     sclRateScaling->setBounds (186, 179, 34, 34);
-    keyVelSens->setBounds (204, 74, 34, 34);
-    ampModSens->setBounds (141, 75, 34, 34);
+    keyVelSens->setBounds (204, 76, 34, 34);
+    ampModSens->setBounds (140, 76, 34, 34);
     vu->setBounds (132, 52, 140, 8);
-    opMode->setBounds (147, 19, 48, 26);
-    kbdLeftCurve->setBounds (129, 170, 36, 26);
-    kbdRightCurve->setBounds (241, 170, 36, 26);
+    opMode->setBounds (146, 19, 48, 26);
+    kbdLeftCurve->setBounds (128, 170, 36, 26);
+    kbdRightCurve->setBounds (240, 170, 36, 26);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -444,7 +444,7 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     int offset = parent->opCtrl[op].egRate[0]->getOffset();
     envDisplay->pvalues = &(parent->data[offset]);
     processor = parent;
-    
+
     opNum << op + 1;
     internalOp = 5-op;
 }
@@ -489,16 +489,16 @@ void OperatorEditor::updateEnvPos(char pos) {
 void OperatorEditor::mouseDown(const MouseEvent &event) {
     if ( event.mods.isRightButtonDown() ) {
         PopupMenu popup;
-        
+
         popup.addItem(1, "Copy Operator Values");
-        popup.addItem(2, "Paste Enveloppes Values", processor->hasClipboardContent());
+        popup.addItem(2, "Paste Enveloppe Values", processor->hasClipboardContent());
         popup.addItem(3, "Paste Operator Values", processor->hasClipboardContent());
-        
+
         switch(popup.show()) {
             case 1:
                 processor->copyToClipboard(internalOp);
             break;
-                
+
             case 2:
                 processor->pasteEnvFromClipboard(internalOp);
             break;
@@ -507,7 +507,7 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
                 processor->pasteOpFromClipboard(internalOp);
             break;
         }
-        
+
     }
 }
 
@@ -564,7 +564,7 @@ BEGIN_JUCER_METADATA
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="opLevel" id="f8521c8214fb8993" memberName="opLevel" virtualName=""
-          explicitFocusOrder="0" pos="244 74 34 34" min="0" max="99" int="1"
+          explicitFocusOrder="0" pos="245 76 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="opFine" id="e445aa61bd6cddcb" memberName="opFine" virtualName=""
@@ -572,14 +572,15 @@ BEGIN_JUCER_METADATA
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="opCoarse" id="4eec63d30d7488d2" memberName="opCoarse" virtualName=""
-          explicitFocusOrder="0" pos="41 24 34 34" min="0" max="31" int="1"
+          explicitFocusOrder="0" pos="43 24 34 34" min="0" max="31" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <LABEL name="khz" id="eb961eed8902a6fc" memberName="khzDisplay" virtualName=""
          explicitFocusOrder="0" pos="15 10 95 10" bkgCol="6a000000" textCol="ffffffff"
          outlineCol="0" edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="12.6" bold="0" italic="0" justification="36"/>
+         fontname="Default font" fontsize="12.599999999999999645" bold="0"
+         italic="0" justification="36"/>
   <SLIDER name="detune" id="f093ec8defca2fc2" memberName="detune" virtualName=""
           explicitFocusOrder="0" pos="6 24 34 34" min="-7" max="7" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
@@ -604,23 +605,23 @@ BEGIN_JUCER_METADATA
           min="0" max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="keyVelSens" id="21795d045d07602b" memberName="keyVelSens"
-          virtualName="" explicitFocusOrder="0" pos="204 74 34 34" min="0"
+          virtualName="" explicitFocusOrder="0" pos="204 76 34 34" min="0"
           max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="ampModSens" id="634ceaa7b0f81a6c" memberName="ampModSens"
-          virtualName="" explicitFocusOrder="0" pos="141 75 34 34" min="0"
+          virtualName="" explicitFocusOrder="0" pos="140 76 34 34" min="0"
           max="3" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <GENERICCOMPONENT name="vu" id="6f952594ea99dc1e" memberName="vu" virtualName=""
                     explicitFocusOrder="0" pos="132 52 140 8" class="VuMeter" params=""/>
   <TOGGLEBUTTON name="opMode" id="15db8e5c9dd13966" memberName="opMode" virtualName=""
-                explicitFocusOrder="0" pos="147 19 48 26" buttonText="" connectedEdges="0"
+                explicitFocusOrder="0" pos="146 19 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="kbdLeftCurve" id="ee4e60dfcd6cb790" memberName="kbdLeftCurve"
-                    virtualName="" explicitFocusOrder="0" pos="129 170 36 26" class="ComboBoxImage"
+                    virtualName="" explicitFocusOrder="0" pos="128 170 36 26" class="ComboBoxImage"
                     params=""/>
   <GENERICCOMPONENT name="kbdRightCurve" id="f5ca44d67593488a" memberName="kbdRightCurve"
-                    virtualName="" explicitFocusOrder="0" pos="241 170 36 26" class="ComboBoxImage"
+                    virtualName="" explicitFocusOrder="0" pos="240 170 36 26" class="ComboBoxImage"
                     params=""/>
 </JUCER_COMPONENT>
 

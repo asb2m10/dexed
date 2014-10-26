@@ -64,7 +64,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 {
     LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
 
-    setSize (866, ownerFilter->showKeyboard ? 677 : 583);
+    setSize (866, ownerFilter->showKeyboard ? 674 : 581);
 
     processor = ownerFilter;
     
@@ -85,15 +85,15 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     operators[2].bind(processor, 2);
     
     addAndMakeVisible(&(operators[3]));
-    operators[3].setBounds(2, 220, 287, 218);
+    operators[3].setBounds(2, 219, 287, 218);
     operators[3].bind(processor, 3);
     
     addAndMakeVisible(&(operators[4]));
-    operators[4].setBounds(290, 220, 287, 218);
+    operators[4].setBounds(290, 219, 287, 218);
     operators[4].bind(processor, 4);
     
     addAndMakeVisible(&(operators[5]));
-    operators[5].setBounds(578, 220, 287, 218);
+    operators[5].setBounds(578, 219, 287, 218);
     operators[5].bind(processor, 5);
 
     // add the midi keyboard component..
@@ -102,10 +102,10 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     // The DX7 is a badass on the bass, keep it that way
     midiKeyboard.setLowestVisibleKey(24);
 
-    midiKeyboard.setBounds(4, 583, getWidth() - 8, 90);
+    midiKeyboard.setBounds(4, 581, getWidth() - 8, 90);
 
     addAndMakeVisible(&global);
-    global.setBounds(2,437,864,144);
+    global.setBounds(2,436,864,144);
     global.bind(this);
     
     sendPopup.addItem(1, "Send program to DX7");

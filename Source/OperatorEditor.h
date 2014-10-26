@@ -70,7 +70,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     String opNum;
     int internalOp;
-    
+
     DexedAudioProcessor *processor;
     //[/UserVariables]
 

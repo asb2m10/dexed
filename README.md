@@ -29,6 +29,7 @@ in normal operation it shouldn't crash and the VST state saving works. If you do
 new version here but you see it in the change log, it's because this version is in development 
 (current sprint). Only officials (tested) builds are listed here.
 
+* Version 0.8.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.8.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.8.0-osx.vst.zip)
 * Version 0.7.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.7.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.7.0-osx.vst.zip)
 * Version 0.6.1 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.1-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.1-osx.vst.zip)
 
@@ -36,7 +37,8 @@ Changelog
 ---------
 #### Version 0.8.0
 * New UI by [AZur Studio](http://bji.yukihotaru.com/)
-* Fixed mono mode ticks on lower frequencies
+* You can now copy/paste the operator/envelopes values by using the right-click mouse button on the operator
+* Fixed some of mono mode ticks on lower frequencies
 * SynprezFM preset are now in a submenu
 
 #### Version 0.7.0
@@ -150,6 +152,7 @@ TODO - Dexed
 * UI threaded messaging to avoid DAW automation 'clicks' 
 * Zomby UI changes: this occurs in Live and will be fixed in the 0.8.1 version.
 * Various code cleanup
+* More smothness in mono mode
 * AU Version 
 
 TODO - msfa

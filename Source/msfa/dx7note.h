@@ -35,6 +35,7 @@ struct VoiceStatus {
 
 class Dx7Note {
  public:
+  Dx7Note();
   void init(const char patch[156], int midinote, int velocity);
 
   // Note: this _adds_ to the buffer. Interesting question whether it's
@@ -53,6 +54,8 @@ class Dx7Note {
   void update(const char patch[156], int midinote);
   void peekVoiceStatus(VoiceStatus &status);
   void transferState(Dx7Note& src);
+  void transferSignal(Dx7Note &src);
+  void firstUse();
     
  private:
   Env env_[6];
