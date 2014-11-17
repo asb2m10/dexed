@@ -68,15 +68,15 @@ public:
     void sliderValueChanged (Slider* sliderThatWasMoved);
     void buttonClicked (Button* buttonThatWasClicked);
 
-    // Binary resources:
-    static const char* globalEditor_864x144_png;
-    static const int globalEditor_864x144_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     DexedAudioProcessorEditor *editor;
     DexedAudioProcessor *processor;
+
+    Image background;
+    Image imageLight;
     //[/UserVariables]
 
     //==============================================================================
@@ -115,7 +115,6 @@ private:
     ScopedPointer<ToggleButton> monoMode;
     ScopedPointer<ComboBoxImage> lfoType;
     ScopedPointer<ProgramSelector> programSelector;
-    Image cachedImage_globalEditor_864x144_png;
 
 
     //==============================================================================

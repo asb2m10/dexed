@@ -38,9 +38,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
     PopupMenu sendPopup;
             
     MidiKeyboardComponent midiKeyboard;
-    DXLookNFeel dx_lnf;
     OperatorEditor operators[6];
-
+    Colour background;
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;

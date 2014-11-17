@@ -31,6 +31,7 @@
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
+File dexedWorkdir;
 
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
@@ -64,6 +65,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     prefOptions.folderName = String("DigitalSuburban");
     prefOptions.osxLibrarySubFolder = String("Application Support");
     
+    dexedWorkdir = prefOptions.getDefaultFile().getParentDirectory();
+
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();

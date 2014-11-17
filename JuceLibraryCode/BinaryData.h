@@ -45,11 +45,17 @@ namespace BinaryData
     extern const char*   about_png;
     const int            about_pngSize = 23143;
 
+    extern const char*   GlobalEditor_864x144_png;
+    const int            GlobalEditor_864x144_pngSize = 27571;
+
+    extern const char*   OperatorEditor_287x218_png;
+    const int            OperatorEditor_287x218_pngSize = 15614;
+
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
 
     // Number of elements in the namedResourceList array.
-    const int namedResourceListSize = 12;
+    const int namedResourceListSize = 14;
 
     // If you provide the name of one of the binary resource variables above, this function will
     // return the corresponding data and its size (or a null pointer if the name isn't found).

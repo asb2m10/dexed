@@ -30,6 +30,10 @@
             file="Resources/ui/NotoSans-Bold.ttf"/>
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
       <FILE id="xxGEA4" name="about.png" compile="0" resource="1" file="Resources/about.png"/>
+      <FILE id="YdXhxj" name="GlobalEditor_864x144.png" compile="0" resource="1"
+            file="Resources/ui/GlobalEditor_864x144.png"/>
+      <FILE id="GAIMQD" name="OperatorEditor_287x218.png" compile="0" resource="1"
+            file="Resources/ui/OperatorEditor_287x218.png"/>
     </GROUP>
     <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">
       <GROUP id="{1B64F271-8E56-F19A-FF63-094159E5EF7B}" name="dsp">

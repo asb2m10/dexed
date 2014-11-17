@@ -61,17 +61,17 @@ public:
     void sliderValueChanged (Slider* sliderThatWasMoved);
     void buttonClicked (Button* buttonThatWasClicked);
 
-    // Binary resources:
-    static const char* operatorEditor_287x218_png;
-    static const int operatorEditor_287x218_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     String opNum;
     int internalOp;
+    Image light;
 
     DexedAudioProcessor *processor;
+
+    Image background;
     //[/UserVariables]
 
     //==============================================================================
@@ -99,7 +99,6 @@ private:
     ScopedPointer<ToggleButton> opMode;
     ScopedPointer<ComboBoxImage> kbdLeftCurve;
     ScopedPointer<ComboBoxImage> kbdRightCurve;
-    Image cachedImage_operatorEditor_287x218_png;
 
 
     //==============================================================================

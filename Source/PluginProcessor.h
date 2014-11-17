@@ -118,7 +118,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     char clipboardContent;
     
 public :
-
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
     StringArray programNames;    

@@ -342,6 +342,7 @@ public:
 
     void initialise (double rate, int blockSize)
     {
+        refreshParameterList();
         updateNumChannels();
         producesMidiMessages = canProduceMidiOutput();
         setPluginCallbacks();
@@ -349,8 +350,6 @@ public:
                               numOutputBusChannels * numOutputBusses,
                               rate, blockSize);
         setLatencySamples (0);
-        initialiseAudioUnit();
-        refreshParameterList();
     }
 
     //==============================================================================

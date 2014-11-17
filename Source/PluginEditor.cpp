@@ -62,14 +62,13 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     : AudioProcessorEditor (ownerFilter),
     midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard)
 {
-    LookAndFeel::setDefaultLookAndFeel(&dx_lnf);
+    LookAndFeel::setDefaultLookAndFeel(DXLookNFeel::getLookAndFeel());
 
     setSize (866, ownerFilter->showKeyboard ? 674 : 581);
 
     processor = ownerFilter;
     
-    /*addAndMakeVisible(midiMonitor = new MidiMonitor(&processor->sysexComm));
-    midiMonitor->setBounds(645, 6, 110, 18);*/
+    background = DXLookNFeel::getLookAndFeel()->background;
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
@@ -127,7 +126,7 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 
 //==============================================================================
 void DexedAudioProcessorEditor::paint (Graphics& g) {    
-    g.setColour(DXLookNFeel::background);
+    g.setColour(background);
     g.fillRoundedRectangle(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 0);
 }
 

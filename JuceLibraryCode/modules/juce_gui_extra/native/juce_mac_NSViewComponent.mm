@@ -142,6 +142,7 @@ public:
 
         if (currentPeer != peer)
         {
+            removeFromParent();
             currentPeer = peer;
 
             if (peer != nullptr)
@@ -149,10 +150,6 @@ public:
                 NSView* const peerView = (NSView*) peer->getNativeHandle();
                 [peerView addSubview: view];
                 componentMovedOrResized (false, false);
-            }
-            else
-            {
-                removeFromParent();
             }
         }
 

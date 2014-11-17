@@ -161,9 +161,6 @@ EnvDisplay::EnvDisplay() {
 }
 
 void EnvDisplay::paint(Graphics &g) {
-    g.setColour(Colours::black.withAlpha(0.5f));
-    g.fillRoundedRectangle (0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 1.0f);
-    
     int h = getHeight();
     char *rates = pvalues;
     char *levels = pvalues + 4;
@@ -369,7 +366,6 @@ void ComboBoxImage::showPopup() {
         if ( idx < 0 )
             return;
         setSelectedItemIndex(idx);
-
     }
 }
 

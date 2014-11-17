@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2014 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,39 +24,38 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class DXLookNFeel : public LookAndFeel_V3 {
+    static CriticalSection lock;
+    static DXLookNFeel *ins;
+    DXLookNFeel();
+
+    HashMap<String, int> colourMap;
+
 public:
     Typeface::Ptr defaultFont;
     Typeface::Ptr defaultFontBold;
 
-    static Colour comboBoxBackground;
-    static Colour background;
-    static Colour lightBackground;
-    static Colour fillColour;
-    static Colour ctrlBackground;
+    Colour background;
 
-    DXLookNFeel();
+    Image imageKnob, imageSwitch, imageButton, imageSlider, imageScaling, imageLight, imageLFO;
+    Image imageOperator, imageGlobal;
 
+    /* overriden methods */
     virtual void drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,  Slider &slider );
-
     virtual void drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown);
-
-    
     virtual void drawLinearSliderBackground (Graphics&, int x, int y, int width, int height,
                                      float sliderPos, float minSliderPos, float maxSliderPos,
                                      const Slider::SliderStyle, Slider&) override;
-    
     virtual void drawLinearSliderThumb (Graphics&, int x, int y, int width, int height,
                                 float sliderPos, float minSliderPos, float maxSliderPos,
                                 const Slider::SliderStyle, Slider&) override;
-    
     virtual void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown) override;
-    
     virtual Font getTextButtonFont(TextButton&, int buttonHeight) override;
-
     virtual Typeface::Ptr getTypefaceForFont(const Font &);
-
     virtual void positionComboBoxText (ComboBox& box, Label& label);
+
+    static DXLookNFeel *getLookAndFeel();
+    static Colour fillColour;
 };
 
 #endif  // DXLOOKNFEEL_H_INCLUDED
