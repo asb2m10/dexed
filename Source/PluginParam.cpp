@@ -140,6 +140,8 @@ float CtrlDX::getValueHost() {
 }
 
 void CtrlDX::setValueHost(float f) {
+    if ( f == 1 )
+        f = 0.999;
     setValue((f * steps));
 }
 

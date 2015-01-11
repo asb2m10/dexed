@@ -38,8 +38,8 @@
 namespace ProjectInfo
 {
     const char* const  projectName    = "Dexed";
-    const char* const  versionString  = "1.0.0";
-    const int          versionNumber  = 0x10000;
+    const char* const  versionString  = "0.8.1";
+    const int          versionNumber  = 0x801;
 }
 #endif
 

@@ -16,12 +16,31 @@
     <key>CFBundleSignature</key>
     <string>PTul</string>
     <key>CFBundleShortVersionString</key>
-    <string>1.0.0</string>
+    <string>0.8.1</string>
     <key>CFBundleVersion</key>
-    <string>1.0.0</string>
+    <string>0.8.1</string>
     <key>NSHumanReadableCopyright</key>
     <string>Digital Suburban</string>
     <key>NSHighResolutionCapable</key>
     <true/>
+    <key>AudioComponents</key>
+    <array>
+      <dict>
+        <key>name</key>
+        <string>Digital Suburban: Dexed</string>
+        <key>description</key>
+        <string>Dexed FM Synth</string>
+        <key>factoryFunction</key>
+        <string>DexedAUFactory</string>
+        <key>manufacturer</key>
+        <string>DGSB</string>
+        <key>type</key>
+        <string>aumu</string>
+        <key>subtype</key>
+        <string>Dexd</string>
+        <key>version</key>
+        <integer>2049</integer>
+      </dict>
+    </array>
   </dict>
 </plist>

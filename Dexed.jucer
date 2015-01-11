@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="1.0.0"
+<JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="0.8.1"
               bundleIdentifier="com.digitalsuburban.Dexed" includeBinaryInAppConfig="1"
-              buildVST="1" buildAU="0" pluginName="Dexed" pluginDesc="Dexed"
-              pluginManufacturer="Digital Suburban" pluginManufacturerCode="Manu"
-              pluginCode="Plug" pluginChannelConfigs="{1, 1}, {2, 2}" pluginIsSynth="1"
-              pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
+              buildVST="1" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
+              pluginManufacturer="Digital Suburban" pluginManufacturerCode="DGSB"
+              pluginCode="Dexd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
+              pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
               aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="AAX_ePlugInCategory_Dynamics"
               jucerVersion="3.1.0" companyName="Digital Suburban" buildVST3="0"

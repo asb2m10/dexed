@@ -63,6 +63,7 @@ class PluginFx {
     int R;
     
 public:
+    PluginFx();
     
     ScopedPointer<ModuleFx> obxdFilter;
     

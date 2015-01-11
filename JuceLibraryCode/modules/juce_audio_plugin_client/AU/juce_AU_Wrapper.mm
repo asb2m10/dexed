@@ -482,6 +482,8 @@ public:
             outParameterInfo.minValue = 0.0f;
             outParameterInfo.maxValue = 1.0f;
             outParameterInfo.defaultValue = juceFilter->getParameterDefaultValue (index);
+            jassert (outParameterInfo.defaultValue >= outParameterInfo.minValue
+                      && outParameterInfo.defaultValue <= outParameterInfo.maxValue);
             outParameterInfo.unit = kAudioUnitParameterUnit_Generic;
 
             return noErr;
@@ -561,7 +563,6 @@ public:
         info.editOriginTime = 0;
         info.ppqPositionOfLastBarStart = 0;
         info.isRecording = false;
-        info.isLooping = false;
         info.ppqLoopStart = 0;
         info.ppqLoopEnd = 0;
 
@@ -598,7 +599,7 @@ public:
         }
 
         double outCurrentSampleInTimeLine, outCycleStartBeat, outCycleEndBeat;
-        Boolean playing = false, playchanged, looping;
+        Boolean playing = false, looping = false, playchanged;
 
         if (CallHostTransportState (&playing,
                                     &playchanged,
@@ -614,6 +615,7 @@ public:
         info.isPlaying = playing;
         info.timeInSamples = (int64) (outCurrentSampleInTimeLine + 0.5);
         info.timeInSeconds = info.timeInSamples / getSampleRate();
+        info.isLooping = looping;
 
         return true;
     }
@@ -1330,7 +1332,7 @@ public:
             }
             else
             {
-                jassertfalse // can't get a pointer to our effect
+                jassertfalse; // can't get a pointer to our effect
             }
         }
 

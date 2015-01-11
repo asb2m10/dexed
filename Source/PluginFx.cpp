@@ -52,6 +52,12 @@ static float logsc(float param, const float min,const float max,const float roll
 	return ((expf(param * logf(rolloff+1)) - 1.0f) / (rolloff)) * (max-min) + min;
 }
 
+PluginFx::PluginFx() {
+    uiCutoff = 1;
+    uiReso = 0;
+    uiGain = 1;
+}
+
 void PluginFx::init(int sr) {
     mm=0;
     s1=s2=s3=s4=c=d=0;
@@ -72,11 +78,7 @@ void PluginFx::init(int sr) {
 	rcor = (480.0 / 44000)*rcrate;
     rcorInv = 1 / rcor;
     bandPassSw = false;
-    
-    uiCutoff = 1;
-    uiReso = 0;
-    uiGain = 1;
-    
+
     pCutoff = -1;
     pReso = -1;
 }
