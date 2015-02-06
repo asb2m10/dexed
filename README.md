@@ -35,6 +35,13 @@ new version here but you see it in the change log, it's because this version is 
 
 Changelog
 ---------
+
+#### Version 0.8.1
+* Apple AU support
+* Basic theming
+* Fixed the UI corruption when more than one Dexed instance was loaded
+
+
 #### Version 0.8.0
 * New UI by [AZur Studio](http://bji.yukihotaru.com/)
 * You can now copy/paste the operator/envelopes values by using the right-click mouse button on the operator

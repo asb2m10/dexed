@@ -26,6 +26,51 @@
 #include "Dexed.h"
 
 // ************************************************************************
+// Custom displays
+
+class CtrlDXLabel : public CtrlDX {
+public:
+    StringArray labels;
+    
+    CtrlDXLabel(String name, int steps, int offset) : CtrlDX(name, steps, offset, 0) {
+    };
+    
+    String getValueDisplay() {
+        return labels[getValue()];
+    }
+};
+
+class CtrlDXTranspose : public CtrlDX {
+public:
+    CtrlDXTranspose(String name, int steps, int offset) : CtrlDX(name, steps, offset, 0) {
+    };
+    
+    String getValueDisplay() {
+        String ret;
+        int value = getValue();
+        if ( value == 48 )
+            value = 47;
+        
+        switch(value % 12) {
+            case 0: ret << "C"; break;
+            case 1: ret << "C#"; break;
+            case 2: ret << "D"; break;
+            case 3: ret << "D#"; break;
+            case 4: ret << "E"; break;
+            case 5: ret << "F"; break;
+            case 6: ret << "F#"; break;
+            case 7: ret << "G"; break;
+            case 8: ret << "G#"; break;
+            case 9: ret << "A"; break;
+            case 10: ret << "A#"; break;
+            case 11: ret << "B"; break;
+        }
+        return ret << (value/12-2);
+    }
+};
+
+
+// ************************************************************************
 //
 Ctrl::Ctrl(String name) {
     label << name;
@@ -266,10 +311,17 @@ void DexedAudioProcessor::initCtrl() {
     lfoSync = new CtrlDX("LFO KEY SYNC", 2, 141);
     ctrl.add(lfoSync);
     
-    lfoWaveform = new CtrlDX("LFO WAVE", 6, 142);
+    CtrlDXLabel *t = new CtrlDXLabel("LFO WAVE", 6, 142);
+    t->labels.add("TRIANGE");
+    t->labels.add("SAW DOWN");
+    t->labels.add("SAW UP");
+    t->labels.add("SQUARE");
+    t->labels.add("SINE");
+    t->labels.add("S&HOLD");     
+    lfoWaveform = t;
     ctrl.add(lfoWaveform);
     
-    transpose = new CtrlDX("MIDDLE C", 49, 144);
+    transpose = new CtrlDXTranspose("MIDDLE C", 49, 144);
     ctrl.add(transpose);
     
     pitchModSens = new CtrlDX("P MODE SENS.", 8, 143);
@@ -288,6 +340,12 @@ void DexedAudioProcessor::initCtrl() {
         pitchEgLevel[i] = new CtrlDX(level, 100, 130+i);
         ctrl.add(pitchEgLevel[i]);
     }
+    
+    StringArray keyScaleLabels;
+    keyScaleLabels.add("-LN");
+    keyScaleLabels.add("-EX");
+    keyScaleLabels.add("+EX");
+    keyScaleLabels.add("+LN");
     
     // fill operator values;
     for (int i = 0; i < 6; i++) {
@@ -353,12 +411,16 @@ void DexedAudioProcessor::initCtrl() {
 
         String sclLeftCurve;
         sclLeftCurve << opName << " L KEY SCALE";
-        opCtrl[opVal].sclLeftCurve = new CtrlDX(sclLeftCurve, 4, opTarget + 11);
+        t = new CtrlDXLabel(sclLeftCurve, 4, opTarget + 11);
+        t->labels = keyScaleLabels;
+        opCtrl[opVal].sclLeftCurve = t;
         ctrl.add(opCtrl[opVal].sclLeftCurve);
 
         String sclRightCurve;
         sclRightCurve << opName << " R KEY SCALE";
-        opCtrl[opVal].sclRightCurve = new CtrlDX(sclRightCurve, 4, opTarget + 12);
+        t = new CtrlDXLabel(sclRightCurve, 4, opTarget + 12);
+        t->labels = keyScaleLabels;
+        opCtrl[opVal].sclRightCurve = t;
         ctrl.add(opCtrl[opVal].sclRightCurve);
 
         String sclRate;

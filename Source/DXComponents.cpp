@@ -351,11 +351,17 @@ void LcdDisplay::paint(Graphics &g) {
 
 void ComboBoxImage::paint(Graphics &g) {
     int idx = getSelectedItemIndex();
+    if ( itemPos[0] != -1 ) {
+        if ( idx < 4 )
+            idx = itemPos[idx];
+    }
+    
     g.drawImage(items, 0, 0, items.getWidth(), itemHeight, 0, idx * itemHeight, items.getWidth(), itemHeight);
 }
 
 ComboBoxImage::ComboBoxImage() {
     onPopup = false;
+    itemPos[0] = -1;
 }
 
 void ComboBoxImage::showPopup() {
@@ -391,6 +397,9 @@ void ComboBoxImage::setImage(Image image, int pos[]) {
         Image tmp = image.getClippedImage(Rectangle<int>(0,itemHeight*pos[i], image.getWidth(), itemHeight));
         popup.addItem(i+1, getItemText(i), true, false, tmp);
     }
+
+    for(int i=0;i<4;i++)
+        itemPos[i] = pos[i];
 }
 
 void ProgramSelector::setInit() {
