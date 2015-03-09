@@ -124,7 +124,7 @@ void EngineOpl::compute(int32_t *output, const int32_t *input, int32_t phase0, i
 
     for (int i = 0; i < N; i++) {
         gain += dgain;
-        int32_t y = oplSin( (phase+input[i]) >> 14, gain);
+        int32_t y = oplSin((phase+input[i]) >> 14, gain);
         output[i] = (y << 14) + adder[i];
         phase += freq;
     }
@@ -138,7 +138,7 @@ void EngineOpl::compute_pure(int32_t *output, int32_t phase0, int32_t freq, int3
 
     for (int i = 0; i < N; i++) {
         gain += dgain;
-        int32_t y = oplSin( phase >> 14, gain);
+        int32_t y = oplSin(phase >> 14, gain);
         output[i] = (y << 14) + adder[i];
         phase += freq;
     }
@@ -158,7 +158,7 @@ void EngineOpl::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
         gain += dgain;
         int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
         y0 = y;
-        y = oplSin( (phase+scaled_fb) >> 14, gain) << 14;
+        y = oplSin((phase+scaled_fb) >> 14, gain) << 14;
         output[i] = y + adder[i];
         phase += freq;
     }

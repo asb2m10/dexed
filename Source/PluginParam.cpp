@@ -29,10 +29,10 @@
 // Custom displays
 
 class CtrlDXLabel : public CtrlDX {
+   StringArray labels;
 public:
-    StringArray labels;
-    
-    CtrlDXLabel(String name, int steps, int offset) : CtrlDX(name, steps, offset, 0) {
+    CtrlDXLabel(String name, int steps, int offset, StringArray &labels) : CtrlDX(name, steps, offset, 0) {
+        this->labels = labels;
     };
     
     String getValueDisplay() {
@@ -311,14 +311,15 @@ void DexedAudioProcessor::initCtrl() {
     lfoSync = new CtrlDX("LFO KEY SYNC", 2, 141);
     ctrl.add(lfoSync);
     
-    CtrlDXLabel *t = new CtrlDXLabel("LFO WAVE", 6, 142);
-    t->labels.add("TRIANGE");
-    t->labels.add("SAW DOWN");
-    t->labels.add("SAW UP");
-    t->labels.add("SQUARE");
-    t->labels.add("SINE");
-    t->labels.add("S&HOLD");     
-    lfoWaveform = t;
+    StringArray lbl;
+    lbl.add("TRIANGE");
+    lbl.add("SAW DOWN");
+    lbl.add("SAW UP");
+    lbl.add("SQUARE");
+    lbl.add("SINE");
+    lbl.add("S&HOLD");
+    
+    lfoWaveform = new CtrlDXLabel("LFO WAVE", 6, 142, lbl);
     ctrl.add(lfoWaveform);
     
     transpose = new CtrlDXTranspose("MIDDLE C", 49, 144);
@@ -411,16 +412,12 @@ void DexedAudioProcessor::initCtrl() {
 
         String sclLeftCurve;
         sclLeftCurve << opName << " L KEY SCALE";
-        t = new CtrlDXLabel(sclLeftCurve, 4, opTarget + 11);
-        t->labels = keyScaleLabels;
-        opCtrl[opVal].sclLeftCurve = t;
+        opCtrl[opVal].sclLeftCurve = new CtrlDXLabel(sclLeftCurve, 4, opTarget + 11, keyScaleLabels);
         ctrl.add(opCtrl[opVal].sclLeftCurve);
 
         String sclRightCurve;
         sclRightCurve << opName << " R KEY SCALE";
-        t = new CtrlDXLabel(sclRightCurve, 4, opTarget + 12);
-        t->labels = keyScaleLabels;
-        opCtrl[opVal].sclRightCurve = t;
+        opCtrl[opVal].sclRightCurve = new CtrlDXLabel(sclRightCurve, 4, opTarget + 12, keyScaleLabels);
         ctrl.add(opCtrl[opVal].sclRightCurve);
 
         String sclRate;

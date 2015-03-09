@@ -141,10 +141,10 @@ void DexedAudioProcessor::releaseResources() {
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
     int numSamples = buffer.getNumSamples();
-    int i = 0;
+    int i;
     
     if ( refreshVoice ) {
-        for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+        for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
                 voices[i].dx7_note->update(data, voices[i].midi_note);
         }
@@ -160,7 +160,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     float *channelData = buffer.getSampleData(0);
   
     // flush first events
-    for (i = 0; i < numSamples && i < extra_buf_size; i++) {
+    for (i=0; i < numSamples && i < extra_buf_size; i++) {
         channelData[i] = extra_buf[i];
     }
     
@@ -226,7 +226,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     fx.process(channelData, numSamples);
-    for(int i=0; i<numSamples; i++) {
+    for(i=0; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
         
         const double decayFactor = 0.99992;

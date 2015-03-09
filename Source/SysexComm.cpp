@@ -151,8 +151,3 @@ int SysexComm::send(const MidiMessage &message) {
 void SysexComm::playBuffer(MidiBuffer &keyboardEvents, int numSamples ) {
     noteOutput.addEvents(keyboardEvents, 0, numSamples, 0);
 }
-
-void SysexComm::handleAsyncUpdate() {
-    
-}
-

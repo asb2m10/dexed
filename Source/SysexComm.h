@@ -23,7 +23,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
-class SysexComm : public AsyncUpdater {
+class SysexComm {
     MidiInput *input;
     MidiOutput *output;
     String inputName;
@@ -56,8 +56,6 @@ public :
     }
     
     int send(const MidiMessage& message);
-    
-    void handleAsyncUpdate();
     void playBuffer(MidiBuffer &keyboardEvents, int numSamples);
 };
 
