@@ -331,6 +331,8 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             voices[note].sustained = sustain;
             voices[note].keydown = true;
             voices[note].dx7_note->init(data, pitch, velo);
+            if ( data[136] )
+                voices[note].dx7_note->oscSync();
             break;
         }
         note = (note + 1) % MAX_ACTIVE_NOTES;
@@ -404,7 +406,7 @@ void DexedAudioProcessor::panic() {
         voices[i].keydown = false;
         voices[i].live = false;
         if ( voices[i].dx7_note != NULL ) {
-            voices[i].dx7_note->firstUse();
+            voices[i].dx7_note->oscSync();
         }
     }
     keyboardState.reset();

@@ -289,7 +289,7 @@ void Dx7Note::transferSignal(Dx7Note &src) {
     }
 }
 
-void Dx7Note::firstUse() {
+void Dx7Note::oscSync() {
     for (int i=0;i<6;i++) {
         params_[i].gain_out = 0;
         params_[i].phase = 0;

@@ -55,7 +55,7 @@ class Dx7Note {
   void peekVoiceStatus(VoiceStatus &status);
   void transferState(Dx7Note& src);
   void transferSignal(Dx7Note &src);
-  void firstUse();
+  void oscSync();
     
  private:
   Env env_[6];
