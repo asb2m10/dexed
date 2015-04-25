@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #define SYSEX_SIZE 4104
-
 
 enum UnpackedOffset {
 	egRate,
@@ -59,10 +58,12 @@ enum UnpackedOffset {
 };
 
 String normalizeSysexName(const char *sysexName);
+uint8_t sysexChecksum(const char *sysex, int size);
 void extractProgramNames(const char *block, StringArray &dest);
 void exportSysexCart(char *dest, char *src, char sysexChl);
 void exportSysexPgm(char *dest, char *src, char sysexChl);
 void packProgram(uint8_t *dest, uint8_t *src, int idx, String name);
+void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx);
 
 class CartridgeManager {
     ScopedPointer<ZipFile> builtin_pgm;

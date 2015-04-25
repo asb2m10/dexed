@@ -18,12 +18,12 @@ ifeq ($(CONFIG),Debug)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=0.8.1" -D "JUCE_APP_VERSION_HEX=0x801" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=1.0.0" -D "JUCE_APP_VERSION_HEX=0x10000" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -g -ggdb -fPIC -O0
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt 
   LDDEPS :=
-  RESFLAGS :=  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=0.8.1" -D "JUCE_APP_VERSION_HEX=0x801" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  RESFLAGS :=  -D "LINUX=1" -D "DEBUG=1" -D "_DEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=1.0.0" -D "JUCE_APP_VERSION_HEX=0x10000" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Dexed.so
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
   CLEANCMD = rm -rf $(OUTDIR)/$(TARGET) $(OBJDIR)
@@ -39,12 +39,12 @@ ifeq ($(CONFIG),Release)
     TARGET_ARCH := -march=native
   endif
 
-  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=0.8.1" -D "JUCE_APP_VERSION_HEX=0x801" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  CPPFLAGS := $(DEPFLAGS) -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=1.0.0" -D "JUCE_APP_VERSION_HEX=0x10000" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   CFLAGS += $(CPPFLAGS) $(TARGET_ARCH) -fPIC -Os
   CXXFLAGS += $(CFLAGS)
   LDFLAGS += $(TARGET_ARCH) -L$(BINDIR) -L$(LIBDIR) -shared -fvisibility=hidden -L/usr/X11R6/lib/ -lX11 -lXext -lXinerama -lasound -ldl -lfreetype -lpthread -lrt 
   LDDEPS :=
-  RESFLAGS :=  -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=0.8.1" -D "JUCE_APP_VERSION_HEX=0x801" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
+  RESFLAGS :=  -D "LINUX=1" -D "NDEBUG=1" -D "JUCER_LINUX_MAKE_7346DA2A=1" -D "JUCE_APP_VERSION=1.0.0" -D "JUCE_APP_VERSION_HEX=0x10000" -I /usr/include -I /usr/include/freetype2 -I ~/src/vstsdk2.4 -I ../../JuceLibraryCode -I ../../JuceLibraryCode/modules
   TARGET := Dexed.so
   BLDCMD = $(CXX) -o $(OUTDIR)/$(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(TARGET_ARCH)
   CLEANCMD = rm -rf $(OUTDIR)/$(TARGET) $(OBJDIR)
@@ -55,12 +55,14 @@ OBJECTS := \
   $(OBJDIR)/EngineMkI_615efdaa.o \
   $(OBJDIR)/EngineOpl_d5a0e5ea.o \
   $(OBJDIR)/PluginEditor_94d4fb09.o \
-  $(OBJDIR)/GlobalEditor_4b9bc379.o \
+  $(OBJDIR)/CartManager_8ad0044e.o \
+  $(OBJDIR)/ProgramListBox_58735432.o \
   $(OBJDIR)/ParamDialog_aca81c16.o \
-  $(OBJDIR)/OperatorEditor_b03d363a.o \
   $(OBJDIR)/AlgoDisplay_895ecdd0.o \
   $(OBJDIR)/DXLookNFeel_cfc3afa2.o \
   $(OBJDIR)/DXComponents_a6963633.o \
+  $(OBJDIR)/OperatorEditor_b03d363a.o \
+  $(OBJDIR)/GlobalEditor_4b9bc379.o \
   $(OBJDIR)/freqlut_ca864b55.o \
   $(OBJDIR)/lfo_a7533573.o \
   $(OBJDIR)/dx7note_176ee213.o \
@@ -127,19 +129,19 @@ $(OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp
 	@echo "Compiling PluginEditor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
-$(OBJDIR)/GlobalEditor_4b9bc379.o: ../../Source/GlobalEditor.cpp
+$(OBJDIR)/CartManager_8ad0044e.o: ../../Source/CartManager.cpp
 	-@mkdir -p $(OBJDIR)
-	@echo "Compiling GlobalEditor.cpp"
+	@echo "Compiling CartManager.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/ProgramListBox_58735432.o: ../../Source/ProgramListBox.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling ProgramListBox.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/ParamDialog_aca81c16.o: ../../Source/ParamDialog.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling ParamDialog.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-
-$(OBJDIR)/OperatorEditor_b03d363a.o: ../../Source/OperatorEditor.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling OperatorEditor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/AlgoDisplay_895ecdd0.o: ../../Source/AlgoDisplay.cpp
@@ -155,6 +157,16 @@ $(OBJDIR)/DXLookNFeel_cfc3afa2.o: ../../Source/DXLookNFeel.cpp
 $(OBJDIR)/DXComponents_a6963633.o: ../../Source/DXComponents.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling DXComponents.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/OperatorEditor_b03d363a.o: ../../Source/OperatorEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling OperatorEditor.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/GlobalEditor_4b9bc379.o: ../../Source/GlobalEditor.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling GlobalEditor.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/freqlut_ca864b55.o: ../../Source/msfa/freqlut.cc

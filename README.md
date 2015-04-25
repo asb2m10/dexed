@@ -15,7 +15,7 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Features
 --------
-* Multi platform (OS X, Windows or Linux) and multi format (VST, *soon* AU and others that I don't use); by using JUCE
+* Multi platform (OS X, Windows or Linux) and multi format (VST, AU); by using JUCE
 * The sound engine [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) is closely modeled on the original DX7 characteristics
 * 144 DAW automatable DX7 parameters available from one single panel
 * Fully supports DX7 input and output Sysex messages; including controller change. This means that you can use this with a native DX7/TX7 as a patch editor and sysex manager
@@ -37,10 +37,10 @@ Changelog
 ---------
 
 #### Version 0.8.1
+* Cartridge Manager
 * Apple AU support
 * Basic theming
 * Fixed the UI corruption when more than one Dexed instance was loaded
-
 
 #### Version 0.8.0
 * New UI by [AZur Studio](http://bji.yukihotaru.com/)
@@ -70,13 +70,11 @@ Changelog
 * Knobs now works with vertical mouse drags
 * User DX7 zip cartridges
 
-User DX7 zip cartridges
------------------------
-It is possible to enjoy your DX7 sysex collection from one single zip file. Simply move your zipped
-sysex content to where you have installed Dexed (VST plugins dir). Then rename the zip file to 
-`Dexed_cart.zip`. You can modify this file anytime you want, Dexed will simply reparse it when the 
-file is changed. Directories in the zip file will be transformed into submenu when you hit the 
-[CART] button. Watch out; Windows hides the .zip extension by default !
+DX7 cartridges
+--------------
+You can now put user cartridges in the "Cartridges" directory once Dexed is started. You will be able to browse them once you use the [CART] button. To get the exact location of this directory, simply click on [FILE MGR], it should open Finder or File Explorer in the "Cartridges" directory.
+
+NOTE: Dexed_Cart.zip is no longer used.
 
 Engine Type
 -----------
@@ -147,12 +145,6 @@ Credits & thanks
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * markusthegeek direct implication for this project
 
-Planned milestones 
-------------------
-* 0.7 msfa engine tuning
-* 0.8 UI redesign
-* 0.8.1 Cartridge browser/editor
-
 TODO - Dexed 
 ------------
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
@@ -160,7 +152,6 @@ TODO - Dexed
 * Zomby UI changes: this occurs in Live and will be fixed in the 0.8.1 version.
 * Various code cleanup
 * More smothness in mono mode
-* AU Version 
 
 TODO - msfa
 -----------

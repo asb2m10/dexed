@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,6 @@
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
-File dexedWorkdir;
-
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
 #ifdef DEBUG
@@ -48,25 +46,21 @@ DexedAudioProcessor::DexedAudioProcessor() {
     Sin::init();
 
     lastStateSave = 0;
-    
     currentNote = -1;
+    engineType = -1;
+    
     vuSignal = 0;
     monoMode = 0;
+    
+    resolvAppDir();
+
     initCtrl();
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
-    engineType = -1;
-    
+
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
-
-    prefOptions.applicationName = String("Dexed");
-    prefOptions.filenameSuffix = String("xml");
-    prefOptions.folderName = String("DigitalSuburban");
-    prefOptions.osxLibrarySubFolder = String("Application Support");
     
-    dexedWorkdir = prefOptions.getDefaultFile().getParentDirectory();
-
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();

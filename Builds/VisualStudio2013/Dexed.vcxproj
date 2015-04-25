@@ -135,6 +135,7 @@
     <ClCompile Include="..\..\Source\PluginFx.cpp"/>
     <ClCompile Include="..\..\Source\EngineMkI.cpp"/>
     <ClCompile Include="..\..\Source\EngineOpl.cpp"/>
+    <ClCompile Include="..\..\Source\CartManager.cpp"/>
     <ClCompile Include="..\..\Source\PluginEditor.cpp"/>
     <ClCompile Include="..\..\Source\GlobalEditor.cpp"/>
     <ClCompile Include="..\..\Source\ParamDialog.cpp"/>
@@ -1109,6 +1110,7 @@
     <ClInclude Include="..\..\Source\PluginFx.h"/>
     <ClInclude Include="..\..\Source\EngineMkI.h"/>
     <ClInclude Include="..\..\Source\EngineOpl.h"/>
+    <ClInclude Include="..\..\Source\CartManager.h"/>
     <ClInclude Include="..\..\Source\PluginEditor.h"/>
     <ClInclude Include="..\..\Source\GlobalEditor.h"/>
     <ClInclude Include="..\..\Source\ParamDialog.h"/>

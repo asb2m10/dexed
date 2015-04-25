@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,8 @@ enum DexedEngineResolution {
     DEXED_ENGINE_OPL
 };
 
+//extern File dexedWorkdir;
+
 //==============================================================================
 /**
 */
@@ -76,7 +78,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     long lastStateSave;
     
     /**
-     * PlugFX
+     * Plugin fx (the filter)
      */
     PluginFx fx;
 
@@ -85,7 +87,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
      * and needs to be updated.
      */
     bool refreshVoice;
-
     bool normalizeDxVelocity;
     bool sendSysexChange;
     
@@ -99,8 +100,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
      */
     void handleAsyncUpdate();
     void initCtrl();
-
-    PropertiesFile::Options prefOptions;
 
 	MidiMessage* nextMidi,*midiMsg;
 	bool hasMidiMessage;
@@ -117,6 +116,9 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     char clipboard[161];
     char clipboardContent;
     
+    void resolvAppDir();
+    File activeCartridge;
+    
 public :
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
@@ -124,18 +126,13 @@ public :
     char sysex[4096];    
     char data[161];
 
-    
-    CartridgeManager cartManager;
+    //CartridgeManager cartManager;
     SysexComm sysexComm;
-    
     VoiceStatus voiceStatus;
     
     bool forceRefreshUI;
-    
     float vuSignal;
-
     bool showKeyboard;
-
     int getEngineType();
     void setEngineType(int rs);
     
@@ -189,7 +186,8 @@ public :
     bool peekVoiceStatus();
     void unpackProgram(int idx);
     void updateProgramFromSysex(const uint8 *rawdata);
-    void loadBuiltin(int idx);
+    void setupStartupCart();
+    
     //==============================================================================
     const String getName() const;
     int getNumParameters();
@@ -220,10 +218,6 @@ public :
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
     
-    //void getCurrentProgramStateInformation (MemoryBlock& destData);
-    //void setCurrentProgramStateInformation (const void* data, int sizeInBytes);
-    //==============================================================================
-    
     // this is kept up to date with the midi messages that arrive, and the UI component
     // registers with it so it can represent the incoming messages
     MidiKeyboardState keyboardState;
@@ -232,6 +226,8 @@ public :
     void loadPreference();
     void savePreference();
     
+    static File dexedAppDir;
+    static File dexedCartDir;
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

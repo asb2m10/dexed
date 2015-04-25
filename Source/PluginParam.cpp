@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
  */
 
 #include <time.h>
+#include <stdlib.h>
 
 #include "PluginParam.h"
 #include "PluginProcessor.h"
@@ -275,7 +276,7 @@ void CtrlDX::updateComponent() {
  *
  */
 void DexedAudioProcessor::initCtrl() {
-    loadBuiltin(0);
+    setupStartupCart();
     currentProgram = 0;
     
     fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);
@@ -544,7 +545,9 @@ const String DexedAudioProcessor::getParameterText(int index) {
 }
 
 void DexedAudioProcessor::loadPreference() {
-    PropertiesFile prop(prefOptions);
+    File propFile = DexedAudioProcessor::dexedAppDir.getChildFile("Dexed.xml");
+    PropertiesFile::Options prefOptions;
+    PropertiesFile prop(propFile, prefOptions);
     
     if ( ! prop.isValidFile() ) {
         return;
@@ -584,7 +587,9 @@ void DexedAudioProcessor::loadPreference() {
 }
 
 void DexedAudioProcessor::savePreference() {
-    PropertiesFile prop(prefOptions);
+    File propFile = DexedAudioProcessor::dexedAppDir.getChildFile("Dexed.xml");
+    PropertiesFile::Options prefOptions;
+    PropertiesFile prop(propFile, prefOptions);
     
     prop.setValue(String("normalizeDxVelocity"), normalizeDxVelocity);
     prop.setValue(String("pitchRange"), controllers.values_[kControllerPitchRange]);
@@ -600,4 +605,5 @@ void DexedAudioProcessor::savePreference() {
     
     prop.save();
 }
+
 

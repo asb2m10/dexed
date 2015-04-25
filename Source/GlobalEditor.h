@@ -107,10 +107,7 @@ private:
     ScopedPointer<VuMeter> vuOutput;
     ScopedPointer<TextButton> initButton;
     ScopedPointer<TextButton> parmButton;
-    ScopedPointer<TextButton> sendButton;
     ScopedPointer<TextButton> cartButton;
-    ScopedPointer<TextButton> loadButton;
-    ScopedPointer<TextButton> saveButton;
     ScopedPointer<TextButton> storeButton;
     ScopedPointer<ToggleButton> monoMode;
     ScopedPointer<ComboBoxImage> lfoType;

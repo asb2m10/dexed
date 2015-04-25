@@ -34,8 +34,6 @@ public:
     Typeface::Ptr defaultFont;
     Typeface::Ptr defaultFontBold;
 
-    Colour background;
-
     Image imageKnob, imageSwitch, imageButton, imageSlider, imageScaling, imageLight, imageLFO;
     Image imageOperator, imageGlobal;
 
@@ -56,6 +54,8 @@ public:
 
     static DXLookNFeel *getLookAndFeel();
     static Colour fillColour;
+    static Colour lightBackground;
+    static Colour background;
 };
 
 #endif  // DXLOOKNFEEL_H_INCLUDED

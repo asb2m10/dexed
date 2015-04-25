@@ -21,8 +21,7 @@
 #include "DXLookNFeel.h"
 #include "DXComponents.h"
 #include "Dexed.h"
-
-extern File dexedWorkdir;
+#include "PluginProcessor.h"
 
 #define REG_COLOUR(id, value) setColour(id, value); colourMap.set(#id, id)
 
@@ -36,13 +35,9 @@ Image &findImage(String path) {
 }
 
 DXLookNFeel::DXLookNFeel() {
-    Colour lightBackground;
     Colour ctrlBackground;
 
-    dexedWorkdir.setAsCurrentWorkingDirectory();
-
-    background = Colour(60,50,47);
-    lightBackground = Colour(78,72,63);
+    DexedAudioProcessor::dexedAppDir.setAsCurrentWorkingDirectory();
     ctrlBackground = Colour(20,18,18);
 
     REG_COLOUR(TextButton::buttonColourId,Colour(0xFF0FC00F));
@@ -63,7 +58,10 @@ DXLookNFeel::DXLookNFeel() {
     REG_COLOUR(PopupMenu::textColourId, Colours::white);
     REG_COLOUR(PopupMenu::highlightedTextColourId, Colours::white);
     REG_COLOUR(PopupMenu::highlightedBackgroundColourId, fillColour);
-
+    REG_COLOUR(TreeView::backgroundColourId, background);
+    REG_COLOUR(DirectoryContentsDisplayComponent::highlightColourId, fillColour);
+    REG_COLOUR(DirectoryContentsDisplayComponent::textColourId, Colours::white);
+    
     imageKnob = ImageCache::getFromMemory(BinaryData::Knob_34x34_png, BinaryData::Knob_34x34_pngSize);
     imageSwitch = ImageCache::getFromMemory(BinaryData::Switch_48x26_png, BinaryData::Switch_48x26_pngSize);
     imageButton = ImageCache::getFromMemory(BinaryData::ButtonUnlabeled_50x30_png, BinaryData::ButtonUnlabeled_50x30_pngSize);
@@ -77,7 +75,7 @@ DXLookNFeel::DXLookNFeel() {
     defaultFont = Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
     defaultFontBold =  Typeface::createSystemTypefaceFor(BinaryData::NotoSansBold_ttf, BinaryData::NotoSansBold_ttfSize);
 
-    File dexedTheme = dexedWorkdir.getChildFile("DexedTheme.xml");
+    File dexedTheme = DexedAudioProcessor::dexedAppDir.getChildFile("DexedTheme.xml");
 
     if ( ! dexedTheme.existsAsFile() )
         return;
@@ -239,6 +237,8 @@ void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
 CriticalSection DXLookNFeel::lock;
 DXLookNFeel * DXLookNFeel::ins = NULL;
 Colour DXLookNFeel::fillColour = Colour(77,159,151);
+Colour DXLookNFeel::lightBackground = Colour(78,72,63);
+Colour DXLookNFeel::background = Colour(60,50,47);
 
 DXLookNFeel *DXLookNFeel::getLookAndFeel() {
     const ScopedLock locker(lock);

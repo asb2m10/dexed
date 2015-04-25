@@ -286,6 +286,9 @@
     <ClCompile Include="..\..\Source\EngineOpl.cpp">
       <Filter>Dexed\Source\dsp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\CartManager.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\PluginEditor.cpp">
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
@@ -1415,6 +1418,9 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\EngineOpl.h">
       <Filter>Dexed\Source\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\CartManager.h">
+      <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\PluginEditor.h">
       <Filter>Dexed\Source\ui</Filter>

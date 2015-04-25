@@ -572,7 +572,8 @@ BEGIN_JUCER_METADATA
          explicitFocusOrder="0" pos="15 10 95 10" bkgCol="6a000000" textCol="ffffffff"
          outlineCol="0" edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="12.6" bold="0" italic="0" justification="36"/>
+         fontname="Default font" fontsize="12.599999999999999645" bold="0"
+         italic="0" justification="36"/>
   <SLIDER name="detune" id="f093ec8defca2fc2" memberName="detune" virtualName=""
           explicitFocusOrder="0" pos="6 24 34 34" min="-7" max="7" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"

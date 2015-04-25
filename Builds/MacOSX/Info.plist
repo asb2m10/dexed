@@ -16,9 +16,9 @@
     <key>CFBundleSignature</key>
     <string>PTul</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.8.1</string>
+    <string>1.0.0</string>
     <key>CFBundleVersion</key>
-    <string>0.8.1</string>
+    <string>1.0.0</string>
     <key>NSHumanReadableCopyright</key>
     <string>Digital Suburban</string>
     <key>NSHighResolutionCapable</key>
@@ -39,7 +39,7 @@
         <key>subtype</key>
         <string>Dexd</string>
         <key>version</key>
-        <integer>2049</integer>
+        <integer>65536</integer>
       </dict>
     </array>
   </dict>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="0.8.1"
+<JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="1.0.0"
               bundleIdentifier="com.digitalsuburban.Dexed" includeBinaryInAppConfig="1"
               buildVST="1" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
               pluginManufacturer="Digital Suburban" pluginManufacturerCode="DGSB"
@@ -48,15 +48,14 @@
         <FILE id="Ec211k" name="PluginEditor.cpp" compile="1" resource="0"
               file="Source/PluginEditor.cpp"/>
         <FILE id="lZFsG0" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-        <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
-              file="Source/GlobalEditor.cpp"/>
-        <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
+        <FILE id="es8q5y" name="CartManager.cpp" compile="1" resource="0" file="Source/CartManager.cpp"/>
+        <FILE id="aKUAyS" name="CartManager.h" compile="0" resource="0" file="Source/CartManager.h"/>
+        <FILE id="McuhRh" name="ProgramListBox.cpp" compile="1" resource="0"
+              file="Source/ProgramListBox.cpp"/>
+        <FILE id="pvLRyR" name="ProgramListBox.h" compile="0" resource="0"
+              file="Source/ProgramListBox.h"/>
         <FILE id="eZN5P2" name="ParamDialog.cpp" compile="1" resource="0" file="Source/ParamDialog.cpp"/>
         <FILE id="fijjBN" name="ParamDialog.h" compile="0" resource="0" file="Source/ParamDialog.h"/>
-        <FILE id="oUObPG" name="OperatorEditor.cpp" compile="1" resource="0"
-              file="Source/OperatorEditor.cpp"/>
-        <FILE id="ChJDca" name="OperatorEditor.h" compile="0" resource="0"
-              file="Source/OperatorEditor.h"/>
         <FILE id="mlAFW9" name="AlgoDisplay.cpp" compile="1" resource="0" file="Source/AlgoDisplay.cpp"/>
         <FILE id="ZsRqfW" name="AlgoDisplay.h" compile="0" resource="0" file="Source/AlgoDisplay.h"/>
         <FILE id="TgCdkS" name="DXLookNFeel.cpp" compile="1" resource="0" file="Source/DXLookNFeel.cpp"/>
@@ -64,6 +63,13 @@
         <FILE id="yOSLIH" name="DXComponents.cpp" compile="1" resource="0"
               file="Source/DXComponents.cpp"/>
         <FILE id="x2E8Zg" name="DXComponents.h" compile="0" resource="0" file="Source/DXComponents.h"/>
+        <FILE id="oUObPG" name="OperatorEditor.cpp" compile="1" resource="0"
+              file="Source/OperatorEditor.cpp"/>
+        <FILE id="ChJDca" name="OperatorEditor.h" compile="0" resource="0"
+              file="Source/OperatorEditor.h"/>
+        <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
+              file="Source/GlobalEditor.cpp"/>
+        <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
       </GROUP>
       <GROUP id="{CEBA9AF6-1C73-85F6-A187-56A246098441}" name="msfa">
         <FILE id="wvG22S" name="freqlut.cc" compile="1" resource="0" file="Source/msfa/freqlut.cc"/>
@@ -148,28 +154,6 @@
         <MODULEPATH id="juce_audio_basics" path="../../juce"/>
       </MODULEPATHS>
     </VS2012>
-    <VS2013 targetFolder="Builds/VisualStudio2013" vstFolder="C:\work\vstsdk2.4">
-      <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="1" optimisation="1" targetName="Dexed"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
-                       isDebug="0" optimisation="2" targetName="Dexed"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../../juce"/>
-        <MODULEPATH id="juce_gui_basics" path="../../juce"/>
-        <MODULEPATH id="juce_graphics" path="../../juce"/>
-        <MODULEPATH id="juce_events" path="../../juce"/>
-        <MODULEPATH id="juce_data_structures" path="../../juce"/>
-        <MODULEPATH id="juce_core" path="../../juce"/>
-        <MODULEPATH id="juce_audio_utils" path="../../juce"/>
-        <MODULEPATH id="juce_audio_processors" path="../../juce"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../juce"/>
-        <MODULEPATH id="juce_audio_formats" path="../../juce"/>
-        <MODULEPATH id="juce_audio_devices" path="../../juce"/>
-        <MODULEPATH id="juce_audio_basics" path="../../juce"/>
-      </MODULEPATHS>
-    </VS2013>
     <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="~/src/vstsdk2.4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"

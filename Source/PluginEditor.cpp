@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013 Pascal Gauthier.
+ * Copyright (c) 2013-2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +60,12 @@ public:
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
-    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard)
+    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+    cartManager(this)
 {
     LookAndFeel::setDefaultLookAndFeel(DXLookNFeel::getLookAndFeel());
 
-    setSize (866, ownerFilter->showKeyboard ? 674 : 581);
+    setSize(866, ownerFilter->showKeyboard ? 674 : 581);
 
     processor = ownerFilter;
     
@@ -115,6 +116,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     rebuildProgramCombobox();
     global.programs->addListener(this);
     
+    addChildComponent(&cartManager);
+    
     updateUI();
     startTimer(100);
 }
@@ -131,43 +134,31 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 }
 
 void DexedAudioProcessorEditor::cartShow() {
-    int result = processor->cartManager.getCarts()->show();
-    if ( result < 1 )
+    cartManager.resetActiveSysex();
+    cartManager.setBounds(4, 2, 859, 576);
+    cartManager.setVisible(true);
+}
+
+
+void DexedAudioProcessorEditor::loadCart(File file) {
+    String f = file.getFullPathName();
+    uint8_t syx_data[4104];
+    ifstream fp_in(f.toRawUTF8(), ios::binary);
+    if (fp_in.fail()) {
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          "Error",
+                                          "Unable to open: " + f);
         return;
-    
-    processor->loadBuiltin(result-1);
+    }
+    fp_in.read((char *)syx_data, 4104);
+    fp_in.close();
+    if ( processor->importSysex((char *) &syx_data) ) {
+        global.setSystemMessage(String("Unkown sysex format !?"));
+    }
     processor->setCurrentProgram(0);
     rebuildProgramCombobox();
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
     processor->updateHostDisplay();
-    return;
-}
-
-void DexedAudioProcessorEditor::loadCart() {
-    FileChooser fc ("Import original DX sysex...", File::nonexistent, "*.syx;*.SYX;*.*", 1);
-    
-    if ( fc.browseForFileToOpen()) {
-        String f = fc.getResults().getReference(0).getFullPathName();
-        uint8_t syx_data[4104];
-        ifstream fp_in(f.toRawUTF8(), ios::binary);
-        if (fp_in.fail()) {
-            AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                              "Error",
-                                              "Unable to open: " + f);
-            return;
-        }
-        fp_in.read((char *)syx_data, 4104);
-        fp_in.close();
-        if ( processor->importSysex((char *) &syx_data) ) {
-            global.setSystemMessage(String("Unkown sysex format !?"));
-        }
-        processor->setCurrentProgram(0);
-        rebuildProgramCombobox();
-        global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
-        processor->updateHostDisplay();
-    }
-    
-    return;
 }
 
 void DexedAudioProcessorEditor::saveCart() {
@@ -233,7 +224,7 @@ void DexedAudioProcessorEditor::parmShow() {
     processor->setEngineType(tp);
     processor->savePreference();
     
-    setSize (866, processor->showKeyboard ? 677 : 583);
+    setSize(866, processor->showKeyboard ? 677 : 583);
     midiKeyboard.repaint();
     
     if ( ret == false ) {
@@ -286,6 +277,8 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
         global.programs->addItem(id, i+1);
     }
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
+    cartManager.setActiveProgram(processor->getCurrentProgram());
+    cartManager.resetActiveSysex();
 }
 
 void DexedAudioProcessorEditor::storeProgram() {
@@ -311,6 +304,14 @@ void DexedAudioProcessorEditor::storeProgram() {
         extractProgramNames((char *) &destSysex, programs);
 
         dialog.addComboBox(String("Dest"), programs);
+
+        ScopedPointer<ToggleButton> saveToDisk = nullptr;
+        if ( externalFile == NULL ) {
+            saveToDisk = new ToggleButton("Save Changes to disk");
+            saveToDisk->setSize(300, 30);
+            dialog.addCustomComponent(saveToDisk);
+        }
+        
         dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
         dialog.addButton("CANCEL", 1, KeyPress(KeyPress::escapeKey));
         dialog.addButton("EXTERNAL FILE", 2, KeyPress());

@@ -206,21 +206,9 @@ GlobalEditor::GlobalEditor ()
     parmButton->setButtonText (TRANS("PARM"));
     parmButton->addListener (this);
 
-    addAndMakeVisible (sendButton = new TextButton ("sendButton"));
-    sendButton->setButtonText (TRANS("SEND"));
-    sendButton->addListener (this);
-
     addAndMakeVisible (cartButton = new TextButton ("cartButton"));
     cartButton->setButtonText (TRANS("CART"));
     cartButton->addListener (this);
-
-    addAndMakeVisible (loadButton = new TextButton ("loadButton"));
-    loadButton->setButtonText (TRANS("LOAD"));
-    loadButton->addListener (this);
-
-    addAndMakeVisible (saveButton = new TextButton ("saveButton"));
-    saveButton->setButtonText (TRANS("SAVE"));
-    saveButton->addListener (this);
 
     addAndMakeVisible (storeButton = new TextButton ("storeButton"));
     storeButton->setButtonText (TRANS("STORE"));
@@ -291,10 +279,7 @@ GlobalEditor::~GlobalEditor()
     vuOutput = nullptr;
     initButton = nullptr;
     parmButton = nullptr;
-    sendButton = nullptr;
     cartButton = nullptr;
-    loadButton = nullptr;
-    saveButton = nullptr;
     storeButton = nullptr;
     monoMode = nullptr;
     lfoType = nullptr;
@@ -346,12 +331,9 @@ void GlobalEditor::resized()
     lcdDisplay->setBounds (6, 87, 140, 13);
     output->setBounds (157, 60, 34, 34);
     vuOutput->setBounds (6, 103, 140, 8);
-    initButton->setBounds (3, 56, 50, 30);
-    parmButton->setBounds (51, 56, 50, 30);
-    sendButton->setBounds (99, 56, 50, 30);
+    initButton->setBounds (100, 111, 50, 30);
+    parmButton->setBounds (52, 111, 50, 30);
     cartButton->setBounds (3, 111, 50, 30);
-    loadButton->setBounds (50, 111, 50, 30);
-    saveButton->setBounds (98, 111, 50, 30);
     storeButton->setBounds (270, 109, 50, 30);
     monoMode->setBounds (249, 65, 48, 26);
     lfoType->setBounds (583, 8, 36, 26);
@@ -502,29 +484,11 @@ void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
         editor->parmShow();
         //[/UserButtonCode_parmButton]
     }
-    else if (buttonThatWasClicked == sendButton)
-    {
-        //[UserButtonCode_sendButton] -- add your button handler code here..
-        editor->sendToDx7();
-        //[/UserButtonCode_sendButton]
-    }
     else if (buttonThatWasClicked == cartButton)
     {
         //[UserButtonCode_cartButton] -- add your button handler code here..
         editor->cartShow();
         //[/UserButtonCode_cartButton]
-    }
-    else if (buttonThatWasClicked == loadButton)
-    {
-        //[UserButtonCode_loadButton] -- add your button handler code here..
-        editor->loadCart();
-        //[/UserButtonCode_loadButton]
-    }
-    else if (buttonThatWasClicked == saveButton)
-    {
-        //[UserButtonCode_saveButton] -- add your button handler code here..
-        editor->saveCart();
-        //[/UserButtonCode_saveButton]
     }
     else if (buttonThatWasClicked == storeButton)
     {
@@ -720,22 +684,13 @@ BEGIN_JUCER_METADATA
   <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
                     explicitFocusOrder="0" pos="6 103 140 8" class="VuMeter" params=""/>
   <TEXTBUTTON name="initButton" id="92b278163c42e21d" memberName="initButton"
-              virtualName="" explicitFocusOrder="0" pos="3 56 50 30" buttonText="INIT"
+              virtualName="" explicitFocusOrder="0" pos="100 111 50 30" buttonText="INIT"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="parmButton" id="d5cd6260b34be817" memberName="parmButton"
-              virtualName="" explicitFocusOrder="0" pos="51 56 50 30" buttonText="PARM"
-              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="sendButton" id="9b45b291c75c7b3f" memberName="sendButton"
-              virtualName="" explicitFocusOrder="0" pos="99 56 50 30" buttonText="SEND"
+              virtualName="" explicitFocusOrder="0" pos="52 111 50 30" buttonText="PARM"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="cartButton" id="465a101c3a0e744" memberName="cartButton"
               virtualName="" explicitFocusOrder="0" pos="3 111 50 30" buttonText="CART"
-              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="loadButton" id="54e62fe23ff547d1" memberName="loadButton"
-              virtualName="" explicitFocusOrder="0" pos="50 111 50 30" buttonText="LOAD"
-              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
-  <TEXTBUTTON name="saveButton" id="44bf9479012da9b4" memberName="saveButton"
-              virtualName="" explicitFocusOrder="0" pos="98 111 50 30" buttonText="SAVE"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="storeButton" id="a94bec26832eb58b" memberName="storeButton"
               virtualName="" explicitFocusOrder="0" pos="270 109 50 30" buttonText="STORE"

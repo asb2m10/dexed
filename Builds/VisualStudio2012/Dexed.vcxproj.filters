@@ -289,13 +289,13 @@
     <ClCompile Include="..\..\Source\PluginEditor.cpp">
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\GlobalEditor.cpp">
+    <ClCompile Include="..\..\Source\CartManager.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\ProgramListBox.cpp">
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\ParamDialog.cpp">
-      <Filter>Dexed\Source\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Source\OperatorEditor.cpp">
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\AlgoDisplay.cpp">
@@ -305,6 +305,12 @@
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\DXComponents.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\OperatorEditor.cpp">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\GlobalEditor.cpp">
       <Filter>Dexed\Source\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Source\msfa\freqlut.cc">
@@ -1419,13 +1425,13 @@
     <ClInclude Include="..\..\Source\PluginEditor.h">
       <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Source\GlobalEditor.h">
+    <ClInclude Include="..\..\Source\CartManager.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\ProgramListBox.h">
       <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\ParamDialog.h">
-      <Filter>Dexed\Source\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Source\OperatorEditor.h">
       <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\AlgoDisplay.h">
@@ -1435,6 +1441,12 @@
       <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\DXComponents.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\OperatorEditor.h">
+      <Filter>Dexed\Source\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\GlobalEditor.h">
       <Filter>Dexed\Source\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\msfa\freqlut.h">
