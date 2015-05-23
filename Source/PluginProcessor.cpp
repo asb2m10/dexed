@@ -439,7 +439,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 
         TRACE("program update sysex");
         updateProgramFromSysex(buf+6);
-        String name = normalizeSysexName((const char *) buf+151);
+        String name = normalizeSysexName((const char *) buf+145);
         packProgram((uint8_t *) sysex, (uint8_t *) data, currentProgram, name); 
         programNames.set(currentProgram, name);
     }

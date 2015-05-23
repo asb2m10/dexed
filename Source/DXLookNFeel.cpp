@@ -227,7 +227,7 @@ void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
 
     // I'm not proud of this one, but really... it must be another way to do this....
     ComboBoxImage* img = dynamic_cast<ComboBoxImage*>(src);
-    if(img != 0) { 
+    if( img != 0 ) {
         return;
     }
 
@@ -239,6 +239,7 @@ DXLookNFeel * DXLookNFeel::ins = NULL;
 Colour DXLookNFeel::fillColour = Colour(77,159,151);
 Colour DXLookNFeel::lightBackground = Colour(78,72,63);
 Colour DXLookNFeel::background = Colour(60,50,47);
+Colour DXLookNFeel::roundBackground = Colour(58,52,48);
 
 DXLookNFeel *DXLookNFeel::getLookAndFeel() {
     const ScopedLock locker(lock);

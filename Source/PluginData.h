@@ -24,6 +24,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #define SYSEX_SIZE 4104
 
+#include <stdint.h>
+
 enum UnpackedOffset {
 	egRate,
 	egLevel = 4,

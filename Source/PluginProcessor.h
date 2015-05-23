@@ -49,8 +49,6 @@ enum DexedEngineResolution {
     DEXED_ENGINE_OPL
 };
 
-//extern File dexedWorkdir;
-
 //==============================================================================
 /**
 */
@@ -117,8 +115,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     char clipboardContent;
     
     void resolvAppDir();
-    File activeCartridge;
-    
 public :
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
@@ -129,6 +125,7 @@ public :
     //CartridgeManager cartManager;
     SysexComm sysexComm;
     VoiceStatus voiceStatus;
+    File activeFileCartridge;
     
     bool forceRefreshUI;
     float vuSignal;
@@ -177,6 +174,8 @@ public :
     void copyToClipboard(int srcOp);
     void pasteOpFromClipboard(int destOp);
     void pasteEnvFromClipboard(int destOp);
+    void sendCurrentSysexProgram();
+    void sendCurrentSysexCartridge();
     bool hasClipboardContent();
     
     //==============================================================================

@@ -33,20 +33,40 @@ ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name)
 void ProgramListBox::paint(Graphics &g) {
     int pgm = 0;
     
+    g.setColour(Colour(20,18,18));
+    g.fillRect(0,0,getWidth(), getHeight());
+    g.setColour(Colour(0,0,0));
+    g.drawLine(0,0,getWidth(), 0, 2);
+    g.setColour(Colour(3,3,1));
+    g.drawLine(0,0,0,getHeight(),2);
+    g.setColour(Colour(34,32,32));
+    g.drawLine(getWidth(), 3, getWidth(), getHeight(), 2);
+    g.setColour(Colour(75,73,73));
+    g.drawLine(0,getHeight(),getWidth(),getHeight(), 2);
+
+
+    const float dashLength[] = { 4, 4 };
+
+    g.setColour(Colour(83,76,69));
+    for(int i=1;i<cols;i++) {
+        Line<float> line(cellWidth*i,0,cellWidth*i,getHeight());
+        g.drawDashedLine(line, dashLength, 2);
+    }
+    for(int i=1;i<rows;i++) {
+        Line<float> line(2, cellHeight*i,getWidth(),cellHeight*i);
+        g.drawDashedLine(line, dashLength, 2);
+    }
+    
     for(int i=0;i<cols;i++) {
         for(int j=0;j<rows;j++) {
             if ( selectedPgm == pgm ) {
                 g.setColour(DXLookNFeel::fillColour);
-                g.fillRoundedRectangle(cellWidth*i+2, cellHeight*j + 2, cellWidth - 4, cellHeight - 4, 2);
-            } else {
-                g.setColour(Colours::dimgrey);
-                g.drawRoundedRectangle(cellWidth*i+2, cellHeight*j + 2, cellWidth - 4, cellHeight - 4, 2, 0.5);
+                g.fillRoundedRectangle(cellWidth*i+2, cellHeight*j + 2, cellWidth - 4, cellHeight - 4, 0);
             }
 
             if ( hasContent == true ) {
                 g.setColour(Colours::white);
-                g.drawText(String(pgm+1) + ". ", cellWidth * i + 5, cellHeight * j, cellWidth, cellHeight, Justification::left, true);
-                g.drawFittedText(programNames[pgm], cellWidth * i - 5, cellHeight * j, cellWidth, cellHeight, Justification::right, true);
+                g.drawFittedText(programNames[pgm], cellWidth * i , cellHeight * j, cellWidth, cellHeight, Justification::centred, true);
             }
             pgm++;
         }
@@ -75,16 +95,23 @@ int ProgramListBox::programPosition(const MouseEvent &event) {
 void ProgramListBox::mouseDoubleClick(const MouseEvent &event) {
     if ( ! hasContent )
         return;
+    if ( ! event.mods.isLeftButtonDown() )
+        return;
     
     int pos = programPosition(event);
-    if ( listener != nullptr ) {
+    if ( listener != nullptr )
         listener->programSelected(this, pos);
-    }
-    repaint();
 }
 
 void ProgramListBox::mouseDown(const MouseEvent &event) {
+    if ( ! hasContent )
+        return;
+    if ( ! event.mods.isRightButtonDown() )
+        return;
     
+    int pos = programPosition(event);
+    if ( listener != nullptr )
+        listener->programRightClicked(this, pos);
 }
 
 void ProgramListBox::setSelected(int idx) {

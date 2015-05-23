@@ -56,6 +56,7 @@ public:
     static Colour fillColour;
     static Colour lightBackground;
     static Colour background;
+    static Colour roundBackground;
 };
 
 #endif  // DXLOOKNFEEL_H_INCLUDED

@@ -489,6 +489,8 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
         popup.addItem(1, "Copy Operator Values");
         popup.addItem(2, "Paste Envelope Values", processor->hasClipboardContent());
         popup.addItem(3, "Paste Operator Values", processor->hasClipboardContent());
+        popup.addSeparator();
+        popup.addItem(4, "Send current program to DX7");
 
         switch(popup.show()) {
             case 1:
@@ -501,6 +503,10 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
 
             case 3:
                 processor->pasteOpFromClipboard(internalOp);
+            break;
+                
+            case 4:
+                processor->sendCurrentSysexProgram();
             break;
         }
 

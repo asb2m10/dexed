@@ -32,6 +32,9 @@ class CartManager  : public TopLevelWindow, public ButtonListener, public DragAn
     ScopedPointer<TextButton> saveButton;
     ScopedPointer<TextButton> closeButton;
     ScopedPointer<TextButton> fileMgrButton;
+    ScopedPointer<TextButton> getDXPgmButton;
+    ScopedPointer<TextButton> getDXCartButton;
+
     
     ScopedPointer<ProgramListBox> activeCart;
     ScopedPointer<ProgramListBox> browserCart;
@@ -40,7 +43,6 @@ class CartManager  : public TopLevelWindow, public ButtonListener, public DragAn
     ScopedPointer<FileFilter> syxFileFilter;
     TimeSliceThread timeSliceThread;
     ScopedPointer<DirectoryContentsList> cartBrowserList;
-    
     File cartDir;
     
     DexedAudioProcessorEditor *mainWindow;
@@ -48,6 +50,7 @@ class CartManager  : public TopLevelWindow, public ButtonListener, public DragAn
     char browserSysex[4096];
 public:
     CartManager(DexedAudioProcessorEditor *editor);
+    virtual ~CartManager();
     void paint(Graphics& g);
     void buttonClicked (Button* buttonThatWasClicked);
     
@@ -56,10 +59,11 @@ public:
     void fileDoubleClicked (const File& file);
     void browserRootChanged (const File& newRoot);
         
-    void setActiveProgram(int idx);
+    void setActiveProgram(int idx, String activeName);
     void resetActiveSysex();
         
     virtual void programSelected(ProgramListBox *source, int pos) override;
+    virtual void programRightClicked(ProgramListBox *source, int pos) override;
 };
 
 

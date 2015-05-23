@@ -28,6 +28,7 @@ class ProgramListBoxListener {
 public:
     virtual ~ProgramListBoxListener() {}
     virtual void programSelected(ProgramListBox *source, int pos) = 0;
+    virtual void programRightClicked(ProgramListBox *source, int pos) = 0;
 };
 
 class ProgramListBox : public Component {
@@ -36,12 +37,12 @@ class ProgramListBox : public Component {
     bool showPgmNumber;
     int cols, rows;
     int cellWidth, cellHeight;
-
-    StringArray programNames;
     int programPosition(const MouseEvent &event);
     int selectedPgm;
     
 public:
+    StringArray programNames;    
+    
     ProgramListBox(const String name, int numCols);
     void addListener(ProgramListBoxListener *listener);
     void paint(Graphics &g);

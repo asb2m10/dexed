@@ -297,6 +297,24 @@ void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
     triggerAsyncUpdate();
 }
 
+void DexedAudioProcessor::sendCurrentSysexProgram() {
+    uint8_t raw[167];
+    
+    exportSysexPgm((char *) raw, data, sysexComm.getChl());
+    if ( sysexComm.isOutputActive() ) {
+        sysexComm.send(MidiMessage(raw, 163));
+    }
+}
+
+void DexedAudioProcessor::sendCurrentSysexCartridge() {
+    uint8_t raw[4104];
+    
+    exportSysexCart((char *) raw, (char *) &sysex, sysexComm.getChl());
+    if ( sysexComm.isOutputActive() ) {
+        sysexComm.send(MidiMessage(raw, 4104));
+    }
+}
+
 bool DexedAudioProcessor::hasClipboardContent() {
     return clipboardContent != -1;
 }
@@ -318,6 +336,9 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("currentProgram", currentProgram);
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
+    
+    if ( activeFileCartridge.exists() )
+        dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
 
     char sysex_blob[4104];
     exportSysexCart((char *) &sysex_blob, (char *) sysex, 0);
@@ -349,6 +370,10 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     setEngineType(root->getIntAttribute("engineType", 0));
     monoMode = root->getIntAttribute("monoMode", 0);
+    
+    File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
+    if ( possibleCartridge.exists() )
+        activeFileCartridge = possibleCartridge;
     
     XmlElement *dexedBlob = root->getChildByName("dexedBlob");
     if ( dexedBlob == NULL ) {
@@ -383,7 +408,7 @@ void DexedAudioProcessor::resolvAppDir() {
 #if JUCE_MAC || JUCE_IOS
     dexedAppDir = File("~/Library/Application Support/DigitalSuburban/Dexed");
 #elif JUCE_WINDOWS
-    dexedAppDir = File(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed"));
+    dexedAppDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed"));
 #else
     //    char xdgHomeDefault[] = ;
     char *xdgHome = getenv("XDG_DATA_HOME");

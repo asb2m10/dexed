@@ -20,7 +20,6 @@
 #ifndef PLUGINEDITOR_H_INCLUDED
 #define PLUGINEDITOR_H_INCLUDED
 
-
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
@@ -36,12 +35,12 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor,
         public ComboBoxListener,
         public Timer {
     PopupMenu cartPopup;
-    PopupMenu sendPopup;
             
     MidiKeyboardComponent midiKeyboard;
     OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;
+            
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
@@ -58,7 +57,6 @@ public:
     void saveCart();
     void initProgram();
     void storeProgram();
-    void sendToDx7();
     void cartShow();
     void parmShow();
 };

@@ -13,25 +13,7 @@ the original machine.
 Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa 
 in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
 
-Features
---------
-* Multi platform (OS X, Windows or Linux) and multi format (VST, AU); by using JUCE
-* The sound engine [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) is closely modeled on the original DX7 characteristics
-* 144 DAW automatable DX7 parameters available from one single panel
-* Fully supports DX7 input and output Sysex messages; including controller change. This means that you can use this with a native DX7/TX7 as a patch editor and sysex manager
-* Each operator have a realtime VU meter to know which one is active
-* Can load/save any DX7/TX7 sysex programs. It is also possible to save a single program into a different sysex file.
-
-Binary downloads
-----------------
-Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
-in normal operation it shouldn't crash and the VST state saving works. If you don't see the 
-new version here but you see it in the change log, it's because this version is in development 
-(current sprint). Only officials (tested) builds are listed here.
-
-* Version 0.8.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.8.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.8.0-osx.vst.zip)
-* Version 0.7.0 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.7.0-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.7.0-osx.vst.zip)
-* Version 0.6.1 [vst win32/x64](http://le-son666.com/software/dexed/dexed-0.6.1-win.zip) - [vst os x](http://le-son666.com/software/dexed/dexed-0.6.1-osx.vst.zip)
+[Dexed User Website](http://asb2m10.github.io/dexed)
 
 Changelog
 ---------
@@ -69,71 +51,6 @@ Changelog
 * Identify the parameter knob/switch by simply moving the mouse over it
 * Knobs now works with vertical mouse drags
 * User DX7 zip cartridges
-
-DX7 cartridges
---------------
-You can now put user cartridges in the "Cartridges" directory once Dexed is started. You will be able to browse them once you use the [CART] button. To get the exact location of this directory, simply click on [FILE MGR], it should open Finder or File Explorer in the "Cartridges" directory.
-
-NOTE: Dexed_Cart.zip is no longer used.
-
-Engine Type
------------
-Dexed can be configured to try to use the original math limitation of a DX synthesizer. This does not
-only apply to the DAC, it also involves the bit resolution of the sine waves and the way that the 
-amplitude is applied to each operator. Since all of this is experimental, multiple engines will be 
-available to be able to compare them easily.
-
-Dexed comes with 3 engine types :
-* Modern : this is the original 24-bit music-synthesizer-for-android implementation.
-* Mark I : It is the music-synthesizer-for-android implementation reduced to 8-bit. It is used to be able to see the difference between the OPL series that also uses 8-bit but with sums of logs to avoid multiplications. It will be upgraded to 10-bit/12-bit later.
-* OPL Series : this is an experimental implementation of the [reversed engineered OPL family chips](http://sourceforge.net/projects/peepeeplayer). 8-bit. Keep in mind that the envelopes stills needs tuning.
-
-Using as a DX7 editor
----------------------
-You can use this plugin to edit your real DX7 patchs. Since midi sysex send/receive are quirky for the 
-majority of VST hosts, any sysex messages (editor messages) must be send or received with the external Dexed
-midi interface. This is configurable in the "PARM" panel. By setting a DX7 in / DX7 out midi interface, 
-Dexed will listen to specific program/cartridge changes from your DX7 and send controller/program/cartridge
-you edit.
-
-### Prerequisite
-* Before you use this interface, your DX7 must be configured to send or receive sysex messages. Do this by hitting [FUNCTION] and [8] button 
-* Check the midi channel. By reading some of DX7 literature, most DX7 are supposed to support only 1 channel. Unless you are running a cluster of DX7, you should keep this to 1.
-* Press [8] again and you should see: "SYS INFO AVAIL" or "SYS INFO UNAVAIL". Keep it to "SYS INFO AVAIL" to be able to receive sysex messages. This step is not required on a TX7.
-* You need to remove MEMORY PROTECT on the internal or cartridge memory to be able to receive a Dexed 32 voice bulk dump. This is done by using the [MEMORY PROTECT] button and then by pushing [NO].
-
-### To send to your DX7
-* If the midi out port is configured, any parameter change will be sent to your DX7.
-* If the midi out port is configured, you should see the [SEND] button, if not this button won't be available.
-* You can use this [SEND] button on Dexed to send program or cartridge changes to your DX7. Be sure you have set [MEMORY PROTECT] is set to NO so the cartridge (internal or external one) on the DX7 can be overridden.
-
-### To receive from your DX7
-* The midi in port must be configured.
-* Receive a program by simply using [MEMORY SELECT] then the program you want to transmit ([1] to [32]).
-* Receive a cartridge by pressing [FUNCTION] then 3 times on [8] you should see " MIDI TRANSMIT ? ". If you hit yes, Dexed should receive the complete cartridge.
-
-### Troubleshooting
-* If you play on your DX7 keyboard, the |DX7 In| light should be flashing. Use this to test the midi in communication.
-* If the data sent is corrupted (wrong checksum, DX7 crash), it might be the midi interface implementation. Default Windows USB midi driver are known to send corrupt sysex data. If it is the case, use a third party device (like the midiman uno) that have his own USB driver.
-* If you are unable to open the interface (error message after the using the [PARM] dialog), it might be because the midi driver doesn't support multiple clients (common on Windows). Be sure that there are no other applications that are using the same midi interface. 
-
-Randomized programs
--------------------
-Dexed doesn't check the sysex checksum so you can load any type of files. If the checksum doesn't 
-match, it will tell you but load it anyway. This feature act as a kind of a randomization 
-for DX programs.
-
-Warning: loading corrupt/random data can crash the plugin and ultimatly your DAW. I'm doing my
-best to filter out values that can crash the DX engine; but I keep it to the minimum to get the
-digital circuit bending feel.
-
-Saving those corrupt/random sysex data will regenerate a 32 bulk program sysex dump with a 
-valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks your DX7 keyboard.
-
-FAQ (possibly)
---------------
-* Some programs can generate distortion : This is because the voice summing still needs some tuning. You can simply lower the volume on those programs.
-* Some sysex files seems to be corrupted : Even if the sysex checksum doesn't match, Dexed will try to load it (this is a kind of randomize feature). Right now Dexed supports only original DX7 sysex, other DX family sysex (like the DX21) is considered as random data.
 
 Credits & thanks
 ----------------

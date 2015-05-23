@@ -71,9 +71,7 @@ public:
 };
 
 class ProgramSelector : public ComboBox {
-    bool isInInit;
 public:
-    void setInit();
     virtual void paint(Graphics &g) override;
 };
 

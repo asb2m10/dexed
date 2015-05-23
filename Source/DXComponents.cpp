@@ -402,14 +402,5 @@ void ComboBoxImage::setImage(Image image, int pos[]) {
         itemPos[i] = pos[i];
 }
 
-void ProgramSelector::setInit() {
-    isInInit = true;
-}
-
 void ProgramSelector::paint(Graphics &g) {
-    g.setColour(Colours::white);
-    g.setFont(Font(15.00f, Font::plain));
-    //g.drawText (, getLocalBounds(),
-      //          Justification::centred, true);   // draw some placeholder text
-
 }
