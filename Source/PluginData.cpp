@@ -25,6 +25,9 @@
 #include "PluginData.h"
 #include "Dexed.h"
 
+#include <fstream>
+using namespace ::std;
+
 uint8_t sysexChecksum(const char *sysex, int size) {
     int sum = 0;
     int i;
@@ -221,7 +224,6 @@ void DexedAudioProcessor::unpackProgram(int idx) {
     unpackProgramFromSysex(data, sysex, idx);
 }
 
-
 int DexedAudioProcessor::importSysex(const char *imported) {
     memcpy(sysex, imported + 6, 4096);
     
@@ -314,6 +316,24 @@ void DexedAudioProcessor::sendCurrentSysexCartridge() {
         sysexComm.send(MidiMessage(raw, 4104));
     }
 }
+
+void DexedAudioProcessor::sendSysexCartridge(File cart) {
+    if ( ! sysexComm.isOutputActive() )
+        return;
+    String f = cart.getFullPathName();
+    uint8_t syx_data[4104];
+    ifstream fp_in(f.toRawUTF8(), ios::binary);
+    if (fp_in.fail()) {
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          "Error",
+                                          "Unable to open: " + f);
+        return;
+    }
+    fp_in.read((char *)syx_data, 4104);
+    fp_in.close();
+    sysexComm.send(MidiMessage(syx_data, 4104));
+}
+
 
 bool DexedAudioProcessor::hasClipboardContent() {
     return clipboardContent != -1;
@@ -408,14 +428,14 @@ void DexedAudioProcessor::resolvAppDir() {
 #if JUCE_MAC || JUCE_IOS
     dexedAppDir = File("~/Library/Application Support/DigitalSuburban/Dexed");
 #elif JUCE_WINDOWS
-    dexedAppDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed"));
+    dexedAppDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed");
 #else
-    //    char xdgHomeDefault[] = ;
     char *xdgHome = getenv("XDG_DATA_HOME");
     if ( xdgHome == nullptr ) {
-        xdgHome = "~/.local/share";
+        dexedAppDir = File("~/.local/share").getChildFile("DigitalSuburban").getChildFile("Dexed");
+    } else {
+        dexedAppDir = File(xdgHome).getChildFile("DigitalSuburban").getChildFile("Dexed");
     }
-    dexedAppDir = File(xdgHome).getChildFile("DigitalSuburban").getChildFile("Dexed");
 #endif
     
     if ( ! dexedAppDir.exists() ) {
@@ -425,7 +445,7 @@ void DexedAudioProcessor::resolvAppDir() {
         // This code will be removed in 0.9.0
         File cfgFile = dexedAppDir.getParentDirectory().getChildFile("Dexed.xml");
         if ( cfgFile.exists() )
-            cfgFile.copyFileTo(dexedAppDir);
+            cfgFile.moveFileTo(dexedAppDir.getChildFile("Dexed.xml"));
         // *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
         // ==========================================================================
     }
@@ -449,142 +469,4 @@ void DexedAudioProcessor::resolvAppDir() {
             }
         }
     }
-}
-
-
-
-
-#define IDX_USER 1000
-
-CartridgeManager::CartridgeManager() {
-    MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
-    builtin_pgm = new ZipFile(mis, true);
-    builtin_pgm->sortEntriesByFilename();
-
-    for(int i=0;i<builtin_pgm->getNumEntries();i++) {
-        const ZipFile::ZipEntry *e = builtin_pgm->getEntry(i);
-        cartNames.add(e->filename.dropLastCharacters(4));
-    }
-
-    userCartFile = File(File::getSpecialLocation(File::currentApplicationFile).getParentDirectory().getFullPathName() + File::separator + "Dexed_cart.zip");
-}
-
-CartridgeManager::~CartridgeManager() {
-}
-
-void CartridgeManager::getSysex(int idx, char *dest) {
-    if ( idx < IDX_USER ) {
-        InputStream *is = builtin_pgm->createStreamForEntry(idx);
-        if ( is == NULL ) {
-            TRACE("ENTRY IN ZIP NOT FOUND");
-            return;
-        }
-        is->read(dest, 4104);
-        delete is;
-        return;
-    }
-    
-    idx -= IDX_USER;
-    
-    if ( ! userCartFile.exists() )
-        return;
-
-    ZipFile userZip(userCartFile);
-    userZip.sortEntriesByFilename();
-    if ( idx < userZip.getNumEntries() ) {
-        InputStream *is = userZip.createStreamForEntry(idx);
-        if ( is != NULL ) {
-            is->read(dest, 4104);
-            delete is;
-        } else {
-            TRACE("USER ENTRY %d NULL ?", idx);
-        }
-    }
-}
-
-void CartridgeManager::rebuildMenu() {
-    TRACE("rebuild menu zip");
-    
-    completeCarts.clear();
-    
-    completeCarts.addItem(1, cartNames[0]);
-    PopupMenu synprez;
-    for(int i=1;i<cartNames.size();i++) {
-        synprez.addItem(i+1, cartNames[i]);
-    }
-    completeCarts.addSubMenu("SynprezFM", synprez, true);
-
-    if ( userCartFile.exists() ) {
-        zipIdx = 0;
-        ZipFile userZip(userCartFile);
-        userZip.sortEntriesByFilename();
-    
-        PopupMenu *user = fillContent("", &userZip);
-        if ( user != NULL ) {
-            completeCarts.addSubMenu("User", *user);
-            delete user;
-        }
-        lastModifiedUserCartFile = userCartFile.getLastModificationTime();
-    } else {
-        lastModifiedUserCartFile = Time(0);
-    }
-}
-
-PopupMenu *CartridgeManager::getCarts() {
-    Time t = userCartFile.getLastModificationTime();
-
-    if ( t != lastModifiedUserCartFile || completeCarts.getNumItems() == 0 ) {
-        rebuildMenu();
-    }
-    return &completeCarts;
-}
-
-PopupMenu *CartridgeManager::fillContent(String root, ZipFile *userZip) {
-    PopupMenu *current = NULL;
-    
-    while(zipIdx < userZip->getNumEntries() ) {
-        String path = userZip->getEntry(zipIdx)->filename;
-
-        if ( path.endsWith(".DS_Store") || path.startsWith("__MACOSX") ) {
-            zipIdx++;
-            continue;
-        }
-        
-        if ( ! path.endsWithIgnoreCase(".syx") ) {
-            zipIdx++;
-            continue;
-        }
-        
-        if ( ( ! path.startsWith(root) ) && root.length() != 0 )
-            return current;
-        
-        String tail = path.substring(root.length());
-        if ( tail.containsChar('/') ) {
-            String target = tail.upToFirstOccurrenceOf("/", true, false);
-            PopupMenu *child = fillContent(root + target, userZip);
-            
-            if ( child == NULL )
-                continue;
-            
-            if ( current == NULL )
-                current = new PopupMenu();
-
-            current->addSubMenu(tail.upToFirstOccurrenceOf("/", false, false), *child);
-            delete child;
-        } else {
-            zipIdx++;
-            
-            if ( tail.length() == 0 )
-                continue;
-            
-            if ( current == NULL )
-                current = new PopupMenu();
-
-            // remove the .syx extension
-            tail = tail.substring(0, tail.length()-4);
-
-            current->addItem(zipIdx + IDX_USER, tail);
-        }
-    }
-    return current;
 }

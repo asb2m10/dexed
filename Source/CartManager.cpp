@@ -38,8 +38,7 @@ public:
     };
 };
 
-CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("CartManager", false),
-        timeSliceThread("Cartridge Directory Scanner") {
+CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("CartManager", false) {
             
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;            
@@ -55,9 +54,10 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("Ca
     
     // -------------------------
     syxFileFilter = new SyxFileFilter();
-    cartBrowserList = new DirectoryContentsList(syxFileFilter, timeSliceThread);
+    timeSliceThread = new TimeSliceThread("Cartridge Directory Scanner");
+    timeSliceThread->startThread();
+    cartBrowserList = new DirectoryContentsList(syxFileFilter, *timeSliceThread);
     cartBrowserList->setDirectory(cartDir, true, true);
-    timeSliceThread.startThread();
     cartBrowser = new FileTreeComponent(*cartBrowserList);
     addAndMakeVisible(cartBrowser);
     cartBrowser->setBounds(23, 18, 590, 384);
@@ -91,7 +91,10 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("Ca
 }
 
 CartManager::~CartManager() {
-    timeSliceThread.stopThread(500);
+    timeSliceThread->stopThread(500);
+    delete cartBrowser;
+    delete cartBrowserList;
+    delete timeSliceThread;
 }
 
 void CartManager::paint(Graphics &g) {
@@ -122,6 +125,7 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
 
 void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     if ( buttonThatWasClicked == closeButton ) {
+        mainWindow->startTimer(100);
         setVisible(false);
         return;
     }
@@ -140,6 +144,22 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     
     if ( buttonThatWasClicked == fileMgrButton ) {
         cartDir.revealToUser();
+        return;
+    }
+
+    if ( buttonThatWasClicked == getDXPgmButton ) {
+        if ( mainWindow->processor->sysexComm.isOutputActive() ) {
+            unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x00, 0xF7 };
+            mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
+        }
+        return;
+    }
+    
+    if ( buttonThatWasClicked == getDXCartButton ) {
+        if ( mainWindow->processor->sysexComm.isOutputActive() ) {
+            unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x01, 0xF7 };
+            mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
+        }
         return;
     }
 }
@@ -167,9 +187,10 @@ void CartManager::fileClicked(const File& file, const MouseEvent& e) {
             file.revealToUser();
             break;
         case 1010 :
+            mainWindow->processor->sendSysexCartridge(file);
             break;
         case 1020:
-                cartBrowser->refresh();
+            cartBrowserList->refresh();
             break;
         }
         return;
@@ -227,6 +248,19 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
 
     switch(menu.show())  {
         case 1000:
+            char unpackPgm[161];
+            
+            if ( source == activeCart ) {
+                unpackProgramFromSysex(unpackPgm, mainWindow->processor->sysex, pos);
+            } else {
+                char *sysex = source->getCurrentCart();
+                if ( sysex == nullptr )
+                    return;
+                unpackProgramFromSysex(unpackPgm, sysex, pos);
+            }
+            
+            if ( mainWindow->processor->sysexComm.isOutputActive() )
+                mainWindow->processor->sysexComm.send(MidiMessage(unpackPgm, 161));
             break;
             
         case 1010:
@@ -234,6 +268,10 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
             break;
     }
 
+}
+
+void CartManager::initialFocus() {
+    cartBrowser->grabKeyboardFocus();
 }
 
 // unused stuff from FileBrowserListener

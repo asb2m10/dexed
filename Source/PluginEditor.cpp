@@ -131,9 +131,11 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 }
 
 void DexedAudioProcessorEditor::cartShow() {
+    stopTimer();    
     cartManager.resetActiveSysex();
     cartManager.setBounds(4, 2, 859, 576);
     cartManager.setVisible(true);
+    cartManager.initialFocus();
 }
 
 
@@ -294,7 +296,7 @@ void DexedAudioProcessorEditor::storeProgram() {
 
         if ( externalFile == NULL ) {
             StringArray saveAction;
-            saveAction.add("Store program to DAW plugin state");
+            saveAction.add("Store program to DAW plugin song state");
             saveAction.add("Store program and create a new copy of the .syx cartridge");
             if ( activeCartridgeFound )
                 saveAction.add("Store program and overwrite current .syx cartridge");
@@ -367,10 +369,10 @@ void DexedAudioProcessorEditor::storeProgram() {
                 }
             }
         }
-
         break;
     }
 
-    if ( externalFile != NULL ) 
+    if ( externalFile != NULL )
         delete externalFile;
+    cartManager.resetActiveSysex();
 }

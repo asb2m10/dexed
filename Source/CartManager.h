@@ -34,15 +34,16 @@ class CartManager  : public TopLevelWindow, public ButtonListener, public DragAn
     ScopedPointer<TextButton> fileMgrButton;
     ScopedPointer<TextButton> getDXPgmButton;
     ScopedPointer<TextButton> getDXCartButton;
-
     
     ScopedPointer<ProgramListBox> activeCart;
     ScopedPointer<ProgramListBox> browserCart;
     
-    ScopedPointer<FileTreeComponent> cartBrowser;
     ScopedPointer<FileFilter> syxFileFilter;
-    TimeSliceThread timeSliceThread;
-    ScopedPointer<DirectoryContentsList> cartBrowserList;
+        
+    FileTreeComponent *cartBrowser;
+    TimeSliceThread *timeSliceThread;
+    DirectoryContentsList *cartBrowserList;
+        
     File cartDir;
     
     DexedAudioProcessorEditor *mainWindow;
@@ -64,6 +65,8 @@ public:
         
     virtual void programSelected(ProgramListBox *source, int pos) override;
     virtual void programRightClicked(ProgramListBox *source, int pos) override;
+        
+    void initialFocus();
 };
 
 

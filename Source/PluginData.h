@@ -67,24 +67,4 @@ void exportSysexPgm(char *dest, char *src, char sysexChl);
 void packProgram(uint8_t *dest, uint8_t *src, int idx, String name);
 void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx);
 
-class CartridgeManager {
-    ScopedPointer<ZipFile> builtin_pgm;
-    Time lastModifiedUserCartFile;
-    File userCartFile;
-    
-	StringArray cartNames;
-    
-    int zipIdx;
-    PopupMenu *fillContent(String root, ZipFile *userZip);
-    PopupMenu completeCarts;
-    void rebuildMenu();
-    
-public:
-    PopupMenu *getCarts();
-
-	CartridgeManager();
-    ~CartridgeManager();
-	void getSysex(int idx, char *data);
-};
-
 #endif  // PLUGINDATA_H_INCLUDED

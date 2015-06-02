@@ -40,6 +40,9 @@ class ProgramListBox : public Component {
     int programPosition(const MouseEvent &event);
     int selectedPgm;
     
+    // TODO: this should be a pointer
+    char cartContent[4104];
+    
 public:
     StringArray programNames;    
     
@@ -51,6 +54,7 @@ public:
     void mouseDoubleClick(const MouseEvent &event);
     void mouseDown(const MouseEvent &event);
     void setSelected(int idx);
+    char* getCurrentCart();
 };
 
 

@@ -80,6 +80,7 @@ void ProgramListBox::resized() {
 
 void ProgramListBox::setCartridge(char *sysex) {
     extractProgramNames((const char *)sysex, programNames);
+    memcpy(cartContent, sysex, 4104);
     hasContent = true;
     repaint();
 }
@@ -116,4 +117,10 @@ void ProgramListBox::mouseDown(const MouseEvent &event) {
 
 void ProgramListBox::setSelected(int idx) {
     selectedPgm = idx;
+}
+
+char* ProgramListBox::getCurrentCart() {
+    if ( ! hasContent )
+        return nullptr;
+    return cartContent;
 }

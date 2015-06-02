@@ -176,6 +176,7 @@ public :
     void pasteEnvFromClipboard(int destOp);
     void sendCurrentSysexProgram();
     void sendCurrentSysexCartridge();
+    void sendSysexCartridge(File cart);
     bool hasClipboardContent();
     
     //==============================================================================
