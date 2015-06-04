@@ -65,6 +65,7 @@ public:
         
     virtual void programSelected(ProgramListBox *source, int pos) override;
     virtual void programRightClicked(ProgramListBox *source, int pos) override;
+    virtual void programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) override;
         
     void initialFocus();
 };

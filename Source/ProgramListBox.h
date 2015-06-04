@@ -29,22 +29,26 @@ public:
     virtual ~ProgramListBoxListener() {}
     virtual void programSelected(ProgramListBox *source, int pos) = 0;
     virtual void programRightClicked(ProgramListBox *source, int pos) = 0;
+    virtual void programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) = 0;
 };
 
-class ProgramListBox : public Component {
+class ProgramListBox : public Component, public DragAndDropTarget {
     ProgramListBoxListener *listener;
     bool hasContent;
     bool showPgmNumber;
     int cols, rows;
     int cellWidth, cellHeight;
-    int programPosition(const MouseEvent &event);
+    int programPosition(int x, int y);
     int selectedPgm;
     
     // TODO: this should be a pointer
     char cartContent[4104];
-    
+
+    int dragCandidate;
 public:
     StringArray programNames;    
+    
+    bool readOnly;
     
     ProgramListBox(const String name, int numCols);
     void addListener(ProgramListBoxListener *listener);
@@ -53,8 +57,15 @@ public:
     void resized();
     void mouseDoubleClick(const MouseEvent &event);
     void mouseDown(const MouseEvent &event);
+    void mouseDrag(const MouseEvent &event);
     void setSelected(int idx);
     char* getCurrentCart();
+    
+    bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
+    void itemDragEnter(const SourceDetails &dragSourceDetails) override;
+    void itemDragMove(const SourceDetails &dragSourceDetails) override;
+    void itemDragExit(const SourceDetails &dragSourceDetails) override;
+    void itemDropped(const SourceDetails& dragSourceDetails) override;
 };
 
 

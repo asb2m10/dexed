@@ -458,7 +458,7 @@ void OperatorEditor::updateDisplay() {
     if (opMode->getToggleState() == 0) {
         if ( freq == 0 )
             freq = 0.5;
-        txtFreq << "f = " << (freq + ((freq*2) * (fine/100)));
+        txtFreq << "f = " << (freq + (freq * (fine/100)));
     } else {
         freq = pow(10,((int)freq)&3);
         freq = freq + ((freq*10) * (fine/100));

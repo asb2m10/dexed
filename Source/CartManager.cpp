@@ -211,6 +211,9 @@ void CartManager::resetActiveSysex() {
 
 void CartManager::selectionChanged() {
     File file = cartBrowser->getSelectedFile();
+
+    if ( ! file.exists() )
+        return;
     
     if ( file.isDirectory() )
         return;
@@ -233,6 +236,9 @@ void CartManager::selectionChanged() {
         message << ((int)checksum) << " != " << ((int)syx_data[4102]);
         
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Warning", message);
+        browserCart->readOnly = true;
+    } else {
+        browserCart->readOnly = false;
     }
     browserCart->setSelected(-1);
     browserCart->setCartridge(browserSysex);
@@ -268,6 +274,38 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
             break;
     }
 
+}
+
+void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) {
+    if ( destListBox == activeCart ) {
+        char *sysex = mainWindow->processor->sysex;
+        memcpy(sysex+(dest*128), packedPgm, 128);
+        mainWindow->updateUI();
+    } else {
+        File file = cartBrowser->getSelectedFile();
+        
+        if ( ! file.exists() )
+            return;
+        
+        if ( file.isDirectory() )
+            return;
+        if ( file.getSize() > 5000 )
+            return;
+        
+        MemoryBlock block;
+        file.loadFileAsData(block);
+        
+        if ( block.getSize() < 4104 )
+            return;
+        
+        char *sysex = ((char *) block.getData()) + 6;
+        memcpy(sysex+(dest*128), packedPgm, 128);
+        
+        char exported[4104];
+        exportSysexCart(exported, sysex, 0);
+        file.replaceWithData(exported, 4104);
+        browserCart->setCartridge(sysex);
+    }
 }
 
 void CartManager::initialFocus() {

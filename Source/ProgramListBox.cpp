@@ -28,6 +28,8 @@ ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name)
     rows = 32 / numCols;
     selectedPgm = -1;
     hasContent = false;
+    dragCandidate = -1;
+    readOnly = false;
 }
 
 void ProgramListBox::paint(Graphics &g) {
@@ -44,7 +46,6 @@ void ProgramListBox::paint(Graphics &g) {
     g.setColour(Colour(75,73,73));
     g.drawLine(0,getHeight(),getWidth(),getHeight(), 2);
 
-
     const float dashLength[] = { 4, 4 };
 
     g.setColour(Colour(83,76,69));
@@ -59,14 +60,20 @@ void ProgramListBox::paint(Graphics &g) {
     
     for(int i=0;i<cols;i++) {
         for(int j=0;j<rows;j++) {
-            if ( selectedPgm == pgm ) {
+            if ( selectedPgm == pgm && dragCandidate == -1 ) {
                 g.setColour(DXLookNFeel::fillColour);
                 g.fillRoundedRectangle(cellWidth*i+2, cellHeight*j + 2, cellWidth - 4, cellHeight - 4, 0);
             }
 
             if ( hasContent == true ) {
-                g.setColour(Colours::white);
-                g.drawFittedText(programNames[pgm], cellWidth * i , cellHeight * j, cellWidth, cellHeight, Justification::centred, true);
+                if ( dragCandidate != pgm ) {
+                    g.setColour(Colours::white);
+                    g.drawFittedText(programNames[pgm], cellWidth * i , cellHeight * j, cellWidth, cellHeight, Justification::centred, true);
+                } else {
+                    g.setColour(DXLookNFeel::fillColour);
+                    g.fillRoundedRectangle(cellWidth*i+2, cellHeight*j + 2, cellWidth - 4, cellHeight - 4, 0);
+                }
+                
             }
             pgm++;
         }
@@ -89,8 +96,8 @@ void ProgramListBox::addListener(ProgramListBoxListener *listener) {
     this->listener = listener;
 }
 
-int ProgramListBox::programPosition(const MouseEvent &event) {
-    return (event.getMouseDownY() / cellHeight) + ((event.getMouseDownX() / cellWidth) * rows);
+int ProgramListBox::programPosition(int x, int y) {
+    return (y / cellHeight) + ((x / cellWidth) * rows);
 }
 
 void ProgramListBox::mouseDoubleClick(const MouseEvent &event) {
@@ -99,7 +106,7 @@ void ProgramListBox::mouseDoubleClick(const MouseEvent &event) {
     if ( ! event.mods.isLeftButtonDown() )
         return;
     
-    int pos = programPosition(event);
+    int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
     if ( listener != nullptr )
         listener->programSelected(this, pos);
 }
@@ -110,9 +117,31 @@ void ProgramListBox::mouseDown(const MouseEvent &event) {
     if ( ! event.mods.isRightButtonDown() )
         return;
     
-    int pos = programPosition(event);
+    int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
     if ( listener != nullptr )
         listener->programRightClicked(this, pos);
+}
+
+void ProgramListBox::mouseDrag(const MouseEvent &event) {
+    if ( ! hasContent )
+        return;
+    if ( dragCandidate != -1 )
+        return;
+    if ( event.getDistanceFromDragStart() < 7 )
+        return;
+    
+    if (DragAndDropContainer* const dragContainer = DragAndDropContainer::findParentDragContainerFor(this)) {
+        Image snapshot (Image::ARGB, cellWidth, cellHeight, true);
+        int position = programPosition(event.getMouseDownX(), event.getMouseDownY());
+        Graphics g(snapshot);
+        g.setColour(DXLookNFeel::lightBackground);
+        g.fillRect(0,0,cellWidth, cellHeight);
+        g.setColour(Colours::white);
+        g.drawFittedText(programNames[position], 0, 0, cellWidth, cellHeight, Justification::centred, true);
+        void *src = cartContent + (position*128);
+        var description = var(src, 128);
+        dragContainer->startDragging(description, this, snapshot, false);
+    }
 }
 
 void ProgramListBox::setSelected(int idx) {
@@ -124,3 +153,44 @@ char* ProgramListBox::getCurrentCart() {
         return nullptr;
     return cartContent;
 }
+
+bool ProgramListBox::isInterestedInDragSource (const SourceDetails& dragSourceDetail)  {
+    if ( readOnly )
+        return false;
+    if ( ! hasContent )
+        return false;
+    
+    Component *comp = dragSourceDetail.sourceComponent.get();
+    if ( comp == nullptr )
+        return false;
+    if ( dynamic_cast<ProgramListBox*>(comp) == nullptr )
+        return false;
+    
+    return true;
+}
+
+void ProgramListBox::itemDropped(const SourceDetails& dragSourceDetails) {
+    dragCandidate = programPosition(dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.y);
+    
+    MemoryBlock* block = dragSourceDetails.description.getBinaryData();
+    if ( listener != nullptr )
+        listener->programDragged(this, dragCandidate, (char *)block->getData());
+    dragCandidate = -1;
+    repaint();
+}
+
+void ProgramListBox::itemDragEnter(const SourceDetails &dragSourceDetails) {
+    dragCandidate = programPosition(dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.y);
+    repaint();
+}
+
+void ProgramListBox::itemDragMove(const SourceDetails &dragSourceDetails) {
+    dragCandidate = programPosition(dragSourceDetails.localPosition.x, dragSourceDetails.localPosition.y);
+    repaint();
+}
+
+void ProgramListBox::itemDragExit(const SourceDetails &dragSourceDetails) {
+    dragCandidate = -1;
+    repaint();
+}
+
