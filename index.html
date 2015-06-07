@@ -18,12 +18,12 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/asb2m10/dexed">View on GitHub</a>
 
-          <h1 id="project_title">Dexed</h1>
-          <h2 id="project_tagline">FM multi plaform/multi format plugin</h2>
+          <h1 id="project_title">dexed</h1>
+          <h2 id="project_tagline">FM multi plaform/multi format plugin, version 0.8.2</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/asb2m10/dexed/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/asb2m10/dexed/tarball/master">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="http://le-son666.com/software/dexed/dexed-0.8.2-win.zip">Download Window plugin</a>
+              <a class="tar_download_link" href="http://le-son666.com/software/dexed/dexed-0.8.2-osx.zip">Download OS X plugin</a>
             </section>
         </header>
     </div>
@@ -32,25 +32,27 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
-<a id="dexed---fm-plugin-synth" class="anchor" href="#dexed---fm-plugin-synth" aria-hidden="true"><span class="octicon octicon-link"></span></a>Dexed - FM Plugin Synth</h1>
+<a id="dexed---fm-plugin-synth" class="anchor" href="#dexed---fm-plugin-synth" aria-hidden="true"><span class="octicon octicon-link"></span></a>dexed - FM Plugin Synth</h1>
 
-<p>Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
-Under the hood it uses <a href="https://code.google.com/p/music-synthesizer-for-android">music-synthesizer-for-android</a> 
-for the synth engine and <a href="http://wwww.juce.com">JUCE</a> as a plugin wrapper.</p>
+<p>Dexed is a multi platform, multi format plugin synth that is closely modeled on the <a href="http://en.wikipedia.org/wiki/Yamaha_DX7">Yamaha DX7</a>. Dexed is also a midi cartridge librarian/manager for the DX7.</p>
+<p>Dexed requires a AU/VST host (like <a href="http://www.hermannseib.com/english/savihost.htm">Savihost</a> or <a href="http://www.reaper.fm/">Reaper</a>) in order to run the plugin.<br>
+Linux users can use the LV2 plugin format with this <a href="https://aur.archlinux.org/packages/dexed-lv2-bin/">AUR Arch build</a></p>
 
-<p>The goal of this project is to be a tool/companion for the original DX7. Sound engine 
-with 'float' value parameters, different waveform à la TX81z would be great but anything that 
-goes beyond the DX7 should and will be a fork of this project. This is to keep the compatibility with
-the original machine.</p>
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/wSs1-020nNY" frameborder="0" allowfullscreen></iframe></p>
 
-<p>Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa 
-in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.</p>
+<p><a href="https://sites.google.com/site/kvrosc/osc-74-dexed">Examples</a> from <a href="https://sites.google.com/site/kvrosc/">One Synth Challenge</a>:<br>
+<p align="center"><iframe src="https://archive.org/embed/OSC74Dexxed" width="500" height="40" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe></p>
+
+<iframe width="100%" height="166" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/200575569&amp;color=ff5500&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false"></iframe>
+</p>
+
+<p>Dexed is free software and is licensed on the GPL v3.</p>
 
 <h2>
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
-<li>Multi platform (OS X, Windows or Linux) and multi format (VST, <em>soon</em> AU and others that I don't use); by using JUCE</li>
+<li>Multi platform (OS X, Windows or Linux) and multi format (VST, AU, LV2)</li>
 <li>The sound engine <a href="https://code.google.com/p/music-synthesizer-for-android">music-synthesizer-for-android</a> is closely modeled on the original DX7 characteristics</li>
 <li>144 DAW automatable DX7 parameters available from one single panel</li>
 <li>Fully supports DX7 input and output Sysex messages; including controller change. This means that you can use this with a native DX7/TX7 as a patch editor and sysex manager</li>
@@ -59,83 +61,18 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 </ul>
 
 <h2>
-<a id="binary-downloads" class="anchor" href="#binary-downloads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Binary downloads</h2>
+<a id="cartridge-manager" class="anchor" href="#cartridge-manager" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cartridge Manager</h2>
 
-<p>Dexed is not a finished product but it is stable enough to be used in a DAW environment: 
-in normal operation it shouldn't crash and the VST state saving works. If you don't see the 
-new version here but you see it in the change log, it's because this version is in development 
-(current sprint). Only officials (tested) builds are listed here.</p>
-
-<ul>
-<li>Version 0.8.0 <a href="http://le-son666.com/software/dexed/dexed-0.8.0-win.zip">vst win32/x64</a> - <a href="http://le-son666.com/software/dexed/dexed-0.8.0-osx.vst.zip">vst os x</a>
-</li>
-<li>Version 0.7.0 <a href="http://le-son666.com/software/dexed/dexed-0.7.0-win.zip">vst win32/x64</a> - <a href="http://le-son666.com/software/dexed/dexed-0.7.0-osx.vst.zip">vst os x</a>
-</li>
-<li>Version 0.6.1 <a href="http://le-son666.com/software/dexed/dexed-0.6.1-win.zip">vst win32/x64</a> - <a href="http://le-son666.com/software/dexed/dexed-0.6.1-osx.vst.zip">vst os x</a>
-</li>
-</ul>
-
-<h2>
-<a id="changelog" class="anchor" href="#changelog" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changelog</h2>
-
-<h4>
-<a id="version-080" class="anchor" href="#version-080" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version 0.8.0</h4>
-
-<ul>
-<li>New UI by <a href="http://bji.yukihotaru.com/">AZur Studio</a>
-</li>
-<li>You can now copy/paste the operator/envelopes values by using the right-click mouse button on the operator</li>
-<li>Fixed some of mono mode ticks on lower frequencies</li>
-<li>SynprezFM preset are now in a submenu</li>
-</ul>
-
-<h4>
-<a id="version-070" class="anchor" href="#version-070" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version 0.7.0</h4>
-
-<ul>
-<li>Preliminary Algo 4 &amp; 6 feedback support</li>
-<li>DX Engine 'Dirty DX' emulation, including one based on OPL chips</li>
-<li>DX Engine LFO amplitude. This still needs tuning.</li>
-<li>Monophonic mode</li>
-<li>Added the 'INIT' button to re-initialize a program</li>
-<li>Fixed stucked notes when programs where changed</li>
-<li>Fixed engine envelopes wrong timing if it was not 44100Khz</li>
-<li>Fixed only .syx are shown when we are using the Dexed_cart.zip cartridges collection</li>
-<li>The DX7 Sysex port are now only used for sysex messages. This is used to avoid any midi note feedback.</li>
-</ul>
-
-<h4>
-<a id="version-061" class="anchor" href="#version-061" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version 0.6.1</h4>
-
-<ul>
-<li>Mouse over + LFO type fix + pitch eg values</li>
-</ul>
-
-<h4>
-<a id="version-060" class="anchor" href="#version-060" aria-hidden="true"><span class="octicon octicon-link"></span></a>Version 0.6.0</h4>
-
-<ul>
-<li>Added external midi interface to send / receive sysex messages</li>
-<li>Fix Tracktion crash upon startup </li>
-<li>Middle C (transpose) now works</li>
-<li>Identify the parameter knob/switch by simply moving the mouse over it</li>
-<li>Knobs now works with vertical mouse drags</li>
-<li>User DX7 zip cartridges</li>
-</ul>
-
-<h2>
-<a id="user-dx7-zip-cartridges" class="anchor" href="#user-dx7-zip-cartridges" aria-hidden="true"><span class="octicon octicon-link"></span></a>User DX7 zip cartridges</h2>
-
-<p>It is possible to enjoy your DX7 sysex collection from one single zip file. Simply move your zipped
-sysex content to where you have installed Dexed (VST plugins dir). Then rename the zip file to 
-<code>Dexed_cart.zip</code>. You can modify this file anytime you want, Dexed will simply reparse it when the 
-file is changed. Directories in the zip file will be transformed into submenu when you hit the 
-[CART] button. Watch out; Windows hides the .zip extension by default !</p>
+<p>Any .syx file in the Cartridges directory will be available from the "CART" window. Find this directory by using the "CART" button then the "SHOW DIR" button. This directory is different depending on the platform you are using.</p>
+<p>You can drag and drop any DX7 program from what is loaded in dexed and/or what you have loaded in the cartridge browser.</p>
+<p>Double-clicking on a program will load the currently selected program in the plugin. It will not modifie the currently loaded sysex cartridge.</p>
+<p>Use the context (right-click) menu to send the program/cartridge the DX7 or open your OS file browser from the directory context.</p>
+<p>BlackWinny from kvraudio did a great DX7 compilation named <a href="http://black.winny.free.fr/MAO/Dexed_cart.zip">Dexed_cart.zip</a>. Simply unzip the content of this zipfile to your Cartridges directory.
 
 <h2>
 <a id="engine-type" class="anchor" href="#engine-type" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engine Type</h2>
 
-<p>Dexed can be configured to try to use the original math limitation of a DX synthesizer. This does not
+<p>Dexed can be configured to use some of the original math limitation of a DX synthesizer. This does not
 only apply to the DAC, it also involves the bit resolution of the sine waves and the way that the 
 amplitude is applied to each operator. Since all of this is experimental, multiple engines will be 
 available to be able to compare them easily.</p>
@@ -149,12 +86,26 @@ available to be able to compare them easily.</p>
 </ul>
 
 <h2>
+<a id="faq" class="anchor" href="#faq-possibly" aria-hidden="true"><span class="octicon octicon-link"></span></a>FAQ</h2>
+
+<ul>
+<li>Does Dexed uses the same midi velocity range (0-100) as the original DX7 ?<br>
+No, the envelopes are based on the DX7II that are using the standard midi velocity range (0-127).</li>
+<li>Some notes seems stucked and/or generate sound indefinitly, is this a bug ?<br>
+The envelopes on the orignal DX7 can be programmed to played indefinitly. If you want to avoid any stuck notes, but sure to set L4 = 0 and R4 = 99.</li>
+<li>How can I find help/contact the author ?<br>
+If you have a generic question, you can use the <a href="http://www.kvraudio.com/forum/viewtopic.php?f=1&t=413885">kvraudio dedicated thread for dexed</a>. If you have found a bug, use the <a href="https://github.com/asb2m10/dexed/issues">github page to open a new issue</a>. I'm asb2m10 on kvraudio.</li>
+<li>Programmer/dsp enthusiast: I was expecting floating based 0.0->1.0 DSP stuff but when I read dexed code, the only thing I see are bit shifts and adds. What is going on ?<br>
+msfa / Dexed is an integer based synth engine, it uses the <a href="http://en.wikipedia.org/wiki/Q_%28number_format%29">Q** format</a>.</li></ul>
+
+
+<h2>
 <a id="using-as-a-dx7-editor" class="anchor" href="#using-as-a-dx7-editor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using as a DX7 editor</h2>
 
 <p>You can use this plugin to edit your real DX7 patchs. Since midi sysex send/receive are quirky for the 
-majority of VST hosts, any sysex messages (editor messages) must be send or received with the external Dexed
+majority of VST hosts, any sysex messages (editor messages) must be send or received with the external dexed
 midi interface. This is configurable in the "PARM" panel. By setting a DX7 in / DX7 out midi interface, 
-Dexed will listen to specific program/cartridge changes from your DX7 and send controller/program/cartridge
+dexed will listen to specific program/cartridge changes from your DX7 and send controller/program/cartridge
 you edit.</p>
 
 <h3>
@@ -164,7 +115,7 @@ you edit.</p>
 <li>Before you use this interface, your DX7 must be configured to send or receive sysex messages. Do this by hitting [FUNCTION] and [8] button </li>
 <li>Check the midi channel. By reading some of DX7 literature, most DX7 are supposed to support only 1 channel. Unless you are running a cluster of DX7, you should keep this to 1.</li>
 <li>Press [8] again and you should see: "SYS INFO AVAIL" or "SYS INFO UNAVAIL". Keep it to "SYS INFO AVAIL" to be able to receive sysex messages. This step is not required on a TX7.</li>
-<li>You need to remove MEMORY PROTECT on the internal or cartridge memory to be able to receive a Dexed 32 voice bulk dump. This is done by using the [MEMORY PROTECT] button and then by pushing [NO].</li>
+<li>You need to remove MEMORY PROTECT on the internal or cartridge memory to be able to receive a dexed 32 voice bulk dump. This is done by using the [MEMORY PROTECT] button and then by pushing [NO].</li>
 </ul>
 
 <h3>
@@ -172,8 +123,7 @@ you edit.</p>
 
 <ul>
 <li>If the midi out port is configured, any parameter change will be sent to your DX7.</li>
-<li>If the midi out port is configured, you should see the [SEND] button, if not this button won't be available.</li>
-<li>You can use this [SEND] button on Dexed to send program or cartridge changes to your DX7. Be sure you have set [MEMORY PROTECT] is set to NO so the cartridge (internal or external one) on the DX7 can be overridden.</li>
+<li>You can send any program/cartridge in the "CART" window by using the context (right-click) menu.</li>
 </ul>
 
 <h3>
@@ -181,8 +131,9 @@ you edit.</p>
 
 <ul>
 <li>The midi in port must be configured.</li>
-<li>Receive a program by simply using [MEMORY SELECT] then the program you want to transmit ([1] to [32]).</li>
-<li>Receive a cartridge by pressing [FUNCTION] then 3 times on [8] you should see " MIDI TRANSMIT ? ". If you hit yes, Dexed should receive the complete cartridge.</li>
+<li>In the "CART" window, you can use the "GET DX7 PGM"/"GET DX7 CART" button. This sends the sysex command to dump program or catridge via midi.<br>
+<b>---- OR</b></li>
+<li>Receive a program by using [MEMORY SELECT] then the program you want to transmit ([1] to [32]). Receive a cartridge by pressing [FUNCTION] then 3 times on [8] you should see " MIDI TRANSMIT ? ". If you hit yes, dexed should receive the complete cartridge.</li>
 </ul>
 
 <h3>
@@ -192,28 +143,6 @@ you edit.</p>
 <li>If you play on your DX7 keyboard, the |DX7 In| light should be flashing. Use this to test the midi in communication.</li>
 <li>If the data sent is corrupted (wrong checksum, DX7 crash), it might be the midi interface implementation. Default Windows USB midi driver are known to send corrupt sysex data. If it is the case, use a third party device (like the midiman uno) that have his own USB driver.</li>
 <li>If you are unable to open the interface (error message after the using the [PARM] dialog), it might be because the midi driver doesn't support multiple clients (common on Windows). Be sure that there are no other applications that are using the same midi interface. </li>
-</ul>
-
-<h2>
-<a id="randomized-programs" class="anchor" href="#randomized-programs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Randomized programs</h2>
-
-<p>Dexed doesn't check the sysex checksum so you can load any type of files. If the checksum doesn't 
-match, it will tell you but load it anyway. This feature act as a kind of a randomization 
-for DX programs.</p>
-
-<p>Warning: loading corrupt/random data can crash the plugin and ultimatly your DAW. I'm doing my
-best to filter out values that can crash the DX engine; but I keep it to the minimum to get the
-digital circuit bending feel.</p>
-
-<p>Saving those corrupt/random sysex data will regenerate a 32 bulk program sysex dump with a 
-valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks your DX7 keyboard.</p>
-
-<h2>
-<a id="faq-possibly" class="anchor" href="#faq-possibly" aria-hidden="true"><span class="octicon octicon-link"></span></a>FAQ (possibly)</h2>
-
-<ul>
-<li>Some programs can generate distortion : This is because the voice summing still needs some tuning. You can simply lower the volume on those programs.</li>
-<li>Some sysex files seems to be corrupted : Even if the sysex checksum doesn't match, Dexed will try to load it (this is a kind of randomize feature). Right now Dexed supports only original DX7 sysex, other DX family sysex (like the DX21) is considered as random data.</li>
 </ul>
 
 <h2>
@@ -227,37 +156,6 @@ valid checksum for your DX7 keyboard. I'm in now way responsible if this breaks 
 <li>PPPlay : Great <a href="http://sourceforge.net/projects/peepeeplayer">OPL3</a> implementation, with documented code :D</li>
 <li>DX7 program compilation : Jean-Marc Desprez (author of <a href="http://www.synprez.com/SynprezFM">SynprezFM</a>) </li>
 <li>DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie</li>
-<li>markusthegeek direct implication for this project</li>
-</ul>
-
-<h2>
-<a id="planned-milestones-" class="anchor" href="#planned-milestones-" aria-hidden="true"><span class="octicon octicon-link"></span></a>Planned milestones </h2>
-
-<ul>
-<li>0.7 msfa engine tuning</li>
-<li>0.8 UI redesign</li>
-<li>0.8.1 Cartridge browser/editor</li>
-</ul>
-
-<h2>
-<a id="todo---dexed-" class="anchor" href="#todo---dexed-" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO - Dexed </h2>
-
-<ul>
-<li>Yamaha 4 operators (DX21/DX27/DX100) sysex import</li>
-<li>UI threaded messaging to avoid DAW automation 'clicks' </li>
-<li>Zomby UI changes: this occurs in Live and will be fixed in the 0.8.1 version.</li>
-<li>Various code cleanup</li>
-<li>More smothness in mono mode</li>
-<li>AU Version </li>
-</ul>
-
-<h2>
-<a id="todo---msfa" class="anchor" href="#todo---msfa" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO - msfa</h2>
-
-<ul>
-<li>Portamento implementation</li>
-<li>Better Amplitude Modulation</li>
-<li>Test maximum delay lfo values that seems to be reset</li>
 </ul>
       </section>
     </div>
