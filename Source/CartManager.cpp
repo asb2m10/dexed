@@ -47,7 +47,6 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("Ca
     activeCart->setBounds(28, 441, 800, 96);
     activeCart->addListener(this);
             
-    memset(browserSysex, 0, 4096);
     addAndMakeVisible(browserCart = new ProgramListBox("browserpgm", 2));
     browserCart->setBounds(635, 18, 200, 384);
     browserCart->addListener(this);
@@ -81,11 +80,11 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("Ca
     fileMgrButton->addListener(this);
             
     addAndMakeVisible(getDXPgmButton = new TextButton("GET DX7 PGM"));
-    getDXPgmButton->setBounds(668, 545, 95, 30);
+    getDXPgmButton->setBounds(656, 545, 100, 30);
     getDXPgmButton->addListener(this);
             
     addAndMakeVisible(getDXCartButton = new TextButton("GET DX7 CART"));
-    getDXCartButton->setBounds(761, 545, 95, 30);
+    getDXCartButton->setBounds(755, 545, 100, 30);
     getDXCartButton->addListener(this);
             
 }
@@ -111,10 +110,10 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
         mainWindow->processor->setCurrentProgram(pos);
         mainWindow->processor->updateHostDisplay();
     } else {
-        if ( browserSysex == nullptr )
+        if ( source->getCurrentCart() == nullptr )
             return;
         char unpackPgm[161];
-        unpackProgramFromSysex(unpackPgm, browserSysex, pos);
+        unpackProgramFromSysex(unpackPgm, source->getCurrentCart(), pos);
         activeCart->setSelected(-1);
         browserCart->setSelected(pos);
         repaint();
@@ -148,17 +147,21 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     }
 
     if ( buttonThatWasClicked == getDXPgmButton ) {
-        if ( mainWindow->processor->sysexComm.isOutputActive() ) {
+        if ( mainWindow->processor->sysexComm.isInputActive() && mainWindow->processor->sysexComm.isOutputActive() ) {
             unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x00, 0xF7 };
             mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
+        } else {
+            showSysexConfigMsg();
         }
         return;
     }
     
     if ( buttonThatWasClicked == getDXCartButton ) {
-        if ( mainWindow->processor->sysexComm.isOutputActive() ) {
+        if ( mainWindow->processor->sysexComm.isInputActive() && mainWindow->processor->sysexComm.isOutputActive() ) {
             unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x01, 0xF7 };
             mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
+        } else {
+            showSysexConfigMsg();
         }
         return;
     }
@@ -228,6 +231,7 @@ void CartManager::selectionChanged() {
     
     fp_in.read((char *)syx_data, 4104);
     fp_in.close();
+    char browserSysex[4104];
     memcpy(browserSysex, syx_data+6, 4096);
     int checksum = sysexChecksum(((char *) &browserSysex), 4096);
     
@@ -310,6 +314,12 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
 
 void CartManager::initialFocus() {
     cartBrowser->grabKeyboardFocus();
+}
+
+void CartManager::showSysexConfigMsg() {
+    AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Warning", "The DX7 midi interface is not configured correctly.\n\n"
+            "These buttons are used to 'ask' the DX7 to send the current program/cartridge.\n\n" 
+            "In order to use this correctly, you need to connect your midi in and midi out of your DX7 to a midi interface and configure this midi interface with the [PARM] dialog.");
 }
 
 // unused stuff from FileBrowserListener

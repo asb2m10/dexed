@@ -250,18 +250,21 @@ void DexedAudioProcessor::setupStartupCart() {
     File startup = dexedCartDir.getChildFile("Dexed_01.syx");
     
     if ( startup.exists() ) {
-        ScopedPointer<FileInputStream> fis = startup.createInputStream();
+        FileInputStream *fis = startup.createInputStream();
         if ( fis == nullptr ) {
             TRACE("unable to open default cartridge");
             return;
         }
         fis->read(syx_data, 4104);
+        delete fis;
     } else {
         // The user deleted the file :/, load from the builtin zip file.
         MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
-        ScopedPointer<ZipFile> builtin_pgm = new ZipFile(mis, true);
-        ScopedPointer<InputStream> is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
+        ZipFile *builtin_pgm = new ZipFile(mis, true);
+        InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
         is->read(syx_data, 4104);
+        delete is;
+        delete builtin_pgm;
     }
     importSysex((char *) &syx_data);
 }
@@ -459,7 +462,7 @@ void DexedAudioProcessor::resolvAppDir() {
         synprezFmDir.createDirectory();
         
         MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
-        ScopedPointer<ZipFile> builtin_pgm = new ZipFile(mis, true);
+        ZipFile *builtin_pgm = new ZipFile(mis, true);
         
         for(int i=0;i<builtin_pgm->getNumEntries();i++) {
             if ( builtin_pgm->getEntry(i)->filename == "Dexed_01.syx" ) {
@@ -468,5 +471,6 @@ void DexedAudioProcessor::resolvAppDir() {
                 builtin_pgm->uncompressEntry(i, synprezFmDir);
             }
         }
+        delete builtin_pgm;
     }
 }

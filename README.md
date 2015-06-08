@@ -18,12 +18,14 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 
-#### Version 0.8.2
-* Cartridge Manager
+#### Version 0.9.0
 * Apple AU support
+* Cartridge Manager
+* Store action also can update the currently loaded cartridge
 * Basic theming
 * Fixed the UI corruption when more than one Dexed instance was loaded
-* Fixed wrong display value issues
+* Fixed wrong display value issues (coarse and fine)
+
 
 #### Version 0.8.0
 * New UI by [AZur Studio](http://bji.yukihotaru.com/)

@@ -47,8 +47,9 @@ class CartManager  : public TopLevelWindow, public ButtonListener, public DragAn
     File cartDir;
     
     DexedAudioProcessorEditor *mainWindow;
-        
-    char browserSysex[4096];
+
+    void showSysexConfigMsg();
+
 public:
     CartManager(DexedAudioProcessorEditor *editor);
     virtual ~CartManager();

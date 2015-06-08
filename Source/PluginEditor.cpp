@@ -163,6 +163,8 @@ void DexedAudioProcessorEditor::loadCart(File file) {
 }
 
 void DexedAudioProcessorEditor::saveCart() {
+    File startFileName = processor->activeFileCartridge.exists() ? processor->activeFileCartridge : processor->dexedCartDir;
+
     FileChooser fc ("Export DX sysex...", processor->dexedCartDir, "*.syx", 1);
     if ( fc.browseForFileToSave(true) ) {
         String f = fc.getResults().getReference(0).getFullPathName();
