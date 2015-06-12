@@ -143,6 +143,8 @@ int SysexComm::send(const MidiMessage &message) {
     if ( output == NULL )
         return 2;
 
+    TRACE("send sysex");
+    
     outActivity = true;
     output->sendMessageNow(message);
     return 0;

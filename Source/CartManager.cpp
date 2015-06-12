@@ -31,7 +31,7 @@ class SyxFileFilter : public FileFilter {
 public:
     SyxFileFilter() : FileFilter(".syx") {}
     bool isFileSuitable(const File &file) const {
-        return file.getFileExtension().toLowerCase() == ".syx";
+        return file.getFileExtension().toLowerCase() == ".syx" && file.getSize() == 4104;
     }
     bool isDirectorySuitable(const File &file) const {
         return true;
@@ -148,7 +148,7 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
 
     if ( buttonThatWasClicked == getDXPgmButton ) {
         if ( mainWindow->processor->sysexComm.isInputActive() && mainWindow->processor->sysexComm.isOutputActive() ) {
-            unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x00, 0xF7 };
+            unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x09, 0xF7 };
             mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
         } else {
             showSysexConfigMsg();
@@ -158,7 +158,7 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     
     if ( buttonThatWasClicked == getDXCartButton ) {
         if ( mainWindow->processor->sysexComm.isInputActive() && mainWindow->processor->sysexComm.isOutputActive() ) {
-            unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x01, 0xF7 };
+            unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x00, 0xF7 };
             mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
         } else {
             showSysexConfigMsg();
@@ -236,10 +236,10 @@ void CartManager::selectionChanged() {
     int checksum = sysexChecksum(((char *) &browserSysex), 4096);
     
     if ( checksum != syx_data[4102] ) {
-        String message = "Sysex import checksum doesnt match ";
+       /*String message = "Sysex import checksum doesnt match ";
         message << ((int)checksum) << " != " << ((int)syx_data[4102]);
         
-        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Warning", message);
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Warning", message);*/
         browserCart->readOnly = true;
     } else {
         browserCart->readOnly = false;
@@ -319,7 +319,7 @@ void CartManager::initialFocus() {
 void CartManager::showSysexConfigMsg() {
     AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Warning", "The DX7 midi interface is not configured correctly.\n\n"
             "These buttons are used to 'ask' the DX7 to send the current program/cartridge.\n\n" 
-            "In order to use this correctly, you need to connect your midi in and midi out of your DX7 to a midi interface and configure this midi interface with the [PARM] dialog.");
+            "In order to use this correctly, you need to connect your midi in and midi out of your DX7 to a midi interface and configure this midi interface with the [PARM] dialog. THIS ONLY WORKS ON A DX7-II");
 }
 
 // unused stuff from FileBrowserListener

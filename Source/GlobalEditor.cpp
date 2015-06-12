@@ -568,6 +568,7 @@ void GlobalEditor::updatePitchPos(int pos) {
 void GlobalEditor::updateVu(float f) {
     vuOutput->v = f;
     vuOutput->repaint();
+    midiMonitor->repaint();
 }
 
 void GlobalEditor::setMonoState(bool state)  {

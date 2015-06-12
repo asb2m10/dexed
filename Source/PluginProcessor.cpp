@@ -437,11 +437,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
             return;
         }
 
-        TRACE("program update sysex");
         updateProgramFromSysex(buf+6);
-        String name = normalizeSysexName((const char *) buf+145);
-        packProgram((uint8_t *) sysex, (uint8_t *) data, currentProgram, name); 
-        programNames.set(currentProgram, name);
     }
 
     // 32 voice dump
