@@ -78,7 +78,11 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("Ca
     addAndMakeVisible(fileMgrButton = new TextButton("SHOW DIR"));
     fileMgrButton->setBounds(148, 545, 70, 30);
     fileMgrButton->addListener(this);
-            
+/*
+ *
+ * I've removed this since it only works on the DX7 II. TBC.
+ *
+ 
     addAndMakeVisible(getDXPgmButton = new TextButton("GET DX7 PGM"));
     getDXPgmButton->setBounds(656, 545, 100, 30);
     getDXPgmButton->addListener(this);
@@ -86,7 +90,8 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("Ca
     addAndMakeVisible(getDXCartButton = new TextButton("GET DX7 CART"));
     getDXCartButton->setBounds(755, 545, 100, 30);
     getDXCartButton->addListener(this);
-            
+ 
+*/
 }
 
 CartManager::~CartManager() {
@@ -146,6 +151,7 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
         return;
     }
 
+    // THIS IS NOT USED
     if ( buttonThatWasClicked == getDXPgmButton ) {
         if ( mainWindow->processor->sysexComm.isInputActive() && mainWindow->processor->sysexComm.isOutputActive() ) {
             unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x09, 0xF7 };
@@ -236,10 +242,6 @@ void CartManager::selectionChanged() {
     int checksum = sysexChecksum(((char *) &browserSysex), 4096);
     
     if ( checksum != syx_data[4102] ) {
-       /*String message = "Sysex import checksum doesnt match ";
-        message << ((int)checksum) << " != " << ((int)syx_data[4102]);
-        
-        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Warning", message);*/
         browserCart->readOnly = true;
     } else {
         browserCart->readOnly = false;
