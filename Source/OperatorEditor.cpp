@@ -24,6 +24,9 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+#ifndef M_LN10
+#define M_LN10 2.30258509299404568402 
+#endif
 //[/MiscUserDefs]
 
 //==============================================================================
