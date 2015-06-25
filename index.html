@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-64443777-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
 
   <head>
     <meta charset='utf-8'>
@@ -19,11 +29,11 @@
           <a id="forkme_banner" href="https://github.com/asb2m10/dexed">View on GitHub</a>
 
           <h1 id="project_title">dexed</h1>
-          <h2 id="project_tagline">FM multi plaform/multi format plugin, version 0.8.2</h2>
+          <h2 id="project_tagline">FM multi plaform/multi format plugin, version 0.9.0</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="http://le-son666.com/software/dexed/dexed-0.8.2-win.zip">Download Window plugin</a>
-              <a class="tar_download_link" href="http://le-son666.com/software/dexed/dexed-0.8.2-osx.zip">Download OS X plugin</a>
+              <a class="zip_download_link" href="http://le-son666.com/software/dexed/dexed-0.9.0-win.zip">Download Window plugin</a>
+              <a class="tar_download_link" href="http://le-son666.com/software/dexed/dexed-0.9.0-osx.zip">Download OS X plugin</a>
             </section>
         </header>
     </div>
@@ -61,13 +71,25 @@ Linux users can use the LV2 plugin format with this <a href="https://aur.archlin
 </ul>
 
 <h2>
+<a id="credits--thanks" class="anchor" href="#credits--thanks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits &amp; thanks</h2>
+
+<ul>
+<li>DX Synth engine : Raph Levien and the <a href="https://code.google.com/p/music-synthesizer-for-android">msfa</a> team </li>
+<li>Graphical design : <a href="http://bji.yukihotaru.com/">AZur Studio</a>
+</li>
+<li>LP Filter : Filatov Vadim (2DaT); taken from the excellent <a href="https://obxd.wordpress.com">Obxd</a> project</li>
+<li>PPPlay : Great <a href="http://sourceforge.net/projects/peepeeplayer">OPL3</a> implementation, with documented code :D</li>
+<li>DX7 program compilation : Jean-Marc Desprez (author of <a href="http://www.synprez.com/SynprezFM">SynprezFM</a>) </li>
+<li>DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie</li>
+
+<h2>
 <a id="cartridge-manager" class="anchor" href="#cartridge-manager" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cartridge Manager</h2>
 
-<p>Any .syx file in the Cartridges directory will be available from the "CART" window. Find this directory by using the "CART" button then the "SHOW DIR" button. This directory is different depending on the platform you are using.</p>
+<p>Any .syx file in the Cartridges directory will be available from the "CART" window. Find this directory by using the "CART" button and then the "SHOW DIR" button.</p>
 <p>You can drag and drop any DX7 program from what is loaded in dexed and/or what you have loaded in the cartridge browser.</p>
-<p>Double-clicking on a program will load the currently selected program in the plugin. It will not modifie the currently loaded sysex cartridge.</p>
+<p>Double-clicking on a program will load the currently selected program in the plugin. It will not modify the currently loaded sysex cartridge.</p>
 <p>Use the context (right-click) menu to send the program/cartridge the DX7 or open your OS file browser from the directory context.</p>
-<p>BlackWinny from kvraudio did a great DX7 compilation named <a href="http://black.winny.free.fr/MAO/Dexed_cart.zip">Dexed_cart.zip</a>. Simply unzip the content of this zipfile to your Cartridges directory.
+<p>BlackWinny from kvraudio did a great DX7 compilation named <a href="hhttp://hsjp.eu/downloads/Dexed">Dexed_cart</a>. Simply unzip the content of this zipfile to your Cartridges directory.</p>
 
 <h2>
 <a id="engine-type" class="anchor" href="#engine-type" aria-hidden="true"><span class="octicon octicon-link"></span></a>Engine Type</h2>
@@ -131,9 +153,8 @@ you edit.</p>
 
 <ul>
 <li>The midi in port must be configured.</li>
-<li>In the "CART" window, you can use the "GET DX7 PGM"/"GET DX7 CART" button. This sends the sysex command to dump program or catridge via midi.<br>
-<b>---- OR</b></li>
-<li>Receive a program by using [MEMORY SELECT] then the program you want to transmit ([1] to [32]). Receive a cartridge by pressing [FUNCTION] then 3 times on [8] you should see " MIDI TRANSMIT ? ". If you hit yes, dexed should receive the complete cartridge.</li>
+<li>Receive a program by using [MEMORY SELECT] then the program you want to transmit ([1] to [32]). </li>
+<li>Receive a cartridge by pressing [FUNCTION] then 3 times on [8] you should see " MIDI TRANSMIT ? ". If you hit yes, dexed should receive the complete cartridge.</li>
 </ul>
 
 <h3>
@@ -145,17 +166,6 @@ you edit.</p>
 <li>If you are unable to open the interface (error message after the using the [PARM] dialog), it might be because the midi driver doesn't support multiple clients (common on Windows). Be sure that there are no other applications that are using the same midi interface. </li>
 </ul>
 
-<h2>
-<a id="credits--thanks" class="anchor" href="#credits--thanks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits &amp; thanks</h2>
-
-<ul>
-<li>DX Synth engine : Raph Levien and the <a href="https://code.google.com/p/music-synthesizer-for-android">msfa</a> team </li>
-<li>Graphical design : <a href="http://bji.yukihotaru.com/">AZur Studio</a>
-</li>
-<li>LP Filter : Filatov Vadim (2DaT); taken from the excellent <a href="https://obxd.wordpress.com">Obxd</a> project</li>
-<li>PPPlay : Great <a href="http://sourceforge.net/projects/peepeeplayer">OPL3</a> implementation, with documented code :D</li>
-<li>DX7 program compilation : Jean-Marc Desprez (author of <a href="http://www.synprez.com/SynprezFM">SynprezFM</a>) </li>
-<li>DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie</li>
 </ul>
       </section>
     </div>
