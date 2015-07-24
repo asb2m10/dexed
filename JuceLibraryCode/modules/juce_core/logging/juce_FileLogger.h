@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -121,12 +121,16 @@ public:
     // (implementation of the Logger virtual method)
     void logMessage (const String&);
 
+    //==============================================================================
+    /** This is a utility function which removes lines from the start of a text
+        file to make sure that its total size is below the given size.
+    */
+    static void trimFileSize (const File& file, int64 maxFileSize);
+
 private:
     //==============================================================================
     File logFile;
     CriticalSection logLock;
-
-    void trimFileSize (int64 maxFileSizeBytes) const;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FileLogger)
 };

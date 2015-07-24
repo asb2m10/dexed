@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -54,7 +54,7 @@ public:
 
         DrawableComposite* const drawable = new DrawableComposite();
 
-        setDrawableID (*drawable, xml);
+        setCommonAttributes (*drawable, xml);
 
         SVGState newState (*this);
 
@@ -272,7 +272,7 @@ public:
 
                     if (parseNextNumber (d, num, false))
                     {
-                        const float angle = num.getFloatValue() * (180.0f / float_Pi);
+                        const float angle = degreesToRadians (num.getFloatValue());
 
                         if (parseNextNumber (d, num, false))
                         {
@@ -345,11 +345,14 @@ private:
     AffineTransform transform;
     String cssStyleText;
 
-    static void setDrawableID (Drawable& d, const XmlPath& xml)
+    static void setCommonAttributes (Drawable& d, const XmlPath& xml)
     {
         String compID (xml->getStringAttribute ("id"));
         d.setName (compID);
         d.setComponentID (compID);
+
+        if (xml->getStringAttribute ("display") == "none")
+            d.setVisible (false);
     }
 
     //==============================================================================
@@ -372,7 +375,7 @@ private:
         if (tag == "line")        return parseLine (xml);
         if (tag == "polyline")    return parsePolygon (xml, true);
         if (tag == "polygon")     return parsePolygon (xml, false);
-        if (tag == "text")        return parseText (xml);
+        if (tag == "text")        return parseText (xml, true);
         if (tag == "switch")      return parseSwitch (xml);
         if (tag == "style")       parseCSSStyle (xml);
 
@@ -391,7 +394,7 @@ private:
     {
         DrawableComposite* const drawable = new DrawableComposite();
 
-        setDrawableID (*drawable, xml);
+        setCommonAttributes (*drawable, xml);
 
         if (xml->hasAttribute ("transform"))
         {
@@ -536,7 +539,7 @@ private:
         }
 
         DrawablePath* dp = new DrawablePath();
-        setDrawableID (*dp, xml);
+        setCommonAttributes (*dp, xml);
         dp->setFill (Colours::transparentBlack);
 
         path.applyTransform (transform);
@@ -804,8 +807,16 @@ private:
     }
 
     //==============================================================================
-    Drawable* parseText (const XmlPath& xml)
+    Drawable* parseText (const XmlPath& xml, bool shouldParseTransform)
     {
+        if (shouldParseTransform && xml->hasAttribute ("transform"))
+        {
+            SVGState newState (*this);
+            newState.addTransform (xml);
+
+            return newState.parseText (xml, false);
+        }
+
         Array<float> xCoords, yCoords, dxCoords, dyCoords;
 
         getCoordList (xCoords,  getInheritedAttribute (xml, "x"),  true, true);
@@ -813,28 +824,59 @@ private:
         getCoordList (dxCoords, getInheritedAttribute (xml, "dx"), true, true);
         getCoordList (dyCoords, getInheritedAttribute (xml, "dy"), true, false);
 
+        const Font font (getFont (xml));
+        const String anchorStr = getStyleAttribute(xml, "text-anchor");
 
-        //xxx not done text yet!
-
+        DrawableComposite* dc = new DrawableComposite();
+        setCommonAttributes (*dc, xml);
 
         forEachXmlChildElement (*xml, e)
         {
             if (e->isTextElement())
             {
-                const String text (e->getText());
+                const String text (e->getText().trim());
 
-                Path path;
-                Drawable* s = parseShape (xml.getChild (e), path);
-                delete s;  // xxx not finished!
+                DrawableText* dt = new DrawableText();
+                dc->addAndMakeVisible (dt);
+
+                dt->setText (text);
+                dt->setFont (font, true);
+                dt->setTransform (transform);
+
+                int i = 0;
+                dt->setColour (parseColour (getStyleAttribute (xml, "fill"), i, Colours::black)
+                                 .withMultipliedAlpha (getStyleAttribute (xml, "fill-opacity", "1").getFloatValue()));
+
+                Rectangle<float> bounds (xCoords[0], yCoords[0] - font.getAscent(),
+                                         font.getStringWidthFloat (text), font.getHeight());
+
+                if (anchorStr == "middle")   bounds.setX (bounds.getX() - bounds.getWidth() / 2.0f);
+                else if (anchorStr == "end") bounds.setX (bounds.getX() - bounds.getWidth());
+
+                dt->setBoundingBox (bounds);
             }
             else if (e->hasTagNameIgnoringNamespace ("tspan"))
             {
-                Drawable* s = parseText (xml.getChild (e));
-                delete s;  // xxx not finished!
+                dc->addAndMakeVisible (parseText (xml.getChild (e), true));
             }
         }
 
-        return nullptr;
+        return dc;
+    }
+
+    Font getFont (const XmlPath& xml) const
+    {
+        const float fontSize = getCoordLength (getStyleAttribute (xml, "font-size"), 1.0f);
+
+        int style = getStyleAttribute (xml, "font-style").containsIgnoreCase ("italic") ? Font::italic : Font::plain;
+
+        if (getStyleAttribute (xml, "font-weight").containsIgnoreCase ("bold"))
+            style |= Font::bold;
+
+        const String family (getStyleAttribute (xml, "font-family"));
+
+        return family.isEmpty() ? Font (fontSize, style)
+                                : Font (family, fontSize, style);
     }
 
     //==============================================================================
@@ -1157,9 +1199,9 @@ private:
 
             tokens.removeEmptyStrings (true);
 
-            float numbers [6];
+            float numbers[6];
 
-            for (int i = 0; i < 6; ++i)
+            for (int i = 0; i < numElementsInArray (numbers); ++i)
                 numbers[i] = tokens[i].getFloatValue();
 
             AffineTransform trans;
@@ -1171,33 +1213,23 @@ private:
             }
             else if (t.startsWithIgnoreCase ("translate"))
             {
-                jassert (tokens.size() == 2);
                 trans = AffineTransform::translation (numbers[0], numbers[1]);
             }
             else if (t.startsWithIgnoreCase ("scale"))
             {
-                if (tokens.size() == 1)
-                    trans = AffineTransform::scale (numbers[0]);
-                else
-                    trans = AffineTransform::scale (numbers[0], numbers[1]);
+                trans = AffineTransform::scale (numbers[0], numbers[tokens.size() > 1 ? 1 : 0]);
             }
             else if (t.startsWithIgnoreCase ("rotate"))
             {
-                if (tokens.size() != 3)
-                    trans = AffineTransform::rotation (numbers[0] / (180.0f / float_Pi));
-                else
-                    trans = AffineTransform::rotation (numbers[0] / (180.0f / float_Pi),
-                                                       numbers[1], numbers[2]);
+                trans = AffineTransform::rotation (degreesToRadians (numbers[0]), numbers[1], numbers[2]);
             }
             else if (t.startsWithIgnoreCase ("skewX"))
             {
-                trans = AffineTransform (1.0f, std::tan (numbers[0] * (float_Pi / 180.0f)), 0.0f,
-                                         0.0f, 1.0f, 0.0f);
+                trans = AffineTransform::shear (std::tan (degreesToRadians (numbers[0])), 0.0f);
             }
             else if (t.startsWithIgnoreCase ("skewY"))
             {
-                trans = AffineTransform (1.0f, 0.0f, 0.0f,
-                                         std::tan (numbers[0] * (float_Pi / 180.0f)), 1.0f, 0.0f);
+                trans = AffineTransform::shear (0.0f, std::tan (degreesToRadians (numbers[0])));
             }
 
             result = trans.followedBy (result);
@@ -1218,8 +1250,8 @@ private:
         const double midX = (x1 - x2) * 0.5;
         const double midY = (y1 - y2) * 0.5;
 
-        const double cosAngle = cos (angle);
-        const double sinAngle = sin (angle);
+        const double cosAngle = std::cos (angle);
+        const double sinAngle = std::sin (angle);
         const double xp = cosAngle * midX + sinAngle * midY;
         const double yp = cosAngle * midY - sinAngle * midX;
         const double xp2 = xp * xp;

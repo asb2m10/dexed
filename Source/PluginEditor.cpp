@@ -202,7 +202,7 @@ void DexedAudioProcessorEditor::parmShow() {
     processor->setEngineType(tp);
     processor->savePreference();
     
-    setSize(866, processor->showKeyboard ? 677 : 583);
+    setSize(866, processor->showKeyboard ? 674 : 581);
     midiKeyboard.repaint();
     
     if ( ret == false ) {

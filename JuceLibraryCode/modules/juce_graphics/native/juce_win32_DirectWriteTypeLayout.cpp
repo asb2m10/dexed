@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -75,10 +75,10 @@ namespace DirectWriteTypeLayout
                 if (currentLine >= layout->getNumLines())
                 {
                     jassert (currentLine == layout->getNumLines());
-                    TextLayout::Line* const newLine = new TextLayout::Line();
-                    layout->addLine (newLine);
+                    TextLayout::Line* const line = new TextLayout::Line();
+                    layout->addLine (line);
 
-                    newLine->lineOrigin = Point<float> (baselineOriginX, baselineOriginY);
+                    line->lineOrigin = Point<float> (baselineOriginX, baselineOriginY);
                 }
             }
 
@@ -311,6 +311,13 @@ namespace DirectWriteTypeLayout
 
         setTextFormatProperties (text, dwTextFormat);
 
+        {
+            DWRITE_TRIMMING trimming = { DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0 };
+            ComSmartPtr<IDWriteInlineObject> trimmingSign;
+            hr = directWriteFactory->CreateEllipsisTrimmingSign (dwTextFormat, trimmingSign.resetAndGetPointerAddress());
+            hr = dwTextFormat->SetTrimming (&trimming, trimmingSign);
+        }
+
         const int textLen = text.getText().length();
 
         hr = directWriteFactory->CreateTextLayout (text.getText().toWideCharPointer(), textLen, dwTextFormat,
@@ -344,7 +351,8 @@ namespace DirectWriteTypeLayout
 
         ComSmartPtr<IDWriteTextLayout> dwTextLayout;
 
-        if (! setupLayout (text, layout.getWidth(), 1.0e7f, renderTarget, directWriteFactory, fontCollection, dwTextLayout))
+        if (! setupLayout (text, layout.getWidth(), layout.getHeight(), renderTarget,
+                           directWriteFactory, fontCollection, dwTextLayout))
             return;
 
         UINT32 actualLineCount = 0;
@@ -374,7 +382,8 @@ namespace DirectWriteTypeLayout
     {
         ComSmartPtr<IDWriteTextLayout> dwTextLayout;
 
-        if (setupLayout (text, area.getWidth(), area.getHeight(), renderTarget, directWriteFactory, fontCollection, dwTextLayout))
+        if (setupLayout (text, area.getWidth(), area.getHeight(), renderTarget,
+                         directWriteFactory, fontCollection, dwTextLayout))
         {
             ComSmartPtr<ID2D1SolidColorBrush> d2dBrush;
             renderTarget->CreateSolidColorBrush (D2D1::ColorF (D2D1::ColorF (0.0f, 0.0f, 0.0f, 1.0f)),

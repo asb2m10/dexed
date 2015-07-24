@@ -58,8 +58,6 @@ class ComboBoxImage : public ComboBox {
     Image items;
     int itemHeight;
     PopupMenu popup;
-    bool onPopup;
-
     int itemPos[4];
 public:
     ComboBoxImage();

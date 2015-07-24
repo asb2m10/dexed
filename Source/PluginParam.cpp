@@ -577,7 +577,7 @@ void DexedAudioProcessor::loadPreference() {
         sysexComm.setChl( prop.getIntValue( String("sysexChl") ) );
     }
     
-    if ( prop.containsKey( String("engineType" ) ) ) {
+    if ( prop.containsKey( String("engineType") ) ) {
         engineType = prop.getIntValue( String("engineType") );
     }
 

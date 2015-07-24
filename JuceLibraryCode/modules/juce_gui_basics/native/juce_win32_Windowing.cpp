@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -1224,9 +1224,9 @@ private:
             clearSingletonInstance();
         }
 
-        LPCTSTR getWindowClassName() const noexcept     { return (LPCTSTR) MAKELONG (atom, 0); }
+        LPCTSTR getWindowClassName() const noexcept     { return (LPCTSTR) atom; }
 
-        juce_DeclareSingleton_SingleThreaded_Minimal (WindowClassHolder);
+        juce_DeclareSingleton_SingleThreaded_Minimal (WindowClassHolder)
 
     private:
         ATOM atom;
@@ -1749,10 +1749,13 @@ private:
 
         doMouseMove (position);
 
-        updateModifiersFromWParam (wParam);
-        isDragging = true;
+        if (isValidPeer (this))
+        {
+            updateModifiersFromWParam (wParam);
+            isDragging = true;
 
-        doMouseEvent (position);
+            doMouseEvent (position);
+        }
     }
 
     void doMouseUp (Point<float> position, const WPARAM wParam)
@@ -1817,6 +1820,7 @@ private:
         wheel.deltaY = isVertical ? amount / 256.0f : 0.0f;
         wheel.isReversed = false;
         wheel.isSmooth = false;
+        wheel.isInertial = false;
 
         Point<float> localPos;
         if (ComponentPeer* const peer = findPeerUnderMouse (localPos))
@@ -2936,7 +2940,7 @@ ComponentPeer* createNonRepaintingEmbeddedWindowsPeer (Component& component, voi
 }
 
 
-juce_ImplementSingleton_SingleThreaded (HWNDComponentPeer::WindowClassHolder);
+juce_ImplementSingleton_SingleThreaded (HWNDComponentPeer::WindowClassHolder)
 
 
 //==============================================================================
@@ -2965,24 +2969,27 @@ bool KeyPress::isKeyCurrentlyDown (const int keyCode)
 {
     SHORT k = (SHORT) keyCode;
 
-    if ((keyCode & extendedKeyModifier) == 0
-         && (k >= (SHORT) 'a' && k <= (SHORT) 'z'))
-        k += (SHORT) 'A' - (SHORT) 'a';
+    if ((keyCode & extendedKeyModifier) == 0)
+    {
+        if (k >= (SHORT) 'a' && k <= (SHORT) 'z')
+            k += (SHORT) 'A' - (SHORT) 'a';
 
-    const SHORT translatedValues[] = { (SHORT) ',', VK_OEM_COMMA,
-                                       (SHORT) '+', VK_OEM_PLUS,
-                                       (SHORT) '-', VK_OEM_MINUS,
-                                       (SHORT) '.', VK_OEM_PERIOD,
-                                       (SHORT) ';', VK_OEM_1,
-                                       (SHORT) ':', VK_OEM_1,
-                                       (SHORT) '/', VK_OEM_2,
-                                       (SHORT) '?', VK_OEM_2,
-                                       (SHORT) '[', VK_OEM_4,
-                                       (SHORT) ']', VK_OEM_6 };
+        // Only translate if extendedKeyModifier flag is not set
+        const SHORT translatedValues[] = { (SHORT) ',', VK_OEM_COMMA,
+                                           (SHORT) '+', VK_OEM_PLUS,
+                                           (SHORT) '-', VK_OEM_MINUS,
+                                           (SHORT) '.', VK_OEM_PERIOD,
+                                           (SHORT) ';', VK_OEM_1,
+                                           (SHORT) ':', VK_OEM_1,
+                                           (SHORT) '/', VK_OEM_2,
+                                           (SHORT) '?', VK_OEM_2,
+                                           (SHORT) '[', VK_OEM_4,
+                                           (SHORT) ']', VK_OEM_6 };
 
-    for (int i = 0; i < numElementsInArray (translatedValues); i += 2)
-        if (k == translatedValues [i])
-            k = translatedValues [i + 1];
+        for (int i = 0; i < numElementsInArray (translatedValues); i += 2)
+            if (k == translatedValues [i])
+                k = translatedValues [i + 1];
+    }
 
     return HWNDComponentPeer::isKeyDown (k);
 }
@@ -3273,13 +3280,13 @@ String SystemClipboard::getTextFromClipboard()
 }
 
 //==============================================================================
-void Desktop::setKioskComponent (Component* kioskModeComponent, bool enableOrDisable, bool /*allowMenusAndBars*/)
+void Desktop::setKioskComponent (Component* kioskModeComp, bool enableOrDisable, bool /*allowMenusAndBars*/)
 {
-    if (TopLevelWindow* tlw = dynamic_cast<TopLevelWindow*> (kioskModeComponent))
+    if (TopLevelWindow* tlw = dynamic_cast<TopLevelWindow*> (kioskModeComp))
         tlw->setUsingNativeTitleBar (! enableOrDisable);
 
     if (enableOrDisable)
-        kioskModeComponent->setBounds (getDisplays().getMainDisplay().totalArea);
+        kioskModeComp->setBounds (getDisplays().getMainDisplay().totalArea);
 }
 
 //==============================================================================
@@ -3426,7 +3433,6 @@ void* MouseCursor::createStandardMouseCursor (const MouseCursor::StandardCursorT
         case IBeamCursor:                   cursorName = IDC_IBEAM; break;
         case PointingHandCursor:            cursorName = MAKEINTRESOURCE(32649); break;
         case CrosshairCursor:               cursorName = IDC_CROSS; break;
-        case CopyingCursor:                 break; // can't seem to find one of these in the system list..
 
         case LeftRightResizeCursor:
         case LeftEdgeResizeCursor:
@@ -3459,6 +3465,24 @@ void* MouseCursor::createStandardMouseCursor (const MouseCursor::StandardCursorT
             }
 
             return dragHandCursor;
+        }
+
+        case CopyingCursor:
+        {
+            static void* copyCursor = nullptr;
+
+            if (copyCursor == nullptr)
+            {
+                static unsigned char copyCursorData[] = { 71,73,70,56,57,97,21,0,21,0,145,0,0,0,0,0,255,255,255,0,
+                  128,128,255,255,255,33,249,4,1,0,0,3,0,44,0,0,0,0,21,0, 21,0,0,2,72,4,134,169,171,16,199,98,11,79,90,71,161,93,56,111,
+                  78,133,218,215,137,31,82,154,100,200,86,91,202,142,12,108,212,87,235,174, 15,54,214,126,237,226,37,96,59,141,16,37,18,201,142,157,230,204,51,112,
+                  252,114,147,74,83,5,50,68,147,208,217,16,71,149,252,124,5,0,59,0,0 };
+                const int copyCursorSize = 119;
+
+                copyCursor = CustomMouseCursorInfo (ImageFileFormat::loadFrom (copyCursorData, copyCursorSize), 1, 3).create();
+            }
+
+            return copyCursor;
         }
 
         default:

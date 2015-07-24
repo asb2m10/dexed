@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -24,14 +24,14 @@
 
 ResamplingAudioSource::ResamplingAudioSource (AudioSource* const inputSource,
                                               const bool deleteInputWhenDeleted,
-                                              const int numChannels_)
+                                              const int channels)
     : input (inputSource, deleteInputWhenDeleted),
       ratio (1.0),
       lastRatio (1.0),
       bufferPos (0),
       sampsInBuffer (0),
       subSampleOffset (0),
-      numChannels (numChannels_)
+      numChannels (channels)
 {
     jassert (input != nullptr);
     zeromem (coefficients, sizeof (coefficients));
@@ -51,9 +51,10 @@ void ResamplingAudioSource::prepareToPlay (int samplesPerBlockExpected, double s
 {
     const SpinLock::ScopedLockType sl (ratioLock);
 
-    input->prepareToPlay (samplesPerBlockExpected, sampleRate);
+    const int scaledBlockSize = roundToInt (samplesPerBlockExpected * ratio);
+    input->prepareToPlay (scaledBlockSize, sampleRate * ratio);
 
-    buffer.setSize (numChannels, roundToInt (samplesPerBlockExpected * ratio) + 32);
+    buffer.setSize (numChannels, scaledBlockSize + 32);
 
     filterStates.calloc ((size_t) numChannels);
     srcBuffers.calloc ((size_t) numChannels);
@@ -93,7 +94,7 @@ void ResamplingAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& inf
         lastRatio = localRatio;
     }
 
-    const int sampsNeeded = roundToInt (info.numSamples * localRatio) + 2;
+    const int sampsNeeded = roundToInt (info.numSamples * localRatio) + 3;
 
     int bufferSize = buffer.getNumSamples();
 
@@ -138,8 +139,11 @@ void ResamplingAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& inf
     }
 
     int nextPos = (bufferPos + 1) % bufferSize;
+
     for (int m = info.numSamples; --m >= 0;)
     {
+        jassert (sampsInBuffer > 0 && nextPos != endOfBufferPos);
+
         const float alpha = (float) subSampleOffset;
 
         for (int channel = 0; channel < channelsToProcess; ++channel)
@@ -147,8 +151,6 @@ void ResamplingAudioSource::getNextAudioBlock (const AudioSourceChannelInfo& inf
                                         + alpha * (srcBuffers[channel][nextPos] - srcBuffers[channel][bufferPos]);
 
         subSampleOffset += localRatio;
-
-        jassert (sampsInBuffer > 0);
 
         while (subSampleOffset >= 1.0)
         {

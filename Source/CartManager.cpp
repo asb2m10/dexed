@@ -38,7 +38,7 @@ public:
     };
 };
 
-CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("CartManager", false) {
+CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartManager") {
             
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;            

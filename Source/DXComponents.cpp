@@ -360,19 +360,25 @@ void ComboBoxImage::paint(Graphics &g) {
 }
 
 ComboBoxImage::ComboBoxImage() {
-    onPopup = false;
     itemPos[0] = -1;
 }
 
-void ComboBoxImage::showPopup() {
-    if ( !onPopup ) { 
-        onPopup = true;
-        int idx = popup.show() - 1;
-        onPopup = false;
-        if ( idx < 0 )
-            return;
-        setSelectedItemIndex(idx);
+static void comboBoxPopupMenuFinishedCallback (int result, ComboBoxImage* combo) {
+    if (combo != nullptr) {
+        combo->hidePopup();
+        
+        if (result != 0)
+            combo->setSelectedId (result);
     }
+}
+
+void ComboBoxImage::showPopup() {
+    popup.showMenuAsync (PopupMenu::Options().withTargetComponent (this)
+                         .withItemThatMustBeVisible(getSelectedId())
+                         .withMinimumWidth(getWidth())
+                         .withMaximumNumColumns(1)
+                         .withStandardItemHeight(itemHeight),
+                         ModalCallbackFunction::forComponent(comboBoxPopupMenuFinishedCallback, this));
 }
 
 void ComboBoxImage::setImage(Image image) {

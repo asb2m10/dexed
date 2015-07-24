@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -53,7 +53,7 @@ public:
 
             if (connectionPoint != nullptr)
             {
-                WebBrowserComponent* const owner = dynamic_cast <WebBrowserComponent*> (getParentComponent());
+                WebBrowserComponent* const owner = dynamic_cast<WebBrowserComponent*> (getParentComponent());
                 jassert (owner != nullptr);
 
                 EventHandler* handler = new EventHandler (*owner);
@@ -71,8 +71,8 @@ public:
         {
             LPSAFEARRAY sa = nullptr;
 
-            VARIANT flags, frame, postDataVar, headersVar;  // (_variant_t isn't available in all compilers)
-            VariantInit (&flags);
+            VARIANT headerFlags, frame, postDataVar, headersVar;  // (_variant_t isn't available in all compilers)
+            VariantInit (&headerFlags);
             VariantInit (&frame);
             VariantInit (&postDataVar);
             VariantInit (&headersVar);
@@ -109,12 +109,12 @@ public:
             }
 
             browser->Navigate ((BSTR) (const OLECHAR*) url.toWideCharPointer(),
-                               &flags, &frame, &postDataVar, &headersVar);
+                               &headerFlags, &frame, &postDataVar, &headersVar);
 
             if (sa != nullptr)
                 SafeArrayDestroy (sa);
 
-            VariantClear (&flags);
+            VariantClear (&headerFlags);
             VariantClear (&frame);
             VariantClear (&postDataVar);
             VariantClear (&headersVar);
@@ -129,15 +129,10 @@ private:
     DWORD adviseCookie;
 
     //==============================================================================
-    class EventHandler  : public ComBaseClassHelper <IDispatch>,
-                          public ComponentMovementWatcher
+    struct EventHandler  : public ComBaseClassHelper<IDispatch>,
+                           public ComponentMovementWatcher
     {
-    public:
-        EventHandler (WebBrowserComponent& owner_)
-            : ComponentMovementWatcher (&owner_),
-              owner (owner_)
-        {
-        }
+        EventHandler (WebBrowserComponent& w)  : ComponentMovementWatcher (&w), owner (w) {}
 
         JUCE_COMRESULT GetTypeInfoCount (UINT*)                                  { return E_NOTIMPL; }
         JUCE_COMRESULT GetTypeInfo (UINT, LCID, ITypeInfo**)                     { return E_NOTIMPL; }
@@ -153,12 +148,21 @@ private:
                                                                                                     : VARIANT_TRUE;
                 return S_OK;
             }
-            else if (dispIdMember == DISPID_DOCUMENTCOMPLETE)
+
+            if (dispIdMember == 273 /*DISPID_NEWWINDOW3*/)
+            {
+                owner.newWindowAttemptingToLoad (pDispParams->rgvarg[0].bstrVal);
+                *pDispParams->rgvarg[3].pboolVal = VARIANT_TRUE;
+                return S_OK;
+            }
+
+            if (dispIdMember == DISPID_DOCUMENTCOMPLETE)
             {
                 owner.pageFinishedLoading (getStringFromVariant (pDispParams->rgvarg[0].pvarVal));
                 return S_OK;
             }
-            else if (dispIdMember == 263 /*DISPID_WINDOWCLOSING*/)
+
+            if (dispIdMember == 263 /*DISPID_WINDOWCLOSING*/)
             {
                 owner.windowCloseRequest();
 
@@ -322,4 +326,27 @@ void WebBrowserComponent::resized()
 void WebBrowserComponent::visibilityChanged()
 {
     checkWindowAssociation();
+}
+
+void WebBrowserComponent::focusGained (FocusChangeType)
+{
+    if (IOleObject* oleObject = (IOleObject*) browser->queryInterface (&IID_IOleObject))
+    {
+        if (IOleWindow* oleWindow = (IOleWindow*) browser->queryInterface (&IID_IOleWindow))
+        {
+            IOleClientSite* oleClientSite = nullptr;
+
+            if (SUCCEEDED (oleObject->GetClientSite (&oleClientSite)))
+            {
+                HWND hwnd;
+                oleWindow->GetWindow (&hwnd);
+                oleObject->DoVerb (OLEIVERB_UIACTIVATE, nullptr, oleClientSite, 0, hwnd, nullptr);
+                oleClientSite->Release();
+            }
+
+            oleWindow->Release();
+        }
+
+        oleObject->Release();
+    }
 }

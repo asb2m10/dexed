@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -30,6 +30,7 @@ Viewport::Viewport (const String& name)
     showHScrollbar (true),
     showVScrollbar (true),
     deleteContent (true),
+    customScrollBarThickness (false),
     allowScrollingWithoutScrollbarV (false),
     allowScrollingWithoutScrollbarH (false),
     verticalScrollBar (true),
@@ -38,6 +39,8 @@ Viewport::Viewport (const String& name)
     // content holder is used to clip the contents so they don't overlap the scrollbars
     addAndMakeVisible (contentHolder);
     contentHolder.setInterceptsMouseClicks (false, true);
+
+    scrollBarThickness = getLookAndFeel().getDefaultScrollbarWidth();
 
     addChildComponent (verticalScrollBar);
     addChildComponent (horizontalScrollBar);
@@ -171,6 +174,12 @@ bool Viewport::autoScroll (const int mouseX, const int mouseY, const int activeB
 void Viewport::componentMovedOrResized (Component&, bool, bool)
 {
     updateVisibleArea();
+}
+
+void Viewport::lookAndFeelChanged()
+{
+    if (! customScrollBarThickness)
+        scrollBarThickness = getLookAndFeel().getDefaultScrollbarWidth();
 }
 
 void Viewport::resized()
@@ -313,17 +322,32 @@ void Viewport::setScrollBarsShown (const bool showVerticalScrollbarIfNeeded,
 
 void Viewport::setScrollBarThickness (const int thickness)
 {
-    if (scrollBarThickness != thickness)
+    int newThickness;
+
+    // To stay compatible with the previous code: use the
+    // default thickness if thickness parameter is zero
+    // or negative
+    if (thickness <= 0)
     {
-        scrollBarThickness = thickness;
+        customScrollBarThickness = false;
+        newThickness = getLookAndFeel().getDefaultScrollbarWidth();
+    }
+    else
+    {
+        customScrollBarThickness = true;
+        newThickness = thickness;
+    }
+
+    if (scrollBarThickness != newThickness)
+    {
+        scrollBarThickness = newThickness;
         updateVisibleArea();
     }
 }
 
 int Viewport::getScrollBarThickness() const
 {
-    return scrollBarThickness > 0 ? scrollBarThickness
-                                  : getLookAndFeel().getDefaultScrollbarWidth();
+    return scrollBarThickness;
 }
 
 void Viewport::scrollBarMoved (ScrollBar* scrollBarThatHasMoved, double newRangeStart)

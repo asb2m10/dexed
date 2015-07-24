@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -334,7 +334,8 @@ InputStream* URL::createInputStream (const bool usePostCommand,
                                      String headers,
                                      const int timeOutMs,
                                      StringPairArray* const responseHeaders,
-                                     int* statusCode) const
+                                     int* statusCode,
+                                     const int numRedirectsToFollow) const
 {
     MemoryBlock headersAndPostData;
 
@@ -350,7 +351,8 @@ InputStream* URL::createInputStream (const bool usePostCommand,
     ScopedPointer<WebInputStream> wi (new WebInputStream (toString (! usePostCommand),
                                                           usePostCommand, headersAndPostData,
                                                           progressCallback, progressCallbackContext,
-                                                          headers, timeOutMs, responseHeaders));
+                                                          headers, timeOutMs, responseHeaders,
+                                                          numRedirectsToFollow));
 
     if (statusCode != nullptr)
         *statusCode = wi->statusCode;
@@ -394,6 +396,17 @@ URL URL::withParameter (const String& parameterName,
 {
     URL u (*this);
     u.addParameter (parameterName, parameterValue);
+    return u;
+}
+
+URL URL::withParameters (const StringPairArray& parametersToAdd) const
+{
+    URL u (*this);
+
+    for (int i = 0; i < parametersToAdd.size(); ++i)
+        u.addParameter (parametersToAdd.getAllKeys()[i],
+                        parametersToAdd.getAllValues()[i]);
+
     return u;
 }
 
@@ -482,8 +495,8 @@ String URL::addEscapeChars (const String& s, const bool isParameter)
                  || legalChars.indexOf ((juce_wchar) c) >= 0))
         {
             utf8.set (i, '%');
-            utf8.insert (++i, "0123456789abcdef" [((uint8) c) >> 4]);
-            utf8.insert (++i, "0123456789abcdef" [c & 15]);
+            utf8.insert (++i, "0123456789ABCDEF" [((uint8) c) >> 4]);
+            utf8.insert (++i, "0123456789ABCDEF" [c & 15]);
         }
     }
 

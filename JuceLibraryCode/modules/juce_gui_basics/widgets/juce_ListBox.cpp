@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -68,7 +68,7 @@ public:
 
         if (isEnabled())
         {
-            if (! selected)
+            if (owner.selectOnMouseDown && ! selected)
             {
                 owner.selectRowsBasedOnModifierKeys (row, e.mods, false);
 
@@ -106,16 +106,21 @@ public:
         {
             if (isEnabled() && ! (e.mouseWasClicked() || isDragging))
             {
-                const SparseSet<int> selectedRows (owner.getSelectedRows());
+                SparseSet<int> rowsToDrag;
 
-                if (selectedRows.size() > 0)
+                if (owner.selectOnMouseDown || owner.isRowSelected (row))
+                    rowsToDrag = owner.getSelectedRows();
+                else
+                    rowsToDrag.addRange (Range<int>::withStartAndLength (row, 1));
+
+                if (rowsToDrag.size() > 0)
                 {
-                    const var dragDescription (m->getDragSourceDescription (selectedRows));
+                    const var dragDescription (m->getDragSourceDescription (rowsToDrag));
 
                     if (! (dragDescription.isVoid() || (dragDescription.isString() && dragDescription.toString().isEmpty())))
                     {
                         isDragging = true;
-                        owner.startDragAndDrop (e, dragDescription, true);
+                        owner.startDragAndDrop (e, rowsToDrag, dragDescription, true);
                     }
                 }
             }
@@ -174,7 +179,7 @@ public:
 
     int getRowNumberOfComponent (Component* const rowComponent) const noexcept
     {
-        const int index = getIndexOfChildComponent (rowComponent);
+        const int index = getViewedComponent()->getIndexOfChildComponent (rowComponent);
         const int num = rows.size();
 
         for (int i = num; --i >= 0;)
@@ -196,15 +201,16 @@ public:
     {
         hasUpdated = false;
 
-        const int newX = getViewedComponent()->getX();
-        int newY = getViewedComponent()->getY();
+        Component& content = *getViewedComponent();
+        const int newX = content.getX();
+        int newY = content.getY();
         const int newW = jmax (owner.minimumRowWidth, getMaximumVisibleWidth());
         const int newH = owner.totalItems * owner.getRowHeight();
 
         if (newY + newH < getMaximumVisibleHeight() && newH > getMaximumVisibleHeight())
             newY = getMaximumVisibleHeight() - newH;
 
-        getViewedComponent()->setBounds (newX, newY, newW, newH);
+        content.setBounds (newX, newY, newW, newH);
 
         if (makeSureItUpdatesContent && ! hasUpdated)
             updateContents();
@@ -214,11 +220,12 @@ public:
     {
         hasUpdated = true;
         const int rowH = owner.getRowHeight();
+        Component& content = *getViewedComponent();
 
         if (rowH > 0)
         {
             const int y = getViewPositionY();
-            const int w = getViewedComponent()->getWidth();
+            const int w = content.getWidth();
 
             const int numNeeded = 2 + getMaximumVisibleHeight() / rowH;
             rows.removeRange (numNeeded, rows.size());
@@ -227,7 +234,7 @@ public:
             {
                 RowComponent* newRow = new RowComponent (owner);
                 rows.add (newRow);
-                getViewedComponent()->addAndMakeVisible (newRow);
+                content.addAndMakeVisible (newRow);
             }
 
             firstIndex = y / rowH;
@@ -247,10 +254,10 @@ public:
         }
 
         if (owner.headerComponent != nullptr)
-            owner.headerComponent->setBounds (owner.outlineThickness + getViewedComponent()->getX(),
+            owner.headerComponent->setBounds (owner.outlineThickness + content.getX(),
                                               owner.outlineThickness,
                                               jmax (owner.getWidth() - owner.outlineThickness * 2,
-                                                    getViewedComponent()->getWidth()),
+                                                    content.getWidth()),
                                               owner.headerComponent->getHeight());
     }
 
@@ -368,7 +375,8 @@ ListBox::ListBox (const String& name, ListBoxModel* const m)
       lastRowSelected (-1),
       multipleSelection (false),
       alwaysFlipSelection (false),
-      hasDoneInitialUpdate (false)
+      hasDoneInitialUpdate (false),
+      selectOnMouseDown (true)
 {
     addAndMakeVisible (viewport = new ListViewport (*this));
 
@@ -392,15 +400,9 @@ void ListBox::setModel (ListBoxModel* const newModel)
     }
 }
 
-void ListBox::setMultipleSelectionEnabled (bool b) noexcept
-{
-    multipleSelection = b;
-}
-
-void ListBox::setClickingTogglesRowSelection (bool b) noexcept
-{
-    alwaysFlipSelection = b;
-}
+void ListBox::setMultipleSelectionEnabled (bool b) noexcept         { multipleSelection = b; }
+void ListBox::setClickingTogglesRowSelection (bool b) noexcept      { alwaysFlipSelection = b; }
+void ListBox::setRowSelectedOnMouseDown (bool b) noexcept           { selectOnMouseDown = b; }
 
 void ListBox::setMouseMoveSelectsRows (bool b)
 {
@@ -884,7 +886,7 @@ void ListBox::repaintRow (const int rowNumber) noexcept
     repaint (getRowPosition (rowNumber, true));
 }
 
-Image ListBox::createSnapshotOfSelectedRows (int& imageX, int& imageY)
+Image ListBox::createSnapshotOfRows (const SparseSet<int>& rows, int& imageX, int& imageY)
 {
     Rectangle<int> imageArea;
     const int firstRow = getRowContainingPosition (0, viewport->getY());
@@ -893,7 +895,7 @@ Image ListBox::createSnapshotOfSelectedRows (int& imageX, int& imageY)
     {
         Component* rowComp = viewport->getComponentForRowIfOnscreen (firstRow + i);
 
-        if (rowComp != nullptr && isRowSelected (firstRow + i))
+        if (rowComp != nullptr && rows.contains (firstRow + i))
         {
             const Point<int> pos (getLocalPoint (rowComp, Point<int>()));
             const Rectangle<int> rowRect (pos.getX(), pos.getY(), rowComp->getWidth(), rowComp->getHeight());
@@ -910,7 +912,7 @@ Image ListBox::createSnapshotOfSelectedRows (int& imageX, int& imageY)
     {
         Component* rowComp = viewport->getComponentForRowIfOnscreen (firstRow + i);
 
-        if (rowComp != nullptr && isRowSelected (firstRow + i))
+        if (rowComp != nullptr && rows.contains (firstRow + i))
         {
             Graphics g (snapshot);
             g.setOrigin (getLocalPoint (rowComp, Point<int>()) - imageArea.getPosition());
@@ -927,12 +929,12 @@ Image ListBox::createSnapshotOfSelectedRows (int& imageX, int& imageY)
     return snapshot;
 }
 
-void ListBox::startDragAndDrop (const MouseEvent& e, const var& dragDescription, bool allowDraggingToOtherWindows)
+void ListBox::startDragAndDrop (const MouseEvent& e, const SparseSet<int>& rowsToDrag, const var& dragDescription, bool allowDraggingToOtherWindows)
 {
     if (DragAndDropContainer* const dragContainer = DragAndDropContainer::findParentDragContainerFor (this))
     {
         int x, y;
-        Image dragImage (createSnapshotOfSelectedRows (x, y));
+        Image dragImage = createSnapshotOfRows (rowsToDrag, x, y);
 
         MouseEvent e2 (e.getEventRelativeTo (this));
         const Point<int> p (x - e2.x, y - e2.y);

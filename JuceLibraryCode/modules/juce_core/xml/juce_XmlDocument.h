@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -41,7 +41,7 @@
     @code
 
     XmlDocument myDocument (File ("myfile.xml"));
-    XmlElement* mainElement = myDocument.getDocumentElement();
+    ScopedPointer<XmlElement> mainElement (myDocument.getDocumentElement());
 
     if (mainElement == nullptr)
     {
@@ -57,7 +57,7 @@
     Or you can use the static helper methods for quick parsing..
 
     @code
-    XmlElement* xml = XmlDocument::parse (myXmlFile);
+    ScopedPointer<XmlElement> xml (XmlDocument::parse (myXmlFile));
 
     if (xml != nullptr && xml->hasTagName ("foobar"))
     {

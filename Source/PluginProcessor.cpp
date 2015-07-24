@@ -58,7 +58,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
-
+    showKeyboard = true;
+    
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
     
     controllers.values_[kControllerPitchRange] = 3;
@@ -66,7 +67,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     loadPreference();
     
     setEngineType(DEXED_ENGINE_MODERN);
-    
+
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
     }

@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -24,11 +24,11 @@
 
 TooltipWindow::TooltipWindow (Component* const parentComp, const int delayMs)
     : Component ("tooltip"),
+      lastComponentUnderMouse (nullptr),
       millisecondsBeforeTipAppears (delayMs),
-      mouseClicks (0),
-      mouseWheelMoves (0),
-      lastHideTime (0),
-      lastComponentUnderMouse (nullptr)
+      mouseClicks (0), mouseWheelMoves (0),
+      lastCompChangeTime (0), lastHideTime (0),
+      reentrant (false)
 {
     if (Desktop::getInstance().getMainMouseSource().canHover())
         startTimer (123);
@@ -60,43 +60,43 @@ void TooltipWindow::mouseEnter (const MouseEvent&)
     hideTip();
 }
 
-void TooltipWindow::updatePosition (const String& tip, Point<int> pos, const Rectangle<int>& parentArea)
+void TooltipWindow::updatePosition (const String& tip, Point<int> pos, Rectangle<int> parentArea)
 {
-    int w, h;
-    getLookAndFeel().getTooltipSize (tip, w, h);
-
-    setBounds (Rectangle<int> (pos.x > parentArea.getCentreX() ? pos.x - (w + 12) : pos.x + 24,
-                               pos.y > parentArea.getCentreY() ? pos.y - (h + 6)  : pos.y + 6,
-                               w, h)
-                .constrainedWithin (parentArea));
-
+    setBounds (getLookAndFeel().getTooltipBounds (tip, pos, parentArea));
     setVisible (true);
 }
 
 void TooltipWindow::displayTip (Point<int> screenPos, const String& tip)
 {
     jassert (tip.isNotEmpty());
-    if (tipShowing != tip)
-        repaint();
 
-    tipShowing = tip;
-
-    if (Component* const parent = getParentComponent())
+    if (! reentrant)
     {
-        updatePosition (tip, parent->getLocalPoint (nullptr, screenPos),
-                        parent->getLocalBounds());
-    }
-    else
-    {
-        updatePosition (tip, screenPos, Desktop::getInstance().getDisplays()
-                                            .getDisplayContaining (screenPos).userArea);
+        ScopedValueSetter<bool> setter (reentrant, true, false);
 
-        addToDesktop (ComponentPeer::windowHasDropShadow
-                        | ComponentPeer::windowIsTemporary
-                        | ComponentPeer::windowIgnoresKeyPresses);
-    }
+        if (tipShowing != tip)
+        {
+            tipShowing = tip;
+            repaint();
+        }
 
-    toFront (false);
+        if (Component* const parent = getParentComponent())
+        {
+            updatePosition (tip, parent->getLocalPoint (nullptr, screenPos),
+                            parent->getLocalBounds());
+        }
+        else
+        {
+            updatePosition (tip, screenPos, Desktop::getInstance().getDisplays()
+                                                .getDisplayContaining (screenPos).userArea);
+
+            addToDesktop (ComponentPeer::windowHasDropShadow
+                            | ComponentPeer::windowIsTemporary
+                            | ComponentPeer::windowIgnoresKeyPresses);
+        }
+
+        toFront (false);
+    }
 }
 
 String TooltipWindow::getTipFor (Component* const c)
@@ -105,19 +105,22 @@ String TooltipWindow::getTipFor (Component* const c)
          && Process::isForegroundProcess()
          && ! ModifierKeys::getCurrentModifiers().isAnyMouseButtonDown())
     {
-        if (TooltipClient* const ttc = dynamic_cast <TooltipClient*> (c))
+        if (TooltipClient* const ttc = dynamic_cast<TooltipClient*> (c))
             if (! c->isCurrentlyBlockedByAnotherModalComponent())
                 return ttc->getTooltip();
     }
 
-    return String::empty;
+    return String();
 }
 
 void TooltipWindow::hideTip()
 {
-    tipShowing.clear();
-    removeFromDesktop();
-    setVisible (false);
+    if (! reentrant)
+    {
+        tipShowing.clear();
+        removeFromDesktop();
+        setVisible (false);
+    }
 }
 
 void TooltipWindow::timerCallback()

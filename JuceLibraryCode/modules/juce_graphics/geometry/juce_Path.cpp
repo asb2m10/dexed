@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -501,13 +501,20 @@ void Path::addRoundedRectangle (float x, float y, float w, float h, float cs)
     addRoundedRectangle (x, y, w, h, cs, cs);
 }
 
-void Path::addTriangle (const float x1, const float y1,
-                        const float x2, const float y2,
-                        const float x3, const float y3)
+void Path::addTriangle (float x1, float y1,
+                        float x2, float y2,
+                        float x3, float y3)
 {
-    startNewSubPath (x1, y1);
-    lineTo (x2, y2);
-    lineTo (x3, y3);
+    addTriangle (Point<float> (x1, y1),
+                 Point<float> (x2, y2),
+                 Point<float> (x3, y3));
+}
+
+void Path::addTriangle (Point<float> p1, Point<float> p2, Point<float> p3)
+{
+    startNewSubPath (p1);
+    lineTo (p2);
+    lineTo (p3);
     closeSubPath();
 }
 
@@ -647,6 +654,20 @@ void Path::addPieSegment (const float x, const float y,
     }
 
     closeSubPath();
+}
+
+void Path::addPieSegment (Rectangle<float> segmentBounds,
+                          const float fromRadians,
+                          const float toRadians,
+                          const float innerCircleProportionalSize)
+{
+    addPieSegment (segmentBounds.getX(),
+                   segmentBounds.getY(),
+                   segmentBounds.getWidth(),
+                   segmentBounds.getHeight(),
+                   fromRadians,
+                   toRadians,
+                   innerCircleProportionalSize);
 }
 
 //==============================================================================
@@ -1546,17 +1567,17 @@ void Path::restoreFromString (StringRef stringVersion)
 }
 
 //==============================================================================
-Path::Iterator::Iterator (const Path& path_)
-    : path (path_),
-      index (0)
+Path::Iterator::Iterator (const Path& p) noexcept
+    : x1 (0), y1 (0), x2 (0), y2 (0), x3 (0), y3 (0),
+      path (p), index (0)
 {
 }
 
-Path::Iterator::~Iterator()
+Path::Iterator::~Iterator() noexcept
 {
 }
 
-bool Path::Iterator::next()
+bool Path::Iterator::next() noexcept
 {
     const float* const elements = path.data.elements;
 
