@@ -30,6 +30,7 @@ ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name)
     hasContent = false;
     dragCandidate = -1;
     readOnly = false;
+    programNames.clear();
 }
 
 void ProgramListBox::paint(Graphics &g) {
@@ -85,9 +86,9 @@ void ProgramListBox::resized() {
     cellHeight = getHeight() / rows;
 }
 
-void ProgramListBox::setCartridge(char *sysex) {
-    extractProgramNames((const char *)sysex, programNames);
-    memcpy(cartContent, sysex, 4104);
+void ProgramListBox::setCartridge(Cartridge &cart) {
+    cartContent = cart;
+    cartContent.getProgramNames(programNames);
     hasContent = true;
     repaint();
 }
@@ -138,7 +139,7 @@ void ProgramListBox::mouseDrag(const MouseEvent &event) {
         g.fillRect(0,0,cellWidth, cellHeight);
         g.setColour(Colours::white);
         g.drawFittedText(programNames[position], 0, 0, cellWidth, cellHeight, Justification::centred, true);
-        void *src = cartContent + (position*128);
+        void *src = cartContent.getRawVoice() + (position*128);
         var description = var(src, 128);
         dragContainer->startDragging(description, this, snapshot, false);
     }
@@ -148,9 +149,7 @@ void ProgramListBox::setSelected(int idx) {
     selectedPgm = idx;
 }
 
-char* ProgramListBox::getCurrentCart() {
-    if ( ! hasContent )
-        return nullptr;
+Cartridge &ProgramListBox::getCurrentCart() {
     return cartContent;
 }
 

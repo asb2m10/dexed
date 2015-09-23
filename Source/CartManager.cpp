@@ -115,10 +115,8 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
         mainWindow->processor->setCurrentProgram(pos);
         mainWindow->processor->updateHostDisplay();
     } else {
-        if ( source->getCurrentCart() == nullptr )
-            return;
-        char unpackPgm[161];
-        unpackProgramFromSysex(unpackPgm, source->getCurrentCart(), pos);
+        uint8_t unpackPgm[161];
+        source->getCurrentCart().unpackProgram(unpackPgm, pos);
         activeCart->setSelected(-1);
         browserCart->setSelected(pos);
         repaint();
@@ -177,7 +175,7 @@ void CartManager::fileDoubleClicked(const File& file) {
     if ( file.isDirectory() )
         return;
     mainWindow->loadCart(file);
-    activeCart->setCartridge(mainWindow->processor->sysex);
+    activeCart->setCartridge(mainWindow->processor->currentCart);
 }
 
 void CartManager::fileClicked(const File& file, const MouseEvent& e) {
@@ -215,7 +213,7 @@ void CartManager::setActiveProgram(int idx, String activeName) {
 }
 
 void CartManager::resetActiveSysex() {
-    activeCart->setCartridge(mainWindow->processor->sysex);
+    activeCart->setCartridge(mainWindow->processor->currentCart);
 }
 
 void CartManager::selectionChanged() {
@@ -227,21 +225,14 @@ void CartManager::selectionChanged() {
     if ( file.isDirectory() )
         return;
     
-    String f = file.getFullPathName();
-    uint8_t syx_data[4104];
-    ifstream fp_in(f.toRawUTF8(), ios::binary);
-    if (fp_in.fail()) {
-        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Error", "Unable to open: " + f);
+    Cartridge browserSysex;
+    int rc = browserSysex.load(file);
+    if ( rc < 0 ) {
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Error", "Unable to open file");
         return;
     }
     
-    fp_in.read((char *)syx_data, 4104);
-    fp_in.close();
-    char browserSysex[4104];
-    memcpy(browserSysex, syx_data+6, 4096);
-    int checksum = sysexChecksum(((char *) &browserSysex), 4096);
-    
-    if ( checksum != syx_data[4102] ) {
+    if ( rc != 0 ) {
         browserCart->readOnly = true;
     } else {
         browserCart->readOnly = false;
@@ -260,15 +251,12 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
 
     switch(menu.show())  {
         case 1000:
-            char unpackPgm[161];
+            uint8_t unpackPgm[161];
             
             if ( source == activeCart ) {
-                unpackProgramFromSysex(unpackPgm, mainWindow->processor->sysex, pos);
+                mainWindow->processor->currentCart.unpackProgram(unpackPgm, pos);
             } else {
-                char *sysex = source->getCurrentCart();
-                if ( sysex == nullptr )
-                    return;
-                unpackProgramFromSysex(unpackPgm, sysex, pos);
+                source->getCurrentCart().unpackProgram(unpackPgm, pos);
             }
             
             if ( mainWindow->processor->sysexComm.isOutputActive() )
@@ -284,7 +272,7 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
 
 void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) {
     if ( destListBox == activeCart ) {
-        char *sysex = mainWindow->processor->sysex;
+        char *sysex = mainWindow->processor->currentCart.getRawVoice();
         memcpy(sysex+(dest*128), packedPgm, 128);
         mainWindow->updateUI();
     } else {
@@ -295,22 +283,14 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
         
         if ( file.isDirectory() )
             return;
-        if ( file.getSize() > 5000 )
+        if ( file.getSize() != 4104 )
             return;
-        
-        MemoryBlock block;
-        file.loadFileAsData(block);
-        
-        if ( block.getSize() < 4104 )
-            return;
-        
-        char *sysex = ((char *) block.getData()) + 6;
-        memcpy(sysex+(dest*128), packedPgm, 128);
-        
-        char exported[4104];
-        exportSysexCart(exported, sysex, 0);
-        file.replaceWithData(exported, 4104);
-        browserCart->setCartridge(sysex);
+
+        Cartridge cart;
+        cart.load(file);
+        memcpy(cart.getRawVoice()+(dest*128), packedPgm, 128);
+        cart.saveVoice(file);
+        browserCart->setCartridge(cart);
     }
 }
 

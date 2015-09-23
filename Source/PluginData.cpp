@@ -28,7 +28,7 @@
 #include <fstream>
 using namespace ::std;
 
-uint8_t sysexChecksum(const char *sysex, int size) {
+uint8_t sysexChecksum(const uint8_t *sysex, int size) {
     int sum = 0;
     int i;
     
@@ -36,64 +36,9 @@ uint8_t sysexChecksum(const char *sysex, int size) {
     return sum & 0x7F;
 }
 
-String normalizeSysexName(const char *sysexName) {
-    char buffer[11];
-
-    memcpy(buffer, sysexName, 10);
-    
-    for (int j = 0; j < 10; j++) {
-        char c = (unsigned char) buffer[j];
-        switch (c) {
-            case 92:
-                c = 'Y';
-                break; /* yen */
-            case 126:
-                c = '>';
-                break; /* >> */
-            case 127:
-                c = '<';
-                break; /* << */
-            default:
-                if (c < 32 || c > 127)
-                    c = 32;
-                break;
-        }
-        buffer[j] = c;
-    }
-    buffer[10] = 0;
-
-    return String(buffer);
-}
-
-
-void extractProgramNames(const char *block, StringArray &dest) {
-    dest.clear();
-    
-    for (int i = 0; i < 32; i++) {
-        dest.add(String(normalizeSysexName(block + ((i * 128) + 118))));
-    }
-}
-
-void exportSysexCart(char *dest, char *src, char sysexChl) {
-    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 };
-    header[2] = sysexChl;
-    
-    memcpy(dest, header, 6);
-    
-    // copy 32 voices
-    memcpy(dest+6, src, 4096);
-    
-    // make checksum for dump
-    uint8_t footer[] = { sysexChecksum(src, 4096), 0xF7 };
-
-    memcpy(dest+4102, footer, 2);
-}
-
-
-void exportSysexPgm(char *dest, char *src, char sysexChl) {
+void exportSysexPgm(uint8_t *dest, uint8_t *src) {
     uint8_t header[] = { 0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B };
-    header[2] = sysexChl;
-    
+   
     memcpy(dest, header, 6);
     
     // copy 1 unpacked voices
@@ -110,8 +55,8 @@ void exportSysexPgm(char *dest, char *src, char sysexChl) {
 /**
  * Pack a program into a 32 packed sysex
  */
-void packProgram(uint8_t *dest, uint8_t *src, int idx, String name) {
-    uint8_t *bulk = dest + (idx * 128);
+void Cartridge::packProgram(uint8_t *src, int idx, String name) {
+    uint8_t *bulk = voiceData + 6 + (idx * 128);
     
     for(int op = 0; op < 6; op++) {
         // eg rate and level, brk pt, depth, scaling
@@ -171,8 +116,9 @@ char normparm(char value, char max, int id) {
     return v;
 }
 
-void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx) {
-    char *bulk = sysexCart + (idx * 128);
+void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
+    // TODO put this in uint8_t :D
+    char *bulk = (char *)voiceData + 6 + (idx * 128);
     
     for (int op = 0; op < 6; op++) {
         // eg rate and level, brk pt, depth, scaling
@@ -220,53 +166,33 @@ void unpackProgramFromSysex(char *unpackPgm, char *sysexCart, int idx) {
     unpackPgm[160] = 1;
 }
 
-void DexedAudioProcessor::unpackProgram(int idx) {
-    unpackProgramFromSysex(data, sysex, idx);
+void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
+    currentCart = sysex;
+    currentCart.getProgramNames(programNames);
 }
 
-int DexedAudioProcessor::importSysex(const char *imported) {
-    memcpy(sysex, imported + 6, 4096);
-    
-    uint8_t checksum = sysexChecksum(((char *) &sysex), 4096);
-    extractProgramNames(sysex, programNames);
-    
-    if ( checksum != imported[4102] ) {
-        TRACE("sysex import checksum doesnt match %d != %d", checksum, imported[4102]);
-        return 1;
-    }
-    
-    return 0;
-}
-
-void DexedAudioProcessor::updateProgramFromSysex(const uint8 *rawdata) {
+void DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
     memcpy(data, rawdata, 161);
     triggerAsyncUpdate();
 }
 
 void DexedAudioProcessor::setupStartupCart() {
-    char syx_data[4104];
-    memset(&syx_data, 0, 4104);
-    
     File startup = dexedCartDir.getChildFile("Dexed_01.syx");
+
+    if ( currentCart.load(startup) != -1 )
+        return;
     
-    if ( startup.exists() ) {
-        FileInputStream *fis = startup.createInputStream();
-        if ( fis == nullptr ) {
-            TRACE("unable to open default cartridge");
-            return;
-        }
-        fis->read(syx_data, 4104);
-        delete fis;
-    } else {
-        // The user deleted the file :/, load from the builtin zip file.
-        MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
-        ZipFile *builtin_pgm = new ZipFile(mis, true);
-        InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
-        is->read(syx_data, 4104);
-        delete is;
-        delete builtin_pgm;
-    }
-    importSysex((char *) &syx_data);
+    // The user deleted the file :/, load from the builtin zip file.
+    MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
+    ZipFile *builtin_pgm = new ZipFile(mis, true);
+    InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
+    Cartridge init;
+    
+    if ( init.load(*is) != -1 )
+        loadCartridge(init);
+
+    delete is;
+    delete builtin_pgm;
 }
 
 void DexedAudioProcessor::resetToInitVoice() {
@@ -305,7 +231,7 @@ void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
 void DexedAudioProcessor::sendCurrentSysexProgram() {
     uint8_t raw[167];
     
-    exportSysexPgm((char *) raw, data, sysexComm.getChl());
+    exportSysexPgm(raw, data);
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(raw, 163));
     }
@@ -314,7 +240,7 @@ void DexedAudioProcessor::sendCurrentSysexProgram() {
 void DexedAudioProcessor::sendCurrentSysexCartridge() {
     uint8_t raw[4104];
     
-    exportSysexCart((char *) raw, (char *) &sysex, sysexComm.getChl());
+    currentCart.saveVoice(raw);
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(raw, 4104));
     }
@@ -363,11 +289,8 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     if ( activeFileCartridge.exists() )
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
 
-    char sysex_blob[4104];
-    exportSysexCart((char *) &sysex_blob, (char *) sysex, 0);
-    
     NamedValueSet blobSet;
-    blobSet.set("sysex", var((void *) &sysex_blob, 4104));
+    blobSet.set("sysex", var((void *) currentCart.getVoiceSysex(), 4104));
     blobSet.set("program", var((void *) &data, 161));
     
     blobSet.copyToXmlAttributes(*dexedBlob);
@@ -415,7 +338,9 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
         return;
     }
     
-    importSysex((char *) sysex_blob.getBinaryData()->getData());
+    Cartridge cart;
+    cart.load((uint8 *)sysex_blob.getBinaryData()->getData(), 4104);
+    loadCartridge(cart);
     memcpy(data, program.getBinaryData()->getData(), 161);
     
     lastStateSave = (long) time(NULL);

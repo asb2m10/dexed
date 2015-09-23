@@ -542,7 +542,7 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor->fxCutoff->bind(cutoff);
     processor->fxReso->bind(reso);
     processor->output->bind(output);
-    algoDisplay->algo = &(processor->data[134]);
+    algoDisplay->algo = (char *) &(processor->data[134]);
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 
     editor = edit;

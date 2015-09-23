@@ -157,13 +157,13 @@ static double getDuration(int p_rate, int p_level_l, int p_level_r) {
 }
 
 EnvDisplay::EnvDisplay() {
-    pvalues = (char *) &TMP_LEVEL_PTR;
+    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
 }
 
 void EnvDisplay::paint(Graphics &g) {
     int h = getHeight();
-    char *rates = pvalues;
-    char *levels = pvalues + 4;
+    uint8_t *rates = pvalues;
+    uint8_t *levels = pvalues + 4;
     
     double d[4];
     double keyoff = 0.0;
@@ -250,15 +250,15 @@ void EnvDisplay::paint(Graphics &g) {
 }
 
 PitchEnvDisplay::PitchEnvDisplay() {
-    pvalues = (char *) &TMP_LEVEL_PTR;
+    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
     vPos = 0;
 }
 
 void PitchEnvDisplay::paint(Graphics &g) {
     g.setColour(Colours::white);
     
-    char *levels = pvalues + 4;
-    char *rates = pvalues;
+    uint8_t *levels = pvalues + 4;
+    uint8_t *rates = pvalues;
     
     float dist[4];
     float total = 0;

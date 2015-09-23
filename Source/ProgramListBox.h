@@ -22,6 +22,7 @@
 #define PROGRAMLISTBOX_H_INCLUDED
 
 #include "JuceHeader.h"
+#include "PluginData.h"
 
 class ProgramListBox;
 class ProgramListBoxListener {
@@ -41,8 +42,7 @@ class ProgramListBox : public Component, public DragAndDropTarget {
     int programPosition(int x, int y);
     int selectedPgm;
     
-    // TODO: this should be a pointer
-    char cartContent[4104];
+    Cartridge cartContent;
 
     int dragCandidate;
 public:
@@ -52,14 +52,15 @@ public:
     
     ProgramListBox(const String name, int numCols);
     void addListener(ProgramListBoxListener *listener);
-    void paint(Graphics &g);
-    void setCartridge(char *sysex);
-    void resized();
-    void mouseDoubleClick(const MouseEvent &event);
-    void mouseDown(const MouseEvent &event);
-    void mouseDrag(const MouseEvent &event);
+    void paint(Graphics &g) override;
+    void resized() override;
+    void mouseDoubleClick(const MouseEvent &event) override;
+    void mouseDown(const MouseEvent &event) override;
+    void mouseDrag(const MouseEvent &event) override;
     void setSelected(int idx);
-    char* getCurrentCart();
+    
+    Cartridge &getCurrentCart();
+    void setCartridge(Cartridge &cart);
     
     bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
     void itemDragEnter(const SourceDetails &dragSourceDetails) override;

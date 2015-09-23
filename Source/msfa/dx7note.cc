@@ -139,7 +139,7 @@ Dx7Note::Dx7Note() {
     }
 }
 
-void Dx7Note::init(const char patch[156], int midinote, int velocity) {
+void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
   int rates[4];
   int levels[4];
   for (int op = 0; op < 6; op++) {
@@ -244,7 +244,7 @@ void Dx7Note::keyup() {
   }
 }
 
-void Dx7Note::update(const char patch[156], int midinote) {
+void Dx7Note::update(const uint8_t patch[156], int midinote) {
   for (int op = 0; op < 6; op++) {
 	    int off = op * 21;
     int mode = patch[off + 17];
@@ -285,7 +285,6 @@ void Dx7Note::transferSignal(Dx7Note &src) {
     for (int i=0;i<6;i++) {
         params_[i].gain_out = src.params_[i].gain_out;
         params_[i].phase = src.params_[i].phase;
-        //params_[i].phase = 0;
     }
 }
 

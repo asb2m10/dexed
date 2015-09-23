@@ -36,7 +36,7 @@ struct VoiceStatus {
 class Dx7Note {
  public:
   Dx7Note();
-  void init(const char patch[156], int midinote, int velocity);
+  void init(const uint8_t patch[156], int midinote, int velocity);
 
   // Note: this _adds_ to the buffer. Interesting question whether it's
   // worth it...
@@ -51,7 +51,7 @@ class Dx7Note {
   // keyup, that won't work.
 
   // PG:add the update
-  void update(const char patch[156], int midinote);
+  void update(const uint8_t patch[156], int midinote);
   void peekVoiceStatus(VoiceStatus &status);
   void transferState(Dx7Note& src);
   void transferSignal(Dx7Note &src);

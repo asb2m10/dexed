@@ -152,7 +152,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     MidiBuffer::Iterator it(midiMessages);
     hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
 
-    float *channelData = buffer.getSampleData(0);
+    float *channelData = buffer.getWritePointer(0);
   
     // flush first events
     for (i=0; i < numSamples && i < extra_buf_size; i++) {
@@ -443,13 +443,11 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 
     // 32 voice dump
     if ( buf[3] == 9 ) {
-        if ( sz < 4104 ) {
-            TRACE("wrong 32 voice datasize %d", sz);
-            return;
+        Cartridge received;
+        if ( received.load(buf, sz) ) {
+            loadCartridge(received);
+            setCurrentProgram(0);
         }
-        TRACE("update 32bulk voice");
-        importSysex((const char *)buf);
-        setCurrentProgram(0);
     }
 
     updateHostDisplay();

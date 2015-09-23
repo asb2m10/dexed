@@ -140,22 +140,18 @@ void DexedAudioProcessorEditor::cartShow() {
 
 
 void DexedAudioProcessorEditor::loadCart(File file) {
-    String f = file.getFullPathName();
-    uint8_t syx_data[4104];
-    ifstream fp_in(f.toRawUTF8(), ios::binary);
-    if (fp_in.fail()) {
+    Cartridge cart;
+
+    if ( cart.load(file) < 0 ) {
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                           "Error",
-                                          "Unable to open: " + f);
+                                          "Unable to open: " + file.getFullPathName());
         return;
     }
-    fp_in.read((char *)syx_data, 4104);
-    fp_in.close();
-    if ( processor->importSysex((char *) &syx_data) ) {
-        global.setSystemMessage(String("Unkown sysex format !?"));
-    }
-    processor->setCurrentProgram(0);
+    
+    processor->loadCartridge(cart);
     rebuildProgramCombobox();
+    processor->setCurrentProgram(0);
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
     processor->updateHostDisplay();
     
@@ -167,19 +163,10 @@ void DexedAudioProcessorEditor::saveCart() {
 
     FileChooser fc ("Export DX sysex...", processor->dexedCartDir, "*.syx", 1);
     if ( fc.browseForFileToSave(true) ) {
-        String f = fc.getResults().getReference(0).getFullPathName();
-        char syx_data[4104];
-        
-        exportSysexCart((char *) syx_data, (char *) &processor->sysex, 0);
-        
-        ofstream fp_out(f.toRawUTF8(), ios::binary);
-        fp_out.write((char *)syx_data, 4104);
-        fp_out.close();
-        
-        if (fp_out.fail()) {
+        if ( ! processor->currentCart.saveVoice(fc.getResults().getReference(0)) ) {
             AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                               "Error",
-                                              "Unable to write: " + f);
+                                              "Unable to write: " + fc.getResults().getReference(0).getFullPathName());
         }
     }
 }
@@ -250,6 +237,8 @@ void DexedAudioProcessorEditor::updateUI() {
 void DexedAudioProcessorEditor::rebuildProgramCombobox() {
     global.programs->clear(dontSendNotification);
     
+    processor->currentCart.getProgramNames(processor->programNames);
+    
     for(int i=0;i<processor->getNumPrograms();i++) {
         String id;
         id << (i+1) << ". " << processor->getProgramName(i);
@@ -258,7 +247,7 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
     
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
     
-    String name = normalizeSysexName((const char *) processor->data+145);
+    String name = Cartridge::normalizePgmName((const char *) processor->data+145);
     cartManager.setActiveProgram(processor->getCurrentProgram(), name);
     if ( name != processor->getProgramName(processor->getCurrentProgram()) )
         global.programs->setText("**. " + name, dontSendNotification);
@@ -267,11 +256,9 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
 }
 
 void DexedAudioProcessorEditor::storeProgram() {
-    String currentName = normalizeSysexName((const char *) processor->data+145);
-    char destSysex[4096];
+    String currentName = Cartridge::normalizePgmName((const char *) processor->data+145);
+    Cartridge destSysex = processor->currentCart;
     File *externalFile = NULL;
-    
-    memcpy(&destSysex, processor->sysex, 4096);
 
     bool activeCartridgeFound = processor->activeFileCartridge.exists();
     
@@ -292,7 +279,7 @@ void DexedAudioProcessorEditor::storeProgram() {
         // TODO: fix the name length to 10
 
         StringArray programs;
-        extractProgramNames((char *) &destSysex, programs);
+        destSysex.getProgramNames(programs);
         dialog.addComboBox("Dest", programs, "Program Destination");
 
 
@@ -318,12 +305,9 @@ void DexedAudioProcessorEditor::storeProgram() {
                 if ( externalFile != NULL ) 
                     delete externalFile;
 
-                MemoryBlock block;
                 externalFile = new File(fc.getResults().getReference(0));
-                if ( externalFile->loadFileAsData(block) ) {
-                    block.copyTo(destSysex, 6, 4096);
+                if ( destSysex.load(*externalFile) )
                     continue;
-                }
                 AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Read error", "Unable to read file");
             }
         }
@@ -340,8 +324,7 @@ void DexedAudioProcessorEditor::storeProgram() {
             }
 
             if ( externalFile == NULL ) {
-                packProgram((uint8_t *) processor->sysex, (uint8_t *) processor->data, programNum, programName);
-                processor->programNames.set(programNum, programName);
+                processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName);
                 rebuildProgramCombobox();
                 processor->setCurrentProgram(programNum);
                 processor->updateHostDisplay();
@@ -355,18 +338,13 @@ void DexedAudioProcessorEditor::storeProgram() {
                             break;
                         destination = fc.getResult();
                     }
-                    char sysexFile[4104];
-                    exportSysexCart((char *) &sysexFile, (char *) &processor->sysex, 0);
-                    if ( ! destination.replaceWithData(sysexFile, 4104) ) {
-                        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
-                    }
+                    
+                    processor->currentCart.saveVoice(destination);
                     processor->activeFileCartridge = destination;
                 }
             } else {
-                packProgram((uint8_t *) &destSysex, (uint8_t *) processor->data, programNum, programName);
-                char sysexFile[4104];
-                exportSysexCart((char *) &sysexFile, (char *) &destSysex, 0);
-                if ( ! externalFile->replaceWithData(sysexFile, 4104) ) {
+                destSysex.packProgram((uint8_t *) processor->data, programNum, programName);
+                if ( ! destSysex.saveVoice(*externalFile)) {
                     AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
                 }
             }

@@ -512,7 +512,7 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     panic();
     
     index = index > 31 ? 31 : index;
-    unpackProgram(index);
+    currentCart.unpackProgram(data, index);
     lfo.reset(data + 137);
     currentProgram = index;
     triggerAsyncUpdate();

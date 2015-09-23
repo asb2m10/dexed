@@ -115,14 +115,14 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     char clipboardContent;
     
     void resolvAppDir();
+
 public :
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
-    StringArray programNames;    
-    char sysex[4096];    
-    char data[161];
+    StringArray programNames;
+    Cartridge currentCart;
+    uint8_t data[161];
 
-    //CartridgeManager cartManager;
     SysexComm sysexComm;
     VoiceStatus voiceStatus;
     File activeFileCartridge;
@@ -154,7 +154,8 @@ public :
     ScopedPointer<CtrlFloat> fxReso;
     ScopedPointer<CtrlFloat> output;
 
-    int importSysex(const char *imported);
+    //int importSysex(const char *imported);
+    void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);
 
     //==============================================================================
@@ -184,7 +185,6 @@ public :
     bool hasEditor() const;
     void updateUI();
     bool peekVoiceStatus();
-    void unpackProgram(int idx);
     void updateProgramFromSysex(const uint8 *rawdata);
     void setupStartupCart();
     
