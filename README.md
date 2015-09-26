@@ -17,6 +17,12 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.1
+* Drop of .syx files in the cartridge manager
+* Dexed data directory can now optionally reside in the same location where the binary is installed
+* 'Send current program to DX7' in Cartridge Manager works as designed
+* Support for sysex streams (multiple sysex messages in one .syx file)
+* falkTX upstream fixes for Linux
 
 #### Version 0.9.0
 * Apple AU support
@@ -25,7 +31,6 @@ Changelog
 * Basic theming
 * Fixed the UI corruption when more than one Dexed instance was loaded
 * Fixed wrong display value issues (coarse and fine)
-
 
 #### Version 0.8.0
 * New UI by [AZur Studio](http://bji.yukihotaru.com/)
@@ -63,15 +68,15 @@ Credits & thanks
 * PPPlay : Great [OPL3](http://sourceforge.net/projects/peepeeplayer) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
-* markusthegeek direct implication for this project
+* falkTX [distrho](http://distrho.sourceforge.net/)
 
 TODO - Dexed 
 ------------
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
 * UI threaded messaging to avoid DAW automation 'clicks' 
-* Zomby UI changes: this occurs in Live and will be fixed in the 0.8.1 version.
+* Zomby UI changes: this occurs in Live
 * Various code cleanup
-* More smothness in mono mode
+* More smoothness in mono mode
 
 TODO - msfa
 -----------

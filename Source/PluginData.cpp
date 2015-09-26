@@ -229,7 +229,7 @@ void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
 }
 
 void DexedAudioProcessor::sendCurrentSysexProgram() {
-    uint8_t raw[167];
+    uint8_t raw[163];
     
     exportSysexPgm(raw, data);
     if ( sysexComm.isOutputActive() ) {

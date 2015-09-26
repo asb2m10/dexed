@@ -38,8 +38,41 @@ public:
     };
 };
 
+class FileTreeDrop : public FileTreeComponent {
+public :
+    FileTreeDrop(DirectoryContentsList &listToShow) : FileTreeComponent(listToShow) {}
+    
+    bool isInterestedInFileDrag (const StringArray &files) override {
+        bool found = false;
+        
+        for(int i=0; i<files.size(); i++) {
+            String filename = files[i].toLowerCase();
+            found |= filename.endsWith(".syx");
+        }
+        return found;
+    }
+    
+    void filesDropped(const StringArray &files, int x, int y) override {
+        File targetDir = getSelectedFile();
+        
+        if ( ! targetDir.exists() )
+            targetDir = DexedAudioProcessor::dexedCartDir;
+        
+        if ( ! targetDir.isDirectory() )
+            targetDir = targetDir.getParentDirectory();
+        
+        for(int i=0; i<files.size(); i++) {
+            if ( files[i].toLowerCase().endsWith(".syx") ) {
+                File src(files[i]);
+                File target = targetDir.getChildFile(src.getFileName());
+                src.copyFileTo(target);
+            }
+        }
+        fileList.refresh();
+    }
+};
+
 CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartManager") {
-            
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;            
             
@@ -57,7 +90,7 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     timeSliceThread->startThread();
     cartBrowserList = new DirectoryContentsList(syxFileFilter, *timeSliceThread);
     cartBrowserList->setDirectory(cartDir, true, true);
-    cartBrowser = new FileTreeComponent(*cartBrowserList);
+    cartBrowser = new FileTreeDrop(*cartBrowserList);
     addAndMakeVisible(cartBrowser);
     cartBrowser->setBounds(23, 18, 590, 384);
     cartBrowser->setDragAndDropDescription("Sysex Browser");
@@ -259,8 +292,11 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
                 source->getCurrentCart().unpackProgram(unpackPgm, pos);
             }
             
-            if ( mainWindow->processor->sysexComm.isOutputActive() )
-                mainWindow->processor->sysexComm.send(MidiMessage(unpackPgm, 161));
+            if ( mainWindow->processor->sysexComm.isOutputActive() ) {
+                uint8_t msg[163];
+                exportSysexPgm(msg, unpackPgm);
+                mainWindow->processor->sysexComm.send(MidiMessage(msg, 163));
+            }
             break;
             
         case 1010:
