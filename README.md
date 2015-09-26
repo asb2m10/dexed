@@ -2,7 +2,7 @@ Dexed - FM Plugin Synth
 =======================
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
-Under the hood it uses [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) 
+Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android) 
 for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
 
 The goal of this project is to be a tool/companion for the original DX7. Sound engine 
