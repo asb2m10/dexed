@@ -18,6 +18,7 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 #### Version 0.9.1
+* Wheel, Foot, Breath, Aftertouch modulation support
 * Drop of .syx files in the cartridge manager
 * Dexed data directory can now optionally reside in the same location where the binary is installed
 * 'Send current program to DX7' in Cartridge Manager works as designed
