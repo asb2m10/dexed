@@ -99,7 +99,10 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     currentNote = 0;
     controllers.values_[kControllerPitch] = 0x2000;
-    controllers.values_[kControllerModWheel] = 0;
+    controllers.modwheel_cc = 0;
+    controllers.foot_cc = 0;
+    controllers.breath_cc = 0;
+    controllers.aftertouch_cc = 0;
     
     sustain = false;
     extra_buf_size = 0;
@@ -265,36 +268,49 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         case 0x90 :
             keydown(buf[1], buf[2]);
         return;
-
+            
         case 0xb0 : {
-            int controller = buf[1];
+            int ctrl = buf[1];
             int value = buf[2];
             
-            // mod wheel
-            if ( controller == 1 ) {
-                controllers.values_[kControllerModWheel] = value;
-                return;
-            }
-            
-            // pedal
-            if (controller == 64) {
-                sustain = value != 0;
-                if (!sustain) {
-                    for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
-                        if (voices[note].sustained && !voices[note].keydown) {
-                            voices[note].dx7_note->keyup();
-                            voices[note].sustained = false;
+            switch(ctrl) {
+                case 1:
+                    controllers.modwheel_cc = value;
+                    controllers.refresh();
+                    break;
+                case 2:
+                    controllers.breath_cc = value;
+                    controllers.refresh();
+                    break;
+                case 4:
+                    controllers.foot_cc = value;
+                    controllers.refresh();
+                    break;
+                case 5:
+                    sustain = value != 0;
+                    if (!sustain) {
+                        for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
+                            if (voices[note].sustained && !voices[note].keydown) {
+                                voices[note].dx7_note->keyup();
+                                voices[note].sustained = false;
+                            }
                         }
                     }
-                }
-                return;
+                    break;
             }
         }
         return;
 
         case 0xc0 :
             setCurrentProgram(buf[1]);
-        return;        
+        return;
+            
+        // aftertouch
+        case 0xd0 :
+            controllers.aftertouch_cc = buf[1];
+            controllers.refresh();
+        return;
+            
     }
 
     switch (cmd) {
@@ -464,8 +480,6 @@ void DexedAudioProcessor::setEngineType(int tp) {
             controllers.core = &engineMsfa;
             break;
         case DEXED_ENGINE_MARKI:
-            controllers.sinBitFilter = 0xFFFFC000;  // 10 bit
-            controllers.dacBitFilter = 0xFFFFF000;  // semi 14 bit
             controllers.core = &engineMkI;
             break;
         case DEXED_ENGINE_OPL:

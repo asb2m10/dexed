@@ -286,6 +286,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
     
+    
     if ( activeFileCartridge.exists() )
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
 

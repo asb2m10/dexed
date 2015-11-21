@@ -68,7 +68,6 @@ void EngineMkI::compute(int32_t *output, const int32_t *input,
         for (int i = 0; i < N; i++) {
             gain += dgain;
             int32_t y = Sin::lookup(phase + input[i]);
-            y &= controllers->sinBitFilter;
             int32_t y1 = ((int64_t)y * (int64_t)gain) >> 24;
             output[i] += y1;
             phase += freq;
@@ -77,7 +76,6 @@ void EngineMkI::compute(int32_t *output, const int32_t *input,
         for (int i = 0; i < N; i++) {
             gain += dgain;
             int32_t y = Sin::lookup(phase + input[i]);
-            y &= controllers->sinBitFilter;
             int32_t y1 = ((int64_t)y * (int64_t)gain) >> 24;
             output[i] = y1;
             phase += freq;
@@ -95,7 +93,6 @@ void EngineMkI::compute_pure(int32_t *output, int32_t phase0, int32_t freq,
         for (int i = 0; i < N; i++) {
             gain += dgain;
             int32_t y = Sin::lookup(phase);
-            y &= controllers->sinBitFilter;
             int32_t y1 = ((int64_t)y * (int64_t)gain) >> 24;
             output[i] += y1;
             phase += freq;
@@ -104,7 +101,6 @@ void EngineMkI::compute_pure(int32_t *output, int32_t phase0, int32_t freq,
         for (int i = 0; i < N; i++) {
             gain += dgain;
             int32_t y = Sin::lookup(phase);
-            y &= controllers->sinBitFilter;
             int32_t y1 = ((int64_t)y * (int64_t)gain) >> 24;
             output[i] = y1;
             phase += freq;
@@ -126,7 +122,6 @@ void EngineMkI::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
             int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
             y0 = y;
             y = Sin::lookup(phase + scaled_fb);
-            y &= controllers->sinBitFilter;
             y = ((int64_t)y * (int64_t)gain) >> 24;
             output[i] += y;
             phase += freq;
@@ -137,7 +132,6 @@ void EngineMkI::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
             int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
             y0 = y;
             y = Sin::lookup(phase + scaled_fb);
-            y &= controllers->sinBitFilter;
             y = ((int64_t)y * (int64_t)gain) >> 24;
             output[i] = y;
             phase += freq;
@@ -173,14 +167,12 @@ void EngineMkI::compute_fb2(int32_t *output, FmOpParams *parms, int32_t gain01, 
         int32_t scaled_fb = (y0 + y) >> (fb_shift + 2); // tsk tsk tsk: this needs some tuning
         y0 = y;
         y = Sin::lookup(phase[0] + scaled_fb);
-        y &= cont->sinBitFilter;
         y = ((int64_t)y * (int64_t)gain[0]) >> 24;
         phase[0] += parms[0].freq;
         
         // op 1
         gain[1] += dgain[1];
         y = Sin::lookup(phase[1] + y);
-        y &= cont->sinBitFilter;
         y = ((int64_t)y * (int64_t)gain[1]) >> 24;
         output[i] = y;
         phase[1] += parms[1].freq;
@@ -218,21 +210,18 @@ void EngineMkI::compute_fb3(int32_t *output, FmOpParams *parms, int32_t gain01, 
         int32_t scaled_fb = (y0 + y) >> (fb_shift + 6);     // tsk tsk tsk: this needs some tuning
         y0 = y;
         y = Sin::lookup(phase[0] + scaled_fb);
-        y &= cont->sinBitFilter;
         y = ((int64_t)y * (int64_t)gain[0]) >> 24;
         phase[0] += parms[0].freq;
         
         // op 1
         gain[1] += dgain[1];
         y = Sin::lookup(phase[1] + y);
-        y &= cont->sinBitFilter;
         y = ((int64_t)y * (int64_t)gain[1]) >> 24;
         phase[1] += parms[1].freq;
         
         // op 2
         gain[2] += dgain[2];
         y = Sin::lookup(phase[2] + y);
-        y &= cont->sinBitFilter;
         y = ((int64_t)y * (int64_t)gain[2]) >> 24;
         output[i] = y;
         phase[2] += parms[2].freq;      

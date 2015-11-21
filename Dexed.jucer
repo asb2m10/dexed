@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="1.0.0"
               bundleIdentifier="com.digitalsuburban.Dexed" includeBinaryInAppConfig="1"
-              buildVST="1" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
+              buildVST="1" buildAU="0" pluginName="Dexed" pluginDesc="Dexed FM Synth"
               pluginManufacturer="Digital Suburban" pluginManufacturerCode="DGSB"
               pluginCode="Dexd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
               pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"

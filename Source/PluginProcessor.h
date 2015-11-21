@@ -154,7 +154,6 @@ public :
     ScopedPointer<CtrlFloat> fxReso;
     ScopedPointer<CtrlFloat> output;
 
-    //int importSysex(const char *imported);
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);
 
