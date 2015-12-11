@@ -27,7 +27,7 @@
 #include "PluginData.h"
 
 class CartManager  : public Component, public ButtonListener, public DragAndDropContainer, public FileBrowserListener
-    , public ProgramListBoxListener {
+    , public ProgramListBoxListener, public KeyListener {
     ScopedPointer<TextButton> newButton;
     ScopedPointer<TextButton> loadButton;
     ScopedPointer<TextButton> saveButton;
@@ -68,7 +68,8 @@ public:
     virtual void programSelected(ProgramListBox *source, int pos) override;
     virtual void programRightClicked(ProgramListBox *source, int pos) override;
     virtual void programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) override;
-
+    virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
+        
     void initialFocus();
 };
 

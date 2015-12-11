@@ -225,7 +225,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
         }
         params_[op].level_in = level;
     }
-    ctrls->core->render(buf, params_, algorithm_, fb_buf_, fb_shift_, ctrls);
+    ctrls->core->render(buf, params_, algorithm_, fb_buf_, fb_shift_);
 }
 
 void Dx7Note::keyup() {

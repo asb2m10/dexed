@@ -286,6 +286,15 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
     
+    char mod_cfg[15];
+    controllers.wheel.setConfig(mod_cfg);
+    dexedState.setAttribute("wheelMod", mod_cfg);
+    controllers.foot.setConfig(mod_cfg);
+    dexedState.setAttribute("footMod", mod_cfg);
+    controllers.breath.setConfig(mod_cfg);
+    dexedState.setAttribute("breathMod", mod_cfg);
+    controllers.at.setConfig(mod_cfg);
+    dexedState.setAttribute("aftertouchMod", mod_cfg);
     
     if ( activeFileCartridge.exists() )
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
@@ -314,6 +323,11 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     fx.uiReso = root->getDoubleAttribute("reso");
     fx.uiGain = root->getDoubleAttribute("gain");
     currentProgram = root->getIntAttribute("currentProgram");
+    
+    controllers.wheel.parseConfig(root->getStringAttribute("wheelMod").toRawUTF8());
+    controllers.foot.parseConfig(root->getStringAttribute("footMod").toRawUTF8());
+    controllers.breath.parseConfig(root->getStringAttribute("breathMod").toRawUTF8());
+    controllers.at.parseConfig(root->getStringAttribute("aftertouchMod").toRawUTF8());
     
     setEngineType(root->getIntAttribute("engineType", 0));
     monoMode = root->getIntAttribute("monoMode", 0);

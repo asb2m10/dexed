@@ -19,6 +19,7 @@
 
 #include "synth.h"
 #include "../Dexed.h"
+#include <stdio.h>
 
 // State of MIDI controllers
 const int kControllerPitch = 128;
@@ -32,32 +33,34 @@ struct FmMod {
     bool pitch = false;
     bool amp = false;
     bool eg = false;
+    
+    void parseConfig(const char *cfg) {
+        int r = 0, p = 0, a = 0, e = 0;
+        sscanf(cfg, "%d %d %d %d", &r, &p, &a, &e);
+        
+        range = r < 0 && r > 127 ? 0 : r;
+        pitch = p != 0;
+        amp = a != 0;
+        eg = e != 0;
+    }
+    
+    void setConfig(char *cfg) {
+        snprintf(cfg, 13, "%d %d %d %d", range, pitch, amp, eg);
+    }
 };
 
 class Controllers {
     void applyMod(int cc, FmMod &mod) {
         float range = 0.01 * mod.range;
-        if ( mod.amp ) {
-            int total = cc * range;
-            if ( amp_mod + total > 127 )
-                amp_mod = 127;
-            else
-                amp_mod += total;
-        }
-        if ( mod.pitch ) {
-            int total = cc * range;
-            if ( pitch_mod + total > 127 )
-                pitch_mod = 127;
-            else
-                pitch_mod += total;
-        }
-        if ( mod.eg ) {
-            int total = cc * range;
-            if ( eg_mod + total > 127 )
-                eg_mod = 127;
-            else
-                eg_mod += total;
-        }
+        int total = cc * range;
+        if ( mod.amp )
+            amp_mod = max(amp_mod, total);
+        
+        if ( mod.pitch )
+            pitch_mod = max(pitch_mod, total);
+        
+        if ( mod.eg )
+            eg_mod = max(eg_mod, total);
     }
     
 public:
@@ -86,6 +89,9 @@ public:
         applyMod(breath_cc, breath);
         applyMod(foot_cc, foot);
         applyMod(aftertouch_cc, at);
+        
+        if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
+            eg_mod = 127;
         
         TRACE("amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }

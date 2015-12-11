@@ -1,12 +1,12 @@
 /*
  * Copyright 2012 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,14 +45,13 @@ public:
 };
 
 class FmCore {
- public:
-  virtual ~FmCore() {};
-  static void dump();
-  virtual void render(int32_t *output, FmOpParams *params, int algorithm,
-                       int32_t *fb_buf, int32_t feedback_gain, const Controllers *controller);
- protected:
-  AlignedBuf<int32_t, N>buf_[2];
-  const static FmAlgorithm algorithms[32];
+public:
+    virtual ~FmCore() {};
+    static void dump();
+    virtual void render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int32_t feedback_gain);
+protected:
+    AlignedBuf<int32_t, N>buf_[2];
+    const static FmAlgorithm algorithms[32];
 };
 
 #endif  // __FM_CORE_H

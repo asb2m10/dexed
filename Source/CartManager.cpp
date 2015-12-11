@@ -91,7 +91,9 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     cartBrowserList = new DirectoryContentsList(syxFileFilter, *timeSliceThread);
     cartBrowserList->setDirectory(cartDir, true, true);
     cartBrowser = new FileTreeDrop(*cartBrowserList);
+    cartBrowser->addKeyListener(this);
     addAndMakeVisible(cartBrowser);
+    
     cartBrowser->setBounds(23, 18, 590, 384);
     cartBrowser->setDragAndDropDescription("Sysex Browser");
     cartBrowser->addListener(this);
@@ -332,6 +334,18 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
 
 void CartManager::initialFocus() {
     cartBrowser->grabKeyboardFocus();
+}
+
+bool CartManager::keyPressed(const KeyPress& key, Component* originatingComponent) {
+    if ( key.getKeyCode() == 13 ) {
+        File file = cartBrowser->getSelectedFile();
+        if ( file.isDirectory() )
+            return true;
+        mainWindow->loadCart(file);
+        activeCart->setCartridge(mainWindow->processor->currentCart);
+        return true;
+    }
+    return false;
 }
 
 void CartManager::showSysexConfigMsg() {

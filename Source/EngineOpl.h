@@ -31,7 +31,7 @@
 class EngineOpl : public FmCore {
 public:
     virtual void render(int32_t *output, FmOpParams *params, int algorithm,
-                         int32_t *fb_buf, int feedback_shift, const Controllers *controllers);
+                        int32_t *fb_buf, int feedback_shift) override;
     void compute(int32_t *output, const int32_t *input, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2, bool add);
 	void compute_pure(int32_t *output, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2, bool add);
     void compute_fb(int32_t *output, int32_t phase0, int32_t freq,
