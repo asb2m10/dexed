@@ -61,12 +61,11 @@ DexedAudioProcessor::DexedAudioProcessor() {
     showKeyboard = true;
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
+    setEngineType(DEXED_ENGINE_MODERN);
     
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     loadPreference();
-    
-    setEngineType(DEXED_ENGINE_MODERN);
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
@@ -475,6 +474,8 @@ int DexedAudioProcessor::getEngineType() {
 }
 
 void DexedAudioProcessor::setEngineType(int tp) {
+    TRACE("settings engine %d", tp);
+    
     switch (tp)  {
         case DEXED_ENGINE_MODERN :
             controllers.core = &engineMsfa;

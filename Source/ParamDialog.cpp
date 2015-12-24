@@ -70,7 +70,7 @@ ParamDialog::ParamDialog ()
     engineReso->setJustificationType (Justification::centredLeft);
     engineReso->setTextWhenNothingSelected (String::empty);
     engineReso->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    engineReso->addItem (TRANS("Modern (Direct)"), 1);
+    engineReso->addItem (TRANS("Modern (24-bit)"), 1);
     engineReso->addItem (TRANS("Mark I"), 2);
     engineReso->addItem (TRANS("OPL Series"), 3);
     engineReso->addListener (this);
@@ -635,7 +635,7 @@ BEGIN_JUCER_METADATA
           textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
   <COMBOBOX name="new combo box" id="4087ff978c3d9e8d" memberName="engineReso"
             virtualName="" explicitFocusOrder="0" pos="160 156 168 24" editable="0"
-            layout="33" items="Modern (Direct)&#10;Mark I&#10;OPL Series"
+            layout="33" items="Modern (24-bit)&#10;Mark I&#10;OPL Series"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <TOGGLEBUTTON name="showKeyboard" id="c963d2cb8e49ffd7" memberName="showKeyboard"
                 virtualName="" explicitFocusOrder="0" pos="264 96 56 24" buttonText=""

@@ -578,7 +578,7 @@ void DexedAudioProcessor::loadPreference() {
     }
     
     if ( prop.containsKey( String("engineType") ) ) {
-        engineType = prop.getIntValue( String("engineType") );
+        setEngineType(prop.getIntValue(String("engineType")));
     }
 
     if ( prop.containsKey( String("showKeyboard") ) ) {
@@ -627,7 +627,7 @@ void DexedAudioProcessor::savePreference() {
     controllers.at.setConfig(mod_cfg);
     prop.setValue(String("aftertouchMod"), mod_cfg);
     
-    //prop.setValue(String("engineResolution"), engineResolution);
+    prop.setValue(String("engineType"), (int) engineType);
     
     prop.save();
 }
