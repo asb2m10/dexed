@@ -135,7 +135,7 @@ Dx7Note::Dx7Note() {
     }
 }
 
-void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
+void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int fb_depth) {
     int rates[4];
     int levels[4];
     for (int op = 0; op < 6; op++) {
@@ -171,7 +171,7 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
     pitchenv_.set(rates, levels);
     algorithm_ = patch[134];
     int feedback = patch[135];
-    fb_shift_ = feedback != 0 ? 8 - feedback : 16;
+    fb_shift_ = feedback != 0 ? fb_depth - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
@@ -235,7 +235,7 @@ void Dx7Note::keyup() {
     }
 }
 
-void Dx7Note::update(const uint8_t patch[156], int midinote) {
+void Dx7Note::update(const uint8_t patch[156], int midinote, int fb_depth) {
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];
@@ -247,7 +247,7 @@ void Dx7Note::update(const uint8_t patch[156], int midinote) {
     }
     algorithm_ = patch[134];
     int feedback = patch[135];
-    fb_shift_ = feedback != 0 ? 8 - feedback : 16;
+    fb_shift_ = feedback != 0 ? 11 - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;

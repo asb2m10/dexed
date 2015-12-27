@@ -112,6 +112,7 @@ private:
     ScopedPointer<ToggleButton> monoMode;
     ScopedPointer<ComboBoxImage> lfoType;
     ScopedPointer<ProgramSelector> programSelector;
+    ScopedPointer<ImageButton> aboutButton;
 
 
     //==============================================================================

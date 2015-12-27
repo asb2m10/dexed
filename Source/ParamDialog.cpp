@@ -154,7 +154,7 @@ ParamDialog::ParamDialog ()
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (700, 350);
+    setSize (710, 350);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -269,44 +269,44 @@ void ParamDialog::paint (Graphics& g)
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Wheel"),
-                368, 19, 276, 23,
+                368, 16, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Foot"),
-                368, 99, 276, 23,
+                368, 96, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("Breath"),
-                368, 59, 276, 23,
+                368, 56, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("After Touch"),
-                368, 139, 276, 23,
+                368, 136, 276, 23,
                 Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("PITCH"),
-                536, 163, 48, 23,
-                Justification::centred, true);
+                533, 163, 48, 23,
+                Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("AMP"),
-                592, 163, 48, 21,
-                Justification::centred, true);
+                589, 163, 48, 23,
+                Justification::centredLeft, true);
 
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("EG BIAS"),
-                648, 163, 48, 23,
-                Justification::centred, true);
+                645, 163, 48, 23,
+                Justification::centredLeft, true);
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -581,7 +581,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="ParamDialog" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="700" initialHeight="350">
+                 fixedSize="1" initialWidth="710" initialHeight="350">
   <BACKGROUND backgroundColour="ff3c322f">
     <TEXT pos="20 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
@@ -600,20 +600,20 @@ BEGIN_JUCER_METADATA
     <TEXT pos="20 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
     <RECT pos="352 11 1 325" fill="solid: ff000000" hasStroke="0"/>
-    <TEXT pos="368 19 276 23" fill="solid: ffffffff" hasStroke="0" text="Wheel"
+    <TEXT pos="368 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Wheel"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="368 99 276 23" fill="solid: ffffffff" hasStroke="0" text="Foot"
+    <TEXT pos="368 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Foot"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="368 59 276 23" fill="solid: ffffffff" hasStroke="0" text="Breath"
+    <TEXT pos="368 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Breath"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="368 139 276 23" fill="solid: ffffffff" hasStroke="0" text="After Touch"
+    <TEXT pos="368 136 276 23" fill="solid: ffffffff" hasStroke="0" text="After Touch"
           fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="536 163 48 23" fill="solid: ffffffff" hasStroke="0" text="PITCH"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="36"/>
-    <TEXT pos="592 163 48 21" fill="solid: ffffffff" hasStroke="0" text="AMP"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="36"/>
-    <TEXT pos="648 163 48 23" fill="solid: ffffffff" hasStroke="0" text="EG BIAS"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="36"/>
+    <TEXT pos="533 163 48 23" fill="solid: ffffffff" hasStroke="0" text="PITCH"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+    <TEXT pos="589 163 48 23" fill="solid: ffffffff" hasStroke="0" text="AMP"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+    <TEXT pos="645 163 48 23" fill="solid: ffffffff" hasStroke="0" text="EG BIAS"
+          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
           virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0"

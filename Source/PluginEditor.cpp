@@ -30,33 +30,6 @@
 
 #include "msfa/fm_op_kernel.h"
 
-using namespace ::std;
-
-class AboutBox : public DialogWindow {
-public:
-    Image about_png;
-    
-    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true) {
-        setUsingNativeTitleBar(false);
-        setAlwaysOnTop(true);
-        about_png = ImageCache::getFromMemory(BinaryData::about_png, BinaryData::about_pngSize);
-        setSize(about_png.getWidth(), about_png.getHeight());
-        centreAroundComponent (parent, getWidth(), getHeight());
-    }
-    
-    void closeButtonPressed() {
-        setVisible (false);
-    }
-    
-    void paint(Graphics &g) {
-        g.drawImage (about_png, 0, 0, about_png.getWidth(), about_png.getHeight(),
-                     0, 0, about_png.getWidth(), about_png.getHeight());
-        g.setColour(Colour(0xFF000000));
-        String ver("Version " DEXED_VERSION " ; built date " __DATE__ );
-        g.drawSingleLineText(ver, 9, 118);
-    }
-};
-
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),

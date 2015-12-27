@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015  Pascal Gauthier
+ * Copyright (C) 2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -210,7 +210,7 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm,
         int32_t gain1 = param.gain_out == 0 ? (ENV_MAX-1) : param.gain_out;
         int32_t gain2 = ENV_MAX-(param.level_in >> (28-ENV_BITDEPTH));
         param.gain_out = gain2;
-        
+
         if (gain1 <= kLevelThresh || gain2 <= kLevelThresh) {
             if (!has_contents[outbus]) {
                 add = false;

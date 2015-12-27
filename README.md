@@ -18,7 +18,10 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 #### Version 0.9.1
+* Mark I engine now uses 10-bit sine/exp tables. Still a work in progress but we are getting there
+* More accurate FM feedback on the Mark I and OPL Series engine
 * Wheel, Foot, Breath, Aftertouch modulation support
+* Fixed the display of some more 'complex' algorithms
 * Drop of .syx files in the cartridge manager
 * Dexed data directory can now optionally reside in the same location where the binary is installed
 * 'Send current program to DX7' in Cartridge Manager works as designed

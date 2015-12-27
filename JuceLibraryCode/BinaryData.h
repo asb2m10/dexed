@@ -43,10 +43,10 @@ namespace BinaryData
     const int            builtin_pgm_zipSize = 88890;
 
     extern const char*   about_png;
-    const int            about_pngSize = 23143;
+    const int            about_pngSize = 24863;
 
     extern const char*   GlobalEditor_864x144_png;
-    const int            GlobalEditor_864x144_pngSize = 27571;
+    const int            GlobalEditor_864x144_pngSize = 30438;
 
     extern const char*   OperatorEditor_287x218_png;
     const int            OperatorEditor_287x218_pngSize = 15614;
