@@ -368,7 +368,7 @@ File DexedAudioProcessor::dexedCartDir;
 
 void DexedAudioProcessor::resolvAppDir() {
     #if JUCE_MAC || JUCE_IOS
-        File parent = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getParentDirectory().getParentDirectory().getSiblingFile("Dexed_data");
+        File parent = File::getSpecialLocation(File::currentExecutableFile).getParentDirectory().getParentDirectory().getParentDirectory().getSiblingFile("Dexed");
     
         if ( parent.isDirectory() ) {
             dexedAppDir = parent;
@@ -376,14 +376,14 @@ void DexedAudioProcessor::resolvAppDir() {
             dexedAppDir = File("~/Library/Application Support/DigitalSuburban/Dexed");
         }
     #elif JUCE_WINDOWS
-        if ( File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed_data").isDirectory() ) {
-            dexedAppDir = File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed_data");
+        if ( File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed").isDirectory() ) {
+            dexedAppDir = File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed");
         } else {
             dexedAppDir = File::getSpecialLocation(File::userApplicationDataDirectory).getChildFile("DigitalSuburban").getChildFile("Dexed");
         }
     #else
-        if ( File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed_data").isDirectory() ) {
-            dexedAppDir = File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed_data");
+        if ( File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed").isDirectory() ) {
+            dexedAppDir = File::getSpecialLocation(File::currentExecutableFile).getSiblingFile("Dexed");
         } else {
             char *xdgHome = getenv("XDG_DATA_HOME");
             if ( xdgHome == nullptr ) {

@@ -285,8 +285,8 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     controllers.foot_cc = value;
                     controllers.refresh();
                     break;
-                case 5:
-                    sustain = value != 0;
+                case 64:
+                    sustain = value > 63;
                     if (!sustain) {
                         for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
                             if (voices[note].sustained && !voices[note].keydown) {
