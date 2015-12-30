@@ -21,6 +21,10 @@
 #include "../Dexed.h"
 #include <stdio.h>
 
+#ifdef _WIN32
+#define snprintf _snprintf
+#endif
+
 // State of MIDI controllers
 const int kControllerPitch = 128;
 const int kControllerPitchRange = 129;
@@ -29,11 +33,18 @@ const int kControllerPitchStep = 130;
 class FmCore;
 
 struct FmMod {
-    int range = 0;
-    bool pitch = false;
-    bool amp = false;
-    bool eg = false;
+    int range;
+    bool pitch;
+    bool amp;
+    bool eg;
     
+    FmMod() {
+        range = 0;
+        pitch = false;
+        amp = false;
+        eg = false;
+    }
+
     void parseConfig(const char *cfg) {
         int r = 0, p = 0, a = 0, e = 0;
         sscanf(cfg, "%d %d %d %d", &r, &p, &a, &e);
@@ -66,9 +77,9 @@ class Controllers {
 public:
     int values_[131];
     
-    int amp_mod = 0;
-    int pitch_mod = 0;
-    int eg_mod = 0;
+    int amp_mod;
+    int pitch_mod;
+    int eg_mod;
     
     int aftertouch_cc;
     int breath_cc;
@@ -80,6 +91,12 @@ public:
     FmMod breath;
     FmMod at;
     
+    Controllers() {
+        amp_mod = 0;
+        pitch_mod = 0;
+        eg_mod = 0;
+    }
+
     void refresh() {
         amp_mod = 0;
         pitch_mod = 0;

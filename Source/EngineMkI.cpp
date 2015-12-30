@@ -22,8 +22,8 @@
  */
 
 #include "EngineMkI.h"
-
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <cstdlib>
 
 #include "msfa/sin.h"
@@ -35,6 +35,12 @@
 #endif
 
 #ifdef _WIN32
+    double log2(double n)  {  
+        return log(n) / log(2.0);  
+    }
+    double round(double n) {
+        return n < 0.0 ? ceil(n - 0.5) : floor(n + 0.5);
+    }
     __declspec(align(16)) int zeros[N] = {0};
 #else
     const int32_t __attribute__ ((aligned(16))) zeros[N] = {0};

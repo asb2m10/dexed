@@ -22,6 +22,7 @@
 #define DXCOMPONENTS_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <stdint.h>
 
 class EnvDisplay : public Component {
 public:

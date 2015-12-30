@@ -116,7 +116,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     
     void resolvAppDir();
 
-    int feedback_bitdepth = 0;
+    int feedback_bitdepth;
     
 public :
     // in MIDI units (0x4000 is neutral)
