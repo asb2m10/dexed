@@ -329,7 +329,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     controllers.breath.parseConfig(root->getStringAttribute("breathMod").toRawUTF8());
     controllers.at.parseConfig(root->getStringAttribute("aftertouchMod").toRawUTF8());
     
-    setEngineType(root->getIntAttribute("engineType", 0));
+    setEngineType(root->getIntAttribute("engineType", 1));
     monoMode = root->getIntAttribute("monoMode", 0);
     
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));

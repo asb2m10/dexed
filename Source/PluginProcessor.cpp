@@ -108,6 +108,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     keyboardState.reset();
     
+    lfo.reset(data + 137);
+    
     nextMidi = new MidiMessage(0xF0);
 	midiMsg = new MidiMessage(0xF0);
 }
