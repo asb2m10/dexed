@@ -66,7 +66,7 @@ public:
             case 10: ret << "A#"; break;
             case 11: ret << "B"; break;
         }
-        return ret << (value/12-2);
+        return ret << (value/12+1);
     }
 };
 
@@ -182,7 +182,7 @@ CtrlDX::CtrlDX(String name, int steps, int offset, int displayValue) : Ctrl(name
 }
 
 float CtrlDX::getValueHost() {
-    return dxValue / steps;
+    return getValue() / (float) steps;
 }
 
 void CtrlDX::setValueHost(float f) {

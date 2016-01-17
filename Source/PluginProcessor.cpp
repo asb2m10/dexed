@@ -479,10 +479,6 @@ void DexedAudioProcessor::setEngineType(int tp) {
     TRACE("settings engine %d", tp);
     
     switch (tp)  {
-        case DEXED_ENGINE_MODERN :
-            controllers.core = &engineMsfa;
-            feedback_bitdepth = 8;
-            break;
         case DEXED_ENGINE_MARKI:
             controllers.core = &engineMkI;
             feedback_bitdepth = 11;
@@ -490,6 +486,10 @@ void DexedAudioProcessor::setEngineType(int tp) {
         case DEXED_ENGINE_OPL:
             controllers.core = &engineOpl;
             feedback_bitdepth = 11;
+            break;
+        default:
+            controllers.core = &engineMsfa;
+            feedback_bitdepth = 8;
             break;
     }
     engineType = tp;

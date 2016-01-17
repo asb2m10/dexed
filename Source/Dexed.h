@@ -31,7 +31,7 @@ void dexed_trace(const char *source, const char *fmt, ...);
         #define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
     #endif
 #else
-    #define DEXED_VERSION "0.9.1b3"
+    #define DEXED_VERSION "0.9.1"
     #define TRACE(fmt, ...)
 #endif
 

@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016 Pascal Gauthier.
  * Copyright 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -182,8 +183,11 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     uint32_t pmd = pitchmoddepth_ * lfo_delay;  // Q32
     int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
     int32_t pmod_1 = (((int64_t) pmd) * (int64_t) senslfo) >> 39;
+    pmod_1 = abs(pmod_1);
     int32_t pmod_2 = ((int64_t)ctrls->pitch_mod * (int64_t)senslfo) >> 14;
-    int32_t pitch_mod = pitchenv_.getsample() + max(pmod_1, pmod_2);
+    pmod_2 = abs(pmod_2);
+    int32_t pitch_mod = max(pmod_1, pmod_2);
+    pitch_mod = pitchenv_.getsample() + (pitch_mod * (senslfo < 0 ? -1 : 1));
     
     // ---- PITCH BEND ----
     int pitchbend = ctrls->values_[kControllerPitch];
