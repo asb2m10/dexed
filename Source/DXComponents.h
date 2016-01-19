@@ -22,11 +22,12 @@
 #define DXCOMPONENTS_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include <stdint.h>
 
 class EnvDisplay : public Component {
 public:
     EnvDisplay();
-    char *pvalues;
+    uint8_t *pvalues;
     char vPos;    
     void paint(Graphics &g);
 };
@@ -35,7 +36,7 @@ class PitchEnvDisplay : public Component {
     char rvalues[8];
 public:
     PitchEnvDisplay();
-    char *pvalues;
+    uint8_t *pvalues;
     char vPos;
     void paint(Graphics &g);
 };
@@ -58,8 +59,6 @@ class ComboBoxImage : public ComboBox {
     Image items;
     int itemHeight;
     PopupMenu popup;
-    bool onPopup;
-
     int itemPos[4];
 public:
     ComboBoxImage();

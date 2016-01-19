@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Introjucer version: 3.1.0
+  Created with Introjucer version: 3.2.0
 
   ------------------------------------------------------------------------------
 
   The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-13 by Raw Material Software Ltd.
+  Copyright (c) 2015 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -38,7 +38,8 @@
 */
 class ParamDialog  : public Component,
                      public SliderListener,
-                     public ComboBoxListener
+                     public ComboBoxListener,
+                     public ButtonListener
 {
 public:
     //==============================================================================
@@ -55,6 +56,7 @@ public:
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
     void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    void buttonClicked (Button* buttonThatWasClicked);
 
 
 
@@ -70,6 +72,22 @@ private:
     ScopedPointer<Slider> sysexChl;
     ScopedPointer<ComboBox> engineReso;
     ScopedPointer<ToggleButton> showKeyboard;
+    ScopedPointer<Slider> whlRange;
+    ScopedPointer<Slider> ftRange;
+    ScopedPointer<Slider> brRange;
+    ScopedPointer<Slider> atRange;
+    ScopedPointer<ToggleButton> whlEg;
+    ScopedPointer<ToggleButton> ftEg;
+    ScopedPointer<ToggleButton> brEg;
+    ScopedPointer<ToggleButton> atEg;
+    ScopedPointer<ToggleButton> whlAmp;
+    ScopedPointer<ToggleButton> ftAmp;
+    ScopedPointer<ToggleButton> brAmp;
+    ScopedPointer<ToggleButton> atAmp;
+    ScopedPointer<ToggleButton> whlPitch;
+    ScopedPointer<ToggleButton> ftPitch;
+    ScopedPointer<ToggleButton> brPitch;
+    ScopedPointer<ToggleButton> atPitch;
 
 
     //==============================================================================

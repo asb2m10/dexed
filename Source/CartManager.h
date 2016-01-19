@@ -24,9 +24,10 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginData.h"
 #include "ProgramListBox.h"
+#include "PluginData.h"
 
-class CartManager  : public TopLevelWindow, public ButtonListener, public DragAndDropContainer, public FileBrowserListener
-    , public ProgramListBoxListener {
+class CartManager  : public Component, public ButtonListener, public DragAndDropContainer, public FileBrowserListener
+    , public ProgramListBoxListener, public KeyListener {
     ScopedPointer<TextButton> newButton;
     ScopedPointer<TextButton> loadButton;
     ScopedPointer<TextButton> saveButton;
@@ -53,13 +54,13 @@ class CartManager  : public TopLevelWindow, public ButtonListener, public DragAn
 public:
     CartManager(DexedAudioProcessorEditor *editor);
     virtual ~CartManager();
-    void paint(Graphics& g);
-    void buttonClicked (Button* buttonThatWasClicked);
+    void paint(Graphics& g) override;
+    void buttonClicked (Button* buttonThatWasClicked) override;
     
-    void selectionChanged();
-    void fileClicked (const File& file, const MouseEvent& e);
-    void fileDoubleClicked (const File& file);
-    void browserRootChanged (const File& newRoot);
+    void selectionChanged() override;
+    void fileClicked (const File& file, const MouseEvent& e) override;
+    void fileDoubleClicked (const File& file) override;
+    void browserRootChanged (const File& newRoot) override;
         
     void setActiveProgram(int idx, String activeName);
     void resetActiveSysex();
@@ -67,6 +68,7 @@ public:
     virtual void programSelected(ProgramListBox *source, int pos) override;
     virtual void programRightClicked(ProgramListBox *source, int pos) override;
     virtual void programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) override;
+    virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
         
     void initialFocus();
 };

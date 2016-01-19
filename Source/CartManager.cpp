@@ -38,8 +38,41 @@ public:
     };
 };
 
-CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("CartManager", false) {
-            
+class FileTreeDrop : public FileTreeComponent {
+public :
+    FileTreeDrop(DirectoryContentsList &listToShow) : FileTreeComponent(listToShow) {}
+    
+    bool isInterestedInFileDrag (const StringArray &files) override {
+        bool found = false;
+        
+        for(int i=0; i<files.size(); i++) {
+            String filename = files[i].toLowerCase();
+            found |= filename.endsWith(".syx");
+        }
+        return found;
+    }
+    
+    void filesDropped(const StringArray &files, int x, int y) override {
+        File targetDir = getSelectedFile();
+        
+        if ( ! targetDir.exists() )
+            targetDir = DexedAudioProcessor::dexedCartDir;
+        
+        if ( ! targetDir.isDirectory() )
+            targetDir = targetDir.getParentDirectory();
+        
+        for(int i=0; i<files.size(); i++) {
+            if ( files[i].toLowerCase().endsWith(".syx") ) {
+                File src(files[i]);
+                File target = targetDir.getChildFile(src.getFileName());
+                src.copyFileTo(target);
+            }
+        }
+        fileList.refresh();
+    }
+};
+
+CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartManager") {
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;            
             
@@ -57,8 +90,10 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : TopLevelWindow("Ca
     timeSliceThread->startThread();
     cartBrowserList = new DirectoryContentsList(syxFileFilter, *timeSliceThread);
     cartBrowserList->setDirectory(cartDir, true, true);
-    cartBrowser = new FileTreeComponent(*cartBrowserList);
+    cartBrowser = new FileTreeDrop(*cartBrowserList);
+    cartBrowser->addKeyListener(this);
     addAndMakeVisible(cartBrowser);
+    
     cartBrowser->setBounds(23, 18, 590, 384);
     cartBrowser->setDragAndDropDescription("Sysex Browser");
     cartBrowser->addListener(this);
@@ -115,10 +150,8 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
         mainWindow->processor->setCurrentProgram(pos);
         mainWindow->processor->updateHostDisplay();
     } else {
-        if ( source->getCurrentCart() == nullptr )
-            return;
-        char unpackPgm[161];
-        unpackProgramFromSysex(unpackPgm, source->getCurrentCart(), pos);
+        uint8_t unpackPgm[161];
+        source->getCurrentCart().unpackProgram(unpackPgm, pos);
         activeCart->setSelected(-1);
         browserCart->setSelected(pos);
         repaint();
@@ -177,7 +210,7 @@ void CartManager::fileDoubleClicked(const File& file) {
     if ( file.isDirectory() )
         return;
     mainWindow->loadCart(file);
-    activeCart->setCartridge(mainWindow->processor->sysex);
+    activeCart->setCartridge(mainWindow->processor->currentCart);
 }
 
 void CartManager::fileClicked(const File& file, const MouseEvent& e) {
@@ -215,7 +248,7 @@ void CartManager::setActiveProgram(int idx, String activeName) {
 }
 
 void CartManager::resetActiveSysex() {
-    activeCart->setCartridge(mainWindow->processor->sysex);
+    activeCart->setCartridge(mainWindow->processor->currentCart);
 }
 
 void CartManager::selectionChanged() {
@@ -227,21 +260,14 @@ void CartManager::selectionChanged() {
     if ( file.isDirectory() )
         return;
     
-    String f = file.getFullPathName();
-    uint8_t syx_data[4104];
-    ifstream fp_in(f.toRawUTF8(), ios::binary);
-    if (fp_in.fail()) {
-        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Error", "Unable to open: " + f);
+    Cartridge browserSysex;
+    int rc = browserSysex.load(file);
+    if ( rc < 0 ) {
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Error", "Unable to open file");
         return;
     }
     
-    fp_in.read((char *)syx_data, 4104);
-    fp_in.close();
-    char browserSysex[4104];
-    memcpy(browserSysex, syx_data+6, 4096);
-    int checksum = sysexChecksum(((char *) &browserSysex), 4096);
-    
-    if ( checksum != syx_data[4102] ) {
+    if ( rc != 0 ) {
         browserCart->readOnly = true;
     } else {
         browserCart->readOnly = false;
@@ -260,19 +286,19 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
 
     switch(menu.show())  {
         case 1000:
-            char unpackPgm[161];
+            uint8_t unpackPgm[161];
             
             if ( source == activeCart ) {
-                unpackProgramFromSysex(unpackPgm, mainWindow->processor->sysex, pos);
+                mainWindow->processor->currentCart.unpackProgram(unpackPgm, pos);
             } else {
-                char *sysex = source->getCurrentCart();
-                if ( sysex == nullptr )
-                    return;
-                unpackProgramFromSysex(unpackPgm, sysex, pos);
+                source->getCurrentCart().unpackProgram(unpackPgm, pos);
             }
             
-            if ( mainWindow->processor->sysexComm.isOutputActive() )
-                mainWindow->processor->sysexComm.send(MidiMessage(unpackPgm, 161));
+            if ( mainWindow->processor->sysexComm.isOutputActive() ) {
+                uint8_t msg[163];
+                exportSysexPgm(msg, unpackPgm);
+                mainWindow->processor->sysexComm.send(MidiMessage(msg, 163));
+            }
             break;
             
         case 1010:
@@ -284,7 +310,7 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
 
 void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) {
     if ( destListBox == activeCart ) {
-        char *sysex = mainWindow->processor->sysex;
+        char *sysex = mainWindow->processor->currentCart.getRawVoice();
         memcpy(sysex+(dest*128), packedPgm, 128);
         mainWindow->updateUI();
     } else {
@@ -295,27 +321,31 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
         
         if ( file.isDirectory() )
             return;
-        if ( file.getSize() > 5000 )
+        if ( file.getSize() != 4104 )
             return;
-        
-        MemoryBlock block;
-        file.loadFileAsData(block);
-        
-        if ( block.getSize() < 4104 )
-            return;
-        
-        char *sysex = ((char *) block.getData()) + 6;
-        memcpy(sysex+(dest*128), packedPgm, 128);
-        
-        char exported[4104];
-        exportSysexCart(exported, sysex, 0);
-        file.replaceWithData(exported, 4104);
-        browserCart->setCartridge(sysex);
+
+        Cartridge cart;
+        cart.load(file);
+        memcpy(cart.getRawVoice()+(dest*128), packedPgm, 128);
+        cart.saveVoice(file);
+        browserCart->setCartridge(cart);
     }
 }
 
 void CartManager::initialFocus() {
     cartBrowser->grabKeyboardFocus();
+}
+
+bool CartManager::keyPressed(const KeyPress& key, Component* originatingComponent) {
+    if ( key.getKeyCode() == 13 ) {
+        File file = cartBrowser->getSelectedFile();
+        if ( file.isDirectory() )
+            return true;
+        mainWindow->loadCart(file);
+        activeCart->setCartridge(mainWindow->processor->currentCart);
+        return true;
+    }
+    return false;
 }
 
 void CartManager::showSysexConfigMsg() {

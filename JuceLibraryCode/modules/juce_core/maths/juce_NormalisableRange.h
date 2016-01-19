@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -104,7 +104,7 @@ public:
         ValueType proportion = (v - start) / (end - start);
 
         if (skew != static_cast<ValueType> (1))
-            proportion = pow (proportion, skew);
+            proportion = std::pow (proportion, skew);
 
         return proportion;
     }
@@ -115,7 +115,7 @@ public:
     ValueType convertFrom0to1 (ValueType proportion) const noexcept
     {
         if (skew != static_cast<ValueType> (1) && proportion > ValueType())
-            proportion = exp (log (proportion) / skew);
+            proportion = std::exp (std::log (proportion) / skew);
 
         return start + (end - start) * proportion;
     }

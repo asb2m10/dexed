@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014, 2015 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,18 @@ inline void displayOp(Graphics &g, char id, int x, int y, char link, char fb) {
     case 2: // ARROW TO RIGHT JOIN
         g.drawLine(x+8,  y+12, x+8, y+19, LINE_SZ);
         break;
+    case 3: // ARROW TO RIGHT AND DOWN
+        g.drawLine(x+8, y+12, x+8, y+21, LINE_SZ);
+        g.drawLine(x+7, y+18, x+34, y+18, LINE_SZ);
+        g.drawLine(x+34, y+17, x+34, y+21, LINE_SZ);
+        break;
+    case 4: // ARROW TO RIGHT+LEFT AND DOWN
+        g.drawLine(x+8, y+12, x+8, y+21, LINE_SZ);
+        g.drawLine(x+7, y+18, x+34, y+18, LINE_SZ);
+        g.drawLine(x+34, y+17, x+34, y+21, LINE_SZ);
+        g.drawLine(x-17, y+18, x+8, y+18, LINE_SZ);
+        g.drawLine(x-17, y+17, x-17, y+21, LINE_SZ);
+        break;
     case 6:
         g.drawLine(x+8, y+12, x+8,  y+18, LINE_SZ);
         g.drawLine(x+7, y+18, x+58, y+18, LINE_SZ);
@@ -66,9 +78,9 @@ inline void displayOp(Graphics &g, char id, int x, int y, char link, char fb) {
         break;
     case 1:
         g.drawLine(x+7, y, x+8, y-5, LINE_SZ);
-        g.drawLine(x+8, y-4, x+20, y-4, LINE_SZ);
-        g.drawLine(x+19, y-4, x+19, y+15, LINE_SZ);
-        g.drawLine(x+18, y+15, x+19, y+15, LINE_SZ);
+        g.drawLine(x+8, y-4, x+21, y-4, LINE_SZ);
+        g.drawLine(x+20, y-4, x+20, y+15, LINE_SZ);
+        g.drawLine(x+19, y+15, x+20, y+16, LINE_SZ);
         g.drawLine(x+8, y+15, x+20, y+15, LINE_SZ);
         break;
     case 2: // ALGO 4
@@ -249,7 +261,7 @@ void AlgoDisplay::paint(Graphics &g) {
             displayOp(g, 1, 3, 3, 0, 0);
             break;
         case 18:
-            displayOp(g, 6, 3, 2, 0, 1);
+            displayOp(g, 6, 3, 2, 3, 1);
             displayOp(g, 5, 4, 3, 2, 0);
             displayOp(g, 4, 3, 3, 1, 0);
             displayOp(g, 3, 2, 1, 0, 0);
@@ -260,20 +272,20 @@ void AlgoDisplay::paint(Graphics &g) {
             displayOp(g, 6, 4, 2, 0, 0);
             displayOp(g, 5, 3, 2, 1, 0);
             displayOp(g, 4, 4, 3, 2, 0);
-            displayOp(g, 3, 1, 2, 0, 1);
+            displayOp(g, 3, 1, 2, 3, 1);
             displayOp(g, 2, 2, 3, 6, 0);
             displayOp(g, 1, 1, 3, 1, 0);
             break;
         case 20:
-            displayOp(g, 6, 3, 2, 0, 0);
+            displayOp(g, 6, 3, 2, 3, 0);
             displayOp(g, 5, 4, 3, 2, 0);
             displayOp(g, 4, 3, 3, 1, 0);
-            displayOp(g, 3, 1, 2, 0, 1);
+            displayOp(g, 3, 1, 2, 3, 1);
             displayOp(g, 2, 2, 3, 1, 0);
             displayOp(g, 1, 1, 3, 1, 0);
             break;
         case 21:
-            displayOp(g, 6, 3, 2, 0, 1);
+            displayOp(g, 6, 3, 2, 4, 1);
             displayOp(g, 5, 4, 3, 2, 0);
             displayOp(g, 4, 3, 3, 1, 0);
             displayOp(g, 3, 2, 3, 1, 0);
@@ -281,7 +293,7 @@ void AlgoDisplay::paint(Graphics &g) {
             displayOp(g, 1, 1, 3, 1, 0);
             break;
         case 22: // CC
-            displayOp(g, 6, 3, 2, 0, 1);
+            displayOp(g, 6, 3, 2, 3, 1);
             displayOp(g, 5, 4, 3, 2, 0);
             displayOp(g, 4, 3, 3, 1, 0);
             displayOp(g, 3, 2, 2, 0, 0);
@@ -289,7 +301,7 @@ void AlgoDisplay::paint(Graphics &g) {
             displayOp(g, 1, 1, 3, 1, 0);
             break;
         case 23: // CC
-            displayOp(g, 6, 3, 2, 0, 1);
+            displayOp(g, 6, 3, 2, 4, 1);
             displayOp(g, 5, 4, 3, 2, 0);
             displayOp(g, 4, 3, 3, 1, 0);
             displayOp(g, 3, 2, 3, 1, 0);
@@ -297,7 +309,7 @@ void AlgoDisplay::paint(Graphics &g) {
             displayOp(g, 1, 0, 3, 1, 0);
             break;
         case 24: // CC
-            displayOp(g, 6, 3, 2, 0, 1);
+            displayOp(g, 6, 3, 2, 3, 1);
             displayOp(g, 5, 4, 3, 2, 0);
             displayOp(g, 4, 3, 3, 1, 0);
             displayOp(g, 3, 2, 3, 1, 0);

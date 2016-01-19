@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -137,17 +137,22 @@ bool File::existsAsFile() const
 bool File::isDirectory() const
 {
     const DWORD attr = WindowsFileHelpers::getAtts (fullPath);
-    return ((attr & FILE_ATTRIBUTE_DIRECTORY) != 0) && (attr != INVALID_FILE_ATTRIBUTES);
+    return (attr & FILE_ATTRIBUTE_DIRECTORY) != 0 && attr != INVALID_FILE_ATTRIBUTES;
 }
 
 bool File::hasWriteAccess() const
 {
-    if (exists())
-        return (WindowsFileHelpers::getAtts (fullPath) & FILE_ATTRIBUTE_READONLY) == 0;
+    if (fullPath.isEmpty())
+        return true;
 
-    // on windows, it seems that even read-only directories can still be written into,
-    // so checking the parent directory's permissions would return the wrong result..
-    return true;
+    const DWORD attr = WindowsFileHelpers::getAtts (fullPath);
+
+    // NB: According to MS, the FILE_ATTRIBUTE_READONLY attribute doesn't work for
+    // folders, and can be incorrectly set for some special folders, so we'll just say
+    // that folders are always writable.
+    return attr == INVALID_FILE_ATTRIBUTES
+            || (attr & FILE_ATTRIBUTE_DIRECTORY) != 0
+            || (attr & FILE_ATTRIBUTE_READONLY) == 0;
 }
 
 bool File::setFileReadOnlyInternal (const bool shouldBeReadOnly) const
@@ -161,6 +166,12 @@ bool File::setFileReadOnlyInternal (const bool shouldBeReadOnly) const
                                            : (oldAtts & ~FILE_ATTRIBUTE_READONLY);
     return newAtts == oldAtts
             || SetFileAttributes (fullPath.toWideCharPointer(), newAtts) != FALSE;
+}
+
+bool File::setFileExecutableInternal (bool /*shouldBeExecutable*/) const
+{
+    // XXX is this possible?
+    return false;
 }
 
 bool File::isHidden() const
@@ -281,12 +292,12 @@ void FileOutputStream::closeHandle()
     CloseHandle ((HANDLE) fileHandle);
 }
 
-ssize_t FileOutputStream::writeInternal (const void* buffer, size_t numBytes)
+ssize_t FileOutputStream::writeInternal (const void* bufferToWrite, size_t numBytes)
 {
     if (fileHandle != nullptr)
     {
         DWORD actualNum = 0;
-        if (! WriteFile ((HANDLE) fileHandle, buffer, (DWORD) numBytes, &actualNum, 0))
+        if (! WriteFile ((HANDLE) fileHandle, bufferToWrite, (DWORD) numBytes, &actualNum, 0))
             status = WindowsFileHelpers::getResultForLastError();
 
         return (ssize_t) actualNum;
@@ -784,18 +795,19 @@ public:
           connected (false), ownsPipe (createPipe), shouldStop (false)
     {
         if (createPipe)
+        {
             pipeH = CreateNamedPipe (filename.toWideCharPointer(),
                                      PIPE_ACCESS_DUPLEX | FILE_FLAG_OVERLAPPED, 0,
                                      PIPE_UNLIMITED_INSTANCES, 4096, 4096, 0, 0);
+
+            if (GetLastError() == ERROR_ALREADY_EXISTS)
+                closePipeHandle();
+        }
     }
 
     ~Pimpl()
     {
-        disconnectPipe();
-
-        if (pipeH != INVALID_HANDLE_VALUE)
-            CloseHandle (pipeH);
-
+        closePipeHandle();
         CloseHandle (cancelEvent);
     }
 
@@ -854,6 +866,16 @@ public:
         {
             DisconnectNamedPipe (pipeH);
             connected = false;
+        }
+    }
+
+    void closePipeHandle()
+    {
+        if (pipeH != INVALID_HANDLE_VALUE)
+        {
+            disconnectPipe();
+            CloseHandle (pipeH);
+            pipeH = INVALID_HANDLE_VALUE;
         }
     }
 

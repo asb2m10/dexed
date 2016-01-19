@@ -71,7 +71,7 @@ uint16_t sinExpTable[256] = {
     937, 942, 948, 953, 959, 964, 969, 975, 980, 986, 991, 996, 1002, 1007, 1013, 1018
 };
 
-inline uint16_t sinLog( uint16_t phi ) {
+inline uint16_t sinLog(uint16_t phi) {
     const uint8_t index = (phi & 0xff);
 
     switch( ( phi & 0x0300 ) ) {
@@ -169,7 +169,7 @@ void EngineOpl::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
 
 
 void EngineOpl::render(int32_t *output, FmOpParams *params, int algorithm,
-                        int32_t *fb_buf, int feedback_shift, const Controllers *controllers) {
+                        int32_t *fb_buf, int feedback_shift) {
     const int kLevelThresh = 507;  // really ????
     const FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
@@ -212,3 +212,15 @@ void EngineOpl::render(int32_t *output, FmOpParams *params, int algorithm,
         param.phase += param.freq << LG_N;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+

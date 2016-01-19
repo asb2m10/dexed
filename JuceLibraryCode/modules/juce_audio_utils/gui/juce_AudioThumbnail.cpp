@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -133,7 +133,7 @@ public:
         if (reader != nullptr)
         {
             if (levels.size() < (int) reader->numChannels)
-                levels.insertMultiple (0, Range<float>(), (int) (reader->numChannels - levels.size()));
+                levels.insertMultiple (0, Range<float>(), (int) reader->numChannels - levels.size());
 
             reader->readMaxLevels (startSample, numSamples, levels.getRawDataPointer(), (int) reader->numChannels);
 
@@ -240,7 +240,7 @@ private:
                 for (int i = 0; i < numThumbSamps; ++i)
                 {
                     reader->readMaxLevels ((firstThumbIndex + i) * owner.samplesPerThumbSample,
-                                           owner.samplesPerThumbSample, levelsRead, numChannels);
+                                           owner.samplesPerThumbSample, levelsRead, (int) numChannels);
 
                     for (int j = 0; j < (int) numChannels; ++j)
                         levels[j][i].setFloat (levelsRead[j]);

@@ -66,7 +66,7 @@ public:
             case 10: ret << "A#"; break;
             case 11: ret << "B"; break;
         }
-        return ret << (value/12-2);
+        return ret << (value/12+1);
     }
 };
 
@@ -182,7 +182,7 @@ CtrlDX::CtrlDX(String name, int steps, int offset, int displayValue) : Ctrl(name
 }
 
 float CtrlDX::getValueHost() {
-    return dxValue / steps;
+    return getValue() / (float) steps;
 }
 
 void CtrlDX::setValueHost(float f) {
@@ -512,7 +512,7 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     panic();
     
     index = index > 31 ? 31 : index;
-    unpackProgram(index);
+    currentCart.unpackProgram(data, index);
     lfo.reset(data + 137);
     currentProgram = index;
     triggerAsyncUpdate();
@@ -577,12 +577,28 @@ void DexedAudioProcessor::loadPreference() {
         sysexComm.setChl( prop.getIntValue( String("sysexChl") ) );
     }
     
-    if ( prop.containsKey( String("engineType" ) ) ) {
-        engineType = prop.getIntValue( String("engineType") );
+    if ( prop.containsKey( String("engineType") ) ) {
+        setEngineType(prop.getIntValue(String("engineType")));
     }
 
     if ( prop.containsKey( String("showKeyboard") ) ) {
         showKeyboard = prop.getIntValue( String("showKeyboard") );
+    }
+
+    if ( prop.containsKey( String("wheelMod") ) ) {
+        controllers.wheel.parseConfig(prop.getValue(String("wheelMod")).toRawUTF8());
+    }
+    
+    if ( prop.containsKey( String("footMod") ) ) {
+        controllers.foot.parseConfig(prop.getValue(String("footMod")).toRawUTF8());
+    }
+    
+    if ( prop.containsKey( String("breathMod") ) ) {
+        controllers.breath.parseConfig(prop.getValue(String("breathMod")).toRawUTF8());
+    }
+    
+    if ( prop.containsKey( String("aftertouchMod") ) ) {
+        controllers.at.parseConfig(prop.getValue(String("aftertouchMod")).toRawUTF8());
     }
 }
 
@@ -601,7 +617,17 @@ void DexedAudioProcessor::savePreference() {
     
     prop.setValue(String("showKeyboard"), showKeyboard);
 
-    //prop.setValue(String("engineResolution"), engineResolution);
+    char mod_cfg[15];
+    controllers.wheel.setConfig(mod_cfg);
+    prop.setValue(String("wheelMod"), mod_cfg);
+    controllers.foot.setConfig(mod_cfg);
+    prop.setValue(String("footMod"), mod_cfg);
+    controllers.breath.setConfig(mod_cfg);
+    prop.setValue(String("breathMod"), mod_cfg);
+    controllers.at.setConfig(mod_cfg);
+    prop.setValue(String("aftertouchMod"), mod_cfg);
+    
+    prop.setValue(String("engineType"), (int) engineType);
     
     prop.save();
 }

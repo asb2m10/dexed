@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission is granted to use this software under the terms of either:
    a) the GPL v2 (or any later version)
@@ -91,6 +91,7 @@ namespace juce
 #include "misc/juce_SplashScreen.cpp"
 #include "misc/juce_SystemTrayIconComponent.cpp"
 #include "misc/juce_LiveConstantEditor.cpp"
+#include "misc/juce_AnimatedAppComponent.cpp"
 
 }
 
@@ -146,5 +147,6 @@ namespace juce
  bool WebBrowserComponent::pageAboutToLoad (const String&)  { return true; }
  void WebBrowserComponent::pageFinishedLoading (const String&) {}
  void WebBrowserComponent::windowCloseRequest() {}
+ void WebBrowserComponent::newWindowAttemptingToLoad (const String&) {}
 #endif
 }

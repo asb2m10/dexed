@@ -157,13 +157,13 @@ static double getDuration(int p_rate, int p_level_l, int p_level_r) {
 }
 
 EnvDisplay::EnvDisplay() {
-    pvalues = (char *) &TMP_LEVEL_PTR;
+    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
 }
 
 void EnvDisplay::paint(Graphics &g) {
     int h = getHeight();
-    char *rates = pvalues;
-    char *levels = pvalues + 4;
+    uint8_t *rates = pvalues;
+    uint8_t *levels = pvalues + 4;
     
     double d[4];
     double keyoff = 0.0;
@@ -250,15 +250,15 @@ void EnvDisplay::paint(Graphics &g) {
 }
 
 PitchEnvDisplay::PitchEnvDisplay() {
-    pvalues = (char *) &TMP_LEVEL_PTR;
+    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
     vPos = 0;
 }
 
 void PitchEnvDisplay::paint(Graphics &g) {
     g.setColour(Colours::white);
     
-    char *levels = pvalues + 4;
-    char *rates = pvalues;
+    uint8_t *levels = pvalues + 4;
+    uint8_t *rates = pvalues;
     
     float dist[4];
     float total = 0;
@@ -360,19 +360,25 @@ void ComboBoxImage::paint(Graphics &g) {
 }
 
 ComboBoxImage::ComboBoxImage() {
-    onPopup = false;
     itemPos[0] = -1;
 }
 
-void ComboBoxImage::showPopup() {
-    if ( !onPopup ) { 
-        onPopup = true;
-        int idx = popup.show() - 1;
-        onPopup = false;
-        if ( idx < 0 )
-            return;
-        setSelectedItemIndex(idx);
+static void comboBoxPopupMenuFinishedCallback (int result, ComboBoxImage* combo) {
+    if (combo != nullptr) {
+        combo->hidePopup();
+        
+        if (result != 0)
+            combo->setSelectedId (result);
     }
+}
+
+void ComboBoxImage::showPopup() {
+    popup.showMenuAsync (PopupMenu::Options().withTargetComponent (this)
+                         .withItemThatMustBeVisible(getSelectedId())
+                         .withMinimumWidth(getWidth())
+                         .withMaximumNumColumns(1)
+                         .withStandardItemHeight(itemHeight),
+                         ModalCallbackFunction::forComponent(comboBoxPopupMenuFinishedCallback, this));
 }
 
 void ComboBoxImage::setImage(Image image) {

@@ -25,7 +25,7 @@
 
 #define REG_COLOUR(id, value) setColour(id, value); colourMap.set(#id, id)
 
-Image &findImage(String path) {
+Image findImage(String path) {
     Image img;
     if ( path.length() <= 3 ) 
         return img;

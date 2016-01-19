@@ -2,7 +2,7 @@
   ==============================================================================
 
    This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2013 - Raw Material Software Ltd.
+   Copyright (c) 2015 - ROLI Ltd.
 
    Permission to use, copy, modify, and/or distribute this software for any purpose with
    or without fee is hereby granted, provided that the above copyright notice and this
@@ -1162,9 +1162,9 @@ double Expression::Scope::evaluateFunction (const String& functionName, const do
 
         if (numParams == 1)
         {
-            if (functionName == "sin")  return sin (parameters[0]);
-            if (functionName == "cos")  return cos (parameters[0]);
-            if (functionName == "tan")  return tan (parameters[0]);
+            if (functionName == "sin")  return std::sin (parameters[0]);
+            if (functionName == "cos")  return std::cos (parameters[0]);
+            if (functionName == "tan")  return std::tan (parameters[0]);
             if (functionName == "abs")  return std::abs (parameters[0]);
         }
     }

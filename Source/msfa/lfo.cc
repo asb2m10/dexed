@@ -28,7 +28,7 @@ void Lfo::init(double sample_rate) {
   Lfo::unit_ = (int32_t)(N * 25190424 / sample_rate + 0.5);
 }
 
-void Lfo::reset(const char params[6]) {
+void Lfo::reset(const uint8_t params[6]) {
   int rate = params[0];  // 0..99
   int sr = rate == 0 ? 1 : (165 * rate) >> 6;
   sr *= sr < 160 ? 11 : (11 + ((sr - 160) >> 4));

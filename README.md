@@ -2,7 +2,7 @@ Dexed - FM Plugin Synth
 =======================
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
-Under the hood it uses [music-synthesizer-for-android](https://code.google.com/p/music-synthesizer-for-android) 
+Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android) 
 for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
 
 The goal of this project is to be a tool/companion for the original DX7. Sound engine 
@@ -17,6 +17,16 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.1
+* Mark I engine now uses 10-bit sine/exp tables. Still a work in progress but we are getting there
+* More accurate FM feedback on the Mark I and OPL Series engine
+* Wheel, Foot, Breath, Aftertouch modulation support
+* Fixed the display of some more 'complex' algorithms
+* Drop of .syx files in the cartridge manager
+* Dexed data directory can now optionally reside in the same location where the binary is installed
+* 'Send current program to DX7' in Cartridge Manager works as designed
+* Support for sysex streams (multiple sysex messages in one .syx file)
+* falkTX upstream fixes for Linux
 
 #### Version 0.9.0
 * Apple AU support
@@ -25,7 +35,6 @@ Changelog
 * Basic theming
 * Fixed the UI corruption when more than one Dexed instance was loaded
 * Fixed wrong display value issues (coarse and fine)
-
 
 #### Version 0.8.0
 * New UI by [AZur Studio](http://bji.yukihotaru.com/)
@@ -60,18 +69,18 @@ Credits & thanks
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
 * Graphical design : [AZur Studio](http://bji.yukihotaru.com/)
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
-* PPPlay : Great [OPL3](http://sourceforge.net/projects/peepeeplayer) implementation, with documented code :D
+* PPPlay : Great [OPL3](https://github.com/stohrendorf/ppplay) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
-* markusthegeek direct implication for this project
+* falkTX [distrho](http://distrho.sourceforge.net/)
 
 TODO - Dexed 
 ------------
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
 * UI threaded messaging to avoid DAW automation 'clicks' 
-* Zomby UI changes: this occurs in Live and will be fixed in the 0.8.1 version.
+* Zomby UI changes: this occurs in Live
 * Various code cleanup
-* More smothness in mono mode
+* More smoothness in mono mode
 
 TODO - msfa
 -----------

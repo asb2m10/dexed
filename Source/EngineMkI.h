@@ -29,21 +29,22 @@ class EngineMkI : public FmCore {
     //refacter this when it is working
     const static FmAlgorithm algo2[32];
 public:
-    virtual void render(int32_t *output, FmOpParams *params, int algorithm,
-                        int32_t *fb_buf, int feedback_shift, const Controllers *controllers);
+    EngineMkI();
+    
+    void render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int feedback_shift) override;
     
     void compute(int32_t *output, const int32_t *input, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2,
-                    bool add, const Controllers *controllers);
+                    bool add);
     
 	void compute_pure(int32_t *output, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2,
-                         bool add, const Controllers *controllers);
+                         bool add);
     
     void compute_fb(int32_t *output, int32_t phase0, int32_t freq, int32_t gain1, int32_t gain2,
-                       int32_t *fb_buf, int fb_gain, bool add, const Controllers *controllers);
+                       int32_t *fb_buf, int fb_gain, bool add);
     
-    void compute_fb2(int32_t *output, FmOpParams *params, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift, const Controllers *controllers);
+    void compute_fb2(int32_t *output, FmOpParams *params, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift);
     
-    void compute_fb3(int32_t *output, FmOpParams *params, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift, const Controllers *controllers);
+    void compute_fb3(int32_t *output, FmOpParams *params, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift);
 };
 
 

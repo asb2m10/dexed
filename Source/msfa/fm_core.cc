@@ -90,8 +90,7 @@ void FmCore::dump() {
 #endif
 }
 
-void FmCore::render(int32_t *output, FmOpParams *params, int algorithm,
-                    int32_t *fb_buf, int feedback_shift, const Controllers *controller) {
+void FmCore::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int feedback_shift) {
     const int kLevelThresh = 1120;
     const FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
