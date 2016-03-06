@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014-2015 Pascal Gauthier.
+ * Copyright (c) 2014-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ uint8_t sysexChecksum(const uint8_t *sysex, int size) {
 }
 
 void exportSysexPgm(uint8_t *dest, uint8_t *src) {
-    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B };
+    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x01, 0x1B };
    
     memcpy(dest, header, 6);
     
