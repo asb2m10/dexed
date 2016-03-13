@@ -71,6 +71,7 @@ public:
 
 class ProgramSelector : public ComboBox {
 public:
+    void mouseDown(const MouseEvent &event) override;    
     virtual void paint(Graphics &g) override;
 };
 
