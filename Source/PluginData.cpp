@@ -249,18 +249,27 @@ void DexedAudioProcessor::sendCurrentSysexCartridge() {
 void DexedAudioProcessor::sendSysexCartridge(File cart) {
     if ( ! sysexComm.isOutputActive() )
         return;
-    String f = cart.getFullPathName();
-    uint8_t syx_data[4104];
-    ifstream fp_in(f.toRawUTF8(), ios::binary);
-    if (fp_in.fail()) {
+    
+    FileInputStream *fis = cart.createInputStream();
+    if ( fis == NULL ) {
+        String f = cart.getFullPathName();
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                           "Error",
                                           "Unable to open: " + f);
+    }
+    
+    uint8 syx_data[65535];
+    int sz = fis->read(syx_data, 65535);
+    delete fis;
+    
+    if (syx_data[0] != 0xF0) {
+        String f = cart.getFullPathName();
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                          "Error",
+                                          "File: " + f + " doesn't seems to contain any sysex data");
         return;
     }
-    fp_in.read((char *)syx_data, 4104);
-    fp_in.close();
-    sysexComm.send(MidiMessage(syx_data, 4104));
+    sysexComm.send(MidiMessage(syx_data, sz));
 }
 
 

@@ -22,15 +22,16 @@
 #define PLUGINDATA_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#define SYSEX_SIZE 4104
 
 #include <stdint.h>
+#include <string.h>
 #include "Dexed.h"
 
 uint8_t sysexChecksum(const uint8_t *sysex, int size);
 void exportSysexPgm(uint8_t *dest, uint8_t *src);
 
 #define SYSEX_HEADER { 0xF0, 0x43, 0x00, 0x00, 0x20, 0x00 }
+#define SYSEX_SIZE 4104
 
 class Cartridge {
     uint8_t voiceData[SYSEX_SIZE];
@@ -144,7 +145,52 @@ public:
     
     int saveVoice(File f) {
         setHeader();
-        return f.replaceWithData(voiceData, SYSEX_SIZE);
+        
+        if ( ! f.existsAsFile() ) {
+            // file doesn't exists, create it
+            return f.replaceWithData(voiceData, SYSEX_SIZE);
+        }
+        
+        FileInputStream *fis = f.createInputStream();
+        if ( fis == NULL )
+            return -1;
+        
+        uint8 buffer[65535];
+        int sz = fis->read(buffer, 65535);
+        delete fis;
+        
+        // if the file is smaller than 4104, it probably needs to be overriden.
+        if ( sz <= 4104 ) {
+            return f.replaceWithData(voiceData, SYSEX_SIZE);
+        }
+
+        // To avoid to erase the performance data, we skip the sysex stream until
+        // we see the header 0xF0, 0x43, 0x00, 0x00, 0x20, 0x00
+        
+        int pos = 0;
+        bool found = 0;
+        while(pos < sz) {
+            // corrupted sysex, erase everything :
+            if ( buffer[pos] != 0xF0 )
+                return f.replaceWithData(voiceData, SYSEX_SIZE);
+            
+            uint8_t header[] = SYSEX_HEADER;
+            if ( memcmp(buffer+pos, header, 6) ) {
+                found = true;
+                memcpy(buffer+pos, voiceData, SYSEX_SIZE);
+                break;
+            } else {
+                for(;pos<sz;pos++) {
+                    if ( buffer[pos] == 0xF7 )
+                        break;
+                }
+            }
+        }
+        
+        if ( ! found )
+            return -1;
+        
+        return f.replaceWithData(buffer, sz);
     }
     
     void saveVoice(uint8_t *sysex) {
