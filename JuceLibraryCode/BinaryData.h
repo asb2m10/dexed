@@ -46,10 +46,10 @@ namespace BinaryData
     const int            about_pngSize = 24863;
 
     extern const char*   GlobalEditor_864x144_png;
-    const int            GlobalEditor_864x144_pngSize = 30438;
+    const int            GlobalEditor_864x144_pngSize = 17334;
 
     extern const char*   OperatorEditor_287x218_png;
-    const int            OperatorEditor_287x218_pngSize = 15614;
+    const int            OperatorEditor_287x218_pngSize = 10927;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
