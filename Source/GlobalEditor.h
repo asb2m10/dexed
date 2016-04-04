@@ -113,6 +113,7 @@ private:
     ScopedPointer<ComboBoxImage> lfoType;
     ScopedPointer<ProgramSelector> programSelector;
     ScopedPointer<ImageButton> aboutButton;
+    ScopedPointer<Slider> tune;
 
 
     //==============================================================================

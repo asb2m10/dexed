@@ -86,6 +86,8 @@ public:
     int foot_cc;
     int modwheel_cc;
     
+    int masterTune;
+    
     FmMod wheel;
     FmMod foot;
     FmMod breath;

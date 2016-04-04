@@ -70,6 +70,39 @@ public:
     }
 };
 
+class CtrlTune : public Ctrl {
+public:
+    DexedAudioProcessor *processor;
+    
+    CtrlTune(String name, DexedAudioProcessor *owner) : Ctrl(name) {
+        processor = owner;
+    }
+    
+    float getValueHost() {
+        // meh. good enough for now
+        int32_t tune = processor->controllers.masterTune / (1.0/12);
+        tune = (tune >> 11) + 0x2000;
+        return (float)tune / 0x4000;
+    }
+    
+    void setValueHost(float v) {
+        int32_t tune = (v * 0x4000) - 0x2000;
+        processor->controllers.masterTune = ((float) (tune << 11)) * (1.0/12);
+    }
+    
+    String getValueDisplay() {
+        String display;
+        display << (getValueHost() * 2) -1;
+        return display;
+    }
+    
+    void updateComponent() {
+        if (slider != NULL) {
+            slider->setValue(getValueHost(), dontSendNotification);
+        }
+    }
+};
+
 
 // ************************************************************************
 //
@@ -287,6 +320,9 @@ void DexedAudioProcessor::initCtrl() {
     
     output = new CtrlFloat("Output", &fx.uiGain);
     ctrl.add(output);
+    
+    tune = new CtrlTune("MASTER TUNE ADJ", this);
+    ctrl.add(tune);
     
     algo = new CtrlDX("ALGORITHM", 32, 134, 1);
     ctrl.add(algo);

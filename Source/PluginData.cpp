@@ -294,6 +294,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("currentProgram", currentProgram);
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
+    dexedState.setAttribute("masterTune", controllers.masterTune);
     
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
@@ -340,6 +341,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     setEngineType(root->getIntAttribute("engineType", 1));
     monoMode = root->getIntAttribute("monoMode", 0);
+    controllers.masterTune = root->getIntAttribute("masterTune", 0);
     
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
     if ( possibleCartridge.exists() )

@@ -65,6 +65,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
+    controllers.masterTune = 0;
     loadPreference();
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
@@ -319,7 +320,6 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
         break;
     }
-
 }
 
 void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
