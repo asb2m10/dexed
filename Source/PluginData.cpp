@@ -173,6 +173,7 @@ void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
     memcpy(data, rawdata, 161);
+    lfo.reset(data + 137);
     triggerAsyncUpdate();
 }
 
