@@ -30,7 +30,7 @@
 uint8_t sysexChecksum(const uint8_t *sysex, int size);
 void exportSysexPgm(uint8_t *dest, uint8_t *src);
 
-#define SYSEX_HEADER { 0xF0, 0x43, 0x00, 0x00, 0x20, 0x00 }
+#define SYSEX_HEADER { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 }
 #define SYSEX_SIZE 4104
 
 class Cartridge {

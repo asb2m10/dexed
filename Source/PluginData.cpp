@@ -37,7 +37,7 @@ uint8_t sysexChecksum(const uint8_t *sysex, int size) {
 }
 
 void exportSysexPgm(uint8_t *dest, uint8_t *src) {
-    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x09, 0x01, 0x1B };
+    uint8_t header[] = { 0xF0, 0x43, 0x00, 0x00, 0x01, 0x1B };
    
     memcpy(dest, header, 6);
     
