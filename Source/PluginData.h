@@ -220,7 +220,7 @@ public:
     }
     
     void unpackProgram(uint8_t *unpackPgm, int idx);
-    void packProgram(uint8_t *src, int idx, String name);
+    void packProgram(uint8_t *src, int idx, String name, char *opSwitch);
 };
 
 #endif  // PLUGINDATA_H_INCLUDED

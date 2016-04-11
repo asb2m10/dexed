@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Introjucer version: 3.1.0
+  Created with Introjucer version: 3.2.0
 
   ------------------------------------------------------------------------------
 
   The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright 2004-13 by Raw Material Software Ltd.
+  Copyright (c) 2015 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -25,13 +25,30 @@
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 #ifndef M_LN10
-#define M_LN10 2.30258509299404568402 
+#define M_LN10 2.30258509299404568402
 #endif
+
+class OperatorSwitch : public ToggleButton {
+    Image image;
+public :
+    OperatorSwitch() : ToggleButton("opSwitch") {
+        image = DXLookNFeel::getLookAndFeel()->imageSwitchOperator;
+        setSize(32, 32);
+    }
+
+    void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) {
+        g.drawImage(image, 0, 0, 32, 32, 0, getToggleState() ? 0 : 32, 32, 32);
+    }
+};
+
 //[/MiscUserDefs]
 
 //==============================================================================
 OperatorEditor::OperatorEditor ()
 {
+    //[Constructor_pre] You can add your own custom stuff here..
+    //[/Constructor_pre]
+
     addAndMakeVisible (s_egl1 = new Slider ("egl1"));
     s_egl1->setRange (0, 99, 1);
     s_egl1->setSliderStyle (Slider::RotaryVerticalDrag);
@@ -173,6 +190,7 @@ OperatorEditor::OperatorEditor ()
 
 
     //[UserPreSize]
+    addAndMakeVisible(opSwitch = new OperatorSwitch());
     //[/UserPreSize]
 
     setSize (287, 218);
@@ -233,6 +251,7 @@ OperatorEditor::~OperatorEditor()
 
 
     //[Destructor]. You can add your own custom destruction code here..
+    opSwitch = nullptr;
     //[/Destructor]
 }
 
@@ -246,7 +265,7 @@ void OperatorEditor::paint (Graphics& g)
     //[UserPaint] Add your own custom painting code here..
     g.setColour (Colours::white);
     g.setFont(Font (30.00f, Font::plain));
-    g.drawText(opNum, 242, 8, 30, 30, Justification::centred, true);
+    g.drawText(opNum, 250, 14, 30, 30, Justification::centred, true);
 
     bool state = opMode->getToggleState();
 
@@ -259,6 +278,9 @@ void OperatorEditor::paint (Graphics& g)
 
 void OperatorEditor::resized()
 {
+    //[UserPreResize] Add your own custom resize code here..
+    //[/UserPreResize]
+
     s_egl1->setBounds (5, 128, 34, 34);
     s_egl2->setBounds (33, 129, 34, 34);
     s_egl3->setBounds (61, 128, 34, 34);
@@ -284,6 +306,7 @@ void OperatorEditor::resized()
     kbdLeftCurve->setBounds (128, 170, 36, 26);
     kbdRightCurve->setBounds (240, 170, 36, 26);
     //[UserResized] Add your own custom resize handling here..
+    opSwitch->setBounds(226, 13, 64, 32);
     //[/UserResized]
 }
 
@@ -439,6 +462,7 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     parent->opCtrl[op].sclRate->bind(sclRateScaling);
     parent->opCtrl[op].ampModSens->bind(ampModSens);
     parent->opCtrl[op].velModSens->bind(keyVelSens);
+    parent->opCtrl[op].opSwitch->bind(opSwitch);
 
     int offset = parent->opCtrl[op].egRate[0]->getOffset();
     envDisplay->pvalues = &(parent->data[offset]);
@@ -507,7 +531,7 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
             case 3:
                 processor->pasteOpFromClipboard(internalOp);
             break;
-                
+
             case 4:
                 processor->sendCurrentSysexProgram();
             break;

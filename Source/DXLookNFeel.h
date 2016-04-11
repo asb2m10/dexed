@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2014 Pascal Gauthier.
+ * Copyright (c) 2013-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,7 @@ public:
     Typeface::Ptr defaultFontBold;
 
     Image imageKnob, imageSwitch, imageButton, imageSlider, imageScaling, imageLight, imageLFO;
+    Image imageSwitchOperator;
     Image imageOperator, imageGlobal;
 
     /* overriden methods */

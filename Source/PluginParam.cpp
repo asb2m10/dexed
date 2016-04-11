@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2015 Pascal Gauthier.
+ * Copyright (c) 2013-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +103,43 @@ public:
     }
 };
 
+class CtrlOpSwitch : public Ctrl {
+    char *value;
+    public :
+    CtrlOpSwitch(String name, char *switchValue) : Ctrl(name) {
+        value = switchValue;
+    }
+    
+    void setValueHost(float f) {
+        if ( f == 0 )
+            *value = '0';
+        else
+            *value = '1';
+    }
+    
+    float getValueHost() {
+        if ( *value == '0' )
+            return 0;
+        else
+            return 1;
+    }
+    
+    String getValueDisplay() {
+        String ret;
+        ret << label << " " << (*value == '0' ? "OFF" : "ON");
+        return ret;
+    }
+    
+    void updateComponent() {
+        if (button != NULL) {
+            if (*value == '0') {
+                button->setToggleState(false, dontSendNotification);
+            } else {
+                button->setToggleState(true, dontSendNotification);
+            }
+        }
+    }
+};
 
 // ************************************************************************
 //
@@ -471,6 +508,11 @@ void DexedAudioProcessor::initCtrl() {
         velModSens << opName << " KEY VELOCITY";
         opCtrl[opVal].velModSens = new CtrlDX(velModSens, 8, opTarget + 15);
         ctrl.add(opCtrl[opVal].velModSens);
+        
+        String opSwitchLabel;
+        opSwitchLabel << opName << " SWITCH";
+        opCtrl[opVal].opSwitch = new CtrlOpSwitch(opSwitchLabel, (char *)&(controllers.opSwitch)+(5-i));
+        ctrl.add(opCtrl[opVal].opSwitch);
     }
     
     for (int i=0; i < ctrl.size(); i++) {
@@ -549,6 +591,7 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     
     index = index > 31 ? 31 : index;
     currentCart.unpackProgram(data, index);
+    strcpy(controllers.opSwitch, "111111");
     lfo.reset(data + 137);
     currentProgram = index;
     triggerAsyncUpdate();

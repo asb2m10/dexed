@@ -20,6 +20,7 @@
 #include "synth.h"
 #include "../Dexed.h"
 #include <stdio.h>
+#include <string.h>
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -77,6 +78,8 @@ class Controllers {
 public:
     int values_[131];
     
+    char opSwitch[7];
+    
     int amp_mod;
     int pitch_mod;
     int eg_mod;
@@ -97,6 +100,7 @@ public:
         amp_mod = 0;
         pitch_mod = 0;
         eg_mod = 0;
+        strcpy(opSwitch, "111111");        
     }
 
     void refresh() {

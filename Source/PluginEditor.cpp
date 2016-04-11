@@ -297,7 +297,7 @@ void DexedAudioProcessorEditor::storeProgram() {
             }
 
             if ( externalFile == NULL ) {
-                processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName);
+                processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
                 rebuildProgramCombobox();
                 processor->setCurrentProgram(programNum);
                 processor->updateHostDisplay();
@@ -316,7 +316,7 @@ void DexedAudioProcessorEditor::storeProgram() {
                     processor->activeFileCartridge = destination;
                 }
             } else {
-                destSysex.packProgram((uint8_t *) processor->data, programNum, programName);
+                destSysex.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
                 if ( ! destSysex.saveVoice(*externalFile)) {
                     AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
                 }

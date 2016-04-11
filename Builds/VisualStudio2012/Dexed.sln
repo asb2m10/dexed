@@ -4,14 +4,14 @@ Project("{BD26B4C3-163D-4785-A63F-D3E66858BFF3}") = "Dexed", "Dexed.vcxproj", "{
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Release|x64 = Release|x64
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Debug|x64.ActiveCfg = Debug|x64
-		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Debug|x64.Build.0 = Debug|x64
-		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Release|x64.ActiveCfg = Release|x64
-		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Release|x64.Build.0 = Release|x64
+		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Debug|Win32.Build.0 = Debug|Win32
+		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Release|Win32.ActiveCfg = Release|Win32
+		{1A9EF105-5BF5-9FB6-9634-A91A6D840866}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

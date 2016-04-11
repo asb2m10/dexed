@@ -121,6 +121,7 @@ struct OperatorCtrl {
     ScopedPointer<CtrlDX> sclRate;
     ScopedPointer<CtrlDX> ampModSens;
     ScopedPointer<CtrlDX> velModSens;
+    ScopedPointer<Ctrl> opSwitch;
 };
 
 #endif  // PLUGINPARAM_H_INCLUDED

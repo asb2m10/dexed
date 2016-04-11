@@ -54,6 +54,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     
     resolvAppDir();
 
+    TRACE("controler %s", controllers.opSwitch);
+    
     initCtrl();
     sendSysexChange = true;
     normalizeDxVelocity = false;
@@ -66,6 +68,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     controllers.masterTune = 0;
+
     loadPreference();
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
@@ -200,7 +203,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                         
                         val = val >> 4;
                         int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-                        float f = ((float) clip_val) / (float) 32768;
+                        float f = ((float) clip_val) / (float) 0x8000;
                         if( f > 1 ) f = 1;
                         if( f < -1 ) f = -1;
                         sumbuf[j] += f;

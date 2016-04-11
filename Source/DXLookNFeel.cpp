@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2014 Pascal Gauthier.
+ * Copyright (c) 2013-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ DXLookNFeel::DXLookNFeel() {
     
     imageKnob = ImageCache::getFromMemory(BinaryData::Knob_34x34_png, BinaryData::Knob_34x34_pngSize);
     imageSwitch = ImageCache::getFromMemory(BinaryData::Switch_48x26_png, BinaryData::Switch_48x26_pngSize);
+    imageSwitchOperator = ImageCache::getFromMemory(BinaryData::Switch_32x32_png, BinaryData::Switch_32x32_pngSize);
     imageButton = ImageCache::getFromMemory(BinaryData::ButtonUnlabeled_50x30_png, BinaryData::ButtonUnlabeled_50x30_pngSize);
     imageSlider = ImageCache::getFromMemory(BinaryData::Slider_26x26_png, BinaryData::Slider_26x26_pngSize);
     imageScaling = ImageCache::getFromMemory(BinaryData::Scaling_36_26_png, BinaryData::Scaling_36_26_pngSize);;
@@ -117,6 +118,10 @@ DXLookNFeel::DXLookNFeel() {
         }
         if ( name == "Switch_48x26.png" ) {
             imageSwitch = findImage(path);
+            continue;
+        }
+        if ( name == "Switch_32x64.png" ) {
+            imageSwitchOperator = findImage(path);
             continue;
         }
         if ( name == "ButtonUnlabeled_50x30.png" ) {

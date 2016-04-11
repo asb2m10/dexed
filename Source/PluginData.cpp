@@ -55,7 +55,7 @@ void exportSysexPgm(uint8_t *dest, uint8_t *src) {
 /**
  * Pack a program into a 32 packed sysex
  */
-void Cartridge::packProgram(uint8_t *src, int idx, String name) {
+void Cartridge::packProgram(uint8_t *src, int idx, String name, char *opSwitch) {
     uint8_t *bulk = voiceData + 6 + (idx * 128);
     
     for(int op = 0; op < 6; op++) {
@@ -70,7 +70,10 @@ void Cartridge::packProgram(uint8_t *src, int idx, String name) {
         // kvs_ams
         bulk[pp+13] = (src[up+14]&0x03) | ((src[up+15]&0x07) << 2);
         // output lvl
-        bulk[pp+14] = src[up+16];
+        if ( opSwitch[op] == '0' )
+            bulk[pp+14] = 0;
+        else
+            bulk[pp+14] = src[up+16];
         // fcoarse_mode
         bulk[pp+15] = (src[up+17]&0x01) | ((src[up+18]&0x1f) << 1);
         // fine freq
@@ -158,7 +161,7 @@ void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
     unpackPgm[142] = (lpms_lfw_lks >> 1) & 7;
     unpackPgm[143] = lpms_lfw_lks >> 4;
     memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
-    unpackPgm[155] = 1;  // operator on/off
+    unpackPgm[155] = 1;  // operator on/off (DEPRECATED)
     unpackPgm[156] = 1;
     unpackPgm[157] = 1;
     unpackPgm[158] = 1;
@@ -296,6 +299,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
     dexedState.setAttribute("masterTune", controllers.masterTune);
+    dexedState.setAttribute("opSwitch", controllers.opSwitch);
     
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
@@ -334,6 +338,13 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     fx.uiReso = root->getDoubleAttribute("reso");
     fx.uiGain = root->getDoubleAttribute("gain");
     currentProgram = root->getIntAttribute("currentProgram");
+    
+    String opSwitchValue = root->getStringAttribute("opSwitch");
+    if ( opSwitchValue.length() != 6 ) {
+        strcpy(controllers.opSwitch, "111111");
+    } else {
+        strncpy(controllers.opSwitch, opSwitchValue.toRawUTF8(), 6);
+    }
     
     controllers.wheel.parseConfig(root->getStringAttribute("wheelMod").toRawUTF8());
     controllers.foot.parseConfig(root->getStringAttribute("footMod").toRawUTF8());
