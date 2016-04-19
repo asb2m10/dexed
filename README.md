@@ -18,6 +18,8 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 #### Version 0.9.2
+* Added operator mute switch
+* Added Tune (MASTER TUNE ADJ) knob
 * Single click program select
 * Fix sysex issue with wrong machine ID
 

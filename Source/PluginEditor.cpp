@@ -115,11 +115,21 @@ void DexedAudioProcessorEditor::cartShow() {
 void DexedAudioProcessorEditor::loadCart(File file) {
     Cartridge cart;
 
-    if ( cart.load(file) < 0 ) {
+    int rc = cart.load(file);
+    
+    if ( rc < 0 ) {
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                           "Error",
                                           "Unable to open: " + file.getFullPathName());
         return;
+    }
+    
+    if ( rc != 0 ) {
+        rc = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Unable to find DX7 sysex cartridge in file",
+                                          "This sysex file is not for the DX7 or it is corrupted. "
+                                          "Do you still want to load this file as random data ?");
+        if ( rc == 0 )
+            return;
     }
     
     processor->loadCartridge(cart);

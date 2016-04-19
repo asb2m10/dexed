@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Pascal Gauthier.
+ * Copyright (C) 2015-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -245,6 +245,7 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm,
         param.phase += param.freq << LG_N;
     }
 }
+ 
 
 const FmAlgorithm EngineMkI::algo2[32] = {
     { { 0xc1, 0x11, 0x11, 0x14, 0x01, 0x14 } }, // 1
@@ -307,7 +308,7 @@ void EngineMkI::compute_fb3(int32_t *output, FmOpParams *parms, int32_t gain01, 
     for (int i = 0; i < N; i++) {
         // op 0
         gain[0] += dgain[0];
-        int32_t scaled_fb = (y0 + y) >> (fb_shift + 6);     // tsk tsk tsk: this needs some tuning
+        int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);     // tsk tsk tsk: this needs some tuning
         y0 = y;
         y = Sin::lookup(phase[0] + scaled_fb);
         y = ((int64_t)y * (int64_t)gain[0]) >> 24;
@@ -352,7 +353,7 @@ void EngineMkI::compute_fb2(int32_t *output, FmOpParams *parms, int32_t gain01, 
     for (int i = 0; i < N; i++) {
         // op 0
         gain[0] += dgain[0];
-        int32_t scaled_fb = (y0 + y) >> (fb_shift + 2); // tsk tsk tsk: this needs some tuning
+        int32_t scaled_fb = (y0 + y) >> (fb_shift + 1); 
         y0 = y;
         y = Sin::lookup(phase[0] + scaled_fb);
         y = ((int64_t)y * (int64_t)gain[0]) >> 24;
@@ -371,7 +372,8 @@ void EngineMkI::compute_fb2(int32_t *output, FmOpParams *parms, int32_t gain01, 
 
 /*
 void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int feedback_shift) {
-    const int kLevelThresh = 507;
+    const uint16_t ENV_MAX = 1<<ENV_BITDEPTH;
+    const int kLevelThresh = ENV_MAX-100;
     const FmAlgorithm alg = algo2[algorithm];
     bool has_contents[3] = { true, false, false };
     
@@ -382,11 +384,11 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
         int inbus = (flags >> 4) & 3;
         int outbus = flags & 3;
         int32_t *outptr = (outbus == 0) ? output : buf_[outbus - 1].get();
-        int32_t gain1 = param.gain_out == 0 ? 511 : param.gain_out;
-        int32_t gain2 = 512-(param.level_in >> 19);
+        int32_t gain1 = param.gain_out == 0 ? (ENV_MAX-1) : param.gain_out;
+        int32_t gain2 = ENV_MAX-(param.level_in >> (28-ENV_BITDEPTH));
         param.gain_out = gain2;
         
-        if (gain1 >= kLevelThresh || gain2 >= kLevelThresh) {
+        if (gain1 <= kLevelThresh || gain2 <= kLevelThresh) {
             
             if (!has_contents[outbus]) {
                 add = false;
@@ -433,5 +435,5 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
         }
         param.phase += param.freq << LG_N;
     }
-}
-*/
+}*/
+

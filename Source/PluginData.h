@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014-2015 Pascal Gauthier.
+ * Copyright (c) 2014-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 uint8_t sysexChecksum(const uint8_t *sysex, int size);
 void exportSysexPgm(uint8_t *dest, uint8_t *src);
 
-#define SYSEX_HEADER { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 }
+#define SYSEX_HEADER        { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 }
 #define SYSEX_SIZE 4104
 
 class Cartridge {
@@ -99,6 +99,7 @@ public:
     }
     
     int load(const uint8_t *stream, int size) {
+        const uint8 voiceHeaderBroken[] = { 0xF0, 0x43, 0x00, 0x00, 0x20, 0x00 };
         uint8 voiceHeader[] = SYSEX_HEADER;
         uint8 tmp[65535];
         uint8 *pos = tmp;
@@ -115,11 +116,13 @@ public:
                 if ( status != 0 )
                     return status;
                 memcpy(voiceData, pos+6, 4096);
+                TRACE("SYSEX Header not found, loading random data");
                 return 2;
             }
             
             pos[3] = 0;
-            if ( memcmp(pos, voiceHeader, 6) == 0 ) {
+            if ( memcmp(pos, voiceHeader, 6) == 0 || memcmp(pos, voiceHeaderBroken, 6) == 0) {
+                TRACE("SYSEX voice header found at %d", pos);
                 memcpy(voiceData, pos, SYSEX_SIZE);
                 if ( sysexChecksum(voiceData + 6, 4096) == pos[4102] )
                     status = 0;
