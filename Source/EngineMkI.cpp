@@ -200,6 +200,7 @@ void EngineMkI::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
     fb_buf[1] = y;
 }
 
+/*
 void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm,
                        int32_t *fb_buf, int feedback_shift) {
     const uint16_t ENV_MAX = 1<<ENV_BITDEPTH;
@@ -245,7 +246,7 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm,
         param.phase += param.freq << LG_N;
     }
 }
- 
+*/
 
 const FmAlgorithm EngineMkI::algo2[32] = {
     { { 0xc1, 0x11, 0x11, 0x14, 0x01, 0x14 } }, // 1
@@ -370,7 +371,7 @@ void EngineMkI::compute_fb2(int32_t *output, FmOpParams *parms, int32_t gain01, 
     fb_buf[1] = y;
 }
 
-/*
+
 void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int feedback_shift) {
     const uint16_t ENV_MAX = 1<<ENV_BITDEPTH;
     const int kLevelThresh = ENV_MAX-100;
@@ -401,13 +402,13 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
                     switch ( algorithm ) {
                         // two operator feedback, process exception for ALGO 6
                         case 5 :
-                            //compute_fb2(outptr, params, gain1, gain2, fb_buf, feedback_shift, controllers);
+                            compute_fb2(outptr, params, gain1, gain2, fb_buf, feedback_shift);
                             params[1].phase += params[1].freq << LG_N;  // yuk, hack, we already processed op-5
                             op++; // ignore next operator;
                             break;
                         // three operator feedback, process exception for ALGO 4
                         case 3 :
-                            //compute_fb3(outptr, params, gain1, gain2, fb_buf, feedback_shift, controllers);
+                            compute_fb3(outptr, params, gain1, gain2, fb_buf, feedback_shift);
                             params[1].phase += params[1].freq << LG_N; // hack, we already processed op-5 - op-4
                             params[2].phase += params[2].freq << LG_N; // yuk yuk
                             op += 2; // ignore the 2 other operators
@@ -435,5 +436,5 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
         }
         param.phase += param.freq << LG_N;
     }
-}*/
+}
 
