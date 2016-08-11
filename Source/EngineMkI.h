@@ -26,8 +26,6 @@
 
 
 class EngineMkI : public FmCore {
-    //refacter this when it is working
-    const static FmAlgorithm algo2[32];
 public:
     EngineMkI();
     

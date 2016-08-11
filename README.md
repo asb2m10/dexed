@@ -20,6 +20,7 @@ Changelog
 #### Version 0.9.2
 * Added operator mute switch
 * Added Tune (MASTER TUNE ADJ) knob
+* Correct feedback implementation for Algo 4 and 6
 * Single click program select
 * Fix sysex issue with wrong machine ID
 

@@ -63,7 +63,7 @@ class ComboBoxImage : public ComboBox {
 public:
     ComboBoxImage();
 
-    virtual void paint(Graphics &g);
+    virtual void paint(Graphics &g) override;
     virtual void showPopup() override;
     void setImage(Image image);
     void setImage(Image image, int pos[]);
