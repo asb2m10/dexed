@@ -241,8 +241,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
 void Dx7Note::keyup() {
     for (int op = 0; op < 6; op++) {
         env_[op].keydown(false);
-        pitchenv_.keydown(false);
     }
+    pitchenv_.keydown(false);
 }
 
 void Dx7Note::update(const uint8_t patch[156], int midinote, int fb_depth) {

@@ -23,6 +23,7 @@ Changelog
 * Correct feedback implementation for Algo 4 and 6
 * Single click program select
 * Fix sysex issue with wrong machine ID
+* Fix for parameter hosts values. @
 
 #### Version 0.9.1
 * Mark I engine now uses 10-bit sine/exp tables. Still a work in progress but we are getting there
@@ -58,6 +59,7 @@ Credits & thanks
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * falkTX [distrho](http://distrho.sourceforge.net/)
+* Sentinel77 for parameter host value fix
 
 TODO - Dexed 
 ------------
