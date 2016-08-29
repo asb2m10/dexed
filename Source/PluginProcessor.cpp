@@ -63,7 +63,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     showKeyboard = true;
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
-    setEngineType(DEXED_ENGINE_MODERN);
+    setEngineType(DEXED_ENGINE_MARKI);
     
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
