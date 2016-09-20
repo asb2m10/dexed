@@ -18,12 +18,13 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 #### Version 0.9.2
+* Mark I engine is now the default engine
 * Added operator mute switch
 * Added Tune (MASTER TUNE ADJ) knob
 * Correct feedback implementation for Algo 4 and 6
 * Single click program select
 * Fix sysex issue with wrong machine ID
-* Fix for parameter hosts values. @
+* Fix for parameter hosts values. thanks @Sentinel77
 
 #### Version 0.9.1
 * Mark I engine now uses 10-bit sine/exp tables. Still a work in progress but we are getting there
