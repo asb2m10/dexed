@@ -63,7 +63,7 @@ public:
 class AboutBox : public DialogWindow {
 public:
     Image about_png;
-    
+
     AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true) {
         setUsingNativeTitleBar(false);
         setAlwaysOnTop(true);
@@ -71,11 +71,11 @@ public:
         setSize(about_png.getWidth(), about_png.getHeight());
         centreAroundComponent (parent, getWidth(), getHeight());
     }
-    
+
     void closeButtonPressed() {
         setVisible (false);
     }
-    
+
     void paint(Graphics &g) {
         g.drawImage (about_png, 0, 0, about_png.getWidth(), about_png.getHeight(),
                      0, 0, about_png.getWidth(), about_png.getHeight());
@@ -260,6 +260,12 @@ GlobalEditor::GlobalEditor ()
                             Image(), 1.000f, Colour (0x00000000),
                             Image(), 1.000f, Colour (0x00000000),
                             Image(), 1.000f, Colour (0x00000000));
+    addAndMakeVisible (tune = new Slider ("tune"));
+    tune->setRange (0, 1, 0);
+    tune->setSliderStyle (Slider::RotaryVerticalDrag);
+    tune->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    tune->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -321,6 +327,7 @@ GlobalEditor::~GlobalEditor()
     lfoType = nullptr;
     programSelector = nullptr;
     aboutButton = nullptr;
+    tune = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -379,6 +386,7 @@ void GlobalEditor::resized()
     lfoType->setBounds (583, 8, 36, 26);
     programSelector->setBounds (153, 115, 112, 18);
     aboutButton->setBounds (8, 11, 135, 46);
+    tune->setBounds (190, 9, 34, 34);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -491,6 +499,11 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_output] -- add your slider handling code here..
         //[/UserSliderCode_output]
     }
+    else if (sliderThatWasMoved == tune)
+    {
+        //[UserSliderCode_tune] -- add your slider handling code here..
+        //[/UserSliderCode_tune]
+    }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]
@@ -584,14 +597,15 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor->fxCutoff->bind(cutoff);
     processor->fxReso->bind(reso);
     processor->output->bind(output);
+    processor->tune->bind(tune);
     algoDisplay->algo = (char *) &(processor->data[134]);
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 
     editor = edit;
 
     midiMonitor = new MidiMonitor(&(processor->sysexComm));
-    addAndMakeVisible(midiMonitor);
-    midiMonitor->setBounds(155, 21, 80, 45);
+    //addAndMakeVisible(midiMonitor);
+    //midiMonitor->setBounds(155, 21, 80, 45);
 
     repaint();
 }
@@ -759,6 +773,10 @@ BEGIN_JUCER_METADATA
                resourceNormal="" opacityNormal="1" colourNormal="0" resourceOver=""
                opacityOver="1" colourOver="0" resourceDown="" opacityDown="1"
                colourDown="0"/>
+  <SLIDER name="tune" id="d22c34aa3363a28a" memberName="tune" virtualName=""
+          explicitFocusOrder="0" pos="190 9 34 34" min="0" max="1" int="0"
+          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

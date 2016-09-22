@@ -17,6 +17,15 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.2
+* Mark I engine is now the default engine
+* Added operator mute switch
+* Added Tune (MASTER TUNE ADJ) knob
+* Correct feedback implementation for Algo 4 and 6
+* Single click program select
+* Fix sysex issue with wrong machine ID
+* Fix for parameter hosts values. thanks @Sentinel77
+
 #### Version 0.9.1
 * Mark I engine now uses 10-bit sine/exp tables. Still a work in progress but we are getting there
 * More accurate FM feedback on the Mark I and OPL Series engine
@@ -42,28 +51,6 @@ Changelog
 * Fixed some of mono mode ticks on lower frequencies
 * SynprezFM preset are now in a submenu
 
-#### Version 0.7.0
-* Preliminary Algo 4 & 6 feedback support
-* DX Engine 'Dirty DX' emulation, including one based on OPL chips
-* DX Engine LFO amplitude. This still needs tuning.
-* Monophonic mode
-* Added the 'INIT' button to re-initialize a program
-* Fixed stucked notes when programs where changed
-* Fixed engine envelopes wrong timing if it was not 44100Khz
-* Fixed only .syx are shown when we are using the Dexed_cart.zip cartridges collection
-* The DX7 Sysex port are now only used for sysex messages. This is used to avoid any midi note feedback.
-
-#### Version 0.6.1
-* Mouse over + LFO type fix + pitch eg values
-
-#### Version 0.6.0
-* Added external midi interface to send / receive sysex messages
-* Fix Tracktion crash upon startup 
-* Middle C (transpose) now works
-* Identify the parameter knob/switch by simply moving the mouse over it
-* Knobs now works with vertical mouse drags
-* User DX7 zip cartridges
-
 Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
@@ -73,6 +60,7 @@ Credits & thanks
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * falkTX [distrho](http://distrho.sourceforge.net/)
+* Sentinel77 for parameter host value fix
 
 TODO - Dexed 
 ------------

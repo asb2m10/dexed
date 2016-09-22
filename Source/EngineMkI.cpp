@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Pascal Gauthier.
+ * Copyright (C) 2015-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +56,8 @@ static uint16_t sinLogTable[SINLOG_TABLESIZE];
 static const uint16_t SINEXP_BITDEPTH = 10;
 static const uint16_t SINEXP_TABLESIZE = 1<<SINEXP_BITDEPTH;
 static uint16_t sinExpTable[SINEXP_TABLESIZE];
+
+const uint16_t ENV_MAX = 1<<ENV_BITDEPTH;
 
 static inline uint16_t sinLog(uint16_t phi) {
     const uint16_t SINLOG_TABLEFILTER = SINLOG_TABLESIZE-1;
@@ -200,86 +202,44 @@ void EngineMkI::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
     fb_buf[1] = y;
 }
 
-void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm,
-                       int32_t *fb_buf, int feedback_shift) {
-    const uint16_t ENV_MAX = 1<<ENV_BITDEPTH;
-    const uint16_t kLevelThresh = ENV_MAX-100;  // really ???? uhuhuh
-    const FmAlgorithm alg = algorithms[algorithm];
-    bool has_contents[3] = { true, false, false };
-    for (int op = 0; op < 6; op++) {
-        int flags = alg.ops[op];
-        bool add = (flags & OUT_BUS_ADD) != 0;
-        FmOpParams &param = params[op];
-        int inbus = (flags >> 4) & 3;
-        int outbus = flags & 3;
-        int32_t *outptr = (outbus == 0) ? output : buf_[outbus - 1].get();
-        int32_t gain1 = param.gain_out == 0 ? (ENV_MAX-1) : param.gain_out;
-        int32_t gain2 = ENV_MAX-(param.level_in >> (28-ENV_BITDEPTH));
-        param.gain_out = gain2;
+// exclusively used for ALGO 6 with feedback
+void EngineMkI::compute_fb2(int32_t *output, FmOpParams *parms, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift) {
+    int32_t dgain[2];
+    int32_t gain[2];
+    int32_t phase[2];
+    int32_t y0 = fb_buf[0];
+    int32_t y = fb_buf[1];
+    
+    phase[0] = parms[0].phase;
+    phase[1] = parms[1].phase;
 
-        if (gain1 <= kLevelThresh || gain2 <= kLevelThresh) {
-            if (!has_contents[outbus]) {
-                add = false;
-            }
-            if (inbus == 0 || !has_contents[inbus]) {
-                // todo: more than one op in a feedback loop
-                if ((flags & 0xc0) == 0xc0 && feedback_shift < 16) {
-                    // cout << op << " fb " << inbus << outbus << add << endl;
-                    compute_fb(outptr, param.phase, param.freq,
-                               gain1, gain2,
-                               fb_buf, feedback_shift, add);
-                } else {
-                    // cout << op << " pure " << inbus << outbus << add << endl;
-                    compute_pure(outptr, param.phase, param.freq,
-                                 gain1, gain2, add);
-                }
-            } else {
-                // cout << op << " normal " << inbus << outbus << " " << param.freq << add << endl;
-                compute(outptr, buf_[inbus - 1].get(),
-                        param.phase, param.freq, gain1, gain2, add);
-            }
-            has_contents[outbus] = true;
-        } else if (!add) {
-            has_contents[outbus] = false;
-        }
-        param.phase += param.freq << LG_N;
+    parms[1].gain_out = (ENV_MAX-(parms[1].level_in >> (28-ENV_BITDEPTH)));
+
+    gain[0] = gain01;
+    gain[1] = parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out;
+
+    dgain[0] = (gain02 - gain01 + (N >> 1)) >> LG_N;
+    dgain[1] = (parms[1].gain_out - (parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out));
+    
+    for (int i = 0; i < N; i++) {
+        int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
+        
+        // op 0
+        gain[0] += dgain[0];
+        y0 = y;
+        y = mkiSin(phase[0]+scaled_fb, gain[0]);
+        phase[0] += parms[0].freq;
+        
+        // op 1
+        gain[1] += dgain[1];
+        y = mkiSin(phase[1]+y, gain[1]);
+        phase[1] += parms[1].freq;
+        
+        output[i] = y;
     }
+    fb_buf[0] = y0;
+    fb_buf[1] = y;
 }
-
-const FmAlgorithm EngineMkI::algo2[32] = {
-    { { 0xc1, 0x11, 0x11, 0x14, 0x01, 0x14 } }, // 1
-    { { 0x01, 0x11, 0x11, 0x14, 0xc1, 0x14 } }, // 2
-    { { 0xc1, 0x11, 0x14, 0x01, 0x11, 0x14 } }, // 3
-    { { 0xc4, 0x00, 0x00, 0x01, 0x11, 0x14 } }, // 4 ** EXCEPTION VIA CODE
-    { { 0xc1, 0x14, 0x01, 0x14, 0x01, 0x14 } }, // 5
-    { { 0xc4, 0x00, 0x01, 0x14, 0x01, 0x14 } }, // 6 ** EXCEPTION VIA CODE
-    { { 0xc1, 0x11, 0x05, 0x14, 0x01, 0x14 } }, // 7
-    { { 0x01, 0x11, 0xc5, 0x14, 0x01, 0x14 } }, // 8
-    { { 0x01, 0x11, 0x05, 0x14, 0xc1, 0x14 } }, // 9
-    { { 0x01, 0x05, 0x14, 0xc1, 0x11, 0x14 } }, // 10
-    { { 0xc1, 0x05, 0x14, 0x01, 0x11, 0x14 } }, // 11
-    { { 0x01, 0x05, 0x05, 0x14, 0xc1, 0x14 } }, // 12
-    { { 0xc1, 0x05, 0x05, 0x14, 0x01, 0x14 } }, // 13
-    { { 0xc1, 0x05, 0x11, 0x14, 0x01, 0x14 } }, // 14
-    { { 0x01, 0x05, 0x11, 0x14, 0xc1, 0x14 } }, // 15
-    { { 0xc1, 0x11, 0x02, 0x25, 0x05, 0x14 } }, // 16
-    { { 0x01, 0x11, 0x02, 0x25, 0xc5, 0x14 } }, // 17
-    { { 0x01, 0x11, 0x11, 0xc5, 0x05, 0x14 } }, // 18
-    { { 0xc1, 0x14, 0x14, 0x01, 0x11, 0x14 } }, // 19
-    { { 0x01, 0x05, 0x14, 0xc1, 0x14, 0x14 } }, // 20
-    { { 0x01, 0x14, 0x14, 0xc1, 0x14, 0x14 } }, // 21
-    { { 0xc1, 0x14, 0x14, 0x14, 0x01, 0x14 } }, // 22
-    { { 0xc1, 0x14, 0x14, 0x01, 0x14, 0x04 } }, // 23
-    { { 0xc1, 0x14, 0x14, 0x14, 0x04, 0x04 } }, // 24
-    { { 0xc1, 0x14, 0x14, 0x04, 0x04, 0x04 } }, // 25
-    { { 0xc1, 0x05, 0x14, 0x01, 0x14, 0x04 } }, // 26
-    { { 0x01, 0x05, 0x14, 0xc1, 0x14, 0x04 } }, // 27
-    { { 0x04, 0xc1, 0x11, 0x14, 0x01, 0x14 } }, // 28
-    { { 0xc1, 0x14, 0x01, 0x14, 0x04, 0x04 } }, // 29
-    { { 0x04, 0xc1, 0x11, 0x14, 0x04, 0x04 } }, // 30
-    { { 0xc1, 0x14, 0x04, 0x04, 0x04, 0x04 } }, // 31
-    { { 0xc4, 0x04, 0x04, 0x04, 0x04, 0x04 } }, // 32
-};
 
 // exclusively used for ALGO 4 with feedback
 void EngineMkI::compute_fb3(int32_t *output, FmOpParams *parms, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift) {
@@ -293,87 +253,54 @@ void EngineMkI::compute_fb3(int32_t *output, FmOpParams *parms, int32_t gain01, 
     phase[1] = parms[1].phase;
     phase[2] = parms[2].phase;
     
+    parms[1].gain_out = (ENV_MAX-(parms[1].level_in >> (28-ENV_BITDEPTH)));
+    parms[2].gain_out = (ENV_MAX-(parms[2].level_in >> (28-ENV_BITDEPTH)));
+    
     gain[0] = gain01;
-    gain[1] = parms[1].gain_out;
-    gain[2] = parms[2].gain_out;
-    
+    gain[1] = parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out;
+    gain[2] = parms[2].gain_out == 0 ? (ENV_MAX-1) : parms[2].gain_out;
+
     dgain[0] = (gain02 - gain01 + (N >> 1)) >> LG_N;
+    dgain[1] = (parms[1].gain_out - (parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out));
+    dgain[2] = (parms[2].gain_out - (parms[2].gain_out == 0 ? (ENV_MAX-1) : parms[2].gain_out));
     
-    parms[1].gain_out = Exp2::lookup(parms[1].level_in - (14 * (1 << 24)));
-    dgain[1] = (parms[1].gain_out - gain[1] + (N >> 1)) >> LG_N;
-    parms[2].gain_out = Exp2::lookup(parms[2].level_in - (14 * (1 << 24)));
-    dgain[2] = (parms[1].gain_out - gain[2] + (N >> 1)) >> LG_N;
     
     for (int i = 0; i < N; i++) {
+        int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
+        
         // op 0
         gain[0] += dgain[0];
-        int32_t scaled_fb = (y0 + y) >> (fb_shift + 6);     // tsk tsk tsk: this needs some tuning
         y0 = y;
-        y = Sin::lookup(phase[0] + scaled_fb);
-        y = ((int64_t)y * (int64_t)gain[0]) >> 24;
+        y = mkiSin(phase[0]+scaled_fb, gain[0]);
         phase[0] += parms[0].freq;
         
         // op 1
         gain[1] += dgain[1];
-        y = Sin::lookup(phase[1] + y);
-        y = ((int64_t)y * (int64_t)gain[1]) >> 24;
+        y = mkiSin(phase[1]+y, gain[1]);
         phase[1] += parms[1].freq;
         
         // op 2
         gain[2] += dgain[2];
-        y = Sin::lookup(phase[2] + y);
-        y = ((int64_t)y * (int64_t)gain[2]) >> 24;
-        output[i] = y;
+        y = mkiSin(phase[2]+y, gain[2]);
         phase[2] += parms[2].freq;
-    }
-    fb_buf[0] = y0;
-    fb_buf[1] = y;
-}
-
-// exclusively used for ALGO 6 with feedback
-void EngineMkI::compute_fb2(int32_t *output, FmOpParams *parms, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift) {
-    int32_t dgain[2];
-    int32_t gain[2];
-    int32_t phase[2];
-    int32_t y0 = fb_buf[0];
-    int32_t y = fb_buf[1];
-    
-    phase[0] = parms[0].phase;
-    phase[1] = parms[1].phase;
-    
-    gain[0] = gain01;
-    gain[1] = parms[1].gain_out;
-    
-    dgain[0] = (gain02 - gain01 + (N >> 1)) >> LG_N;
-    
-    parms[1].gain_out = Exp2::lookup(parms[1].level_in - (14 * (1 << 24)));
-    dgain[1] = (parms[1].gain_out - gain[1] + (N >> 1)) >> LG_N;
-    
-    for (int i = 0; i < N; i++) {
-        // op 0
-        gain[0] += dgain[0];
-        int32_t scaled_fb = (y0 + y) >> (fb_shift + 2); // tsk tsk tsk: this needs some tuning
-        y0 = y;
-        y = Sin::lookup(phase[0] + scaled_fb);
-        y = ((int64_t)y * (int64_t)gain[0]) >> 24;
-        phase[0] += parms[0].freq;
         
-        // op 1
-        gain[1] += dgain[1];
-        y = Sin::lookup(phase[1] + y);
-        y = ((int64_t)y * (int64_t)gain[1]) >> 24;
         output[i] = y;
-        phase[1] += parms[1].freq;
     }
     fb_buf[0] = y0;
     fb_buf[1] = y;
 }
 
-/*
 void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int feedback_shift) {
-    const int kLevelThresh = 507;
-    const FmAlgorithm alg = algo2[algorithm];
+    const int kLevelThresh = ENV_MAX-100;
+    FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
+    bool fb_on = feedback_shift < 16;
+
+    switch(algorithm) {
+        case 3 : case 5 :
+            if ( fb_on )
+                alg.ops[0] = 0xc4;
+    }
     
     for (int op = 0; op < 6; op++) {
         int flags = alg.ops[op];
@@ -382,11 +309,11 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
         int inbus = (flags >> 4) & 3;
         int outbus = flags & 3;
         int32_t *outptr = (outbus == 0) ? output : buf_[outbus - 1].get();
-        int32_t gain1 = param.gain_out == 0 ? 511 : param.gain_out;
-        int32_t gain2 = 512-(param.level_in >> 19);
+        int32_t gain1 = param.gain_out == 0 ? (ENV_MAX-1) : param.gain_out;
+        int32_t gain2 = ENV_MAX-(param.level_in >> (28-ENV_BITDEPTH));
         param.gain_out = gain2;
         
-        if (gain1 >= kLevelThresh || gain2 >= kLevelThresh) {
+        if (gain1 <= kLevelThresh || gain2 <= kLevelThresh) {
             
             if (!has_contents[outbus]) {
                 add = false;
@@ -394,44 +321,38 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
             
             if (inbus == 0 || !has_contents[inbus]) {
                 // PG: this is my 'dirty' implementation of FB for 2 and 3 operators...
-                // still needs some tuning...
-                if ((flags & 0xc0) == 0xc0 && feedback_shift < 16) {
+                if ((flags & 0xc0) == 0xc0 && fb_on) {
                     switch ( algorithm ) {
-                        // two operator feedback, process exception for ALGO 6
-                        case 5 :
-                            //compute_fb2(outptr, params, gain1, gain2, fb_buf, feedback_shift, controllers);
-                            params[1].phase += params[1].freq << LG_N;  // yuk, hack, we already processed op-5
-                            op++; // ignore next operator;
-                            break;
                         // three operator feedback, process exception for ALGO 4
                         case 3 :
-                            //compute_fb3(outptr, params, gain1, gain2, fb_buf, feedback_shift, controllers);
+                            compute_fb3(outptr, params, gain1, gain2, fb_buf, feedback_shift);
                             params[1].phase += params[1].freq << LG_N; // hack, we already processed op-5 - op-4
                             params[2].phase += params[2].freq << LG_N; // yuk yuk
                             op += 2; // ignore the 2 other operators
                             break;
+                        // two operator feedback, process exception for ALGO 6
+                        case 5 :
+                            compute_fb2(outptr, params, gain1, gain2, fb_buf, feedback_shift);
+                            params[1].phase += params[1].freq << LG_N;  // yuk, hack, we already processed op-5
+                            op++; // ignore next operator;
+                            break;
                         default:
                             // one operator feedback, normal proces
-                            //cout << "\t" << op << " fb " << inbus << outbus << add << endl;
-                            compute_fb(outptr, param.phase, param.freq,gain1, gain2, fb_buf, feedback_shift, add);
+                            compute_fb(outptr, param.phase, param.freq, gain1, gain2, fb_buf, feedback_shift, add);
                             break;
                     }
                 } else {
-                    // cout << op << " pure " << inbus << outbus << add << endl;
                     compute_pure(outptr, param.phase, param.freq, gain1, gain2, add);
                 }
             } else {
-                
-                // cout << op << " normal " << inbus << outbus << " " << param.freq << add << endl;
                 compute(outptr, buf_[inbus - 1].get(), param.phase, param.freq, gain1, gain2, add);
             }
             
             has_contents[outbus] = true;
-            
         } else if (!add) {
             has_contents[outbus] = false;
         }
         param.phase += param.freq << LG_N;
     }
 }
-*/
+

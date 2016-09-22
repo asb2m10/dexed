@@ -202,6 +202,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
         }
     }
     pitch_mod += pb;
+    pitch_mod += ctrls->masterTune;
     
     // ==== AMP MOD ====
     uint32_t amod_1 = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
@@ -215,19 +216,24 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     
     // ==== OP RENDER ====
     for (int op = 0; op < 6; op++) {
-        //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
-        params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
-        
-        int32_t level = env_[op].getsample();
-        if (ampmodsens_[op] != 0) {
-            uint32_t sensamp = ((uint64_t) amd_mod) * ((uint64_t) ampmodsens_[op]) >> 24;
+        if ( ctrls->opSwitch[op] == '0' )  {
+            env_[op].getsample(); // advance the envelop even if it is not playing
+            params_[op].level_in = 0;
+        } else {
+            //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
+            params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
             
-            // TODO: mehhh.. this needs some real tuning.
-            uint32_t pt = exp(((float)sensamp)/262144 * 0.07 + 12.2);
-            uint32_t ldiff = ((uint64_t)level) * (((uint64_t)pt<<4)) >> 28;
-            level -= ldiff;
+            int32_t level = env_[op].getsample();
+            if (ampmodsens_[op] != 0) {
+                uint32_t sensamp = ((uint64_t) amd_mod) * ((uint64_t) ampmodsens_[op]) >> 24;
+                
+                // TODO: mehhh.. this needs some real tuning.
+                uint32_t pt = exp(((float)sensamp)/262144 * 0.07 + 12.2);
+                uint32_t ldiff = ((uint64_t)level) * (((uint64_t)pt<<4)) >> 28;
+                level -= ldiff;
+            }
+            params_[op].level_in = level;
         }
-        params_[op].level_in = level;
     }
     ctrls->core->render(buf, params_, algorithm_, fb_buf_, fb_shift_);
 }
@@ -235,8 +241,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
 void Dx7Note::keyup() {
     for (int op = 0; op < 6; op++) {
         env_[op].keydown(false);
-        pitchenv_.keydown(false);
     }
+    pitchenv_.keydown(false);
 }
 
 void Dx7Note::update(const uint8_t patch[156], int midinote, int fb_depth) {

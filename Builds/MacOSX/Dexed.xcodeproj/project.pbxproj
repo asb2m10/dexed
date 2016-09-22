@@ -262,6 +262,7 @@
 		2CA19470CA427333F8CAC0A5 /* juce_ImagePreviewComponent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = juce_ImagePreviewComponent.cpp; path = ../../JuceLibraryCode/modules/juce_gui_basics/filebrowser/juce_ImagePreviewComponent.cpp; sourceTree = SOURCE_ROOT; };
 		2CA60524355CF872ADB42EA4 /* CAVectorUnit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CAVectorUnit.cpp; path = Extras/CoreAudio/PublicUtility/CAVectorUnit.cpp; sourceTree = DEVELOPER_DIR; };
 		2CB4C73C121FCDEF65CBAC79 /* juce_mac_MainMenu.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = juce_mac_MainMenu.mm; path = ../../JuceLibraryCode/modules/juce_gui_basics/native/juce_mac_MainMenu.mm; sourceTree = SOURCE_ROOT; };
+		2CBFFF86BDEB0B89734D6956 /* Switch_32x32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Switch_32x32.png; path = ../../Resources/ui/Switch_32x32.png; sourceTree = SOURCE_ROOT; };
 		2D26E2304C0F6FC633936014 /* lfo.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = lfo.cc; path = ../../Source/msfa/lfo.cc; sourceTree = SOURCE_ROOT; };
 		2D8A5B5929909ADD898D7E00 /* juce_HashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_HashMap.h; path = ../../JuceLibraryCode/modules/juce_core/containers/juce_HashMap.h; sourceTree = SOURCE_ROOT; };
 		2D9932D322EDA14CC872D08B /* juce_MemoryOutputStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = juce_MemoryOutputStream.h; path = ../../JuceLibraryCode/modules/juce_core/streams/juce_MemoryOutputStream.h; sourceTree = SOURCE_ROOT; };
@@ -2581,6 +2582,7 @@
 		F472964B0FFEE5615B72CE3D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2CBFFF86BDEB0B89734D6956 /* Switch_32x32.png */,
 				0D5761BE1D2DEA319B57D740 /* Switch_48x26.png */,
 				E6F65C031FCBB192F3927D4C /* ButtonUnlabeled_50x30.png */,
 				8B19E0BEAD29F2C0D46FA89C /* Knob_34x34.png */,
@@ -2881,7 +2883,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;

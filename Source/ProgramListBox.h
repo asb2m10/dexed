@@ -45,6 +45,7 @@ class ProgramListBox : public Component, public DragAndDropTarget {
     Cartridge cartContent;
 
     int dragCandidate;
+    int pgmCandidate;
 public:
     StringArray programNames;    
     
@@ -54,9 +55,9 @@ public:
     void addListener(ProgramListBoxListener *listener);
     void paint(Graphics &g) override;
     void resized() override;
-    void mouseDoubleClick(const MouseEvent &event) override;
     void mouseDown(const MouseEvent &event) override;
     void mouseDrag(const MouseEvent &event) override;
+    void mouseUp(const MouseEvent &event) override;
     void setSelected(int idx);
     
     Cartridge &getCurrentCart();

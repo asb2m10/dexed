@@ -1555,6 +1555,7 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resources\ui\Switch_32x32.png"/>
     <None Include="..\..\Resources\ui\Switch_48x26.png"/>
     <None Include="..\..\Resources\ui\ButtonUnlabeled_50x30.png"/>
     <None Include="..\..\Resources\ui\Knob_34x34.png"/>

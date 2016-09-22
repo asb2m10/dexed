@@ -12,6 +12,8 @@
               buildRTAS="0" buildAAX="0" pluginManufacturerEmail="support@yourcompany.com">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
+      <FILE id="CD5ehh" name="Switch_32x32.png" compile="0" resource="1"
+            file="Resources/ui/Switch_32x32.png"/>
       <FILE id="SXelfa" name="Switch_48x26.png" compile="0" resource="1"
             file="Resources/ui/Switch_48x26.png"/>
       <FILE id="AjTNZm" name="ButtonUnlabeled_50x30.png" compile="0" resource="1"
@@ -191,5 +193,7 @@
     <MODULES id="juce_gui_basics" showAllCode="1" useLocalCopy="1"/>
     <MODULES id="juce_gui_extra" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
-  <JUCEOPTIONS JUCE_QUICKTIME="disabled"/>
+  <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_USE_FLAC="disabled" JUCE_USE_OGGVORBIS="disabled"
+               JUCE_USE_MP3AUDIOFORMAT="disabled" JUCE_USE_LAME_AUDIO_FORMAT="disabled"
+               JUCE_USE_WINDOWS_MEDIA_FORMAT="disabled" JUCE_WEB_BROWSER="disabled"/>
 </JUCERPROJECT>

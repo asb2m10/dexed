@@ -9,6 +9,9 @@
 
 namespace BinaryData
 {
+    extern const char*   Switch_32x32_png;
+    const int            Switch_32x32_pngSize = 841;
+
     extern const char*   Switch_48x26_png;
     const int            Switch_48x26_pngSize = 2261;
 
@@ -46,16 +49,16 @@ namespace BinaryData
     const int            about_pngSize = 24863;
 
     extern const char*   GlobalEditor_864x144_png;
-    const int            GlobalEditor_864x144_pngSize = 30438;
+    const int            GlobalEditor_864x144_pngSize = 17334;
 
     extern const char*   OperatorEditor_287x218_png;
-    const int            OperatorEditor_287x218_pngSize = 15614;
+    const int            OperatorEditor_287x218_pngSize = 10927;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
 
     // Number of elements in the namedResourceList array.
-    const int namedResourceListSize = 14;
+    const int namedResourceListSize = 15;
 
     // If you provide the name of one of the binary resource variables above, this function will
     // return the corresponding data and its size (or a null pointer if the name isn't found).

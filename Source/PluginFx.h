@@ -55,6 +55,10 @@ class PluginFx {
 	float rcor,rcorInv;
     int R;
     
+    float dc_id;
+    float dc_od;
+    float dc_r;
+    
 public:
     PluginFx();
 

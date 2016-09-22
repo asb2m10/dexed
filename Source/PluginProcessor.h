@@ -155,6 +155,7 @@ public :
     ScopedPointer<CtrlFloat> fxCutoff;
     ScopedPointer<CtrlFloat> fxReso;
     ScopedPointer<CtrlFloat> output;
+    ScopedPointer<Ctrl> tune;
 
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);

@@ -31,7 +31,7 @@ class SyxFileFilter : public FileFilter {
 public:
     SyxFileFilter() : FileFilter(".syx") {}
     bool isFileSuitable(const File &file) const {
-        return file.getFileExtension().toLowerCase() == ".syx" && file.getSize() == 4104;
+        return file.getFileExtension().toLowerCase() == ".syx" && file.getSize() >= 4104;
     }
     bool isDirectorySuitable(const File &file) const {
         return true;
@@ -117,7 +117,7 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
  *
  * I've removed this since it only works on the DX7 II. TBC.
  *
- 
+
     addAndMakeVisible(getDXPgmButton = new TextButton("GET DX7 PGM"));
     getDXPgmButton->setBounds(656, 545, 100, 30);
     getDXPgmButton->addListener(this);
@@ -125,7 +125,6 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     addAndMakeVisible(getDXCartButton = new TextButton("GET DX7 CART"));
     getDXCartButton->setBounds(755, 545, 100, 30);
     getDXCartButton->addListener(this);
- 
 */
 }
 

@@ -29,6 +29,7 @@ ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name)
     selectedPgm = -1;
     hasContent = false;
     dragCandidate = -1;
+    pgmCandidate = -1;
     readOnly = false;
     programNames.clear();
 }
@@ -101,29 +102,36 @@ int ProgramListBox::programPosition(int x, int y) {
     return (y / cellHeight) + ((x / cellWidth) * rows);
 }
 
-void ProgramListBox::mouseDoubleClick(const MouseEvent &event) {
+void ProgramListBox::mouseDown(const MouseEvent &event) {
+    pgmCandidate = -1;
+    
     if ( ! hasContent )
         return;
-    if ( ! event.mods.isLeftButtonDown() )
-        return;
     
-    int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
-    if ( listener != nullptr )
-        listener->programSelected(this, pos);
+    if ( event.mods.isRightButtonDown() ) {
+        int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
+        if ( listener != nullptr )
+            listener->programRightClicked(this, pos);
+        return;
+    }
+
+    pgmCandidate = programPosition(event.getMouseDownX(), event.getMouseDownY());
 }
 
-void ProgramListBox::mouseDown(const MouseEvent &event) {
-    if ( ! hasContent )
-        return;
-    if ( ! event.mods.isRightButtonDown() )
+void ProgramListBox::mouseUp(const MouseEvent &event) {
+    if ( pgmCandidate == -1 )
         return;
     
     int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
-    if ( listener != nullptr )
-        listener->programRightClicked(this, pos);
+    if ( pgmCandidate == pos) {
+        if ( listener != nullptr )
+            listener->programSelected(this, pgmCandidate);
+        pgmCandidate = -1;
+    }
 }
 
 void ProgramListBox::mouseDrag(const MouseEvent &event) {
+    pgmCandidate = -1;
     if ( ! hasContent )
         return;
     if ( dragCandidate != -1 )

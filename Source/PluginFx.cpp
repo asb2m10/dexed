@@ -81,6 +81,10 @@ void PluginFx::init(int sr) {
 
     pCutoff = -1;
     pReso = -1;
+    
+    dc_r = 1.0-(126.0/sr);
+    dc_id = 0;
+    dc_od = 0;
 }
 
 inline float PluginFx::NR24(float sample,float g,float lpc) {
@@ -97,6 +101,18 @@ inline float PluginFx::NR(float sample, float g) {
 }
 
 void PluginFx::process(float *work, int sampleSize) {
+    // very basic DC filter
+    float t_fd = work[0];
+    work[0] = work[0] - dc_id + dc_r * dc_od;
+    dc_id = t_fd;
+    for (int i=1; i<sampleSize; i++) {
+        t_fd = work[i];
+        work[i] = work[i] - dc_id + dc_r * work[i-1];
+        dc_id = t_fd;
+        
+    }
+    dc_od = work[sampleSize-1];
+    
     if ( uiGain != 1 ) {
         for(int i=0; i < sampleSize; i++ )
             work[i] *= uiGain;

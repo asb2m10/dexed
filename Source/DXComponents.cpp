@@ -1,4 +1,4 @@
-/**
+﻿/**
  *
  * Copyright (c) 2014 Pascal Gauthier.
  *
@@ -408,5 +408,35 @@ void ComboBoxImage::setImage(Image image, int pos[]) {
         itemPos[i] = pos[i];
 }
 
+void ProgramSelector::mouseDown(const MouseEvent &event) {
+    if ( event.x < getWidth() - 8) {
+        ComboBox::mouseDown(event);
+        return;
+    }
+    
+    int cur = getSelectedItemIndex();
+    if ( event.y < getHeight() / 2 ) {
+        if ( cur == 0 )
+            cur = 31;
+        else
+            cur--;
+    } else {
+        if ( cur == 31 )
+            cur = 0;
+        else
+            cur++;
+    }
+    setSelectedItemIndex(cur);
+}
+
 void ProgramSelector::paint(Graphics &g) {
+    int x = getWidth();
+    int y = getHeight();
+    
+    Path path;
+    path.addTriangle(x-8, y/2-1, x-4, 2,   x, y/2-1);
+    path.addTriangle(x-8, y/2+1, x-4, y-2, x, y/2+1);
+    
+    g.setColour(Colours::white);
+    g.fillPath(path);
 }

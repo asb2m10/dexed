@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2015 Pascal Gauthier.
+ * Copyright (c) 2013-2016 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,7 @@
 //==============================================================================
 /**
 */
-class DexedAudioProcessorEditor  : public AudioProcessorEditor,
-        public ComboBoxListener,
-        public Timer {
-    PopupMenu cartPopup;
-            
+class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBoxListener, public Timer {
     MidiKeyboardComponent midiKeyboard;
     OperatorEditor operators[6];
     Colour background;

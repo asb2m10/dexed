@@ -2723,6 +2723,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resources\ui\Switch_32x32.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
     <None Include="..\..\Resources\ui\Switch_48x26.png">
       <Filter>Dexed\Resources</Filter>
     </None>
