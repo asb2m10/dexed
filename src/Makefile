@@ -17,7 +17,7 @@ all: \
 	SysexComm.o \
 
 clean:
-	rm -f *.o *~ *.bak
+	rm -f *.o *~ *.bak *.gch
 
 msfa/%.o: msfa/%.cc
 	$(CXX) $(CFLAGS) -Wall -c $<
