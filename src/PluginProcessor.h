@@ -21,15 +21,11 @@
 #ifndef PLUGINPROCESSOR_H_INCLUDED
 #define PLUGINPROCESSOR_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 #include "msfa/controllers.h"
 #include "msfa/dx7note.h"
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
-#include "PluginParam.h"
-#include "PluginData.h"
 #include "PluginFx.h"
 #include "SysexComm.h"
 #include "EngineMkI.h"

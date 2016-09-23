@@ -21,8 +21,6 @@
 #ifndef SYSEXCOMM_H_INCLUDED
 #define SYSEXCOMM_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 class SysexComm {
     MidiInput *input;
     MidiOutput *output;

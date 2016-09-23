@@ -21,8 +21,6 @@
 #ifndef PLUGINFX_H_INCLUDED
 #define PLUGINFX_H_INCLUDED
 
-#include "../JuceLibraryCode/JuceHeader.h"
-
 class PluginFx {
 	float s1,s2,s3,s4;
 	float sampleRate;
