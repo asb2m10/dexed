@@ -1,6 +1,2 @@
-Builds/VisualStudio2012/Dexed.vcxproj.user
-Builds/VisualStudio2012/Dexed.sdf
-Builds/VisualStudio2012/Debug
-Builds/VisualStudio2012/Release
-Builds/VisualStudio2012/x64
-Builds/VisualStudio2012/Dexed.vcxproj.filters
+*.o
+*.so
