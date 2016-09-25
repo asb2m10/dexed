@@ -1,0 +1,7 @@
+add https://github.com/dcoredump/dexed.lv2 0
+add http://gareus.org/oss/lv2/stepseq#s4n4 1
+connect effect_1:midiout effect_0:midi_in
+connect effect_0:audio_out system:playback_1
+connect effect_0:audio_out system:playback_2
+param_set 1 grid_1_1 1
+param_set 1 grid_2_3 1

@@ -19,7 +19,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   TRACE("Hi");
 
   bufsize_=256;
-  outbuf16_=new int16_t[bufsize_];
+  //outbuf_=new int16_t[bufsize_];
+  outbuf_=new float[bufsize_];
 
   Exp2::init();
   Tanh::init();
@@ -69,7 +70,7 @@ Dexed::~Dexed()
 {
   TRACE("Hi");
 
-  delete [] outbuf16_;
+  delete [] outbuf_;
 
   currentNote = -1;
 
@@ -282,14 +283,14 @@ void Dexed::run (uint32_t sample_count)
        }
 
        // render audio from the last frame until the timestamp of this event
-       GetSamples (num_this_time, outbuf16_);
+       GetSamples (num_this_time, outbuf_);
       
        // i is the index of the engine's buf, which always starts at 0 (i think)
        // j is the index of the plugin's float output buffer which will be the timestamp
        // of the last processed atom event.
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         //output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
-         output[j] = (static_cast<float> (outbuf16_[i]));
+         //output[j] = (static_cast<float> (outbuf_[i])) * *p(p_output);
+         output[j]=outbuf_[i];
 
        last_frame = ev->time.frames;
     }
@@ -302,16 +303,16 @@ void Dexed::run (uint32_t sample_count)
        // already been handled.
 
        num_this_time = sample_count - last_frame;
-       GetSamples (num_this_time, outbuf16_);
+       GetSamples (num_this_time, outbuf_);
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         //output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
-         output[j] = (static_cast<float> (outbuf16_[i]));
+         //output[j] = (static_cast<float> (outbuf_[i])) * *p(p_output);
+         output[j] = outbuf_[i];
     }
     
     fx.process(output, sample_count);
 }
 
-void Dexed::GetSamples(int n_samples, int16_t *buffer)
+void Dexed::GetSamples(int n_samples, float *buffer)
 {
   size_t input_offset;
 
@@ -329,6 +330,7 @@ void Dexed::GetSamples(int n_samples, int16_t *buffer)
   int i;
   if ( refreshVoice ) {
     for(i=0;i < MAX_ACTIVE_NOTES;i++) {
+      TRACE("Voice[%d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
       if ( voices[i].live )
         voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
     }
@@ -352,11 +354,11 @@ void Dexed::GetSamples(int n_samples, int16_t *buffer)
   {
     for (; i < n_samples; i += N) {
       AlignedBuf<int32_t, N> audiobuf;
-      int16_t sumbuf[N];
+      float sumbuf[N];
       
       for (int j = 0; j < N; ++j) {
         audiobuf.get()[j] = 0;
-        sumbuf[j] = 0;
+        sumbuf[j] = 0.0;
       }
 
       int32_t lfovalue = lfo.getsample();
@@ -370,8 +372,13 @@ void Dexed::GetSamples(int n_samples, int16_t *buffer)
                         
             val = val >> 4;
             int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-            sumbuf[j] += clip_val;
-            audiobuf.get()[j] = 0;
+            float f = ((float) clip_val) / (float) 0x8000;
+            if(f>1.0)
+              f=1.0;
+            if(f<-1.0)
+              f=-1.0;
+            sumbuf[j]+=f;
+            audiobuf.get()[j]=0;
           }
         }
       }

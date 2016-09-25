@@ -62,8 +62,8 @@
         lv2:symbol "algorithm_num" ;
         lv2:name "ALGORITHM" ;
         lv2:default 5 ;
-        lv2:minimum 1 ;
-        lv2:maximum 32 ;
+        lv2:minimum 0 ;
+        lv2:maximum 31 ;
 	lv2:portProperty lv2:integer ;
     ] ,
     [
