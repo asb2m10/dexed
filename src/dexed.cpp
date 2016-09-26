@@ -48,6 +48,13 @@ void DexedVoice::render(uint32_t from, uint32_t to)
   }
 }
 
+void DexedVoice::post_process(uint32_t from, uint32_t to)
+{
+  for (uint32_t i = from; i < to; ++i)
+  {
+    p(p_lv2_audio_out_1)[i] *= *p(p_output);
+  }
+}
 
 //==============================================================================
 

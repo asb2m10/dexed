@@ -54,6 +54,7 @@ class DexedVoice : public lvtk::Voice
     void off(unsigned char velocity);
     unsigned char get_key(void) const;
     void render(uint32_t from, uint32_t to);
+    void post_process(uint32_t from, uint32_t to);
 
   protected:
     unsigned char m_key;
