@@ -1,5 +1,5 @@
 BUNDLE = lv2pftci-beep2.lv2
-INSTALL_DIR = /usr/local/lib/lv2
+INSTALL_DIR = /home/pi/zynthian/zynthian-plugins/mod-lv2
 
 
 $(BUNDLE): manifest.ttl beep2.ttl beep2.so

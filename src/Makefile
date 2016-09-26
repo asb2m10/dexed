@@ -1,6 +1,6 @@
 BUNDLE = dexed.lv2
-INSTALL_DIR = /usr/local/lib/lv2
-CFLAGS := -fPIC -DPIC -DDEBUG=0 -std=c++11 -I/usr/include/lv2-c++-tools
+INSTALL_DIR = /home/pi/zynthian/zynthian-plugins/mod-lv2
+CFLAGS := -fPIC -DPIC -DDEBUG=0 -std=c++11 -I. -I/usr/local/include/lvtk-2 -L/usr/local/lib -llvtk_plugin2
 OBJ = dexed.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o
 #       SysexComm.o PluginFx.o
 
@@ -18,7 +18,7 @@ install: $(BUNDLE)
 	cp -R $(BUNDLE) $(INSTALL_DIR)
 
 dexed.so: $(OBJ)
-	g++ -shared -fPIC -DPIC $(OBJ) `pkg-config --cflags --libs lv2-plugin` -o dexed.so
+	g++ -shared -fPIC -DPIC $(OBJ) $(CFLAGS) -o dexed.so
 
 dexed.o: dexed.cpp dexed.peg
 	$(CXX) $(CFLAGS) -Wall -c dexed.cpp

@@ -1,6 +1,6 @@
 // from: http://ll-plugins.nongnu.org/lv2pftci/#A_synth
 
-#include <lv2synth.hpp>
+#include <lvtk/synth.hpp>
 #include "dexed.peg"
 #include "dexed.h"
 #include "EngineMkI.h"
@@ -10,7 +10,7 @@
 #include "msfa/freqlut.h"
 #include "msfa/controllers.h"
 
-DexedVoice::DexedVoice(double rate, uint8_t fb) : m_key(LV2::INVALID_KEY), m_rate(rate)
+DexedVoice::DexedVoice(double rate, uint8_t fb) : m_key(lvtk::INVALID_KEY), m_rate(rate)
 {
   voice.dx7_note=new Dx7Note;
   feedback_bitdepth=fb;
@@ -24,6 +24,7 @@ void DexedVoice::on(unsigned char key, unsigned char velocity)
 void DexedVoice::off(unsigned char velocity)
 {
   voice.dx7_note->keyup();
+  m_key = lvtk::INVALID_KEY;
 }
 
 unsigned char DexedVoice::get_key(void) const
@@ -33,7 +34,7 @@ unsigned char DexedVoice::get_key(void) const
 
 void DexedVoice::render(uint32_t from, uint32_t to)
 {
-  if (m_key == LV2::INVALID_KEY)
+  if (m_key == lvtk::INVALID_KEY)
     return;
 
   for (uint32_t i = from; i < to; ++i)
@@ -50,7 +51,7 @@ void DexedVoice::render(uint32_t from, uint32_t to)
 
 //==============================================================================
 
-Dexed::Dexed(double rate) : LV2::Synth<DexedVoice, Dexed>(p_n_ports, p_lv2_events_in)
+Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_lv2_events_in)
 {
   Exp2::init();
   Tanh::init();
@@ -85,6 +86,5 @@ uint32_t Dexed::get_engineType(void)
 {
   return(engineType);
 }
-
 
 static int _ = Dexed::register_class(p_uri);

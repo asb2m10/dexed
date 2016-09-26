@@ -7,7 +7,7 @@ $(BUNDLE): manifest.ttl beep.ttl beep.so
 	cp $^ $(BUNDLE)
 
 beep.so: beep.cpp beep.peg
-	g++ -shared -fPIC -DPIC beep.cpp -I. -I/usr/local/include/lvtk-2 -L/usr/local/lib -llvtk_plugin2 -o beep.so
+	g++ -shared -fPIC -DPIC beep.cpp `pkg-config --cflags --libs lv2-plugin` -o beep.so
 
 beep.peg: beep.ttl
 	lv2peg beep.ttl beep.peg

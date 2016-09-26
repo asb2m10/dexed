@@ -46,7 +46,7 @@ enum DexedEngineResolution {
 
 //==============================================================================
 
-class DexedVoice : public LV2::Voice
+class DexedVoice : public lvtk::Voice
 {
   public:
     DexedVoice(double rate, uint8_t fb);
@@ -64,7 +64,7 @@ class DexedVoice : public LV2::Voice
 
 //==============================================================================
 
-class Dexed : public LV2::Synth<DexedVoice, Dexed>
+class Dexed : public lvtk::Synth<DexedVoice, Dexed>
 {
   public:
     Dexed(double rate);
