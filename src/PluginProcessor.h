@@ -27,7 +27,7 @@
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
 #include "PluginFx.h"
-#include "SysexComm.h"
+//#include "SysexComm.h"
 #include "EngineMkI.h"
 #include "EngineOpl.h"
 
