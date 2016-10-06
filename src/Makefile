@@ -1,8 +1,8 @@
 BUNDLE = dexed.lv2
 INSTALL_DIR = /usr/local/lib/lv2
 CFLAGS := -fPIC -DPIC -DDEBUG=0 -std=c++11 -I/usr/include/lv2-c++-tools
-OBJ = dexed.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o PluginProcessor.o
-#       SysexComm.o
+OBJ = dexed.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o
+#       SysexComm.o PluginFx.o
 
 $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
 	rm -rf $(BUNDLE)
