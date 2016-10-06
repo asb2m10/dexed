@@ -50,6 +50,15 @@ class DexedVoice : public LV2::Voice
 {
   public:
     DexedVoice(double rate);
+    void on(unsigned char key, unsigned char velocity);
+    void off(unsigned char velocity);
+    unsigned char get_key(void) const;
+    void render(uint32_t from, uint32_t to);
+
+  protected:
+    unsigned char m_key;
+    double m_rate;
+    ProcessorVoice voice;
 };
 
 //==============================================================================
@@ -58,6 +67,16 @@ class Dexed : public LV2::Synth<DexedVoice, Dexed>
 {
   public:
     Dexed(double rate);
+    FmCore *core;
+
+  protected:
+    // dexed internal
+    int feedback_bitdepth;
+    uint32_t engineType;
+
+    FmCore engineMsfa;
+    EngineMkI engineMkI;
+    EngineOpl engineOpl;
 };
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED
