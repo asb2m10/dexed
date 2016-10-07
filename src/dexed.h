@@ -71,12 +71,27 @@ class Dexed : public LV2::Synth<DexedVoice, Dexed>
 
   protected:
     // dexed internal
-    int feedback_bitdepth;
-    uint32_t engineType;
 
     FmCore engineMsfa;
     EngineMkI engineMkI;
     EngineOpl engineOpl;
+
 };
+
+// Global vars
+uint8_t feedback_bitdepth=11;
+uint32_t engineType;
+
+const char init_voice[] =
+      { 99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
+        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 99, 0, 1, 0, 7,
+        99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
+        73, 78, 73, 84, 32, 86, 79, 73, 67, 69 };
+
+uint8_t data[161]; // program data
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED
