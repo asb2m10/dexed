@@ -43,6 +43,7 @@ void DexedVoice::render(uint32_t from, uint32_t to)
     voice.dx7_note->compute(&s, 0, 0, NULL);
     float fs=float(s)/(INT32_MAX);
     p(p_lv2_audio_out_1)[i]+=fs;
+
   }
 }
 

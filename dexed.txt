@@ -1,0 +1,44 @@
+PluginParam.cpp: 340 DexedAudioProcessor::initCtrl() {
+
+    CtrlDX(String name, int steps, int offset = -1, int displayValue = 0);
+
+    fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);
+    fxReso = new CtrlFloat("Resonance", &fx.uiReso);
+    output = new CtrlFloat("Output", &fx.uiGain);
+    tune = new CtrlTune("MASTER TUNE ADJ", this);
+
+    algo = new CtrlDX("ALGORITHM", 31, 134, 1);
+    feedback = new CtrlDX("FEEDBACK", 7, 135);
+    oscSync = new CtrlDX("OSC KEY SYNC", 1, 136);
+    lfoRate = new CtrlDX("LFO SPEED", 99, 137);
+    lfoDelay = new CtrlDX("LFO DELAY", 99, 138);
+    lfoPitchDepth = new CtrlDX("LFO PM DEPTH", 99, 139);
+    lfoAmpDepth = new CtrlDX("LFO AM DEPTH", 99, 140);
+    lfoSync = new CtrlDX("LFO KEY SYNC", 1, 141);
+    lfoWaveform = new CtrlDXLabel("LFO WAVE", 5, 142, lbl);
+    transpose = new CtrlDXTranspose("MIDDLE C", 48, 144);
+    pitchModSens = new CtrlDX("P MODE SENS.", 7, 143);
+
+    0..5
+    pitchEgRate[i] = new CtrlDX(rate, 99, 126+i);
+    pitchEgLevel[i] = new CtrlDX(level, 99, 130+i);
+    opCtrl[opVal].egRate[j] = new CtrlDX(opRate, 99, opTarget + j);
+    opCtrl[opVal].egLevel[j] = new CtrlDX(opLevel, 99, opTarget + j + 4);
+    opCtrl[opVal].level = new CtrlDX(opVol, 99, opTarget + 16);
+    opCtrl[opVal].opMode = new CtrlDX(opMode, 1, opTarget + 17);
+    opCtrl[opVal].coarse = new CtrlDX(coarse, 31, opTarget + 18);
+    opCtrl[opVal].fine = new CtrlDX(fine, 99, opTarget + 19);
+    opCtrl[opVal].detune = new CtrlDX(detune, 14, opTarget + 20, -7);
+    opCtrl[opVal].sclBrkPt = new CtrlDX(sclBrkPt, 99, opTarget + 8);
+    opCtrl[opVal].sclLeftDepth = new CtrlDX(sclLeftDepth, 99, opTarget + 9);
+    opCtrl[opVal].sclRightDepth = new CtrlDX(sclRightDepth, 99, opTarget + 10);
+    opCtrl[opVal].sclLeftCurve = new CtrlDXLabel(sclLeftCurve, 3, opTarget + 11, keyScaleLabels);
+    opCtrl[opVal].sclRightCurve = new CtrlDXLabel(sclRightCurve, 3, opTarget + 12, keyScaleLabels);
+    opCtrl[opVal].sclRate = new CtrlDX(sclRate, 7, opTarget + 13);
+    opCtrl[opVal].ampModSens = new CtrlDX(ampModSens, 3, opTarget + 14);
+    opCtrl[opVal].velModSens = new CtrlDX(velModSens, 7, opTarget + 15);
+    opCtrl[opVal].opSwitch = new CtrlOpSwitch(opSwitchLabel, (char *)&(controllers.opSwitch)+(5-i));
+
+
+
+
