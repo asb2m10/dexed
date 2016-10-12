@@ -1527,5 +1527,5 @@
     ] ;
 
     doap:name "Dexed" ;
-    doap:maintainer [ foaf:name "Digital Suburban" ] .
+    doap:maintainer [ foaf:name "dcoredump" ] .
 

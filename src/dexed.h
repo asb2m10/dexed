@@ -49,7 +49,7 @@ enum DexedEngineResolution {
 class DexedVoice : public LV2::Voice
 {
   public:
-    DexedVoice(double rate);
+    DexedVoice(double rate, uint8_t fb);
     void on(unsigned char key, unsigned char velocity);
     void off(unsigned char velocity);
     unsigned char get_key(void) const;
@@ -58,6 +58,7 @@ class DexedVoice : public LV2::Voice
   protected:
     unsigned char m_key;
     double m_rate;
+    uint8_t feedback_bitdepth;
     ProcessorVoice voice;
 };
 
@@ -68,19 +69,17 @@ class Dexed : public LV2::Synth<DexedVoice, Dexed>
   public:
     Dexed(double rate);
     FmCore *core;
+    uint8_t get_feedback_bitdepth(void);
+    uint32_t get_engineType(void);
 
   protected:
     // dexed internal
-
     FmCore engineMsfa;
     EngineMkI engineMkI;
     EngineOpl engineOpl;
-
+    uint8_t feedback_bitdepth;
+    uint32_t engineType;
 };
-
-// Global vars
-uint8_t feedback_bitdepth=11;
-uint32_t engineType;
 
 const char init_voice[] =
       { 99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,

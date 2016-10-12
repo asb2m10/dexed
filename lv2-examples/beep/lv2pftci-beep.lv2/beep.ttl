@@ -5,6 +5,7 @@
 @prefix ll: <http://ll-plugins.nongnu.org/lv2/namespace#>.
 @prefix pg: <http://ll-plugins.nongnu.org/lv2/ext/portgroups#>.
 @prefix ev: <http://lv2plug.in/ns/ext/event#>.
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
 
 <http://ll-plugins.nongnu.org/lv2/lv2pftci/beep/out> a pg:StereoGroup.
 
@@ -16,7 +17,9 @@
   ll:pegName "p";
 
   lv2:port [
-    a ev:EventPort, lv2:InputPort;
+    a lv2:InputPort, atom:AtomPort ;
+    atom:bufferType atom:Sequence ;
+    atom:supports <http://lv2plug.in/ns/ext/midi#MidiEvent> ;
     lv2:index 0;
     ev:supportsEvent <http://lv2plug.in/ns/ext/midi#MidiEvent>;
     lv2:symbol "midi";

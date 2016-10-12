@@ -7,12 +7,12 @@
 @prefix ev: <http://lv2plug.in/ns/ext/event#>.
 @prefix atom: <http://lv2plug.in/ns/ext/atom#> .
 
-<http://ll-plugins.nongnu.org/lv2/lv2pftci/beep/out> a pg:StereoGroup.
+<http://ll-plugins.nongnu.org/lv2/lv2pftci/beep2/out> a pg:StereoGroup.
 
-<http://ll-plugins.nongnu.org/lv2/lv2pftci/beep>
+<http://ll-plugins.nongnu.org/lv2/lv2pftci/beep2>
   a lv2:Plugin, lv2:InstrumentPlugin;
-  lv2:binary <beep.so>;
-  doap:name "Beep";
+  lv2:binary <beep2.so>;
+  doap:name "Beep2";
   doap:license <http://usefulinc.com/doap/licenses/gpl>;
   ll:pegName "p";
 
@@ -32,7 +32,7 @@
     lv2:symbol "left";
     lv2:name "Left";
     pg:membership [
-      pg:group <http://ll-plugins.nongnu.org/lv2/lv2pftci/beep/out>;
+      pg:group <http://ll-plugins.nongnu.org/lv2/lv2pftci/beep2/out>;
       pg:role pg:leftChannel;
     ];
   ],
@@ -43,7 +43,27 @@
     lv2:symbol "right";
     lv2:name "Right";
     pg:membership [
-      pg:group <http://ll-plugins.nongnu.org/lv2/lv2pftci/beep/out>;
+      pg:group <http://ll-plugins.nongnu.org/lv2/lv2pftci/beep2/out>;
       pg:role pg:rightChannel;
     ];
+  ],
+
+  [
+    a lv2:ControlPort, lv2:InputPort;
+    lv2:index 3;
+    lv2:symbol "pwm";
+    lv2:name "PWM";
+    lv2:minimum 0;
+    lv2:maximum 1;
+    lv2:default 0.5;
+  ],
+
+  [
+    a lv2:ControlPort, lv2:InputPort;
+    lv2:index 4;
+    lv2:symbol "gain";
+    lv2:name "Gain";
+    lv2:minimum 0;
+    lv2:maximum 2;
+    lv2:default 1;
   ].
