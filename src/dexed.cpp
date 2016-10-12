@@ -8,6 +8,7 @@
 #include "msfa/exp2.h"
 #include "msfa/sin.h"
 #include "msfa/freqlut.h"
+#include "msfa/controllers.h"
 
 DexedVoice::DexedVoice(double rate) : m_key(LV2::INVALID_KEY), m_rate(rate)
 {
@@ -16,7 +17,7 @@ DexedVoice::DexedVoice(double rate) : m_key(LV2::INVALID_KEY), m_rate(rate)
 
 void DexedVoice::on(unsigned char key, unsigned char velocity)
 {
-  voice.dx7_note->init(data, key, velocity, 11);
+  voice.dx7_note->init(data, key, velocity, feedback_bitdepth);
 }
 
 void DexedVoice::off(unsigned char velocity)
@@ -57,9 +58,10 @@ Dexed::Dexed(double rate) : LV2::Synth<DexedVoice, Dexed>(p_n_ports, p_lv2_event
   PitchEnv::init(rate);
   Env::init_sr(rate);
 
-  feedback_bitdepth=11;
-  engineType=DEXED_ENGINE_MARKI;
-  core=&engineMkI;
+  Controllers controllers;
+
+  //controllers.engineType=DEXED_ENGINE_MARKI;
+  controllers.core=&engineMkI;
 
   for(uint i=0;i<sizeof(init_voice);i++) {
     data[i] = init_voice[i];

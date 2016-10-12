@@ -5,18 +5,10 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix ll: <http://ll-plugins.nongnu.org/lv2/namespace#>.
 @prefix pg: <http://ll-plugins.nongnu.org/lv2/ext/portgroups#>.
-@prefix ev: <http://lv2plug.in/ns/ext/event#>.
 
-<https://github.com/asb2m10/dexed>
+<https://github.com/dcoredump/dexed>
     a lv2:InstrumentPlugin, lv2:Plugin ;
-    lv2:requiredFeature <http://lv2plug.in/ns/ext/buf-size#boundedBlockLength> ,
-                        <http://lv2plug.in/ns/ext/urid#map> ;
-    lv2:extensionData <http://lv2plug.in/ns/ext/options#interface> ,
-                      <http://lv2plug.in/ns/ext/state#interface> ,
-                      <http://kxstudio.sf.net/ns/lv2ext/programs#Interface> ;
-
-    ui:ui <https://github.com/asb2m10/dexed#ExternalUI> ,
-          <https://github.com/asb2m10/dexed#ParentUI> ;
+    lv2:binary <dexed.so> ;
     ll:pegName "p";
 
     lv2:port [
