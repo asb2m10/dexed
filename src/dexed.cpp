@@ -10,21 +10,25 @@
 #include "msfa/freqlut.h"
 #include "msfa/controllers.h"
 
-DexedVoice::DexedVoice(double rate, uint8_t fb) : m_key(lvtk::INVALID_KEY), m_rate(rate)
+DexedVoice::DexedVoice(double rate) : m_key(lvtk::INVALID_KEY), m_rate(rate)
 {
   voice.dx7_note=new Dx7Note;
-  feedback_bitdepth=fb;
 }
 
 void DexedVoice::on(unsigned char key, unsigned char velocity)
 {
+  m_key = key;
   voice.dx7_note->init(data, key, velocity, feedback_bitdepth);
+  voice.keydown=true;
+  printf("Dexed: key-down: %d %d\n",key,velocity);
 }
 
 void DexedVoice::off(unsigned char velocity)
 {
   voice.dx7_note->keyup();
+  voice.keydown=false;
   m_key = lvtk::INVALID_KEY;
+  printf("Dexed: key-up: %d\n",velocity);
 }
 
 unsigned char DexedVoice::get_key(void) const
@@ -41,11 +45,10 @@ void DexedVoice::render(uint32_t from, uint32_t to)
   {
     int32_t s;
     //dx7_note->compute(&s, lfovalue, lfodelay, &controllers);
-    voice.dx7_note->compute(&s, 0, 0, NULL);
+    voice.dx7_note->compute(&s, lfo.getsample(), lfo.getdelay(), &controllers);
     float fs=float(s)/(INT32_MAX);
     p(p_lv2_audio_out_1)[i]+=fs;
-
-  }
+  } 
 }
 
 void DexedVoice::post_process(uint32_t from, uint32_t to)
@@ -68,8 +71,6 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_lv2_even
   PitchEnv::init(rate);
   Env::init_sr(rate);
 
-  Controllers controllers;
-
   engineType=DEXED_ENGINE_MARKI;
   feedback_bitdepth=11;
 
@@ -79,19 +80,9 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_lv2_even
     data[i] = init_voice[i];
   }
 
-  add_voices(new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth),new DexedVoice(rate, feedback_bitdepth));
+  add_voices(new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate));
 
   add_audio_outputs(p_lv2_audio_out_1);
-}
-
-uint8_t Dexed::get_feedback_bitdepth(void)
-{
-  return(feedback_bitdepth);
-}
-
-uint32_t Dexed::get_engineType(void)
-{
-  return(engineType);
 }
 
 static int _ = Dexed::register_class(p_uri);
