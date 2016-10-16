@@ -121,8 +121,10 @@ EngineMkI::EngineMkI() {
 
 inline int32_t mkiSin(int32_t phase, uint16_t env) {
     uint16_t expVal = sinLog(phase >> (22 - SINLOG_BITDEPTH)) + (env);
-    //int16_t expValShow = expVal;
-    
+#ifdef MKIDEBUG
+    int16_t expValShow = expVal;
+#endif
+ 
     const bool isSigned = expVal & NEGATIVE_BIT;
     expVal &= ~NEGATIVE_BIT;
     

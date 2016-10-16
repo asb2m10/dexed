@@ -50,6 +50,7 @@ class DexedVoice : public lvtk::Voice
 {
   public:
     DexedVoice(double rate);
+    ~DexedVoice();
     void on(unsigned char key, unsigned char velocity);
     void off(unsigned char velocity);
     unsigned char get_key(void) const;
@@ -60,6 +61,7 @@ class DexedVoice : public lvtk::Voice
     unsigned char m_key;
     double m_rate;
     ProcessorVoice voice;
+    char voice_number;
 };
 
 //==============================================================================
@@ -68,24 +70,20 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
 {
   public:
     Dexed(double rate);
-    FmCore *core;
+    ~Dexed();
 
   protected:
     // dexed internal
 };
 
 // GLOBALS
+char voice_counter=0;
+EngineMkI engineMkI;
+uint8_t feedback_bitdepth;
+Lfo lfo;
+Controllers controllers;
 
-    EngineMkI engineMkI;
-    //FmCore engineMsfa;
-    //EngineOpl engineOpl;
-    uint8_t feedback_bitdepth;
-    uint32_t engineType;
-    Lfo lfo;
-    Controllers controllers;
-
-
-const char init_voice[] =
+const uint8_t init_voice[] =
       { 99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
         99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
         99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
@@ -95,6 +93,6 @@ const char init_voice[] =
         99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
         73, 78, 73, 84, 32, 86, 79, 73, 67, 69 };
 
-uint8_t data[161]; // program data
+uint8_t data[156]; // program data
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED
