@@ -104,19 +104,24 @@ unsigned char DexedVoice::get_key(void) const
 void DexedVoice::render(uint32_t from, uint32_t to)
 {
   int32_t s;
+  uint32_t render_loop_counter=from;
 
   TRACE("Hi");
   TRACE("%d from: %d to: %d",voice_number,from,to);
 
+TRACE("1:%d",render_loop_counter);
   if (m_key != lvtk::INVALID_KEY)
   {
-    for (uint32_t i = from; i < to; ++i)
+    for (render_loop_counter = from; render_loop_counter < to; ++render_loop_counter)
     {
+TRACE("2:%d",render_loop_counter);
       if(voice.live==true)
       {
+TRACE("3:%d",render_loop_counter);
         voice.dx7_note->compute(&s, lfo.getsample(), lfo.getdelay(), &controllers);
+TRACE("4:%d",render_loop_counter);
         float fs=(float)s/INT32_MAX;
-        p(p_lv2_audio_out_1)[i]+=fs;
+        p(p_lv2_audio_out_1)[render_loop_counter]+=fs;
 	TRACE("out: %2.5f",fs);
       }
     } 
@@ -124,7 +129,7 @@ void DexedVoice::render(uint32_t from, uint32_t to)
   TRACE("Bye");
 }
 
-void DexedVoice::post_process(uint32_t from, uint32_t to)
+/* void DexedVoice::post_process(uint32_t from, uint32_t to)
 {
   TRACE("Hi");
   for (uint32_t i = from; i < to; ++i)
@@ -132,7 +137,7 @@ void DexedVoice::post_process(uint32_t from, uint32_t to)
     p(p_lv2_audio_out_1)[i] *= *p(p_output);
   }
   TRACE("Bye");
-}
+} */
 
 #ifdef DEBUG
 void dexed_trace(const char *source, const char *fmt, ...) {
