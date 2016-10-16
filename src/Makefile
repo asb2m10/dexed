@@ -1,7 +1,8 @@
 BUNDLE = dexed.lv2
 INSTALL_DIR = /home/pi/zynthian/zynthian-plugins/mod-lv2
-CFLAGS := -fPIC -DPIC -DDEBUG=1 -std=c++11 -I. -I/usr/local/include/lvtk-2 -L/usr/local/lib -llvtk_plugin2
-OBJ = dexed.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o
+CFLAGS := -fPIC -DPIC -DDEBUG=1 -std=c++11 -I. -I/usr/local/include/lvtk-2
+LDFLAGS := -L/usr/local/lib -llvtk_plugin2
+OBJ = fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o
 #       SysexComm.o PluginFx.o
 
 $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
@@ -10,15 +11,21 @@ $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
 	cp $^ $(BUNDLE)
 
 clean:
-	rm -f *.o *~ *.bak *.gch *.peg
+	rm -f *.o *~ *.bak *.gch *.peg dexed-test
 
 install: $(BUNDLE)
 	mkdir -p $(INSTALL_DIR)
 	rm -rf $(INSTALL_DIR)/$(BUNDLE)
 	cp -R $(BUNDLE) $(INSTALL_DIR)
 
-dexed.so: $(OBJ)
-	g++ -shared -fPIC -DPIC $(OBJ) $(CFLAGS) -o dexed.so
+dexed-test: $(OBJ) dexed-test.o
+	g++ -fPIC -DPIC dexed-test.o $(OBJ) $(LDFLAGS) -o dexed-test
+
+dexed.so: $(OBJ) dexed.o
+	g++ -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
+
+dexed-test.o: dexed-test.cpp
+	$(CXX) $(CFLAGS) -Wall -c dexed-test.cpp
 
 dexed.o: dexed.cpp dexed.peg
 	$(CXX) $(CFLAGS) -Wall -c dexed.cpp
