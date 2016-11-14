@@ -25,7 +25,6 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "PluginFx.h"
-#include "PluginProcessor.h"
 
 const float dc = 1e-18;
 
@@ -44,9 +43,9 @@ inline static float tptlpupw(float & state , float inp , float cutoff , float sr
 	return res;
 }
 
-static float linsc(float param,const float min,const float max) {
-    return (param) * (max - min) + min;
-}
+//static float linsc(float param,const float min,const float max) {
+//    return (param) * (max - min) + min;
+//}
 
 static float logsc(float param, const float min,const float max,const float rolloff = 19.0f) {
 	return ((expf(param * logf(rolloff+1)) - 1.0f) / (rolloff)) * (max-min) + min;

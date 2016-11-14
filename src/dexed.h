@@ -30,6 +30,7 @@
 #include "PluginFx.h"
 #include "EngineMkI.h"
 #include "EngineOpl.h"
+#include "dexed.peg"
 
 struct ProcessorVoice {
     int midi_note;
@@ -51,6 +52,10 @@ enum DexedEngineResolution {
     #define TRACE(fmt, ...)
 #endif
 
+// GLOBALS
+//static const float scaler = 0.00003051757813;
+static const float scaler = 0.00003;
+
 //==============================================================================
 
 class DexedVoice : public lvtk::Voice
@@ -65,6 +70,8 @@ class DexedVoice : public lvtk::Voice
   protected:
     unsigned char m_key;
     double m_rate;
+
+  private:
 };
 
 //==============================================================================
@@ -74,17 +81,26 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
   public:
     Dexed(double rate);
     ~Dexed();
+    void run(uint32_t sample_count);
     int getEngineType();
     void setEngineType(int rs);
-    bool isMonoMode();
-    void setMonoMode(bool mode);
-    void setParameter (int index, int newValue);
+    void set_params(void);
+    void GetSamples(int n_samples, int16_t *buffer);
+    //bool isMonoMode();
+    //void setMonoMode(bool mode);
 
     uint8_t data[161];
     Controllers controllers;
     VoiceStatus voiceStatus;
 
   protected:
+    int ProcessMidiMessage(const uint8_t *buf, int buf_size);
+    void onParam(int param_num,int param_val);
+    void TransferInput();
+    void ConsumeInput(size_t n_input_bytes);
+    void keyup(uint8_t pitch);
+    void keydown(uint8_t pitch, uint8_t velo);
+
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
     int currentNote;
@@ -100,13 +116,15 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     FmCore engineMsfa;
     EngineMkI engineMkI;
     EngineOpl engineOpl;
+    RingBuffer ring_buffer_;
     int16_t* outbuf16_;
     uint32_t bufsize_;
-};
+    int16_t extra_buf_[N];
+    int extra_buf_size_;
+    uint8_t input_buffer_[8192];
+    size_t input_buffer_index_;
 
-// GLOBALS
-RingBuffer ring_buffer_;
-//static const float scaler = 0.00003051757813;
-static const float scaler = 0.00003;
+  private:
+};
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED
