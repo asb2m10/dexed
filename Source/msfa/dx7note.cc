@@ -114,9 +114,9 @@ int ScaleLevel(int midinote, int break_pt, int left_depth, int right_depth,
                int left_curve, int right_curve) {
     int offset = midinote - break_pt - 17;
     if (offset >= 0) {
-        return ScaleCurve(offset / 3, right_depth, right_curve);
+        return ScaleCurve((offset+1) / 3, right_depth, right_curve);
     } else {
-        return ScaleCurve((-offset) / 3, left_depth, left_curve);
+        return ScaleCurve(-(offset-1) / 3, left_depth, left_curve);
     }
 }
 
