@@ -2,7 +2,7 @@
 
 #include <lvtk/synth.hpp>
 #include <string.h>
-#include "dexed.peg"
+#include "dexed-ttl.h"
 #include "dexed.h"
 #include "EngineMkI.h"
 #include "EngineOpl.h"
@@ -10,40 +10,51 @@
 #include "msfa/sin.h"
 #include "msfa/freqlut.h"
 #include "msfa/controllers.h"
+#include "msfa/ringbuffer.h"
 
 Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_lv2_events_in)
 {
   TRACE("Hi");
 
+  bufsize_=256;
+  outbuf16_=new int16_t[bufsize_];
+
   Exp2::init();
   Tanh::init();
   Sin::init();
 
-  feedback_bitdepth=11;
+  lastStateSave = 0;
+  currentNote = -1;
+  engineType = -1;
+  monoMode = 0;
+  normalizeDxVelocity = false;
 
-  for(uint i=0;i<sizeof(init_voice);i++) {
-    data[i] = init_voice[i];
+  memset(&voiceStatus, 0, sizeof(VoiceStatus));
+  setEngineType(DEXED_ENGINE_MARKI);
+
+  Freqlut::init(rate);
+  Lfo::init(rate);
+  PitchEnv::init(rate);
+  Env::init_sr(rate);
+  fx.init(rate);
+
+  for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+    voices[note].dx7_note = new Dx7Note;
+    voices[note].keydown = false;
+    voices[note].sustained = false;
+    voices[note].live = false;
   }
 
-  controllers.values_[kControllerPitchRange] = 3;
-  controllers.values_[kControllerPitchStep] = 0;
-  controllers.masterTune = 0;
+  currentNote = 0;
   controllers.values_[kControllerPitch] = 0x2000;
   controllers.modwheel_cc = 0;
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
 
-  controllers.core=&engineMkI;
+  sustain = false;
 
   lfo.reset(data + 137);
-
-  Freqlut::init(rate);
-  Lfo::init(rate);
-  PitchEnv::init(rate);
-  Env::init_sr(rate);
-
-  //add_voices(new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate));
 
   add_voices(new DexedVoice(rate));
 
@@ -52,6 +63,10 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_lv2_even
 
 Dexed::~Dexed()
 {
+  TRACE("Hi");
+
+  delete [] outbuf16_;
+
   TRACE("Bye");
 }
 
@@ -59,85 +74,44 @@ Dexed::~Dexed()
 
 DexedVoice::DexedVoice(double rate) : m_key(lvtk::INVALID_KEY), m_rate(rate)
 {
-  voice_number=voice_counter++;
-  TRACE("Hi %d",voice_number);
-  voice.dx7_note=new Dx7Note;
+  TRACE("Hi");
+
+  TRACE("Bye");
 }
 
 DexedVoice::~DexedVoice()
 {
+  TRACE("Hi");
+
   TRACE("Bye");
 }
 
 void DexedVoice::on(unsigned char key, unsigned char velocity)
 {
-  m_key = key;
-  voice.midi_note=data[144] - 24;
-  voice.keydown=true;
-  voice.sustained=false;
-  lfo.keydown();
-  if(voice.live==false)
-  {
-    voice.dx7_note->init(data, key, velocity, feedback_bitdepth);
-    voice.live=true;
-  }
-  if(data[136])
-    voice.dx7_note->oscSync();
+  TRACE("Hi");
 
-  TRACE("%d key-down: %d %d",voice_number,key,velocity);
+  m_key = key;
+
+  TRACE("Bye");
 }
 
 void DexedVoice::off(unsigned char velocity)
 {
-  voice.dx7_note->keyup();
-  voice.keydown=false;
-  voice.live=false;
+  TRACE("Hi");
+
   m_key = lvtk::INVALID_KEY;
-  TRACE("%d key-up: %d",voice_number,velocity);
+
+  TRACE("Bye");
 }
 
 unsigned char DexedVoice::get_key(void) const
 {
+  TRACE("Hi");
+
   return m_key;
-}
 
-void DexedVoice::render(uint32_t from, uint32_t to)
-{
-  int32_t s;
-  uint32_t render_loop_counter=from;
-
-  TRACE("Hi");
-  TRACE("%d from: %d to: %d",voice_number,from,to);
-
-TRACE("1:%d",render_loop_counter);
-  if (m_key != lvtk::INVALID_KEY)
-  {
-    for (render_loop_counter = from; render_loop_counter < to; ++render_loop_counter)
-    {
-TRACE("2:%d",render_loop_counter);
-      if(voice.live==true)
-      {
-TRACE("3:%d",render_loop_counter);
-        voice.dx7_note->compute(&s, lfo.getsample(), lfo.getdelay(), &controllers);
-TRACE("4:%d",render_loop_counter);
-        float fs=(float)s/INT32_MAX;
-        p(p_lv2_audio_out_1)[render_loop_counter]+=fs;
-	TRACE("out: %2.5f",fs);
-      }
-    } 
-  }
   TRACE("Bye");
 }
-
-/* void DexedVoice::post_process(uint32_t from, uint32_t to)
-{
-  TRACE("Hi");
-  for (uint32_t i = from; i < to; ++i)
-  {
-    p(p_lv2_audio_out_1)[i] *= *p(p_output);
-  }
-  TRACE("Bye");
-} */
 
 #ifdef DEBUG
 void dexed_trace(const char *source, const char *fmt, ...) {

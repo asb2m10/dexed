@@ -26,6 +26,7 @@
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
+#include "msfa/ringbuffer.h"
 #include "PluginFx.h"
 #include "EngineMkI.h"
 #include "EngineOpl.h"
@@ -44,6 +45,12 @@ enum DexedEngineResolution {
     DEXED_ENGINE_OPL
 };
 
+#ifdef DEBUG
+    #define TRACE(fmt, ...) _trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+#else
+    #define TRACE(fmt, ...)
+#endif
+
 //==============================================================================
 
 class DexedVoice : public lvtk::Voice
@@ -54,14 +61,10 @@ class DexedVoice : public lvtk::Voice
     void on(unsigned char key, unsigned char velocity);
     void off(unsigned char velocity);
     unsigned char get_key(void) const;
-    void render(uint32_t from, uint32_t to);
-    void post_process(uint32_t from, uint32_t to);
 
   protected:
     unsigned char m_key;
     double m_rate;
-    ProcessorVoice voice;
-    char voice_number;
 };
 
 //==============================================================================
@@ -71,28 +74,39 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
   public:
     Dexed(double rate);
     ~Dexed();
+    int getEngineType();
+    void setEngineType(int rs);
+    bool isMonoMode();
+    void setMonoMode(bool mode);
+    void setParameter (int index, int newValue);
+
+    uint8_t data[161];
+    Controllers controllers;
+    VoiceStatus voiceStatus;
 
   protected:
-    // dexed internal
+    static const int MAX_ACTIVE_NOTES = 16;
+    ProcessorVoice voices[MAX_ACTIVE_NOTES];
+    int currentNote;
+    bool sustain;
+    bool monoMode;
+    bool refreshVoice;
+    bool normalizeDxVelocity;
+    uint32_t engineType;
+    int feedback_bitdepth;
+    long lastStateSave;
+    PluginFx fx;
+    Lfo lfo;
+    FmCore engineMsfa;
+    EngineMkI engineMkI;
+    EngineOpl engineOpl;
+    int16_t* outbuf16_;
+    uint32_t bufsize_;
 };
 
 // GLOBALS
-char voice_counter=0;
-EngineMkI engineMkI;
-uint8_t feedback_bitdepth;
-Lfo lfo;
-Controllers controllers;
-
-const uint8_t init_voice[] =
-      { 99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 39, 0, 0, 0, 0, 0, 0, 0, 99, 0, 1, 0, 7,
-        99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
-        73, 78, 73, 84, 32, 86, 79, 73, 67, 69 };
-
-uint8_t data[156]; // program data
+RingBuffer ring_buffer_;
+//static const float scaler = 0.00003051757813;
+static const float scaler = 0.00003;
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED

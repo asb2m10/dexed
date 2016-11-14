@@ -1,35 +1,45 @@
-BUNDLE = dexed.lv2
-INSTALL_DIR = /home/pi/zynthian/zynthian-plugins/mod-lv2
-CFLAGS := -fPIC -DPIC -DDEBUG=1 -std=c++11 -I. -I/usr/local/include/lvtk-2
-LDFLAGS := -L/usr/local/lib -llvtk_plugin2
-OBJ = fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o
-#       SysexComm.o PluginFx.o
+#DEBUG=-DDEBUG=1 -DMSFADEBUG=1
+#DEBUG=-DMSFADEBUG=1
+BUNDLE=dexed.lv2
+INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
+TARGET=dexed.so
+OBJ=ringbuffer.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o
+CFLAGS=-fPIC -DPIC $(DEBUG) -std=c++11 -I. -I/usr/local/include/lvtk-2
+LDFLAGS=-L/usr/local/lib -llvtk_plugin2
+
+all: $(BUNDLE) Makefile
+
+clean:
+	rm -f *.o *~ *.bak *.gch dexed-ttl.h *.so
+	rm -rf $(BUNDLE)
+
+install: $(BUNDLE)
+	mkdir -p $(INSTALL_DIR)
+	rm -rf $(INSTALL_DIR)/$(BUNDLE)
+	rm -rf ${HOME}/.lv2/$(BUNDLE)
+	cp -R $(BUNDLE) $(INSTALL_DIR)
 
 $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
 	rm -rf $(BUNDLE)
 	mkdir $(BUNDLE)
 	cp $^ $(BUNDLE)
-
-clean:
-	rm -f *.o *~ *.bak *.gch *.peg dexed-test
-
-install: $(BUNDLE)
-	mkdir -p $(INSTALL_DIR)
-	rm -rf $(INSTALL_DIR)/$(BUNDLE)
-	cp -R $(BUNDLE) $(INSTALL_DIR)
-
-dexed-test: $(OBJ) dexed-test.o
-	g++ -fPIC -DPIC dexed-test.o $(OBJ) $(LDFLAGS) -o dexed-test
+#	cp -R modgui $(BUNDLE)
 
 dexed.so: $(OBJ) dexed.o
 	g++ -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
 
-dexed-test.o: dexed-test.cpp
-	$(CXX) $(CFLAGS) -Wall -c dexed-test.cpp
+#dexed-test: $(OBJ) dexed-test.o
+#	g++ -fPIC -DPIC dexed-test.o $(OBJ) $(LDFLAGS) -o dexed-test
+#
+#dexed-test.o: dexed-test.cpp
+#	$(CXX) $(CFLAGS) -Wall -c dexed-test.cpp
 
-dexed.o: dexed.cpp dexed.peg
+dexed.o: dexed.cpp dexed-ttl.h
 	$(CXX) $(CFLAGS) -Wall -c dexed.cpp
 
+ringbuffer.o: msfa/ringbuffer.cc
+	$(CXX) $(CFLAGS) -Wall -c msfa/ringbuffer.cc
+ 
 fm_core.o: msfa/fm_core.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/fm_core.cc
  
@@ -66,18 +76,6 @@ EngineOpl.o: EngineOpl.cpp
 PluginFx.o: PluginFx.cpp
 	$(CXX) $(CFLAGS) -Wall -c PluginFx.cpp
 
-PluginProcessor.o: PluginProcessor.cpp
-	$(CXX) $(CFLAGS) -Wall -c PluginProcessor.cpp
-
-SysexComm.o: SysexComm.cpp
-	$(CXX) $(CFLAGS) -Wall -c SysexComm.cpp
-
-#msfa/%.o: msfa/%.cc
-#	$(CXX) $(CFLAGS) -Wall -c $<
-#
-#%.o: %.cpp
-#	$(CXX) $(CFLAGS) -Wall -c $<
-
-dexed.peg: Dexed.ttl
-	lv2peg Dexed.ttl dexed.peg
+dexed-ttl.h: Dexed.ttl
+	ttl2c Dexed.ttl dexed-ttl.h
 
