@@ -31,6 +31,9 @@
 #include "EngineMkI.h"
 #include "EngineOpl.h"
 #include "dexed.peg"
+#ifdef DEBUG
+#include "trace.h"
+#endif
 
 struct ProcessorVoice {
     int midi_note;
@@ -45,12 +48,6 @@ enum DexedEngineResolution {
     DEXED_ENGINE_MARKI,
     DEXED_ENGINE_OPL
 };
-
-#ifdef DEBUG
-    #define TRACE(fmt, ...) _trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
-#else
-    #define TRACE(fmt, ...)
-#endif
 
 // GLOBALS
 //static const float scaler = 0.00003051757813;
@@ -84,6 +81,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     void run(uint32_t sample_count);
     int getEngineType();
     void setEngineType(int rs);
+    void setMonoMode(bool mode);
     void set_params(void);
     void GetSamples(int n_samples, int16_t *buffer);
     //bool isMonoMode();

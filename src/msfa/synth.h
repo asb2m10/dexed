@@ -17,16 +17,6 @@
 #ifndef __SYNTH_H
 #define __SYNTH_H
 
-#define DEXED_ID "0.9.2"
-
-#ifdef DEBUG
-    #define DEXED_VERSION DEXED_ID " DEBUG"
-    #define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
-#else
-    #define DEXED_VERSION DEXED_ID
-    #define TRACE(fmt, ...)
-#endif
-
 // This IS not be present on MSVC.
 // See http://stackoverflow.com/questions/126279/c99-stdint-h-header-and-ms-visual-studio
 #include <stdint.h>
@@ -67,8 +57,6 @@ inline static T max(const T& a, const T& b) {
     return a > b ? a : b;
 }
 
-
-void dexed_trace(const char *source, const char *fmt, ...);
 
 #define QER(n,b) ( ((float)n)/(1<<b) )
 

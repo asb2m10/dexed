@@ -18,9 +18,12 @@
 #define __CONTROLLERS_H
 
 #include "synth.h"
-#include "../Dexed.h"
 #include <stdio.h>
 #include <string.h>
+
+#ifdef DEBUG
+#include "trace.h"
+#endif
 
 #ifdef _WIN32
 #define snprintf _snprintf

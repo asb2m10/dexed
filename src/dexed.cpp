@@ -561,6 +561,34 @@ void Dexed::onParam(int param_num,int param_val)
 	data[param_num]=param_val;
 }
 
+int Dexed::getEngineType() {
+    return engineType;
+}
+
+void Dexed::setEngineType(int tp) {
+    TRACE("settings engine %d", tp);
+    
+    switch (tp)  {
+        case DEXED_ENGINE_MARKI:
+            controllers.core = &engineMkI;
+            feedback_bitdepth = 11;
+            break;
+        case DEXED_ENGINE_OPL:
+            controllers.core = &engineOpl;
+            feedback_bitdepth = 11;
+            break;
+        default:
+            controllers.core = &engineMsfa;
+            feedback_bitdepth = 8;
+            break;
+    }
+    engineType = tp;
+}
+
+void Dexed::setMonoMode(bool mode) {
+    monoMode = mode;
+}
+
 //==============================================================================
 
 DexedVoice::DexedVoice(double rate) : m_key(lvtk::INVALID_KEY), m_rate(rate)
@@ -603,16 +631,5 @@ unsigned char DexedVoice::get_key(void) const
 
   TRACE("Bye");
 }
-
-#ifdef DEBUG
-void dexed_trace(const char *source, const char *fmt, ...) {
-    char output[4096];
-    va_list argptr;
-    va_start(argptr, fmt);
-    vsnprintf(output, 4095, fmt, argptr);
-    va_end(argptr);
-    printf("%s: %s\n",source,output);
-}
-#endif
 
 static int _ = Dexed::register_class(p_uri);

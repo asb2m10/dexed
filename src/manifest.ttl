@@ -6,7 +6,7 @@
 @prefix pset: <http://lv2plug.in/ns/ext/presets#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
 
-<https://github.com/dcoredump/dexed>
+<https://github.com/dcoredump/dexed.lv2>
     a lv2:Plugin ;
     doap:name "Dexed";
     rdfs:seeAlso <Dexed.ttl> .

@@ -1,16 +1,16 @@
-#DEBUG=-DDEBUG=1 -DMSFADEBUG=1
-#DEBUG=-DMSFADEBUG=1
+DEBUG=-DDEBUG=1
 BUNDLE=dexed.lv2
-INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
+#INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
+INSTALL_DIR=/usr/local/lib/lv2
 TARGET=dexed.so
-OBJ=ringbuffer.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o
+OBJ=ringbuffer.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 CFLAGS=-fPIC -DPIC $(DEBUG) -std=c++11 -I. -I/usr/local/include/lvtk-2
 LDFLAGS=-L/usr/local/lib -llvtk_plugin2
 
 all: $(BUNDLE) Makefile
 
 clean:
-	rm -f *.o *~ *.bak *.gch dexed.peg *.so
+	rm -f *.o *~ *.bak *.gch dexed.peg *.so *.gch msfa/*.gch
 	rm -rf $(BUNDLE)
 
 install: $(BUNDLE)
@@ -36,6 +36,9 @@ dexed.so: $(OBJ) dexed.o
 
 dexed.o: dexed.cpp dexed.peg
 	$(CXX) $(CFLAGS) -Wall -c dexed.cpp
+
+trace.o: trace.c trace.h
+	$(CXX) $(CFLAGS) -Wall -c trace.c
 
 ringbuffer.o: msfa/ringbuffer.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/ringbuffer.cc
