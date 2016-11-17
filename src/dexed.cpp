@@ -89,6 +89,11 @@ void Dexed::set_params(void)
 
   refreshVoice=true;
 
+  // Dexed-Filter
+  fx.uiCutoff=*p(p_cutoff);
+  fx.uiReso=*p(p_resonance);
+  fx.uiGain=*p(p_output);
+
   // OP6
   onParam(0,static_cast<char>(*p(p_op6_eg_rate_1)));
   onParam(1,static_cast<char>(*p(p_op6_eg_rate_2)));
@@ -280,7 +285,8 @@ void Dexed::run (uint32_t sample_count)
        // j is the index of the plugin's float output buffer which will be the timestamp
        // of the last processed atom event.
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
+         //output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
+         output[j] = (static_cast<float> (outbuf16_[i]));
 
        last_frame = ev->time.frames;
     }
@@ -295,7 +301,8 @@ void Dexed::run (uint32_t sample_count)
        num_this_time = sample_count - last_frame;
        GetSamples (num_this_time, outbuf16_);
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
+         //output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
+         output[j] = (static_cast<float> (outbuf16_[i]));
     }
     
     fx.process(output, sample_count);
