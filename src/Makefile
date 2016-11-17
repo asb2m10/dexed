@@ -1,7 +1,6 @@
-DEBUG=-DDEBUG=1
+#DEBUG=-DDEBUG=0
 BUNDLE=dexed.lv2
-#INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
-INSTALL_DIR=/usr/local/lib/lv2
+INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
 TARGET=dexed.so
 OBJ=ringbuffer.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 CFLAGS=-fPIC -DPIC $(DEBUG) -std=c++11 -I. -I/usr/local/include/lvtk-2
@@ -26,13 +25,7 @@ $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
 #	cp -R modgui $(BUNDLE)
 
 dexed.so: $(OBJ) dexed.o
-	g++ -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
-
-#dexed-test: $(OBJ) dexed-test.o
-#	g++ -fPIC -DPIC dexed-test.o $(OBJ) $(LDFLAGS) -o dexed-test
-#
-#dexed-test.o: dexed-test.cpp
-#	$(CXX) $(CFLAGS) -Wall -c dexed-test.cpp
+	$(CXX) -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
 
 dexed.o: dexed.cpp dexed.peg
 	$(CXX) $(CFLAGS) -Wall -c dexed.cpp

@@ -87,6 +87,8 @@ void Dexed::set_params(void)
 {
   TRACE("Hi");
 
+  refreshVoice=true;
+
   // OP6
   onParam(0,static_cast<char>(*p(p_op6_eg_rate_1)));
   onParam(1,static_cast<char>(*p(p_op6_eg_rate_2)));
@@ -251,9 +253,6 @@ void Dexed::run (uint32_t sample_count)
     const LV2_Atom_Sequence* seq = p<LV2_Atom_Sequence> (p_midi_in);
     float* output = p(p_audio_out);
     uint32_t last_frame = 0, num_this_time = 0;
-    float level=*p(p_output)*scaler;
-
-    set_params(); // pre_process: copy actual voice params
 
     for (LV2_Atom_Event* ev = lv2_atom_sequence_begin (&seq->body);
          !lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev);
@@ -263,7 +262,16 @@ void Dexed::run (uint32_t sample_count)
 
        // If it's midi, send it to the engine
        if (ev->body.type == m_midi_type)
+       {
+          set_params(); // pre_process: copy actual voice params
           ring_buffer_.Write ((uint8_t*) LV2_ATOM_BODY (&ev->body), ev->body.size);
+#ifdef DEBUG
+	for(uint i=0;i<ev->body.size;i++)
+	{
+		TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
+	}
+#endif
+       }
 
        // render audio from the last frame until the timestamp of this event
        GetSamples (num_this_time, outbuf16_);
@@ -272,7 +280,7 @@ void Dexed::run (uint32_t sample_count)
        // j is the index of the plugin's float output buffer which will be the timestamp
        // of the last processed atom event.
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         output[j] = (static_cast<float> (outbuf16_[i])) * level;
+         output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
 
        last_frame = ev->time.frames;
     }
@@ -287,7 +295,7 @@ void Dexed::run (uint32_t sample_count)
        num_this_time = sample_count - last_frame;
        GetSamples (num_this_time, outbuf16_);
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         output[j] = (static_cast<float> (outbuf16_[i])) * level;
+         output[j] = (static_cast<float> (outbuf16_[i])) * *p(p_output);
     }
     
     fx.process(output, sample_count);
@@ -295,90 +303,71 @@ void Dexed::run (uint32_t sample_count)
 
 void Dexed::GetSamples(int n_samples, int16_t *buffer)
 {
-    int i;
-    size_t input_offset;
+  size_t input_offset;
 
-    TransferInput();
-    for (input_offset = 0; input_offset < input_buffer_index_; ) {
-      int bytes_available = input_buffer_index_ - input_offset;
-      int bytes_consumed = ProcessMidiMessage(input_buffer_ + input_offset, bytes_available);
-      if (bytes_consumed == 0) {
-        break;
-      }
-      input_offset += bytes_consumed;
+  TransferInput();
+  for (input_offset = 0; input_offset < input_buffer_index_; ) {
+    int bytes_available = input_buffer_index_ - input_offset;
+    int bytes_consumed = ProcessMidiMessage(input_buffer_ + input_offset, bytes_available);
+    if (bytes_consumed == 0) {
+      break;
     }
-    ConsumeInput(input_offset);
-   
-    if ( refreshVoice ) {
-        for(i=0;i < MAX_ACTIVE_NOTES;i++) {
-            if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
-        }
-        lfo.reset(data + 137);
-        refreshVoice = false;
-    }
+    input_offset += bytes_consumed;
+  }
+  ConsumeInput(input_offset);
 
-    // flush first events
-    for (i=0; i < n_samples && i < extra_buf_size_; i++) {
-        buffer[i] = extra_buf_[i];
+  int i;
+  if ( refreshVoice ) {
+    for(i=0;i < MAX_ACTIVE_NOTES;i++) {
+      if ( voices[i].live )
+        voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
     }
+    lfo.reset(data + 137);
+    refreshVoice = false;
+  }
+
+  // flush first events
+  for (i=0; i < n_samples && i < extra_buf_size_; i++) {
+    buffer[i] = extra_buf_[i];
+  }
     
-    // remaining buffer is still to be processed
-    if (extra_buf_size_ > n_samples) {
-        for (int j = 0; j < extra_buf_size_ - n_samples; j++) {
-            extra_buf_[j] = extra_buf_[j + n_samples];
-        }
-        extra_buf_size_ -= n_samples;
-        
-        // flush the events, they will be process in the next cycle
-        //while(getNextEvent(&it, n_samples)) {
-        //    processMidiMessage(midiMsg);
-       // }
-    } else {
-        for (; i < n_samples; i += N) {
-            AlignedBuf<int32_t, N> audiobuf;
-            float sumbuf[N];
-            
-            //while(getNextEvent(&it, i)) {
-            //    processMidiMessage(midiMsg);
-            //}
-            
-            for (int j = 0; j < N; ++j) {
-                audiobuf.get()[j] = 0;
-                sumbuf[j] = 0;
-            }
-            int32_t lfovalue = lfo.getsample();
-            int32_t lfodelay = lfo.getdelay();
-            
-            for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-                if (voices[note].live) {
-                    voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-                    
-                    for (int j=0; j < N; ++j) {
-                        int32_t val = audiobuf.get()[j];
-                        
-                        val = val >> 4;
-                        int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-                        float f = ((float) clip_val) / (float) 0x8000;
-                        if( f > 1 ) f = 1;
-                        if( f < -1 ) f = -1;
-                        sumbuf[j] += f;
-                        audiobuf.get()[j] = 0;
-                    }
-                }
-            }
-            
-            int jmax = n_samples - i;
-            for (int j = 0; j < N; ++j) {
-                if (j < jmax) {
-                    buffer[i + j] = sumbuf[j];
-                } else {
-                    extra_buf_[j - jmax] = sumbuf[j];
-                }
-            }
-        }
-        extra_buf_size_ = i - n_samples;
+  // remaining buffer is still to be processed
+  if (extra_buf_size_ > n_samples) {
+    for (int j = 0; j < extra_buf_size_ - n_samples; j++) {
+      extra_buf_[j] = extra_buf_[j + n_samples];
     }
+    extra_buf_size_ -= n_samples;
+    return;
+  }
+  for (; i < n_samples; i += N) {
+    AlignedBuf<int32_t, N> audiobuf;
+            
+    for (int j = 0; j < N; ++j) {
+      audiobuf.get()[j] = 0;
+    }
+    int32_t lfovalue = lfo.getsample();
+    int32_t lfodelay = lfo.getdelay();
+            
+    for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+      if (voices[note].live) {
+TRACE("Voice-note: %d:%d\n",note,voices[note].midi_note);
+        voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
+      }
+    }
+
+    int jmax = n_samples - i;
+    for (int j = 0; j < N; ++j) {
+      int32_t val = audiobuf.get()[j] >> 4;
+      int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
+      // TODO: maybe some dithering?
+      if (j < jmax) {
+        buffer[i + j] = clip_val;
+      } else {
+        extra_buf_[j - jmax] = clip_val;
+      }
+    }
+  }
+  extra_buf_size_ = i - n_samples;
 }
 
 //void Dexed::processMidiMessage(const MidiMessage *msg) {

@@ -20,10 +20,7 @@
 #include "synth.h"
 #include <stdio.h>
 #include <string.h>
-
-#ifdef DEBUG
 #include "trace.h"
-#endif
 
 #ifdef _WIN32
 #define snprintf _snprintf
