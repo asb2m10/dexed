@@ -1,4 +1,4 @@
-#DEBUG=-DDEBUG=0
+#DEBUG=-DDEBUG
 BUNDLE=dexed.lv2
 INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
 TARGET=dexed.so
@@ -8,7 +8,7 @@ LDFLAGS=-L/usr/local/lib -llvtk_plugin2
 
 all: $(BUNDLE) Makefile
 
-clean:
+clean: Makefile
 	rm -f *.o *~ *.bak *.gch dexed.peg *.so *.gch msfa/*.gch
 	rm -rf $(BUNDLE)
 
@@ -27,49 +27,49 @@ $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
 dexed.so: $(OBJ) dexed.o
 	$(CXX) -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
 
-dexed.o: dexed.cpp dexed.peg
+dexed.o: Makefile dexed.cpp dexed.peg
 	$(CXX) $(CFLAGS) -Wall -c dexed.cpp
 
-trace.o: trace.c trace.h
+trace.o: Makefile trace.c trace.h
 	$(CXX) $(CFLAGS) -Wall -c trace.c
 
-ringbuffer.o: msfa/ringbuffer.cc
+ringbuffer.o: Makefile msfa/ringbuffer.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/ringbuffer.cc
  
-fm_core.o: msfa/fm_core.cc
+fm_core.o: Makefile msfa/fm_core.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/fm_core.cc
  
-env.o: msfa/env.cc
+env.o: Makefile msfa/env.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/env.cc
 
-lfo.o: msfa/lfo.cc
+lfo.o: Makefile msfa/lfo.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/lfo.cc
 
-dx7note.o: msfa/dx7note.cc
+dx7note.o: Makefile msfa/dx7note.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/dx7note.cc
 
-sin.o: msfa/sin.cc
+sin.o: Makefile msfa/sin.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/sin.cc
 
-pitchenv.o: msfa/pitchenv.cc
+pitchenv.o: Makefile msfa/pitchenv.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/pitchenv.cc
 
-fm_op_kernel.o: msfa/fm_op_kernel.cc
+fm_op_kernel.o: Makefile msfa/fm_op_kernel.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/fm_op_kernel.cc
 
-freqlut.o: msfa/freqlut.cc
+freqlut.o: Makefile msfa/freqlut.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/freqlut.cc
 
-exp2.o: msfa/exp2.cc
+exp2.o: Makefile msfa/exp2.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/exp2.cc
 
-EngineMkI.o: EngineMkI.cpp
+EngineMkI.o: Makefile EngineMkI.cpp
 	$(CXX) $(CFLAGS) -Wall -c EngineMkI.cpp
 
-EngineOpl.o: EngineOpl.cpp
+EngineOpl.o: Makefile EngineOpl.cpp
 	$(CXX) $(CFLAGS) -Wall -c EngineOpl.cpp
 
-PluginFx.o: PluginFx.cpp
+PluginFx.o: Makefile PluginFx.cpp
 	$(CXX) $(CFLAGS) -Wall -c PluginFx.cpp
 
 dexed.peg: Dexed.ttl

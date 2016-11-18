@@ -12,7 +12,6 @@
 #include "msfa/ringbuffer.h"
 #include "PluginFx.h"
 #include <string.h>
-#include <limits.h>
 
 Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
@@ -352,41 +351,33 @@ void Dexed::GetSamples(int n_samples, int16_t *buffer)
   {
     for (; i < n_samples; i += N) {
       AlignedBuf<int32_t, N> audiobuf;
-      int16_t sumbuf[N];
-      
+            
       for (int j = 0; j < N; ++j) {
         audiobuf.get()[j] = 0;
-        sumbuf[j] = 0;
       }
-
       int32_t lfovalue = lfo.getsample();
       int32_t lfodelay = lfo.getdelay();
             
       for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-          for (int j=0; j < N; ++j) {
-            int32_t val = audiobuf.get()[j];
-                        
-            val = val >> 4;
+
+          int jmax = n_samples - i;
+          for (int j = 0; j < N; ++j) {
+            int32_t val = audiobuf.get()[j] >> 4;
             int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-            sumbuf[j] += clip_val;
-            audiobuf.get()[j] = 0;
+            // TODO: maybe some dithering?
+            if (j < jmax) {
+              buffer[i + j] = clip_val;
+            } else {
+              extra_buf_[j - jmax] = clip_val;
+            }
           }
         }
       }
-
-      int jmax = n_samples - i;
-      for (int j = 0; j < N; ++j) {
-        if (j < jmax) {
-          buffer[i + j] = sumbuf[j];
-        } else {
-          extra_buf_[j - jmax] = sumbuf[j];
-        }
-      }
     }
-    extra_buf_size_ = i - n_samples;
   }
+  extra_buf_size_ = i - n_samples;
 }
 
 //void Dexed::processMidiMessage(const MidiMessage *msg) {
