@@ -19,7 +19,6 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   TRACE("Hi");
 
   bufsize_=256;
-  //outbuf_=new int16_t[bufsize_];
   outbuf_=new float[bufsize_];
 
   Exp2::init();
@@ -89,14 +88,29 @@ Dexed::~Dexed()
 
 void Dexed::set_params(void)
 {
-  TRACE("Hi");
-
-  refreshVoice=true;
+  // Dexed-Engine
+  if(getEngineType()!=(*p(p_engine))-1)
+  {
+    panic();
+    setEngineType((*p(p_engine))-1);
+  }
 
   // Dexed-Filter
-  fx.uiCutoff=*p(p_cutoff);
-  fx.uiReso=*p(p_resonance);
-  fx.uiGain=*p(p_output);
+  if(fx.uiCutoff!=*p(p_cutoff))
+  {
+    fx.uiCutoff=*p(p_cutoff);
+    refreshVoice=true;
+  }
+  if(fx.uiReso!=*p(p_resonance))
+  {
+    fx.uiReso=*p(p_resonance);
+    refreshVoice=true;
+  }
+  if(fx.uiGain!=*p(p_output))
+  {
+    fx.uiGain=*p(p_output);
+    refreshVoice=true;
+  }
 
   // OP6
   onParam(0,static_cast<char>(*p(p_op6_eg_rate_1)));
@@ -252,8 +266,6 @@ void Dexed::set_params(void)
   onParam(144,static_cast<char>(*p(p_transpose)));
   // 10 bytes (145-154) are the name of the patch
   onParam(155,0x3f); // operator on/off => All OPs on
-
-  TRACE("Bye");
 }
 
 // override the run() method
@@ -262,6 +274,8 @@ void Dexed::run (uint32_t sample_count)
     const LV2_Atom_Sequence* seq = p<LV2_Atom_Sequence> (p_midi_in);
     float* output = p(p_audio_out);
     uint32_t last_frame = 0, num_this_time = 0;
+
+    set_params(); // pre_process: copy actual voice params
 
     for (LV2_Atom_Event* ev = lv2_atom_sequence_begin (&seq->body);
          !lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev);
@@ -272,14 +286,16 @@ void Dexed::run (uint32_t sample_count)
        // If it's midi, send it to the engine
        if (ev->body.type == m_midi_type)
        {
-          set_params(); // pre_process: copy actual voice params
-          ring_buffer_.Write ((uint8_t*) LV2_ATOM_BODY (&ev->body), ev->body.size);
 #ifdef DEBUG
-	for(uint i=0;i<ev->body.size;i++)
-	{
-		TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
-	}
+         for(uint i=0;i<ev->body.size;i++)
+         {
+           TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
+         }
 #endif
+//         ring_buffer_.Write ((uint8_t*) LV2_ATOM_BODY (&ev->body), ev->body.size);
+
+         if(ProcessMidiMessage((uint8_t*) LV2_ATOM_BODY (&ev->body),ev->body.size)==false)
+           break;
        }
 
        // render audio from the last frame until the timestamp of this event
@@ -289,7 +305,6 @@ void Dexed::run (uint32_t sample_count)
        // j is the index of the plugin's float output buffer which will be the timestamp
        // of the last processed atom event.
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         //output[j] = (static_cast<float> (outbuf_[i])) * *p(p_output);
          output[j]=outbuf_[i];
 
        last_frame = ev->time.frames;
@@ -305,7 +320,6 @@ void Dexed::run (uint32_t sample_count)
        num_this_time = sample_count - last_frame;
        GetSamples (num_this_time, outbuf_);
        for (uint32_t i = 0, j = last_frame; i < num_this_time; ++i, ++j)
-         //output[j] = (static_cast<float> (outbuf_[i])) * *p(p_output);
          output[j] = outbuf_[i];
     }
     
@@ -314,7 +328,7 @@ void Dexed::run (uint32_t sample_count)
 
 void Dexed::GetSamples(int n_samples, float *buffer)
 {
-  size_t input_offset;
+  /* size_t input_offset;
 
   TransferInput();
   for (input_offset = 0; input_offset < input_buffer_index_; ) {
@@ -325,7 +339,7 @@ void Dexed::GetSamples(int n_samples, float *buffer)
     }
     input_offset += bytes_consumed;
   }
-  ConsumeInput(input_offset);
+  ConsumeInput(input_offset); */
 
   int i;
   if ( refreshVoice ) {
@@ -394,20 +408,25 @@ void Dexed::GetSamples(int n_samples, float *buffer)
     }
     extra_buf_size_ = i - n_samples;
   }
+//#ifdef DEBUG
+//for(i=0;i<n_samples;i++)
+//  TRACE("samplebuffer[%d]=%f",i,buffer[i]);
+//#endif
 }
 
-//void Dexed::processMidiMessage(const MidiMessage *msg) {
-int Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
+bool Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
+    TRACE("Hi");
+
     uint8_t cmd = buf[0];
 
     switch(cmd & 0xf0) {
         case 0x80 :
             keyup(buf[1]);
-        return(3);
+        return(true);
 
         case 0x90 :
             keydown(buf[1], buf[2]);
-        return(3);
+        return(true);
             
         case 0xb0 : {
             int ctrl = buf[1];
@@ -439,45 +458,32 @@ int Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
                     break;
             }
         }
-        return(3);
+        return(true);
 
         case 0xc0 :
             //setCurrentProgram(buf[1]);
-        return(3);
+        return(true);
             
         // aftertouch
         case 0xd0 :
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
-        return(3);
+        return(true);
             
     }
 
     switch (cmd) {
         case 0xe0 :
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-            return(3);
+            return(true);
         break;
     }
-    return(3);
-}
 
-void Dexed::TransferInput() {
-  size_t bytes_available = ring_buffer_.BytesAvailable();
-  int bytes_to_read = min(bytes_available,
-      sizeof(input_buffer_) - input_buffer_index_);
-  if (bytes_to_read > 0) {
-    ring_buffer_.Read(bytes_to_read, input_buffer_ + input_buffer_index_);
-    input_buffer_index_ += bytes_to_read;
-  }
-}
+    TRACE("MIDI event unknown: cmd=%d, val1=%d, val2=%d",buf[0],buf[1],buf[2]);
 
-void Dexed::ConsumeInput(size_t n_input_bytes) {
-  if (n_input_bytes < input_buffer_index_) {
-    memmove(input_buffer_, input_buffer_ + n_input_bytes,
-        input_buffer_index_ - n_input_bytes);
-  }
-  input_buffer_index_ -= n_input_bytes;
+    TRACE("Bye");
+
+    return(false);
 }
 
 void Dexed::keydown(uint8_t pitch, uint8_t velo) {
@@ -580,7 +586,11 @@ TRACE("Bye");
 
 void Dexed::onParam(int param_num,int param_val)
 {
-	data[param_num]=param_val;
+	if(param_val!=data[param_num])
+	{
+	  refreshVoice=true;
+	  data[param_num]=param_val;
+	}
 }
 
 int Dexed::getEngineType() {
@@ -609,6 +619,16 @@ void Dexed::setEngineType(int tp) {
 
 void Dexed::setMonoMode(bool mode) {
     monoMode = mode;
+}
+
+void Dexed::panic(void) {
+  for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+    voices[i].keydown = false;
+    voices[i].live = false;
+    if ( voices[i].dx7_note != NULL ) {
+      voices[i].dx7_note->oscSync();
+    }
+  }
 }
 
 //==============================================================================
