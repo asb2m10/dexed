@@ -9,7 +9,6 @@
 #include "msfa/sin.h"
 #include "msfa/freqlut.h"
 #include "msfa/controllers.h"
-#include "msfa/ringbuffer.h"
 #include "PluginFx.h"
 #include <string.h>
 #include <limits.h>
@@ -25,7 +24,6 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   Tanh::init();
   Sin::init();
 
-  lastStateSave = 0;
   currentNote = -1;
   engineType = -1;
   monoMode = 0;
@@ -57,6 +55,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   sustain = false;
 
   lfo.reset(data + 137);
+
+  extra_buf_size_ = 0;
 
   add_voices(new DexedVoice(rate));
 
@@ -292,7 +292,6 @@ void Dexed::run (uint32_t sample_count)
            TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
          }
 #endif
-//         ring_buffer_.Write ((uint8_t*) LV2_ATOM_BODY (&ev->body), ev->body.size);
 
          if(ProcessMidiMessage((uint8_t*) LV2_ATOM_BODY (&ev->body),ev->body.size)==false)
            break;
@@ -328,19 +327,6 @@ void Dexed::run (uint32_t sample_count)
 
 void Dexed::GetSamples(int n_samples, float *buffer)
 {
-  /* size_t input_offset;
-
-  TransferInput();
-  for (input_offset = 0; input_offset < input_buffer_index_; ) {
-    int bytes_available = input_buffer_index_ - input_offset;
-    int bytes_consumed = ProcessMidiMessage(input_buffer_ + input_offset, bytes_available);
-    if (bytes_consumed == 0) {
-      break;
-    }
-    input_offset += bytes_consumed;
-  }
-  ConsumeInput(input_offset); */
-
   int i;
   if ( refreshVoice ) {
     for(i=0;i < MAX_ACTIVE_NOTES;i++) {
@@ -351,7 +337,6 @@ void Dexed::GetSamples(int n_samples, float *buffer)
     lfo.reset(data + 137);
     refreshVoice = false;
   }
-
   // flush first events
   for (i=0; i < n_samples && i < extra_buf_size_; i++) {
     buffer[i] = extra_buf_[i];
@@ -408,10 +393,6 @@ void Dexed::GetSamples(int n_samples, float *buffer)
     }
     extra_buf_size_ = i - n_samples;
   }
-//#ifdef DEBUG
-//for(i=0;i<n_samples;i++)
-//  TRACE("samplebuffer[%d]=%f",i,buffer[i]);
-//#endif
 }
 
 bool Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {

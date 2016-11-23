@@ -2,7 +2,7 @@
 BUNDLE=dexed.lv2
 INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
 TARGET=dexed.so
-OBJ=ringbuffer.o fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
+OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 CFLAGS=-fPIC -DPIC $(DEBUG) -std=c++11 -I. -I/usr/local/include/lvtk-2
 LDFLAGS=-L/usr/local/lib -llvtk_plugin2
 
@@ -33,9 +33,6 @@ dexed.o: Makefile dexed.cpp dexed.peg
 trace.o: Makefile trace.c trace.h
 	$(CXX) $(CFLAGS) -Wall -c trace.c
 
-ringbuffer.o: Makefile msfa/ringbuffer.cc
-	$(CXX) $(CFLAGS) -Wall -c msfa/ringbuffer.cc
- 
 fm_core.o: Makefile msfa/fm_core.cc
 	$(CXX) $(CFLAGS) -Wall -c msfa/fm_core.cc
  

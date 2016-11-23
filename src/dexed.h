@@ -26,7 +26,6 @@
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
-#include "msfa/ringbuffer.h"
 #include "PluginFx.h"
 #include "EngineMkI.h"
 #include "EngineOpl.h"
@@ -113,7 +112,6 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     FmCore engineMsfa;
     EngineMkI engineMkI;
     EngineOpl engineOpl;
-    RingBuffer ring_buffer_;
     float* outbuf_;
     uint32_t bufsize_;
     int16_t extra_buf_[N];
