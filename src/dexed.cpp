@@ -88,11 +88,19 @@ Dexed::~Dexed()
 
 void Dexed::set_params(void)
 {
-  // Dexed-Engine
-  if(getEngineType()!=(*p(p_engine))-1)
+/*
+  // Dexed-Unisono
+  if(getEngineType()!=int(*p(p_unisono)))
   {
     panic();
-    setEngineType((*p(p_engine))-1);
+    setMonoMode(int(*p(p_unisono)));
+  } */
+
+  // Dexed-Engine
+  if(getEngineType()!=int(*p(p_engine)))
+  {
+    panic();
+    setEngineType(int(*p(p_engine)));
   }
 
   // Dexed-Filter
