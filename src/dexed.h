@@ -78,11 +78,10 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     void run(uint32_t sample_count);
     int getEngineType();
     void setEngineType(int rs);
+    bool isMonoMode(void);
     void setMonoMode(bool mode);
     void set_params(void);
     void GetSamples(int n_samples, float *buffer);
-    //bool isMonoMode();
-    //void setMonoMode(bool mode);
 
     uint8_t data[161];
     Controllers controllers;

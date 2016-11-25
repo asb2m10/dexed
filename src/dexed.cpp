@@ -88,13 +88,12 @@ Dexed::~Dexed()
 
 void Dexed::set_params(void)
 {
-/*
   // Dexed-Unisono
-  if(getEngineType()!=int(*p(p_unisono)))
+  if(isMonoMode()!=int(*p(p_unisono)))
   {
     panic();
     setMonoMode(int(*p(p_unisono)));
-  } */
+  }
 
   // Dexed-Engine
   if(getEngineType()!=int(*p(p_engine)))
@@ -626,6 +625,10 @@ void Dexed::setEngineType(int tp) {
             break;
     }
     engineType = tp;
+}
+
+bool Dexed::isMonoMode(void) {
+    return monoMode;
 }
 
 void Dexed::setMonoMode(bool mode) {
