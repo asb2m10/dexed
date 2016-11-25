@@ -328,9 +328,31 @@ void Dexed::run (uint32_t sample_count)
 void Dexed::GetSamples(int n_samples, float *buffer)
 {
   int i;
+  VoiceStatus vs;
+
+  for(i=0;i < MAX_ACTIVE_NOTES;i++) {
+    if(voices[i].live==true &&voices[i].keydown==false)
+    {
+      uint8_t op_amp=0;
+
+      voices[i].dx7_note->peekVoiceStatus(vs);
+
+      for(int op=0;op<6;op++)
+      {
+        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,vs.amp[op],vs.ampStep[op],vs.pitchStep);
+
+        if(vs.amp[op]<=1069)
+          op_amp++;
+
+      }
+      if(op_amp==6)
+        voices[i].live=false;
+    }
+    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
+  }
+
   if ( refreshVoice ) {
     for(i=0;i < MAX_ACTIVE_NOTES;i++) {
-      TRACE("Voice[%d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
       if ( voices[i].live )
         voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
     }
