@@ -32,7 +32,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   Env::init_sr(rate);
   fx.init(rate);
 
-  for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
     voices[note].dx7_note = new Dx7Note;
     voices[note].keydown = false;
     voices[note].sustained = false;
@@ -72,7 +72,7 @@ Dexed::~Dexed()
 
   currentNote = -1;
 
-  for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
     if ( voices[note].dx7_note != NULL ) {
       delete voices[note].dx7_note;
       voices[note].dx7_note = NULL;
@@ -88,13 +88,13 @@ Dexed::~Dexed()
 void Dexed::set_params(void)
 {
   // Dexed-Unisono
-  if(isMonoMode()!=int(*p(p_unisono)))
-    setMonoMode(int(*p(p_unisono)));
+  if(isMonoMode()!=bool(*p(p_unisono)))
+    setMonoMode(bool(*p(p_unisono)));
 
   // Dexed-Engine
-  if(getEngineType()!=int(*p(p_engine))-1)
+  if(getEngineType()!=uint8_t(*p(p_engine))-1)
   {
-    setEngineType(int(*p(p_engine))-1);
+    setEngineType(uint8_t(*p(p_engine))-1);
     refreshVoice=true;
   }
 
@@ -290,7 +290,7 @@ void Dexed::run (uint32_t sample_count)
        if (ev->body.type == m_midi_type)
        {
 #ifdef DEBUG
-         for(uint i=0;i<ev->body.size;i++)
+         for(uint8_t i=0;i<ev->body.size;i++)
          {
            TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
          }
@@ -328,9 +328,9 @@ void Dexed::run (uint32_t sample_count)
     fx.process(output, sample_count);
 }
 
-void Dexed::GetSamples(uint n_samples, float* buffer)
+void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 {
-  uint i;
+  uint32_t i;
 
   if(refreshVoice) {
     for(i=0;i < MAX_ACTIVE_NOTES;i++) {
@@ -348,7 +348,7 @@ void Dexed::GetSamples(uint n_samples, float* buffer)
     
   // remaining buffer is still to be processed
   if (extra_buf_size_ > n_samples) {
-    for (uint j = 0; j < extra_buf_size_ - n_samples; j++) {
+    for (uint32_t j = 0; j < extra_buf_size_ - n_samples; j++) {
       extra_buf_[j] = extra_buf_[j + n_samples];
     }
     extra_buf_size_ -= n_samples;
@@ -359,7 +359,7 @@ void Dexed::GetSamples(uint n_samples, float* buffer)
       AlignedBuf<int32_t, N> audiobuf;
       float sumbuf[N];
       
-      for (int j = 0; j < N; ++j) {
+      for (uint32_t j = 0; j < N; ++j) {
         audiobuf.get()[j] = 0;
         sumbuf[j] = 0.0;
       }
@@ -367,13 +367,13 @@ void Dexed::GetSamples(uint n_samples, float* buffer)
       int32_t lfovalue = lfo.getsample();
       int32_t lfodelay = lfo.getdelay();
             
-      for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+      for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-          for (uint j=0; j < N; ++j) {
+          for (uint32_t j=0; j < N; ++j) {
             int32_t val = audiobuf.get()[j];
                         
-            //val = val >> 4;
+            val = val >> 4;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
             float f = float(clip_val) / float(0x8000);
             if(f>1.0)
@@ -386,8 +386,8 @@ void Dexed::GetSamples(uint n_samples, float* buffer)
         }
       }
 
-      uint jmax = n_samples - i;
-      for (uint j = 0; j < N; ++j) {
+      uint32_t jmax = n_samples - i;
+      for (uint32_t j = 0; j < N; ++j) {
         if (j < jmax) {
           buffer[i + j] = sumbuf[j];
         } else {
@@ -405,7 +405,7 @@ void Dexed::GetSamples(uint n_samples, float* buffer)
 
       voices[i].dx7_note->peekVoiceStatus(voiceStatus);
 
-      for(int op=0;op<6;op++)
+      for(uint8_t op=0;op<6;op++)
       {
         TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
 
@@ -420,7 +420,7 @@ void Dexed::GetSamples(uint n_samples, float* buffer)
   }
 }
 
-bool Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
+bool Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
     TRACE("Hi");
 
     uint8_t cmd = buf[0];
@@ -435,8 +435,8 @@ bool Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
         return(true);
             
         case 0xb0 : {
-            int ctrl = buf[1];
-            int value = buf[2];
+            uint8_t ctrl = buf[1];
+            uint8_t value = buf[2];
             
             switch(ctrl) {
                 case 1:
@@ -454,7 +454,7 @@ bool Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
                 case 64:
                     sustain = value > 63;
                     if (!sustain) {
-                        for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
+                        for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; note++) {
                             if (voices[note].sustained && !voices[note].keydown) {
                                 voices[note].dx7_note->keyup();
                                 voices[note].sustained = false;
@@ -506,8 +506,8 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
         velo = ((float)velo) * 0.7874015; // 100/127
     }
     
-    int note = currentNote;
-    for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
+    uint8_t note = currentNote;
+    for (uint8_t i=0; i<MAX_ACTIVE_NOTES; i++) {
         if (!voices[note].keydown) {
             currentNote = (note + 1) % MAX_ACTIVE_NOTES;
             lfo.keydown();  // TODO: should only do this if # keys down was 0
@@ -523,7 +523,7 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
     }
     
     if ( monoMode ) {
-        for(int i=0; i<MAX_ACTIVE_NOTES; i++) {            
+        for(uint8_t i=0; i<MAX_ACTIVE_NOTES; i++) {            
             if ( voices[i].live ) {
                 // all keys are up, only transfert signal
                 if ( ! voices[i].keydown ) {
@@ -551,7 +551,7 @@ TRACE("pitch=%d\n",pitch);
 
     pitch += data[144] - 24;
 
-    int note;
+    uint8_t note;
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
         if ( voices[note].midi_note == pitch && voices[note].keydown ) {
             voices[note].keydown = false;
@@ -566,7 +566,7 @@ TRACE("pitch=%d\n",pitch);
     }
     
     if ( monoMode ) {
-        int highNote = -1;
+        uint8_t highNote = -1;
         int target = 0;
         for (int i=0; i<MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].keydown && voices[i].midi_note > highNote ) {
@@ -590,7 +590,7 @@ TRACE("pitch=%d\n",pitch);
 TRACE("Bye");
 }
 
-void Dexed::onParam(int param_num,int param_val)
+void Dexed::onParam(uint8_t param_num,uint8_t param_val)
 {
 	if(param_val!=data[param_num])
 	{
@@ -601,7 +601,7 @@ void Dexed::onParam(int param_num,int param_val)
 	}
 }
 
-int Dexed::getEngineType() {
+uint8_t Dexed::getEngineType() {
     return engineType;
 }
 
@@ -641,7 +641,7 @@ void Dexed::setMonoMode(bool mode) {
 }
 
 void Dexed::panic(void) {
-  for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+  for(uint8_t i=0;i<MAX_ACTIVE_NOTES;i++) {
     voices[i].keydown = false;
     voices[i].live = false;
     if ( voices[i].dx7_note != NULL ) {

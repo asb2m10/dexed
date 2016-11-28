@@ -35,7 +35,7 @@
 #endif
 
 struct ProcessorVoice {
-    int midi_note;
+    uint8_t midi_note;
     bool keydown;
     bool sustained;
     bool live;
@@ -76,34 +76,33 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     Dexed(double rate);
     ~Dexed();
     void run(uint32_t sample_count);
-    int getEngineType();
+    uint8_t getEngineType();
     void setEngineType(uint8_t tp);
     bool isMonoMode(void);
     void setMonoMode(bool mode);
     void set_params(void);
-    void GetSamples(uint n_samples, float *buffer);
+    void GetSamples(uint32_t n_samples, float *buffer);
 
     uint8_t data[161];
     Controllers controllers;
     VoiceStatus voiceStatus;
 
   protected:
-    bool ProcessMidiMessage(const uint8_t *buf, int buf_size);
-    void onParam(int param_num,int param_val);
+    bool ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size);
+    void onParam(uint8_t param_num,uint8_t param_val);
     void keyup(uint8_t pitch);
     void keydown(uint8_t pitch, uint8_t velo);
     void panic(void);
 
-    static const int MAX_ACTIVE_NOTES = 16;
+    static const uint8_t MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
-    int currentNote;
+    uint8_t currentNote;
     bool sustain;
     bool monoMode;
     bool refreshVoice;
     bool normalizeDxVelocity;
     uint8_t engineType;
-    int feedback_bitdepth;
-    long lastStateSave;
+    uint8_t feedback_bitdepth;
     PluginFx fx;
     Lfo lfo;
     FmCore engineMsfa;
