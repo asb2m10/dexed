@@ -39,6 +39,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[note].live = false;
   }
 
+  refreshVoice=false;
+
   currentNote = 0;
   controllers.values_[kControllerPitch] = 0x2000;
   controllers.modwheel_cc = 0;
@@ -91,7 +93,10 @@ void Dexed::set_params(void)
 
   // Dexed-Engine
   if(getEngineType()!=int(*p(p_engine))-1)
+  {
     setEngineType(int(*p(p_engine))-1);
+    refreshVoice=true;
+  }
 
   // Dexed-Filter
   if(fx.uiCutoff!=*p(p_cutoff))
@@ -323,32 +328,11 @@ void Dexed::run (uint32_t sample_count)
     fx.process(output, sample_count);
 }
 
-void Dexed::GetSamples(int n_samples, float *buffer)
+void Dexed::GetSamples(uint n_samples, float* buffer)
 {
-  int i;
+  uint i;
 
-  for(i=0;i < MAX_ACTIVE_NOTES;i++) {
-    if(voices[i].live==true &&voices[i].keydown==false)
-    {
-      uint8_t op_amp=0;
-
-      voices[i].dx7_note->peekVoiceStatus(voiceStatus);
-
-      for(int op=0;op<6;op++)
-      {
-        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
-
-        if(voiceStatus.amp[op]<=1069)
-          op_amp++;
-
-      }
-      if(op_amp==6)
-        voices[i].live=false;
-    }
-    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
-  }
-
-  if ( refreshVoice ) {
+  if(refreshVoice) {
     for(i=0;i < MAX_ACTIVE_NOTES;i++) {
       if ( voices[i].live )
         voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
@@ -356,6 +340,7 @@ void Dexed::GetSamples(int n_samples, float *buffer)
     lfo.reset(data + 137);
     refreshVoice = false;
   }
+
   // flush first events
   for (i=0; i < n_samples && i < extra_buf_size_; i++) {
     buffer[i] = extra_buf_[i];
@@ -363,7 +348,7 @@ void Dexed::GetSamples(int n_samples, float *buffer)
     
   // remaining buffer is still to be processed
   if (extra_buf_size_ > n_samples) {
-    for (int j = 0; j < extra_buf_size_ - n_samples; j++) {
+    for (uint j = 0; j < extra_buf_size_ - n_samples; j++) {
       extra_buf_[j] = extra_buf_[j + n_samples];
     }
     extra_buf_size_ -= n_samples;
@@ -385,12 +370,12 @@ void Dexed::GetSamples(int n_samples, float *buffer)
       for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-          for (int j=0; j < N; ++j) {
+          for (uint j=0; j < N; ++j) {
             int32_t val = audiobuf.get()[j];
                         
-            val = val >> 4;
-            int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-            float f = ((float) clip_val) / (float) 0x8000;
+            //val = val >> 4;
+            int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
+            float f = float(clip_val) / float(0x8000);
             if(f>1.0)
               f=1.0;
             if(f<-1.0)
@@ -401,8 +386,8 @@ void Dexed::GetSamples(int n_samples, float *buffer)
         }
       }
 
-      int jmax = n_samples - i;
-      for (int j = 0; j < N; ++j) {
+      uint jmax = n_samples - i;
+      for (uint j = 0; j < N; ++j) {
         if (j < jmax) {
           buffer[i + j] = sumbuf[j];
         } else {
@@ -411,6 +396,27 @@ void Dexed::GetSamples(int n_samples, float *buffer)
       }
     }
     extra_buf_size_ = i - n_samples;
+  }
+
+  for(i=0;i < MAX_ACTIVE_NOTES;i++) {
+    if(voices[i].live==true && voices[i].keydown==false)
+    {
+      uint8_t op_amp=0;
+
+      voices[i].dx7_note->peekVoiceStatus(voiceStatus);
+
+      for(int op=0;op<6;op++)
+      {
+        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
+
+        if(voiceStatus.amp[op]<=1069)
+          op_amp++;
+
+      }
+      if(op_amp==6)
+        voices[i].live=false;
+    }
+    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
   }
 }
 

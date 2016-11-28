@@ -81,7 +81,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     bool isMonoMode(void);
     void setMonoMode(bool mode);
     void set_params(void);
-    void GetSamples(int n_samples, float *buffer);
+    void GetSamples(uint n_samples, float *buffer);
 
     uint8_t data[161];
     Controllers controllers;
@@ -111,8 +111,8 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     EngineOpl engineOpl;
     float* outbuf_;
     uint32_t bufsize_;
-    int16_t extra_buf_[N];
-    int extra_buf_size_;
+    float extra_buf_[N];
+    uint32_t extra_buf_size_;
 
   private:
 };
