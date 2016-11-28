@@ -158,7 +158,7 @@ void PluginFx::process(float *work, int sampleSize) {
         float y2 = tptpc(s2,y1,g);
         float y3 = tptpc(s3,y2,g);
         float y4 = tptpc(s4,y3,g);
-        float mc;
+        float mc=0.0;
     
         switch(mmch) {
             case 0:

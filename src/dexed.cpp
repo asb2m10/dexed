@@ -588,6 +588,8 @@ void Dexed::onParam(int param_num,int param_val)
 {
 	if(param_val!=data[param_num])
 	{
+	  if(param_num==144)
+            panic();
 	  refreshVoice=true;
 	  data[param_num]=param_val;
 	}
