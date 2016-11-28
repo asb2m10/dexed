@@ -43,9 +43,9 @@ struct ProcessorVoice {
 };
 
 enum DexedEngineResolution {
-    DEXED_ENGINE_MODERN,
-    DEXED_ENGINE_MARKI,
-    DEXED_ENGINE_OPL
+    DEXED_ENGINE_MODERN,	// 0
+    DEXED_ENGINE_MARKI,		// 1
+    DEXED_ENGINE_OPL		// 2
 };
 
 // GLOBALS
@@ -77,7 +77,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     ~Dexed();
     void run(uint32_t sample_count);
     int getEngineType();
-    void setEngineType(int rs);
+    void setEngineType(uint8_t tp);
     bool isMonoMode(void);
     void setMonoMode(bool mode);
     void set_params(void);
@@ -101,7 +101,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     bool monoMode;
     bool refreshVoice;
     bool normalizeDxVelocity;
-    uint32_t engineType;
+    uint8_t engineType;
     int feedback_bitdepth;
     long lastStateSave;
     PluginFx fx;

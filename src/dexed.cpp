@@ -10,8 +10,6 @@
 #include "msfa/freqlut.h"
 #include "msfa/controllers.h"
 #include "PluginFx.h"
-#include <string.h>
-#include <limits.h>
 
 Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
@@ -24,13 +22,9 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   Tanh::init();
   Sin::init();
 
-  currentNote = -1;
-  engineType = -1;
-  monoMode = 0;
   normalizeDxVelocity = false;
 
   memset(&voiceStatus, 0, sizeof(VoiceStatus));
-  setEngineType(DEXED_ENGINE_MARKI);
 
   Freqlut::init(rate);
   Lfo::init(rate);
@@ -51,6 +45,9 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
+
+  setEngineType(DEXED_ENGINE_MARKI);
+  setMonoMode(false);
 
   sustain = false;
 
@@ -90,17 +87,11 @@ void Dexed::set_params(void)
 {
   // Dexed-Unisono
   if(isMonoMode()!=int(*p(p_unisono)))
-  {
-    panic();
     setMonoMode(int(*p(p_unisono)));
-  }
 
   // Dexed-Engine
-  if(getEngineType()!=int(*p(p_engine)))
-  {
-    panic();
-    setEngineType(int(*p(p_engine)));
-  }
+  if(getEngineType()!=int(*p(p_engine))-1)
+    setEngineType(int(*p(p_engine))-1);
 
   // Dexed-Filter
   if(fx.uiCutoff!=*p(p_cutoff))
@@ -335,20 +326,19 @@ void Dexed::run (uint32_t sample_count)
 void Dexed::GetSamples(int n_samples, float *buffer)
 {
   int i;
-  VoiceStatus vs;
 
   for(i=0;i < MAX_ACTIVE_NOTES;i++) {
     if(voices[i].live==true &&voices[i].keydown==false)
     {
       uint8_t op_amp=0;
 
-      voices[i].dx7_note->peekVoiceStatus(vs);
+      voices[i].dx7_note->peekVoiceStatus(voiceStatus);
 
       for(int op=0;op<6;op++)
       {
-        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,vs.amp[op],vs.ampStep[op],vs.pitchStep);
+        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
 
-        if(vs.amp[op]<=1069)
+        if(voiceStatus.amp[op]<=1069)
           op_amp++;
 
       }
@@ -467,8 +457,8 @@ bool Dexed::ProcessMidiMessage(const uint8_t *buf, int buf_size) {
                     }
                     break;
             }
+            return(true);
         }
-        return(true);
 
         case 0xc0 :
             //setCurrentProgram(buf[1]);
@@ -607,9 +597,13 @@ int Dexed::getEngineType() {
     return engineType;
 }
 
-void Dexed::setEngineType(int tp) {
+void Dexed::setEngineType(uint8_t tp) {
     TRACE("settings engine %d", tp);
-    
+
+    if(engineType==tp)
+      return;
+
+    panic();
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             controllers.core = &engineMkI;
@@ -632,6 +626,9 @@ bool Dexed::isMonoMode(void) {
 }
 
 void Dexed::setMonoMode(bool mode) {
+    if(monoMode==mode)
+      return;
+
     monoMode = mode;
 }
 

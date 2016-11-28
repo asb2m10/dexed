@@ -113,9 +113,9 @@ sub write_preset_header
 	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("output","1.0");
 	print $deeaxe_voice "        ] , [\n";
-        print_lv2_port("engine","2.0");
+        print_lv2_port("engine","2");
 	print $deeaxe_voice "        ] , [\n";
-        print_lv2_port("unisono","0.0");
+        print_lv2_port("unisono","0");
 }
 
 sub write_manifest
