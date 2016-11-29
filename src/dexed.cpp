@@ -58,6 +58,9 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   extra_buf_size_ = 0;
 
   add_voices(new DexedVoice(rate));
+  //add_voices(new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate));
+
+  add_audio_outputs(p_audio_out);
 
   TRACE("Bye");
 }
@@ -87,11 +90,9 @@ void Dexed::activate(void)
 {
   TRACE("Hi");
 
-  refreshVoice=true;
-  set_params();
   Plugin::activate();
-
-  add_audio_outputs(p_audio_out);
+  set_params();
+  refreshVoice=true;
 
   TRACE("Bye");
 }
@@ -100,8 +101,6 @@ void Dexed::deactivate(void)
 {
   TRACE("Hi");
 
-  refreshVoice=true;
-  set_params();
   Plugin::deactivate();
 
   TRACE("Bye");
@@ -110,7 +109,6 @@ void Dexed::deactivate(void)
 void Dexed::set_params(void)
 {
   TRACE("Hi");
-  TRACE("refreshVoice=%d",refreshVoice);
 
   // Dexed-Unisono
   if(isMonoMode()!=bool(*p(p_unisono)))
@@ -324,9 +322,7 @@ void Dexed::run (uint32_t sample_count)
          {
            TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
          }
-
-         if(ProcessMidiMessage((uint8_t*) LV2_ATOM_BODY (&ev->body),ev->body.size)==false)
-           break;
+         ProcessMidiMessage((uint8_t*) LV2_ATOM_BODY (&ev->body),ev->body.size);
        }
 
        // render audio from the last frame until the timestamp of this event
@@ -448,7 +444,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
   }
 }
 
-bool Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
+void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
     TRACE("Hi");
 
     uint8_t cmd = buf[0];
@@ -456,12 +452,10 @@ bool Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
     switch(cmd & 0xf0) {
         case 0x80 :
             keyup(buf[1]);
-        return(true);
-
+            break;
         case 0x90 :
             keydown(buf[1], buf[2]);
-        return(true);
-            
+            break;
         case 0xb0 : {
             uint8_t ctrl = buf[1];
             uint8_t value = buf[2];
@@ -491,33 +485,28 @@ bool Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
                     }
                     break;
             }
-            return(true);
+            break;
         }
 
         case 0xc0 :
             //setCurrentProgram(buf[1]);
-        return(true);
-            
+            break;
         // aftertouch
         case 0xd0 :
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
-        return(true);
-            
+            break;
     }
 
     switch (cmd) {
         case 0xe0 :
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-            return(true);
         break;
     }
 
     TRACE("MIDI event unknown: cmd=%d, val1=%d, val2=%d",buf[0],buf[1],buf[2]);
 
     TRACE("Bye");
-
-    return(false);
 }
 
 void Dexed::keydown(uint8_t pitch, uint8_t velo) {

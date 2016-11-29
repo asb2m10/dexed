@@ -90,7 +90,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     VoiceStatus voiceStatus;
 
   protected:
-    bool ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size);
+    void ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size);
     void onParam(uint8_t param_num,uint8_t param_val);
     void keyup(uint8_t pitch);
     void keydown(uint8_t pitch, uint8_t velo);
