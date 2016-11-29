@@ -85,7 +85,6 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     void set_params(void);
     void GetSamples(uint32_t n_samples, float *buffer);
 
-    uint8_t data[161];
     Controllers controllers;
     VoiceStatus voiceStatus;
 
@@ -95,6 +94,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     void keyup(uint8_t pitch);
     void keydown(uint8_t pitch, uint8_t velo);
     void panic(void);
+    void init(double rate);
 
     static const uint8_t MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
@@ -117,6 +117,20 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
 
   private:
     uint8_t _param_counter;
+    uint8_t data[156];
+/*    uint8_t data[156]={
+      95, 29, 20, 50, 99, 95, 00, 00, 41, 00, 19, 00, 00, 03, 00, 06, 79, 00, 01, 00, 14,
+      95, 20, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 00, 99, 00, 01, 00, 00,
+      95, 29, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 06, 89, 00, 01, 00, 07,
+      95, 20, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 02, 99, 00, 01, 00, 07,
+      95, 50, 35, 78, 99, 75, 00, 00, 00, 00, 00, 00, 00, 03, 00, 07, 58, 00, 14, 00, 07,
+      96, 25, 25, 67, 99, 75, 00, 00, 00, 00, 00, 00, 00, 03, 00, 02, 99, 00, 01, 00, 10,
+      94, 67, 95, 60, 50, 50, 50, 50,
+      04, 06, 00,
+      34, 33, 00, 00, 00, 04,
+      03, 24,
+      00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      63 }; */
 };
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED
