@@ -464,7 +464,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
     // 32 voice dump
     if ( buf[3] == 9 ) {
         Cartridge received;
-        if ( received.load(buf, sz) ) {
+        if ( received.load(buf, sz) == 0 ) {
             loadCartridge(received);
             setCurrentProgram(0);
         }
