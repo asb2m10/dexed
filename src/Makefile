@@ -2,7 +2,7 @@ BUNDLE=dexed.lv2
 INSTALL_DIR=/home/pi/zynthian/zynthian-plugins/mod-lv2
 TARGET=dexed.so
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
-CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2
+CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false
 LDFLAGS=-L/usr/local/lib -llvtk_plugin2
 
 ifeq ($(ARCH),)
@@ -36,13 +36,12 @@ ifneq (,$(findstring aarch64,$(machine)))
 endif
 
 ifneq ($(findstring arm,$(ARCH)),)
-   CXXFLAGS += -DRASPI
+   CXXFLAGS += 
 endif
 
 ifeq ($(DEBUG), 1)
    CXXFLAGS += -DDEBUG $(CFLAGS)
 else
-   #CXXFLAGS += -Ofast $(CFLAGS) -DRASPI
    CXXFLAGS += -Ofast $(CFLAGS) $(CPU) $(FPU)
 endif
 
