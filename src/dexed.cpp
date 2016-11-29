@@ -372,8 +372,12 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
           for (uint32_t j=0; j < N; ++j) {
             int32_t val = audiobuf.get()[j];
-                        
+#ifndef RASPI
             val = val >> 4;
+#else
+            //val*=2;
+            val=val<<2; // hope this is an arithmetic shift!
+#endif
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
             float f = float(clip_val) / float(0x8000);
             if(f>1.0)

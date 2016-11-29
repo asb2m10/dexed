@@ -8,15 +8,42 @@ LDFLAGS=-L/usr/local/lib -llvtk_plugin2
 ifeq ($(ARCH),)
    ARCH := $(shell uname -m)
 endif
+machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 
-ifneq ($(findstring armv7,$(ARCH)),)
-   CXXFLAGS += -mfpu=neon -march=armv7-a -marm
+# Raspberry Pi B+, Zero, etc
+ifneq (,$(findstring armv6l,$(machine)))
+  CPU = -mcpu=arm1176jzf-s
+  FPU = -mfpu=vfp
+endif
+
+# Raspberry Pi 2 and 3
+ifneq (,$(findstring armv7l,$(machine)))
+  model = $(shell sh -c 'cat /sys/firmware/devicetree/base/model 2>/dev/null || echo unknown')
+ifneq (,$(findstring 3,$(model)))
+  CPU = -mcpu=cortex-a53
+  FPU = -mfpu=neon-fp-armv8
+else
+  CPU = -mcpu=cortex-a7 -mthumb
+  FPU = -mfpu=neon-vfpv4
+endif
+  FPU += -mneon-for-64bits
+endif
+
+# ARM A64
+ifneq (,$(findstring aarch64,$(machine)))
+  CPU = -mcpu=cortex-a53
+  PLATFORM += -mabi=lp64 -mcmodel=tiny
+endif
+
+ifneq ($(findstring arm,$(ARCH)),)
+   CXXFLAGS += -DRASPI
 endif
 
 ifeq ($(DEBUG), 1)
    CXXFLAGS += -DDEBUG $(CFLAGS)
 else
-   CXXFLAGS += -Ofast $(CFLAGS)
+   #CXXFLAGS += -Ofast $(CFLAGS) -DRASPI
+   CXXFLAGS += -Ofast $(CFLAGS) $(CPU) $(FPU)
 endif
 
 all: $(BUNDLE) Makefile
