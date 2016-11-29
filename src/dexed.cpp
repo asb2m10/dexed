@@ -39,7 +39,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[note].live = false;
   }
 
-  refreshVoice=false;
+  refreshVoice=true;
 
   currentNote = 0;
   controllers.values_[kControllerPitch] = 0x2000;
