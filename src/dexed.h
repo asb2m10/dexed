@@ -76,6 +76,8 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     Dexed(double rate);
     ~Dexed();
     void run(uint32_t sample_count);
+    void activate(void);
+    void deactivate(void);
     uint8_t getEngineType();
     void setEngineType(uint8_t tp);
     bool isMonoMode(void);
@@ -114,6 +116,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     uint32_t extra_buf_size_;
 
   private:
+    uint8_t _param_counter;
 };
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED

@@ -59,8 +59,6 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   add_voices(new DexedVoice(rate));
 
-  add_audio_outputs(p_audio_out);
-
   TRACE("Bye");
 }
 
@@ -85,8 +83,35 @@ Dexed::~Dexed()
   TRACE("Bye");
 }
 
+void Dexed::activate(void)
+{
+  TRACE("Hi");
+
+  refreshVoice=true;
+  set_params();
+  Plugin::activate();
+
+  add_audio_outputs(p_audio_out);
+
+  TRACE("Bye");
+}
+
+void Dexed::deactivate(void)
+{
+  TRACE("Hi");
+
+  refreshVoice=true;
+  set_params();
+  Plugin::deactivate();
+
+  TRACE("Bye");
+}
+
 void Dexed::set_params(void)
 {
+  TRACE("Hi");
+  TRACE("refreshVoice=%d",refreshVoice);
+
   // Dexed-Unisono
   if(isMonoMode()!=bool(*p(p_unisono)))
     setMonoMode(bool(*p(p_unisono)));
@@ -269,6 +294,8 @@ void Dexed::set_params(void)
   onParam(144,static_cast<char>(*p(p_transpose)));
   // 10 bytes (145-154) are the name of the patch
   onParam(155,0x3f); // operator on/off => All OPs on
+
+  TRACE("Bye");
 }
 
 // override the run() method
@@ -278,7 +305,11 @@ void Dexed::run (uint32_t sample_count)
     float* output = p(p_audio_out);
     uint32_t last_frame = 0, num_this_time = 0;
 
-    set_params(); // pre_process: copy actual voice params
+    if(++_param_counter==16)
+    {
+      set_params(); // pre_process: copy actual voice params
+      _param_counter=0;
+    }
 
     for (LV2_Atom_Event* ev = lv2_atom_sequence_begin (&seq->body);
          !lv2_atom_sequence_is_end(&seq->body, seq->atom.size, ev);
@@ -289,12 +320,10 @@ void Dexed::run (uint32_t sample_count)
        // If it's midi, send it to the engine
        if (ev->body.type == m_midi_type)
        {
-#ifdef DEBUG
          for(uint8_t i=0;i<ev->body.size;i++)
          {
            TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
          }
-#endif
 
          if(ProcessMidiMessage((uint8_t*) LV2_ATOM_BODY (&ev->body),ev->body.size)==false)
            break;
@@ -406,7 +435,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 
       for(uint8_t op=0;op<6;op++)
       {
-        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
+//        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
 
         if(voiceStatus.amp[op]<=1069)
           op_amp++;
@@ -415,7 +444,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
       if(op_amp==6)
         voices[i].live=false;
     }
-    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
+//    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
   }
 }
 
