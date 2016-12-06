@@ -5,8 +5,42 @@
 @prefix mdap: <http://moddevices.com/plugins/mda/presets#> .
 @prefix pset: <http://lv2plug.in/ns/ext/presets#> .
 @prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix modgui: <http://moddevices.com/ns/modgui#> .
 
 <https://github.com/dcoredump/dexed.lv2>
     a lv2:Plugin ;
     doap:name "Dexed";
     rdfs:seeAlso <Dexed.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2>
+    modgui:gui [
+        modgui:resourcesDirectory <modgui> ;
+        modgui:iconTemplate <modgui/icon-dexed.html> ;
+        modgui:stylesheet <modgui/stylesheet-dexed.css> ;
+        modgui:screenshot <modgui/screenshot-dexed.png> ;
+        modgui:thumbnail <modgui/thumbnail-dexed.png> ;
+        modgui:brand "dcoredump" ;
+        modgui:label "Dexed" ;
+        modgui:model "japanese" ;
+        modgui:panel "4-knobs" ;
+        modgui:color "black" ;
+        modgui:knob "racing" ;
+        modgui:port [
+            lv2:index 0 ;
+            lv2:symbol "output" ;
+            lv2:name "Output" ;
+        ] , [
+            lv2:index 1 ;
+            lv2:symbol "engine" ;
+            lv2:name "Engine" ;
+        ] , [
+            lv2:index 2 ;
+            lv2:symbol "cutoff" ;
+            lv2:name "Cutoff" ;
+        ] , [
+            lv2:index 3 ;
+            lv2:symbol "resonance" ;
+            lv2:name "Resonance" ;
+        ] ;
+    ] .
+

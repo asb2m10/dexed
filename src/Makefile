@@ -61,7 +61,7 @@ $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
 	rm -rf $(BUNDLE)
 	mkdir $(BUNDLE)
 	cp $^ $(BUNDLE)
-#	cp -R modgui $(BUNDLE)
+	cp -R modgui $(BUNDLE)
 
 dexed.so: $(OBJ) dexed.o
 	$(CXX) $(CXXFLAGS) -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so

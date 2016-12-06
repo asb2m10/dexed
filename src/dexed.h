@@ -55,7 +55,7 @@ enum DexedEngineResolution {
 class DexedVoice : public lvtk::Voice
 {
   public:
-    DexedVoice(double rate);
+    explicit DexedVoice(double rate);
     ~DexedVoice();
     void on(unsigned char key, unsigned char velocity);
     void off(unsigned char velocity);
