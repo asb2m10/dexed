@@ -8,6 +8,8 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix ui:    <http://lv2plug.in/ns/extensions/ui#>.
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#>.
+@prefix epp: <http://lv2plug.in/ns/dev/extportinfo#>.
+@prefix pprops: <http://lv2plug.in/ns/ext/port-props#>.
 
 <https://github.com/dcoredump/dexed.lv2>
     a lv2:InstrumentPlugin, lv2:Plugin ;
@@ -51,9 +53,11 @@
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 4 ;
         lv2:symbol "output" ;
-        lv2:name "Output" ;
+        lv2:name "Volume" ;
+        lv2:portProperty epp:logarithmic ;
+	lv2:portProperty pprops:logarithmic ;
         lv2:default 1.000000 ;
-        lv2:minimum 0.0 ;
+        lv2:minimum 0.1 ;
         lv2:maximum 2.0 ;
     ] ,
     [
@@ -64,7 +68,20 @@
         lv2:default 2 ;
         lv2:minimum 1 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 1 ;
+            rdfs:label "Mark I" ;
+            rdfs:comment "Engine Mark I" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "OPL" ;
+            rdfs:comment "Engine OPL" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "MSFA" ;
+            rdfs:comment "Engine MSFA" ;
+	];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
