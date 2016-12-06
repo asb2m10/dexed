@@ -66,7 +66,7 @@ $(BUNDLE): manifest.ttl Dexed.ttl dexed.so
 dexed.so: $(OBJ) dexed.o
 	$(CXX) $(CXXFLAGS) -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
 
-dexed.o: Makefile dexed.cpp dexed.peg
+dexed.o: Makefile dexed.cpp dexed.h dexed.peg
 	$(CXX) $(CXXFLAGS) -Wall -c dexed.cpp
 
 trace.o: Makefile trace.c trace.h
@@ -109,5 +109,6 @@ PluginFx.o: Makefile PluginFx.cpp
 	$(CXX) $(CXXFLAGS) -Wall -c PluginFx.cpp
 
 dexed.peg: Dexed.ttl
-	lv2peg Dexed.ttl dexed.peg
+	#lv2peg Dexed.ttl dexed.peg
+	ttl2c Dexed.ttl dexed.peg
 

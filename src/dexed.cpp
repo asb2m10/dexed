@@ -10,57 +10,18 @@
 #include "msfa/freqlut.h"
 #include "msfa/controllers.h"
 #include "PluginFx.h"
+#include <unistd.h>
 
 Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
   TRACE("Hi");
 
-  bufsize_=256;
-  outbuf_=new float[bufsize_];
-
-  Exp2::init();
-  Tanh::init();
-  Sin::init();
-
-  normalizeDxVelocity = false;
-
-  memset(&voiceStatus, 0, sizeof(VoiceStatus));
-
-  Freqlut::init(rate);
-  Lfo::init(rate);
-  PitchEnv::init(rate);
-  Env::init_sr(rate);
-  fx.init(rate);
-
-  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-    voices[note].dx7_note = new Dx7Note;
-    voices[note].keydown = false;
-    voices[note].sustained = false;
-    voices[note].live = false;
-  }
-
-  refreshVoice=true;
-
-  currentNote = 0;
-  controllers.values_[kControllerPitch] = 0x2000;
-  controllers.modwheel_cc = 0;
-  controllers.foot_cc = 0;
-  controllers.breath_cc = 0;
-  controllers.aftertouch_cc = 0;
-
-  setEngineType(DEXED_ENGINE_MARKI);
-  setMonoMode(false);
-
-  sustain = false;
-
-  lfo.reset(data + 137);
-
-  extra_buf_size_ = 0;
-
   add_voices(new DexedVoice(rate));
   //add_voices(new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate));
 
   add_audio_outputs(p_audio_out);
+
+  init(rate);
 
   TRACE("Bye");
 }
@@ -362,7 +323,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
       if ( voices[i].live )
         voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
     }
-    lfo.reset(data + 137);
+    lfo.reset(data+137);
     refreshVoice = false;
   }
 
@@ -665,6 +626,54 @@ void Dexed::panic(void) {
       voices[i].dx7_note->oscSync();
     }
   }
+}
+
+void Dexed::init(double rate)
+{
+  TRACE("Hi");
+
+  bufsize_=256;
+  outbuf_=new float[bufsize_];
+
+  Exp2::init();
+  Tanh::init();
+  Sin::init();
+
+  normalizeDxVelocity = false;
+
+  memset(&voiceStatus, 0, sizeof(VoiceStatus));
+
+  Freqlut::init(rate);
+  Lfo::init(rate);
+  PitchEnv::init(rate);
+  Env::init_sr(rate);
+  fx.init(rate);
+
+  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+    voices[note].dx7_note = new Dx7Note;
+    voices[note].keydown = false;
+    voices[note].sustained = false;
+    voices[note].live = false;
+  }
+
+  refreshVoice=true;
+
+  currentNote = 0;
+  controllers.values_[kControllerPitch] = 0x2000;
+  controllers.modwheel_cc = 0;
+  controllers.foot_cc = 0;
+  controllers.breath_cc = 0;
+  controllers.aftertouch_cc = 0;
+
+  setEngineType(DEXED_ENGINE_MARKI);
+  setMonoMode(false);
+
+  sustain = false;
+
+  lfo.reset(data+137);
+
+  extra_buf_size_ = 0;
+
 }
 
 //==============================================================================
