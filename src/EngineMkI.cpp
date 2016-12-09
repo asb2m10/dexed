@@ -76,6 +76,7 @@ static inline uint16_t sinLog(uint16_t phi) {
 }
 
 EngineMkI::EngineMkI() {
+    TRACE("Hi");
     float bitReso = SINLOG_TABLESIZE;
     
     for(int i=0;i<SINLOG_TABLESIZE;i++) {
@@ -117,6 +118,8 @@ EngineMkI::EngineMkI() {
     TRACE("SINEXTTABLE: %s", buffer);
     TRACE("****************************************");
 #endif
+
+    TRACE("Bye");
 }
 
 inline int32_t mkiSin(int32_t phase, uint16_t env) {

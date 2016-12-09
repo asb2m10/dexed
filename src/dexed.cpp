@@ -76,7 +76,7 @@ void Dexed::set_params(void)
     setMonoMode(bool(*p(p_unisono)));
 
   // Dexed-Engine
-  if(getEngineType()!=uint8_t(*p(p_engine))-1)
+  if(controllers.core==NULL || getEngineType()!=uint8_t(*p(p_engine))-1)
   {
     setEngineType(uint8_t(*p(p_engine))-1);
     refreshVoice=true;
@@ -665,7 +665,7 @@ void Dexed::init(double rate)
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
 
-  setEngineType(DEXED_ENGINE_MARKI);
+  //setEngineType(DEXED_ENGINE_MARKI);
   setMonoMode(false);
 
   sustain = false;

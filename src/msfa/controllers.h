@@ -119,7 +119,7 @@ public:
         TRACE("amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
     
-    FmCore *core;
+    FmCore *core=NULL;
 };
 
 #endif  // __CONTROLLERS_H
