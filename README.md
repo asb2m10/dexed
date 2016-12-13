@@ -17,6 +17,12 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.3
+
+* Fix LFO delay issue issues upon large values
+* Fix for receiving sysex cartridge. thanks @Sentinel77
+* Fix for breakpoint levels. thanks @Sentinel77
+
 #### Version 0.9.2
 * Mark I engine is now the default engine
 * Added operator mute switch
