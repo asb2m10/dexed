@@ -113,8 +113,9 @@ public:
         applyMod(foot_cc, foot);
         applyMod(aftertouch_cc, at);
         
-        if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
+/*        if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
             eg_mod = 127;
+ */
         
         TRACE("amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
