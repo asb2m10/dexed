@@ -57,7 +57,7 @@ install: $(BUNDLE)
 	rm -rf ${HOME}/.lv2/$(BUNDLE)
 	cp -R $(BUNDLE) $(INSTALL_DIR)
 
-$(BUNDLE): manifest.ttl Dexed.ttl dexed.so
+$(BUNDLE): manifest.ttl Dexed.ttl presets.ttl dexed.so
 	rm -rf $(BUNDLE)
 	mkdir $(BUNDLE)
 	cp $^ $(BUNDLE)

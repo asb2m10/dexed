@@ -1,5 +1,7 @@
 add https://github.com/dcoredump/dexed.lv2 0
 add http://gareus.org/oss/lv2/stepseq#s8n8 1
+add http://gareus.org/oss/lv2/modmeter 2
+connect effect_0:audio_out effect_2:in
 connect effect_1:midiout effect_0:midi_in
 connect effect_0:audio_out system:playback_1
 connect effect_0:audio_out system:playback_2

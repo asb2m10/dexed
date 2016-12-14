@@ -76,9 +76,9 @@ void Dexed::set_params(void)
     setMonoMode(bool(*p(p_unisono)));
 
   // Dexed-Engine
-  if(controllers.core==NULL || getEngineType()!=uint8_t(*p(p_engine))-1)
+  if(controllers.core==NULL || getEngineType()!=uint8_t(*p(p_engine)))
   {
-    setEngineType(uint8_t(*p(p_engine))-1);
+    setEngineType(uint8_t(*p(p_engine)));
     refreshVoice=true;
   }
 
@@ -360,7 +360,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
             int32_t val = audiobuf.get()[j];
             val = val >> 4;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-            float f = float(clip_val) / float(0x8000);
+            float f = static_cast<float>(clip_val) / float(0x8000);
             if(f>1.0)
               f=1.0;
             if(f<-1.0)
@@ -413,9 +413,11 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
     switch(cmd & 0xf0) {
         case 0x80 :
             keyup(buf[1]);
+            return;
             break;
         case 0x90 :
             keydown(buf[1], buf[2]);
+            return;
             break;
         case 0xb0 : {
             uint8_t ctrl = buf[1];
@@ -425,14 +427,17 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
                 case 1:
                     controllers.modwheel_cc = value;
                     controllers.refresh();
+                    return;
                     break;
                 case 2:
                     controllers.breath_cc = value;
                     controllers.refresh();
+                    return;
                     break;
                 case 4:
                     controllers.foot_cc = value;
                     controllers.refresh();
+                    return;
                     break;
                 case 64:
                     sustain = value > 63;
@@ -444,6 +449,7 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
                             }
                         }
                     }
+                    return;
                     break;
             }
             break;
@@ -451,18 +457,21 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
 
         case 0xc0 :
             //setCurrentProgram(buf[1]);
+            return;
             break;
         // aftertouch
         case 0xd0 :
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
+            return;
             break;
     }
 
     switch (cmd) {
         case 0xe0 :
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-        break;
+            return;
+            break;
     }
 
     TRACE("MIDI event unknown: cmd=%d, val1=%d, val2=%d",buf[0],buf[1],buf[2]);
@@ -592,14 +601,17 @@ void Dexed::setEngineType(uint8_t tp) {
     panic();
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
+            TRACE("DEXED_ENGINE_MARKI:%d",DEXED_ENGINE_MARKI);
             controllers.core = &engineMkI;
             feedback_bitdepth = 11;
             break;
         case DEXED_ENGINE_OPL:
+            TRACE("DEXED_ENGINE_OPL:%d",DEXED_ENGINE_OPL);
             controllers.core = &engineOpl;
             feedback_bitdepth = 11;
             break;
         default:
+            TRACE("DEXED_ENGINE_MODERN:%d",DEXED_ENGINE_MODERN);
             controllers.core = &engineMsfa;
             feedback_bitdepth = 8;
             break;
@@ -665,7 +677,9 @@ void Dexed::init(double rate)
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
 
-  //setEngineType(DEXED_ENGINE_MARKI);
+  engineType=0xff;
+
+  setEngineType(DEXED_ENGINE_MARKI);
   setMonoMode(false);
 
   sustain = false;

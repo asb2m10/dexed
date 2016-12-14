@@ -10,6 +10,7 @@
 @prefix urid:  <http://lv2plug.in/ns/ext/urid#>.
 @prefix epp: <http://lv2plug.in/ns/dev/extportinfo#>.
 @prefix pprops: <http://lv2plug.in/ns/ext/port-props#>.
+@prefix pset: <http://lv2plug.in/ns/ext/presets#> .
 
 <https://github.com/dcoredump/dexed.lv2>
     a lv2:InstrumentPlugin, lv2:Plugin ;
@@ -66,8 +67,8 @@
         lv2:symbol "engine" ;
         lv2:name "ENGINE" ;
         lv2:default 1 ;
-        lv2:minimum 1 ;
-        lv2:maximum 3 ;
+        lv2:minimum 0 ;
+        lv2:maximum 2 ;
 	lv2:portProperty lv2:enumeration, lv2:integer ;
         lv2:scalePoint [
             rdf:value 1 ;
@@ -78,7 +79,7 @@
             rdfs:label "OPL" ;
             rdfs:comment "Engine OPL" ;
         ], [
-            rdf:value 3 ;
+            rdf:value 0 ;
             rdfs:label "MSFA" ;
             rdfs:comment "Engine MSFA" ;
 	];
@@ -1547,3 +1548,162 @@
     doap:name "Dexed" ;
     doap:maintainer [ foaf:name "dcoredump" ] .
 
+<https://github.com/dcoredump/dexed.lv2/presets#BRASS____1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#BRASS____2>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#BRASS___3>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#STRINGS_1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#STRINGS_2>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#STRINGS_3>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#ORCHESTRA>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#PIANO___1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#PIANO___2>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#PIANO___3>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#E.PIANO_1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#GUITAR__1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#GUITAR__2>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#SYN_LEAD_1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#BASS____1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#BASS____2>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#E.ORGAN_1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#PIPES___1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#HARPSICH_1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#CLAV____1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#VIBE____1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#MARIMBA>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#KOTO>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#FLUTE___1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#ORCH_CHIME>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#TUB_BELLS>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#STEEL_DRUM>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#TIMPANI>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#REFS_WHISL>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#VOICE___1>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#TRAIN>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
+
+<https://github.com/dcoredump/dexed.lv2/presets#TAKE_OFF>
+    a pset:Preset ;
+    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
+    rdfs:seeAlso <presets.ttl> .
