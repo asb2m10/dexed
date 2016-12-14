@@ -144,7 +144,7 @@ void DexedAudioProcessorEditor::loadCart(File file) {
 void DexedAudioProcessorEditor::saveCart() {
     File startFileName = processor->activeFileCartridge.exists() ? processor->activeFileCartridge : processor->dexedCartDir;
 
-    FileChooser fc ("Export DX sysex...", processor->dexedCartDir, "*.syx", 1);
+    FileChooser fc ("Export DX sysex...", processor->dexedCartDir, "*.syx;*.SYX", 1);
     if ( fc.browseForFileToSave(true) ) {
         if ( ! processor->currentCart.saveVoice(fc.getResults().getReference(0)) ) {
             AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
@@ -289,7 +289,7 @@ void DexedAudioProcessorEditor::storeProgram() {
                     delete externalFile;
 
                 externalFile = new File(fc.getResults().getReference(0));
-                if ( destSysex.load(*externalFile) )
+                if ( destSysex.load(*externalFile) == 0 )
                     continue;
                 AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Read error", "Unable to read file");
             }
@@ -315,8 +315,8 @@ void DexedAudioProcessorEditor::storeProgram() {
                 int action = dialog.getComboBoxComponent("SaveAction")->getSelectedItemIndex();
                 if ( action > 0 ) {                  
                     File destination = processor->activeFileCartridge;
-                    if ( ! destination.exists() ) {
-                        FileChooser fc("Destination Sysex", processor->dexedCartDir, "*.syx", 1);
+                    if ( action == 1 ) {
+                        FileChooser fc("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX", 1);
                         if ( ! fc.browseForFileToSave(true) )
                             break;
                         destination = fc.getResult();
