@@ -93,6 +93,7 @@ void Dexed::set_params(void)
     fx.uiReso=*p(p_resonance);
     refreshVoice=true;
   }
+  fx.uiGain=1.0;
   if(fx.uiGain!=*p(p_output))
   {
     fx.uiGain=*p(p_output);
@@ -662,6 +663,10 @@ void Dexed::init(double rate)
   PitchEnv::init(rate);
   Env::init_sr(rate);
   fx.init(rate);
+
+  fx.uiCutoff=1.0;
+  fx.uiReso=0.0;
+  fx.uiGain=1.0;
 
   for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
     voices[note].dx7_note = new Dx7Note;
