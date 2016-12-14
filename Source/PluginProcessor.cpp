@@ -302,6 +302,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                         }
                     }
                     break;
+                case 123:
+                    panic();
+                    break;
             }
         }
         return;
