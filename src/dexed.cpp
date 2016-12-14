@@ -16,12 +16,11 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
   TRACE("Hi");
 
-  add_voices(new DexedVoice(rate));
-  //add_voices(new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate),new DexedVoice(rate));
+  //add_voices(new DexedVoice(rate));
 
   add_audio_outputs(p_audio_out);
 
-  init(rate);
+  _rate=rate;
 
   TRACE("Bye");
 }
@@ -52,6 +51,7 @@ void Dexed::activate(void)
   TRACE("Hi");
 
   Plugin::activate();
+  init(_rate);
   set_params();
   refreshVoice=true;
 
@@ -651,6 +651,8 @@ void Dexed::init(double rate)
   Tanh::init();
   Sin::init();
 
+  add_voices(new DexedVoice(rate));
+
   normalizeDxVelocity = false;
 
   memset(&voiceStatus, 0, sizeof(VoiceStatus));
@@ -687,6 +689,8 @@ void Dexed::init(double rate)
   lfo.reset(data+137);
 
   extra_buf_size_ = 0;
+
+  _rate=rate;
 
 }
 

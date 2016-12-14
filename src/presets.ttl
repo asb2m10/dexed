@@ -17,7 +17,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -473,7 +473,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -929,7 +929,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -1385,7 +1385,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -1841,7 +1841,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -2297,7 +2297,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -2753,7 +2753,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -3209,7 +3209,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -3665,7 +3665,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -4121,7 +4121,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -4577,7 +4577,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -5033,7 +5033,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -5489,7 +5489,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -5945,7 +5945,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -6401,7 +6401,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -6857,7 +6857,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -7313,7 +7313,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -7769,7 +7769,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -8225,7 +8225,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -8681,7 +8681,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -9137,7 +9137,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -9593,7 +9593,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -10049,7 +10049,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -10505,7 +10505,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -10961,7 +10961,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -11417,7 +11417,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -11873,7 +11873,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -12329,7 +12329,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -12785,7 +12785,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -13241,7 +13241,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -13697,7 +13697,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
@@ -14153,7 +14153,7 @@
                 pset:value 1.0
         ] , [
                 lv2:symbol "engine" ;
-                pset:value 2.0
+                pset:value 1.0
         ] , [
                 lv2:symbol "unisono" ;
                 pset:value 0.0
