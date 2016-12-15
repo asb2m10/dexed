@@ -1,10 +1,11 @@
 // from: http://ll-plugins.nongnu.org/lv2pftci/#A_synth
 
 #include <lvtk/synth.hpp>
-#include "dexed.peg"
 #include "dexed.h"
+#include "dexed_ttl.h"
 #include "EngineMkI.h"
 #include "EngineOpl.h"
+#include "msfa/fm_core.h"
 #include "msfa/exp2.h"
 #include "msfa/sin.h"
 #include "msfa/freqlut.h"
@@ -16,11 +17,55 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
   TRACE("Hi");
 
+  engineMkI=new EngineMkI;
+  engineOpl=new EngineOpl;
+  engineMsfa=new FmCore;
+
+  Exp2::init();
+  Tanh::init();
+  Sin::init();
+
+  Freqlut::init(rate);
+  Lfo::init(rate);
+  PitchEnv::init(rate);
+  Env::init_sr(rate);
+  fx.init(rate);
+
+  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
+    voices[note].dx7_note = new Dx7Note;
+    voices[note].keydown = false;
+    voices[note].sustained = false;
+    voices[note].live = false;
+  }
+
+  currentNote = 0;
+  controllers.values_[kControllerPitch] = 0x2000;
+  controllers.modwheel_cc = 0;
+  controllers.foot_cc = 0;
+  controllers.breath_cc = 0;
+  controllers.aftertouch_cc = 0;
+
+  bufsize_=256;
+
+  outbuf_=new float[bufsize_];
+
+  lfo.reset(data+137);
+
+  normalizeDxVelocity = false;
+
+  setMonoMode(false);
+
+  sustain = false;
+
+  extra_buf_size_ = 0;
+
+  memset(&voiceStatus, 0, sizeof(VoiceStatus));
+
+  engineType=0xff;
+  setEngineType(DEXED_ENGINE_MARKI);
+
   //add_voices(new DexedVoice(rate));
-
   add_audio_outputs(p_audio_out);
-
-  _rate=rate;
 
   TRACE("Bye");
 }
@@ -51,7 +96,7 @@ void Dexed::activate(void)
   TRACE("Hi");
 
   Plugin::activate();
-  init(_rate);
+
   set_params();
   refreshVoice=true;
 
@@ -71,32 +116,37 @@ void Dexed::set_params(void)
 {
   TRACE("Hi");
 
+  bool unisono=bool(*p(p_unisono));
+  uint8_t engine=uint8_t(*p(p_engine));
+  float f_gain=*p(p_output);
+  float f_cutoff=*p(p_cutoff);
+  float f_reso=*p(p_resonance);
+
   // Dexed-Unisono
-  if(isMonoMode()!=bool(*p(p_unisono)))
-    setMonoMode(bool(*p(p_unisono)));
+  if(isMonoMode()!=unisono)
+    setMonoMode(unisono);
 
   // Dexed-Engine
-  if(controllers.core==NULL || getEngineType()!=uint8_t(*p(p_engine)))
+  if(controllers.core==NULL || getEngineType()!=engine)
   {
-    setEngineType(uint8_t(*p(p_engine)));
+    setEngineType(engine);
     refreshVoice=true;
   }
 
   // Dexed-Filter
-  if(fx.uiCutoff!=*p(p_cutoff))
+  if(fx.uiCutoff!=f_cutoff)
   {
-    fx.uiCutoff=*p(p_cutoff);
+    fx.uiCutoff=f_cutoff;
     refreshVoice=true;
   }
-  if(fx.uiReso!=*p(p_resonance))
+  if(fx.uiReso!=f_reso)
   {
-    fx.uiReso=*p(p_resonance);
+    fx.uiReso=f_reso;
     refreshVoice=true;
   }
-  fx.uiGain=1.0;
-  if(fx.uiGain!=*p(p_output))
+  if(fx.uiGain!=f_gain)
   {
-    fx.uiGain=*p(p_output);
+    fx.uiGain=f_gain;
     refreshVoice=true;
   }
 
@@ -603,17 +653,17 @@ void Dexed::setEngineType(uint8_t tp) {
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             TRACE("DEXED_ENGINE_MARKI:%d",DEXED_ENGINE_MARKI);
-            controllers.core = &engineMkI;
+            controllers.core = engineMkI;
             feedback_bitdepth = 11;
             break;
         case DEXED_ENGINE_OPL:
             TRACE("DEXED_ENGINE_OPL:%d",DEXED_ENGINE_OPL);
-            controllers.core = &engineOpl;
+            controllers.core = engineOpl;
             feedback_bitdepth = 11;
             break;
         default:
             TRACE("DEXED_ENGINE_MODERN:%d",DEXED_ENGINE_MODERN);
-            controllers.core = &engineMsfa;
+            controllers.core = engineMsfa;
             feedback_bitdepth = 8;
             break;
     }
@@ -639,64 +689,6 @@ void Dexed::panic(void) {
       voices[i].dx7_note->oscSync();
     }
   }
-}
-
-void Dexed::init(double rate)
-{
-  TRACE("Hi");
-
-  bufsize_=256;
-  outbuf_=new float[bufsize_];
-
-  Exp2::init();
-  Tanh::init();
-  Sin::init();
-
-  add_voices(new DexedVoice(rate));
-
-  normalizeDxVelocity = false;
-
-  memset(&voiceStatus, 0, sizeof(VoiceStatus));
-
-  Freqlut::init(rate);
-  Lfo::init(rate);
-  PitchEnv::init(rate);
-  Env::init_sr(rate);
-  fx.init(rate);
-
-  fx.uiCutoff=1.0;
-  fx.uiReso=0.0;
-  fx.uiGain=1.0;
-
-  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-    voices[note].dx7_note = new Dx7Note;
-    voices[note].keydown = false;
-    voices[note].sustained = false;
-    voices[note].live = false;
-  }
-
-  refreshVoice=true;
-
-  currentNote = 0;
-  controllers.values_[kControllerPitch] = 0x2000;
-  controllers.modwheel_cc = 0;
-  controllers.foot_cc = 0;
-  controllers.breath_cc = 0;
-  controllers.aftertouch_cc = 0;
-
-  engineType=0xff;
-
-  setEngineType(DEXED_ENGINE_MARKI);
-  setMonoMode(false);
-
-  sustain = false;
-
-  lfo.reset(data+137);
-
-  extra_buf_size_ = 0;
-
-  _rate=rate;
-
 }
 
 //==============================================================================

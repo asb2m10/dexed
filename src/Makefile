@@ -48,7 +48,7 @@ endif
 all: $(BUNDLE) Makefile
 
 clean: Makefile
-	rm -f *.o *~ *.bak *.gch dexed.peg *.so *.gch msfa/*.gch
+	rm -f *.o *~ *.bak *.gch dexed_ttl.h *.so *.gch msfa/*.gch
 	rm -rf $(BUNDLE)
 
 install: $(BUNDLE)
@@ -66,7 +66,7 @@ $(BUNDLE): manifest.ttl Dexed.ttl modgui.ttl presets.ttl dexed.so
 dexed.so: $(OBJ) dexed.o
 	$(CXX) $(CXXFLAGS) -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
 
-dexed.o: Makefile dexed.cpp dexed.h dexed.peg
+dexed.o: Makefile dexed.cpp dexed.h dexed_ttl.h
 	$(CXX) $(CXXFLAGS) -Wall -c dexed.cpp
 
 trace.o: Makefile trace.c trace.h
@@ -108,7 +108,6 @@ EngineOpl.o: Makefile EngineOpl.cpp
 PluginFx.o: Makefile PluginFx.cpp
 	$(CXX) $(CXXFLAGS) -Wall -c PluginFx.cpp
 
-dexed.peg: Dexed.ttl
-	#lv2peg Dexed.ttl dexed.peg
-	ttl2c Dexed.ttl dexed.peg
+dexed_ttl.h: Dexed.ttl
+	ttl2c Dexed.ttl dexed_ttl.h
 

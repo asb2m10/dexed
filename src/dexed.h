@@ -29,7 +29,7 @@
 #include "PluginFx.h"
 #include "EngineMkI.h"
 #include "EngineOpl.h"
-#include "dexed.peg"
+#include "dexed_ttl.h"
 #ifdef DEBUG
 #include "trace.h"
 #endif
@@ -94,7 +94,6 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     void keyup(uint8_t pitch);
     void keydown(uint8_t pitch, uint8_t velo);
     void panic(void);
-    void init(double rate);
 
     static const uint8_t MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
@@ -107,9 +106,9 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     uint8_t feedback_bitdepth;
     PluginFx fx;
     Lfo lfo;
-    FmCore engineMsfa;
-    EngineMkI engineMkI;
-    EngineOpl engineOpl;
+    FmCore* engineMsfa;
+    EngineMkI* engineMkI;
+    EngineOpl* engineOpl;
     float* outbuf_;
     uint32_t bufsize_;
     float extra_buf_[N];
