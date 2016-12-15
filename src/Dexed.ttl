@@ -182,7 +182,32 @@
         lv2:default 4 ;
         lv2:minimum 0 ;
         lv2:maximum 5 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Triangle" ;
+            rdfs:comment "Triangle" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Saw-Down" ;
+            rdfs:comment "Saw-Down" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "Saw-Up" ;
+            rdfs:comment "Saw-Up" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "Square" ;
+            rdfs:comment "Square" ;
+        ], [
+            rdf:value 4 ;
+            rdfs:label "Sine" ;
+            rdfs:comment "Sine" ;
+        ], [
+            rdf:value 6 ;
+            rdfs:label "Sample & Hold" ;
+            rdfs:comment "Sample & Hold" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -382,7 +407,16 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 1 ;
-	lv2:portProperty lv2:toggled, lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Ratio" ;
+            rdfs:comment "Ratio" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Fixed" ;
+            rdfs:comment "Fixed" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -452,7 +486,24 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -462,7 +513,24 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -592,7 +660,16 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 1 ;
-	lv2:portProperty lv2:toggled, lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Ratio" ;
+            rdfs:comment "Ratio" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Fixed" ;
+            rdfs:comment "Fixed" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -658,21 +735,55 @@
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 63 ;
         lv2:symbol "op2_kbd_lev_scl_lft_curve" ;
-        lv2:name "OP2 L KEY SCALE" ;
+        lv2:name "OP2 L KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 64 ;
         lv2:symbol "op2_kbd_lev_scl_rht_curve" ;
-        lv2:name "OP2 R KEY SCALE" ;
+        lv2:name "OP2 R KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -802,7 +913,16 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 1 ;
-	lv2:portProperty lv2:toggled, lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Ratio" ;
+            rdfs:comment "Ratio" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Fixed" ;
+            rdfs:comment "Fixed" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -868,21 +988,55 @@
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 84 ;
         lv2:symbol "op3_kbd_lev_scl_lft_curve" ;
-        lv2:name "OP3 L KEY SCALE" ;
+        lv2:name "OP3 L KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 85 ;
         lv2:symbol "op3_kbd_lev_scl_rht_curve" ;
-        lv2:name "OP3 R KEY SCALE" ;
+        lv2:name "OP3 R KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -1012,7 +1166,16 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 1 ;
-	lv2:portProperty lv2:toggled, lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Ratio" ;
+            rdfs:comment "Ratio" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Fixed" ;
+            rdfs:comment "Fixed" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -1078,21 +1241,55 @@
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 105 ;
         lv2:symbol "op4_kbd_lev_scl_lft_curve" ;
-        lv2:name "OP4 L KEY SCALE" ;
+        lv2:name "OP4 L KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
-        lv2:maximum 99 ;
-	lv2:portProperty lv2:integer ;
+        lv2:maximum 3 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 106 ;
         lv2:symbol "op4_kbd_lev_scl_rht_curve" ;
-        lv2:name "OP4 R KEY SCALE" ;
+        lv2:name "OP4 R KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
-        lv2:maximum 99 ;
-	lv2:portProperty lv2:integer ;
+        lv2:maximum 3 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -1222,7 +1419,16 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 1 ;
-	lv2:portProperty lv2:toggled, lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Ratio" ;
+            rdfs:comment "Ratio" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Fixed" ;
+            rdfs:comment "Fixed" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -1288,21 +1494,55 @@
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 126 ;
         lv2:symbol "op5_kbd_lev_scl_lft_curve" ;
-        lv2:name "OP5 L KEY SCALE" ;
+        lv2:name "OP5 L KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 127 ;
         lv2:symbol "op5_kbd_lev_scl_rht_curve" ;
-        lv2:name "OP5 R KEY SCALE" ;
+        lv2:name "OP5 R KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -1432,7 +1672,16 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 1 ;
-	lv2:portProperty lv2:toggled, lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Ratio" ;
+            rdfs:comment "Ratio" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Fixed" ;
+            rdfs:comment "Fixed" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -1498,21 +1747,55 @@
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 147 ;
         lv2:symbol "op6_kbd_lev_scl_lft_curve" ;
-        lv2:name "OP6 L KEY SCALE" ;
+        lv2:name "OP6 L KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 148 ;
         lv2:symbol "op6_kbd_lev_scl_rht_curve" ;
-        lv2:name "OP6 R KEY SCALE" ;
+        lv2:name "OP6 R KEY CURVE" ;
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 3 ;
-	lv2:portProperty lv2:integer ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "-LIN" ;
+            rdfs:comment "-LIN" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "-EXP" ;
+            rdfs:comment "-EXP" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "+EXP" ;
+            rdfs:comment "+EXP" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "+LIN" ;
+            rdfs:comment "+LIN" ;
+        ];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
