@@ -18,6 +18,7 @@
 #define __CONTROLLERS_H
 
 #include "synth.h"
+#include "../Dexed.h"
 #include <stdio.h>
 #include <string.h>
 #include "trace.h"
@@ -113,14 +114,14 @@ public:
         applyMod(foot_cc, foot);
         applyMod(aftertouch_cc, at);
         
-        if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
+/*        if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
             eg_mod = 127;
+ */
         
         TRACE("amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
     
-    FmCore *core=NULL;
+    FmCore *core;
 };
 
 #endif  // __CONTROLLERS_H
-

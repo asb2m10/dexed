@@ -211,8 +211,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     uint32_t amd_mod = max(amod_1, amod_2);
     
     // ==== EG AMP MOD ====
-    uint32_t amod_3 = (ctrls->eg_mod+1) << 16;
-    amd_mod = max((1<<23) - amod_3, amd_mod);
+    uint32_t amod_3 = (ctrls->eg_mod+1) << 17;
+    amd_mod = max((1<<24) - amod_3, amd_mod);
     
     // ==== OP RENDER ====
     for (int op = 0; op < 6; op++) {
