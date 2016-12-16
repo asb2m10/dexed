@@ -64,7 +64,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   engineType=0xff;
   setEngineType(DEXED_ENGINE_MARKI);
 
-  //add_voices(new DexedVoice(rate));
+  add_voices(new DexedVoice(rate));
+
   add_audio_outputs(p_audio_out);
 
   TRACE("Bye");
@@ -314,6 +315,8 @@ void Dexed::run (uint32_t sample_count)
     const LV2_Atom_Sequence* seq = p<LV2_Atom_Sequence> (p_midi_in);
     float* output = p(p_audio_out);
     uint32_t last_frame = 0, num_this_time = 0;
+
+    Plugin::run(sample_count);
 
     if(++_param_counter==16)
     {

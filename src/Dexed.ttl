@@ -59,7 +59,7 @@
 	lv2:portProperty pprops:logarithmic ;
         lv2:default 1.000000 ;
         lv2:minimum 0.1 ;
-        lv2:maximum 2.0 ;
+        lv2:maximum 10.0 ;
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;

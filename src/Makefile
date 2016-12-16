@@ -40,9 +40,14 @@ ifneq ($(findstring arm,$(ARCH)),)
 endif
 
 ifeq ($(DEBUG), 1)
-   CXXFLAGS += -DDEBUG $(CFLAGS)
+   ifeq ($(FILETRACE), 1)
+      CXXFLAGS += -DDEBUG -DFILETRACE $(CFLAGS) -D PATCH_DEBUG
+   else
+      CXXFLAGS += -DDEBUG $(CFLAGS)
+   endif
 else
-   CXXFLAGS += -Ofast $(CFLAGS) $(CPU) $(FPU)
+   #CXXFLAGS += -Ofast $(CFLAGS) $(CPU) $(FPU)
+   CXXFLAGS += $(CFLAGS) -O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
 endif
 
 all: $(BUNDLE) Makefile
