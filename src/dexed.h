@@ -90,7 +90,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
 
   protected:
     void ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size);
-    void onParam(uint8_t param_num,uint8_t param_val);
+    void onParam(uint8_t param_num,float param_val);
     void keyup(uint8_t pitch);
     void keydown(uint8_t pitch, uint8_t velo);
     void panic(void);
@@ -116,6 +116,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
 
   private:
     uint8_t _param_counter;
+    float data_float[156];
     uint8_t data[156];
     double _rate;
 /*    uint8_t data[156]={
