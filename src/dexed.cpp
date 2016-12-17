@@ -115,7 +115,7 @@ void Dexed::deactivate(void)
 
 void Dexed::set_params(void)
 {
-  TRACE("Hi");
+  //TRACE("Hi");
 
   bool unisono=bool(*p(p_unisono));
   uint8_t engine=uint8_t(*p(p_engine));
@@ -152,161 +152,161 @@ void Dexed::set_params(void)
   }
 
   // OP6
-  onParam(0,static_cast<char>(*p(p_op6_eg_rate_1)));
-  onParam(1,static_cast<char>(*p(p_op6_eg_rate_2)));
-  onParam(2,static_cast<char>(*p(p_op6_eg_rate_3)));
-  onParam(3,static_cast<char>(*p(p_op6_eg_rate_4)));
-  onParam(4,static_cast<char>(*p(p_op6_eg_level_1)));
-  onParam(5,static_cast<char>(*p(p_op6_eg_level_2)));
-  onParam(6,static_cast<char>(*p(p_op6_eg_level_3)));
-  onParam(7,static_cast<char>(*p(p_op6_eg_level_4)));
-  onParam(8,static_cast<char>(*p(p_op6_kbd_lev_scl_brk_pt)));
-  onParam(9,static_cast<char>(*p(p_op6_kbd_lev_scl_lft_depth)));
-  onParam(10,static_cast<char>(*p(p_op6_kbd_lev_scl_rht_depth)));
-  onParam(11,static_cast<char>(*p(p_op6_kbd_lev_scl_lft_curve)));
-  onParam(12,static_cast<char>(*p(p_op6_kbd_lev_scl_rht_curve)));
-  onParam(13,static_cast<char>(*p(p_op6_kbd_rate_scaling)));
-  onParam(14,static_cast<char>(*p(p_op6_amp_mod_sensitivity)));
-  onParam(15,static_cast<char>(*p(p_op6_key_vel_sensitivity)));
-  onParam(16,static_cast<char>(*p(p_op6_operator_output_level)));
-  onParam(17,static_cast<char>(*p(p_op6_osc_mode)));
-  onParam(18,static_cast<char>(*p(p_op6_osc_freq_coarse)));
-  onParam(19,static_cast<char>(*p(p_op6_osc_freq_fine)));
-  onParam(20,static_cast<char>(*p(p_op6_osc_detune)+7));
+  onParam(0,static_cast<uint8_t>(*p(p_op6_eg_rate_1)));
+  onParam(1,static_cast<uint8_t>(*p(p_op6_eg_rate_2)));
+  onParam(2,static_cast<uint8_t>(*p(p_op6_eg_rate_3)));
+  onParam(3,static_cast<uint8_t>(*p(p_op6_eg_rate_4)));
+  onParam(4,static_cast<uint8_t>(*p(p_op6_eg_level_1)));
+  onParam(5,static_cast<uint8_t>(*p(p_op6_eg_level_2)));
+  onParam(6,static_cast<uint8_t>(*p(p_op6_eg_level_3)));
+  onParam(7,static_cast<uint8_t>(*p(p_op6_eg_level_4)));
+  onParam(8,static_cast<uint8_t>(*p(p_op6_kbd_lev_scl_brk_pt)));
+  onParam(9,static_cast<uint8_t>(*p(p_op6_kbd_lev_scl_lft_depth)));
+  onParam(10,static_cast<uint8_t>(*p(p_op6_kbd_lev_scl_rht_depth)));
+  onParam(11,static_cast<uint8_t>(*p(p_op6_kbd_lev_scl_lft_curve)));
+  onParam(12,static_cast<uint8_t>(*p(p_op6_kbd_lev_scl_rht_curve)));
+  onParam(13,static_cast<uint8_t>(*p(p_op6_kbd_rate_scaling)));
+  onParam(14,static_cast<uint8_t>(*p(p_op6_amp_mod_sensitivity)));
+  onParam(15,static_cast<uint8_t>(*p(p_op6_key_vel_sensitivity)));
+  onParam(16,static_cast<uint8_t>(*p(p_op6_operator_output_level)));
+  onParam(17,static_cast<uint8_t>(*p(p_op6_osc_mode)));
+  onParam(18,static_cast<uint8_t>(*p(p_op6_osc_freq_coarse)));
+  onParam(19,static_cast<uint8_t>(*p(p_op6_osc_freq_fine)));
+  onParam(20,static_cast<uint8_t>(*p(p_op6_osc_detune)+7));
   // OP5
-  onParam(21,static_cast<char>(*p(p_op5_eg_rate_1)));
-  onParam(22,static_cast<char>(*p(p_op5_eg_rate_2)));
-  onParam(23,static_cast<char>(*p(p_op5_eg_rate_3)));
-  onParam(24,static_cast<char>(*p(p_op5_eg_rate_4)));
-  onParam(25,static_cast<char>(*p(p_op5_eg_level_1)));
-  onParam(26,static_cast<char>(*p(p_op5_eg_level_2)));
-  onParam(27,static_cast<char>(*p(p_op5_eg_level_3)));
-  onParam(28,static_cast<char>(*p(p_op5_eg_level_4)));
-  onParam(29,static_cast<char>(*p(p_op5_kbd_lev_scl_brk_pt)));
-  onParam(30,static_cast<char>(*p(p_op5_kbd_lev_scl_lft_depth)));
-  onParam(31,static_cast<char>(*p(p_op5_kbd_lev_scl_rht_depth)));
-  onParam(32,static_cast<char>(*p(p_op5_kbd_lev_scl_lft_curve)));
-  onParam(33,static_cast<char>(*p(p_op5_kbd_lev_scl_rht_curve)));
-  onParam(34,static_cast<char>(*p(p_op5_kbd_rate_scaling)));
-  onParam(35,static_cast<char>(*p(p_op5_amp_mod_sensitivity)));
-  onParam(36,static_cast<char>(*p(p_op5_key_vel_sensitivity)));
-  onParam(37,static_cast<char>(*p(p_op5_operator_output_level)));
-  onParam(38,static_cast<char>(*p(p_op5_osc_mode)));
-  onParam(39,static_cast<char>(*p(p_op5_osc_freq_coarse)));
-  onParam(40,static_cast<char>(*p(p_op5_osc_freq_fine)));
-  onParam(41,static_cast<char>(*p(p_op5_osc_detune)+7));
+  onParam(21,static_cast<uint8_t>(*p(p_op5_eg_rate_1)));
+  onParam(22,static_cast<uint8_t>(*p(p_op5_eg_rate_2)));
+  onParam(23,static_cast<uint8_t>(*p(p_op5_eg_rate_3)));
+  onParam(24,static_cast<uint8_t>(*p(p_op5_eg_rate_4)));
+  onParam(25,static_cast<uint8_t>(*p(p_op5_eg_level_1)));
+  onParam(26,static_cast<uint8_t>(*p(p_op5_eg_level_2)));
+  onParam(27,static_cast<uint8_t>(*p(p_op5_eg_level_3)));
+  onParam(28,static_cast<uint8_t>(*p(p_op5_eg_level_4)));
+  onParam(29,static_cast<uint8_t>(*p(p_op5_kbd_lev_scl_brk_pt)));
+  onParam(30,static_cast<uint8_t>(*p(p_op5_kbd_lev_scl_lft_depth)));
+  onParam(31,static_cast<uint8_t>(*p(p_op5_kbd_lev_scl_rht_depth)));
+  onParam(32,static_cast<uint8_t>(*p(p_op5_kbd_lev_scl_lft_curve)));
+  onParam(33,static_cast<uint8_t>(*p(p_op5_kbd_lev_scl_rht_curve)));
+  onParam(34,static_cast<uint8_t>(*p(p_op5_kbd_rate_scaling)));
+  onParam(35,static_cast<uint8_t>(*p(p_op5_amp_mod_sensitivity)));
+  onParam(36,static_cast<uint8_t>(*p(p_op5_key_vel_sensitivity)));
+  onParam(37,static_cast<uint8_t>(*p(p_op5_operator_output_level)));
+  onParam(38,static_cast<uint8_t>(*p(p_op5_osc_mode)));
+  onParam(39,static_cast<uint8_t>(*p(p_op5_osc_freq_coarse)));
+  onParam(40,static_cast<uint8_t>(*p(p_op5_osc_freq_fine)));
+  onParam(41,static_cast<uint8_t>(*p(p_op5_osc_detune)+7));
   // OP4
-  onParam(42,static_cast<char>(*p(p_op4_eg_rate_1)));
-  onParam(43,static_cast<char>(*p(p_op4_eg_rate_2)));
-  onParam(44,static_cast<char>(*p(p_op4_eg_rate_3)));
-  onParam(45,static_cast<char>(*p(p_op4_eg_rate_4)));
-  onParam(46,static_cast<char>(*p(p_op4_eg_level_1)));
-  onParam(47,static_cast<char>(*p(p_op4_eg_level_2)));
-  onParam(48,static_cast<char>(*p(p_op4_eg_level_3)));
-  onParam(49,static_cast<char>(*p(p_op4_eg_level_4)));
-  onParam(50,static_cast<char>(*p(p_op4_kbd_lev_scl_brk_pt)));
-  onParam(51,static_cast<char>(*p(p_op4_kbd_lev_scl_lft_depth)));
-  onParam(52,static_cast<char>(*p(p_op4_kbd_lev_scl_rht_depth)));
-  onParam(53,static_cast<char>(*p(p_op4_kbd_lev_scl_lft_curve)));
-  onParam(54,static_cast<char>(*p(p_op4_kbd_lev_scl_rht_curve)));
-  onParam(55,static_cast<char>(*p(p_op4_kbd_rate_scaling)));
-  onParam(56,static_cast<char>(*p(p_op4_amp_mod_sensitivity)));
-  onParam(57,static_cast<char>(*p(p_op4_key_vel_sensitivity)));
-  onParam(58,static_cast<char>(*p(p_op4_operator_output_level)));
-  onParam(59,static_cast<char>(*p(p_op4_osc_mode)));
-  onParam(60,static_cast<char>(*p(p_op4_osc_freq_coarse)));
-  onParam(61,static_cast<char>(*p(p_op4_osc_freq_fine)));
-  onParam(62,static_cast<char>(*p(p_op4_osc_detune)+7));
+  onParam(42,static_cast<uint8_t>(*p(p_op4_eg_rate_1)));
+  onParam(43,static_cast<uint8_t>(*p(p_op4_eg_rate_2)));
+  onParam(44,static_cast<uint8_t>(*p(p_op4_eg_rate_3)));
+  onParam(45,static_cast<uint8_t>(*p(p_op4_eg_rate_4)));
+  onParam(46,static_cast<uint8_t>(*p(p_op4_eg_level_1)));
+  onParam(47,static_cast<uint8_t>(*p(p_op4_eg_level_2)));
+  onParam(48,static_cast<uint8_t>(*p(p_op4_eg_level_3)));
+  onParam(49,static_cast<uint8_t>(*p(p_op4_eg_level_4)));
+  onParam(50,static_cast<uint8_t>(*p(p_op4_kbd_lev_scl_brk_pt)));
+  onParam(51,static_cast<uint8_t>(*p(p_op4_kbd_lev_scl_lft_depth)));
+  onParam(52,static_cast<uint8_t>(*p(p_op4_kbd_lev_scl_rht_depth)));
+  onParam(53,static_cast<uint8_t>(*p(p_op4_kbd_lev_scl_lft_curve)));
+  onParam(54,static_cast<uint8_t>(*p(p_op4_kbd_lev_scl_rht_curve)));
+  onParam(55,static_cast<uint8_t>(*p(p_op4_kbd_rate_scaling)));
+  onParam(56,static_cast<uint8_t>(*p(p_op4_amp_mod_sensitivity)));
+  onParam(57,static_cast<uint8_t>(*p(p_op4_key_vel_sensitivity)));
+  onParam(58,static_cast<uint8_t>(*p(p_op4_operator_output_level)));
+  onParam(59,static_cast<uint8_t>(*p(p_op4_osc_mode)));
+  onParam(60,static_cast<uint8_t>(*p(p_op4_osc_freq_coarse)));
+  onParam(61,static_cast<uint8_t>(*p(p_op4_osc_freq_fine)));
+  onParam(62,static_cast<uint8_t>(*p(p_op4_osc_detune)+7));
   // OP3
-  onParam(63,static_cast<char>(*p(p_op3_eg_rate_1)));
-  onParam(64,static_cast<char>(*p(p_op3_eg_rate_2)));
-  onParam(65,static_cast<char>(*p(p_op3_eg_rate_3)));
-  onParam(66,static_cast<char>(*p(p_op3_eg_rate_4)));
-  onParam(67,static_cast<char>(*p(p_op3_eg_level_1)));
-  onParam(68,static_cast<char>(*p(p_op3_eg_level_2)));
-  onParam(69,static_cast<char>(*p(p_op3_eg_level_3)));
-  onParam(70,static_cast<char>(*p(p_op3_eg_level_4)));
-  onParam(71,static_cast<char>(*p(p_op3_kbd_lev_scl_brk_pt)));
-  onParam(72,static_cast<char>(*p(p_op3_kbd_lev_scl_lft_depth)));
-  onParam(73,static_cast<char>(*p(p_op3_kbd_lev_scl_rht_depth)));
-  onParam(74,static_cast<char>(*p(p_op3_kbd_lev_scl_lft_curve)));
-  onParam(75,static_cast<char>(*p(p_op3_kbd_lev_scl_rht_curve)));
-  onParam(76,static_cast<char>(*p(p_op3_kbd_rate_scaling)));
-  onParam(77,static_cast<char>(*p(p_op3_amp_mod_sensitivity)));
-  onParam(78,static_cast<char>(*p(p_op3_key_vel_sensitivity)));
-  onParam(79,static_cast<char>(*p(p_op3_operator_output_level)));
-  onParam(80,static_cast<char>(*p(p_op3_osc_mode)));
-  onParam(81,static_cast<char>(*p(p_op3_osc_freq_coarse)));
-  onParam(82,static_cast<char>(*p(p_op3_osc_freq_fine)));
-  onParam(83,static_cast<char>(*p(p_op3_osc_detune)+7));
+  onParam(63,static_cast<uint8_t>(*p(p_op3_eg_rate_1)));
+  onParam(64,static_cast<uint8_t>(*p(p_op3_eg_rate_2)));
+  onParam(65,static_cast<uint8_t>(*p(p_op3_eg_rate_3)));
+  onParam(66,static_cast<uint8_t>(*p(p_op3_eg_rate_4)));
+  onParam(67,static_cast<uint8_t>(*p(p_op3_eg_level_1)));
+  onParam(68,static_cast<uint8_t>(*p(p_op3_eg_level_2)));
+  onParam(69,static_cast<uint8_t>(*p(p_op3_eg_level_3)));
+  onParam(70,static_cast<uint8_t>(*p(p_op3_eg_level_4)));
+  onParam(71,static_cast<uint8_t>(*p(p_op3_kbd_lev_scl_brk_pt)));
+  onParam(72,static_cast<uint8_t>(*p(p_op3_kbd_lev_scl_lft_depth)));
+  onParam(73,static_cast<uint8_t>(*p(p_op3_kbd_lev_scl_rht_depth)));
+  onParam(74,static_cast<uint8_t>(*p(p_op3_kbd_lev_scl_lft_curve)));
+  onParam(75,static_cast<uint8_t>(*p(p_op3_kbd_lev_scl_rht_curve)));
+  onParam(76,static_cast<uint8_t>(*p(p_op3_kbd_rate_scaling)));
+  onParam(77,static_cast<uint8_t>(*p(p_op3_amp_mod_sensitivity)));
+  onParam(78,static_cast<uint8_t>(*p(p_op3_key_vel_sensitivity)));
+  onParam(79,static_cast<uint8_t>(*p(p_op3_operator_output_level)));
+  onParam(80,static_cast<uint8_t>(*p(p_op3_osc_mode)));
+  onParam(81,static_cast<uint8_t>(*p(p_op3_osc_freq_coarse)));
+  onParam(82,static_cast<uint8_t>(*p(p_op3_osc_freq_fine)));
+  onParam(83,static_cast<uint8_t>(*p(p_op3_osc_detune)+7));
   // OP2
-  onParam(84,static_cast<char>(*p(p_op2_eg_rate_1)));
-  onParam(85,static_cast<char>(*p(p_op2_eg_rate_2)));
-  onParam(86,static_cast<char>(*p(p_op2_eg_rate_3)));
-  onParam(87,static_cast<char>(*p(p_op2_eg_rate_4)));
-  onParam(88,static_cast<char>(*p(p_op2_eg_level_1)));
-  onParam(89,static_cast<char>(*p(p_op2_eg_level_2)));
-  onParam(90,static_cast<char>(*p(p_op2_eg_level_3)));
-  onParam(91,static_cast<char>(*p(p_op2_eg_level_4)));
-  onParam(92,static_cast<char>(*p(p_op2_kbd_lev_scl_brk_pt)));
-  onParam(93,static_cast<char>(*p(p_op2_kbd_lev_scl_lft_depth)));
-  onParam(94,static_cast<char>(*p(p_op2_kbd_lev_scl_rht_depth)));
-  onParam(95,static_cast<char>(*p(p_op2_kbd_lev_scl_lft_curve)));
-  onParam(96,static_cast<char>(*p(p_op2_kbd_lev_scl_rht_curve)));
-  onParam(97,static_cast<char>(*p(p_op2_kbd_rate_scaling)));
-  onParam(98,static_cast<char>(*p(p_op2_amp_mod_sensitivity)));
-  onParam(99,static_cast<char>(*p(p_op2_key_vel_sensitivity)));
-  onParam(100,static_cast<char>(*p(p_op2_operator_output_level)));
-  onParam(101,static_cast<char>(*p(p_op2_osc_mode)));
-  onParam(102,static_cast<char>(*p(p_op2_osc_freq_coarse)));
-  onParam(103,static_cast<char>(*p(p_op2_osc_freq_fine)));
-  onParam(104,static_cast<char>(*p(p_op2_osc_detune)+7));
+  onParam(84,static_cast<uint8_t>(*p(p_op2_eg_rate_1)));
+  onParam(85,static_cast<uint8_t>(*p(p_op2_eg_rate_2)));
+  onParam(86,static_cast<uint8_t>(*p(p_op2_eg_rate_3)));
+  onParam(87,static_cast<uint8_t>(*p(p_op2_eg_rate_4)));
+  onParam(88,static_cast<uint8_t>(*p(p_op2_eg_level_1)));
+  onParam(89,static_cast<uint8_t>(*p(p_op2_eg_level_2)));
+  onParam(90,static_cast<uint8_t>(*p(p_op2_eg_level_3)));
+  onParam(91,static_cast<uint8_t>(*p(p_op2_eg_level_4)));
+  onParam(92,static_cast<uint8_t>(*p(p_op2_kbd_lev_scl_brk_pt)));
+  onParam(93,static_cast<uint8_t>(*p(p_op2_kbd_lev_scl_lft_depth)));
+  onParam(94,static_cast<uint8_t>(*p(p_op2_kbd_lev_scl_rht_depth)));
+  onParam(95,static_cast<uint8_t>(*p(p_op2_kbd_lev_scl_lft_curve)));
+  onParam(96,static_cast<uint8_t>(*p(p_op2_kbd_lev_scl_rht_curve)));
+  onParam(97,static_cast<uint8_t>(*p(p_op2_kbd_rate_scaling)));
+  onParam(98,static_cast<uint8_t>(*p(p_op2_amp_mod_sensitivity)));
+  onParam(99,static_cast<uint8_t>(*p(p_op2_key_vel_sensitivity)));
+  onParam(100,static_cast<uint8_t>(*p(p_op2_operator_output_level)));
+  onParam(101,static_cast<uint8_t>(*p(p_op2_osc_mode)));
+  onParam(102,static_cast<uint8_t>(*p(p_op2_osc_freq_coarse)));
+  onParam(103,static_cast<uint8_t>(*p(p_op2_osc_freq_fine)));
+  onParam(104,static_cast<uint8_t>(*p(p_op2_osc_detune)+7));
   // OP1
-  onParam(105,static_cast<char>(*p(p_op1_eg_rate_1)));
-  onParam(106,static_cast<char>(*p(p_op1_eg_rate_2)));
-  onParam(107,static_cast<char>(*p(p_op1_eg_rate_3)));
-  onParam(108,static_cast<char>(*p(p_op1_eg_rate_4)));
-  onParam(109,static_cast<char>(*p(p_op1_eg_level_1)));
-  onParam(110,static_cast<char>(*p(p_op1_eg_level_2)));
-  onParam(111,static_cast<char>(*p(p_op1_eg_level_3)));
-  onParam(112,static_cast<char>(*p(p_op1_eg_level_4)));
-  onParam(113,static_cast<char>(*p(p_op1_kbd_lev_scl_brk_pt)));
-  onParam(114,static_cast<char>(*p(p_op1_kbd_lev_scl_lft_depth)));
-  onParam(115,static_cast<char>(*p(p_op1_kbd_lev_scl_rht_depth)));
-  onParam(116,static_cast<char>(*p(p_op1_kbd_lev_scl_lft_curve)));
-  onParam(117,static_cast<char>(*p(p_op1_kbd_lev_scl_rht_curve)));
-  onParam(118,static_cast<char>(*p(p_op1_kbd_rate_scaling)));
-  onParam(119,static_cast<char>(*p(p_op1_amp_mod_sensitivity)));
-  onParam(120,static_cast<char>(*p(p_op1_key_vel_sensitivity)));
-  onParam(121,static_cast<char>(*p(p_op1_operator_output_level)));
-  onParam(122,static_cast<char>(*p(p_op1_osc_mode)));
-  onParam(123,static_cast<char>(*p(p_op1_osc_freq_coarse)));
-  onParam(124,static_cast<char>(*p(p_op1_osc_freq_fine)));
-  onParam(125,static_cast<char>(*p(p_op1_osc_detune)+7));
+  onParam(105,static_cast<uint8_t>(*p(p_op1_eg_rate_1)));
+  onParam(106,static_cast<uint8_t>(*p(p_op1_eg_rate_2)));
+  onParam(107,static_cast<uint8_t>(*p(p_op1_eg_rate_3)));
+  onParam(108,static_cast<uint8_t>(*p(p_op1_eg_rate_4)));
+  onParam(109,static_cast<uint8_t>(*p(p_op1_eg_level_1)));
+  onParam(110,static_cast<uint8_t>(*p(p_op1_eg_level_2)));
+  onParam(111,static_cast<uint8_t>(*p(p_op1_eg_level_3)));
+  onParam(112,static_cast<uint8_t>(*p(p_op1_eg_level_4)));
+  onParam(113,static_cast<uint8_t>(*p(p_op1_kbd_lev_scl_brk_pt)));
+  onParam(114,static_cast<uint8_t>(*p(p_op1_kbd_lev_scl_lft_depth)));
+  onParam(115,static_cast<uint8_t>(*p(p_op1_kbd_lev_scl_rht_depth)));
+  onParam(116,static_cast<uint8_t>(*p(p_op1_kbd_lev_scl_lft_curve)));
+  onParam(117,static_cast<uint8_t>(*p(p_op1_kbd_lev_scl_rht_curve)));
+  onParam(118,static_cast<uint8_t>(*p(p_op1_kbd_rate_scaling)));
+  onParam(119,static_cast<uint8_t>(*p(p_op1_amp_mod_sensitivity)));
+  onParam(120,static_cast<uint8_t>(*p(p_op1_key_vel_sensitivity)));
+  onParam(121,static_cast<uint8_t>(*p(p_op1_operator_output_level)));
+  onParam(122,static_cast<uint8_t>(*p(p_op1_osc_mode)));
+  onParam(123,static_cast<uint8_t>(*p(p_op1_osc_freq_coarse)));
+  onParam(124,static_cast<uint8_t>(*p(p_op1_osc_freq_fine)));
+  onParam(125,static_cast<uint8_t>(*p(p_op1_osc_detune)+7));
   // Global for all OPs
-  onParam(126,static_cast<char>(*p(p_pitch_eg_rate_1)));
-  onParam(127,static_cast<char>(*p(p_pitch_eg_rate_2)));
-  onParam(128,static_cast<char>(*p(p_pitch_eg_rate_3)));
-  onParam(129,static_cast<char>(*p(p_pitch_eg_rate_4)));
-  onParam(130,static_cast<char>(*p(p_pitch_eg_level_1)));
-  onParam(131,static_cast<char>(*p(p_pitch_eg_level_2)));
-  onParam(132,static_cast<char>(*p(p_pitch_eg_level_3)));
-  onParam(133,static_cast<char>(*p(p_pitch_eg_level_4)));
-  onParam(134,static_cast<char>(*p(p_algorithm_num)-1));
-  onParam(135,static_cast<char>(*p(p_feedback)));
-  onParam(136,static_cast<char>(*p(p_oscillator_sync)));
-  onParam(137,static_cast<char>(*p(p_lfo_speed)));
-  onParam(138,static_cast<char>(*p(p_lfo_delay)));
-  onParam(139,static_cast<char>(*p(p_lfo_pitch_mod_depth)));
-  onParam(140,static_cast<char>(*p(p_lfo_amp_mod_depth)));
-  onParam(141,static_cast<char>(*p(p_lfo_sync)));
-  onParam(142,static_cast<char>(*p(p_lfo_waveform)));
-  onParam(143,static_cast<char>(*p(p_pitch_mod_sensitivity)));
-  onParam(144,static_cast<char>(*p(p_transpose)));
+  onParam(126,static_cast<uint8_t>(*p(p_pitch_eg_rate_1)));
+  onParam(127,static_cast<uint8_t>(*p(p_pitch_eg_rate_2)));
+  onParam(128,static_cast<uint8_t>(*p(p_pitch_eg_rate_3)));
+  onParam(129,static_cast<uint8_t>(*p(p_pitch_eg_rate_4)));
+  onParam(130,static_cast<uint8_t>(*p(p_pitch_eg_level_1)));
+  onParam(131,static_cast<uint8_t>(*p(p_pitch_eg_level_2)));
+  onParam(132,static_cast<uint8_t>(*p(p_pitch_eg_level_3)));
+  onParam(133,static_cast<uint8_t>(*p(p_pitch_eg_level_4)));
+  onParam(134,static_cast<uint8_t>(*p(p_algorithm_num)-1));
+  onParam(135,static_cast<uint8_t>(*p(p_feedback)));
+  onParam(136,static_cast<uint8_t>(*p(p_oscillator_sync)));
+  onParam(137,static_cast<uint8_t>(*p(p_lfo_speed)));
+  onParam(138,static_cast<uint8_t>(*p(p_lfo_delay)));
+  onParam(139,static_cast<uint8_t>(*p(p_lfo_pitch_mod_depth)));
+  onParam(140,static_cast<uint8_t>(*p(p_lfo_amp_mod_depth)));
+  onParam(141,static_cast<uint8_t>(*p(p_lfo_sync)));
+  onParam(142,static_cast<uint8_t>(*p(p_lfo_waveform)));
+  onParam(143,static_cast<uint8_t>(*p(p_pitch_mod_sensitivity)));
+  onParam(144,static_cast<uint8_t>(*p(p_transpose)));
   // 10 bytes (145-154) are the name of the patch
   onParam(155,0x3f); // operator on/off => All OPs on
 
-  TRACE("Bye");
+  //TRACE("Bye");
 }
 
 // override the run() method
@@ -333,10 +333,6 @@ void Dexed::run (uint32_t sample_count)
        // If it's midi, send it to the engine
        if (ev->body.type == m_midi_type)
        {
-         for(uint8_t i=0;i<ev->body.size;i++)
-         {
-           TRACE("midi msg %d: %d\n",i,((uint8_t*)LV2_ATOM_BODY(&ev->body))[i]);
-         }
          ProcessMidiMessage((uint8_t*) LV2_ATOM_BODY (&ev->body),ev->body.size);
        }
 
@@ -466,10 +462,12 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
 
     switch(cmd & 0xf0) {
         case 0x80 :
+            TRACE("MIDI keyup event: %d",buf[1]);
             keyup(buf[1]);
             return;
             break;
         case 0x90 :
+            TRACE("MIDI keyup event: %d %d",buf[1],buf[2]);
             keydown(buf[1], buf[2]);
             return;
             break;
@@ -479,21 +477,22 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
             
             switch(ctrl) {
                 case 1:
+                    TRACE("MIDI modwheel event: %d %d",ctrl,value);
                     controllers.modwheel_cc = value;
                     controllers.refresh();
-                    return;
                     break;
                 case 2:
+                    TRACE("MIDI breath event: %d %d",ctrl,value);
                     controllers.breath_cc = value;
                     controllers.refresh();
-                    return;
                     break;
                 case 4:
+                    TRACE("MIDI footsw event: %d %d",ctrl,value);
                     controllers.foot_cc = value;
                     controllers.refresh();
-                    return;
                     break;
                 case 64:
+                    TRACE("MIDI sustain event: %d %d",ctrl,value);
                     sustain = value > 63;
                     if (!sustain) {
                         for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; note++) {
@@ -503,7 +502,6 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
                             }
                         }
                     }
-                    return;
                     break;
             }
             break;
@@ -511,24 +509,22 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
 
         case 0xc0 :
             //setCurrentProgram(buf[1]);
-            return;
             break;
         // aftertouch
         case 0xd0 :
+            TRACE("MIDI aftertouch 0xd0 event: %d %d",buf[1]);
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
-            return;
             break;
-    }
-
-    switch (cmd) {
         case 0xe0 :
+            TRACE("MIDI pitchbend 0xe0 event: %d %d",buf[1],buf[2]);
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-            return;
+            break;
+        default:
+            TRACE("MIDI event unknown: cmd=%d, val1=%d, val2=%d",buf[0],buf[1],buf[2]);
             break;
     }
 
-    TRACE("MIDI event unknown: cmd=%d, val1=%d, val2=%d",buf[0],buf[1],buf[2]);
 
     TRACE("Bye");
 }
