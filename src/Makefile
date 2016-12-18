@@ -41,7 +41,7 @@ endif
 
 ifeq ($(DEBUG), 1)
    ifeq ($(FILETRACE), 1)
-      CXXFLAGS += -DDEBUG -DFILETRACE $(CFLAGS) -D PATCH_DEBUG
+      CXXFLAGS += -DDEBUG -DFILETRACE $(CFLAGS)
    else
       CXXFLAGS += -DDEBUG $(CFLAGS)
    endif

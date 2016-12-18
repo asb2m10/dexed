@@ -68,6 +68,22 @@ int n_out(const FmAlgorithm &alg) {
   return count;
 }
 
+uint8_t FmCore::op_out(uint8_t algorithm)
+{
+  uint8_t op_out=0;
+  FmAlgorithm alg=algorithms[algorithm];
+
+  for(uint8_t i=0; i<6;i++)
+  {
+    if((alg.ops[i]&OUT_BUS_ADD)==OUT_BUS_ADD)
+      op_out|=1<<i;
+    TRACE("OP[%d]:",6-i);
+    TRACE("OUT_BUS_ONE=%d OUT_BUS_TWO=%d OUT_BUS_ADD=%d IN_BUS_ONE=%d IN_BUS_TWO=%d FB_IN=%d FB_OUT=%d",alg.ops[i]&OUT_BUS_ONE?1:0,alg.ops[i]&OUT_BUS_TWO?1:0,alg.ops[i]&OUT_BUS_ADD?1:0,alg.ops[i]&IN_BUS_ONE?1:0,alg.ops[i]&IN_BUS_TWO?1:0,alg.ops[i]&FB_IN?1:0,alg.ops[i]&FB_OUT?1:0);
+  }
+
+  return op_out;
+}
+
 void FmCore::dump() {
 #ifdef VERBOSE
   for (int i = 0; i < 32; i++) {

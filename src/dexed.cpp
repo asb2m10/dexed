@@ -104,6 +104,10 @@ void Dexed::activate(void)
 
   set_params();
 
+#ifdef DEBUG
+  TRACE("Algorithm %d outputs: %d",data[134],controllers.core->op_out(data[134]));
+#endif
+
   Plugin::activate();
 
   TRACE("Bye");
@@ -447,18 +451,25 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
     if(voices[i].live==true && voices[i].keydown==false)
     {
       uint8_t op_amp=0;
+      uint8_t op_out=controllers.core->op_out(data[134]);
+      uint8_t op_carrier_num=0;
 
       voices[i].dx7_note->peekVoiceStatus(voiceStatus);
 
       for(uint8_t op=0;op<6;op++)
       {
-//        TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
+        if((op_out&op)==1)
+        {
+          // this voice is a carrier!
+          op_carrier_num++;
 
-        if(voiceStatus.amp[op]<=1069)
-          op_amp++;
-
+          TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
+       
+          if(voiceStatus.amp[op]<=1069)
+            op_amp++;
+        }
       }
-      if(op_amp==6)
+      if(op_amp==op_carrier_num)
         voices[i].live=false;
     }
 //    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
