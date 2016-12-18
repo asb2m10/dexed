@@ -1826,6 +1826,26 @@
         lv2:minimum 0 ;
         lv2:maximum 7 ;
 	lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 152 ;
+        lv2:symbol "pitch_bend_range" ;
+        lv2:name "PITCH BEND RANGE" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 12 ;
+	lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 153 ;
+        lv2:symbol "pitch_bend_step" ;
+        lv2:name "PITCH BEND STEP" ;
+        lv2:default 0 ;
+        lv2:minimum 0 ;
+        lv2:maximum 12 ;
+	lv2:portProperty lv2:integer ;
     ] ;
 
     doap:name "Dexed" ;

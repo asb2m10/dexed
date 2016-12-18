@@ -115,11 +115,11 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     uint32_t extra_buf_size_;
 
   private:
+    double _rate;
     uint8_t _param_counter;
     float data_float[156];
-    uint8_t data[156];
-    double _rate;
-/*    uint8_t data[156]={
+    //uint8_t data[156];
+    uint8_t data[156]={
       95, 29, 20, 50, 99, 95, 00, 00, 41, 00, 19, 00, 00, 03, 00, 06, 79, 00, 01, 00, 14,
       95, 20, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 00, 99, 00, 01, 00, 00,
       95, 29, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 06, 89, 00, 01, 00, 07,
@@ -131,7 +131,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
       34, 33, 00, 00, 00, 04,
       03, 24,
       00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
-      63 }; */
+      63 };
 };
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED

@@ -15,6 +15,8 @@
 
 Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
+  uint8_t i;
+
   TRACE("Hi");
 
   engineMkI=new EngineMkI;
@@ -31,12 +33,15 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   Env::init_sr(rate);
   fx.init(rate);
 
-  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-    voices[note].dx7_note = new Dx7Note;
-    voices[note].keydown = false;
-    voices[note].sustained = false;
-    voices[note].live = false;
+  for(i=0; i<MAX_ACTIVE_NOTES; ++i) {
+    voices[i].dx7_note = new Dx7Note;
+    voices[i].keydown = false;
+    voices[i].sustained = false;
+    voices[i].live = false;
   }
+
+  for(i=0;i<156;++i)
+    data_float[i]=static_cast<float>(data[i]);
 
   currentNote = 0;
   controllers.values_[kControllerPitch] = 0x2000;
@@ -64,7 +69,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   engineType=0xff;
   setEngineType(DEXED_ENGINE_MARKI);
 
-  add_voices(new DexedVoice(rate));
+  //add_voices(new DexedVoice(rate));
 
   add_audio_outputs(p_audio_out);
 
@@ -96,10 +101,9 @@ void Dexed::activate(void)
 {
   TRACE("Hi");
 
-  Plugin::activate();
-
   set_params();
-  refreshVoice=true;
+
+  Plugin::activate();
 
   TRACE("Bye");
 }
@@ -306,6 +310,10 @@ void Dexed::set_params(void)
   // 10 bytes (145-154) are the name of the patch
   onParam(155,0x3f); // operator on/off => All OPs on
 
+  // Pitch bend
+  controllers.values_[kControllerPitchRange]=static_cast<int16_t>(*p(p_pitch_bend_range));
+  controllers.values_[kControllerPitchStep]=static_cast<int16_t>(*p(p_pitch_bend_step));
+
   //TRACE("Bye");
 }
 
@@ -318,7 +326,7 @@ void Dexed::run (uint32_t sample_count)
 
     Plugin::run(sample_count);
 
-    if(++_param_counter==16)
+    if(++_param_counter>=16)
     {
       set_params(); // pre_process: copy actual voice params
       _param_counter=0;
@@ -506,7 +514,7 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
             }
             break;
         }
-
+/*
         case 0xc0 :
             //setCurrentProgram(buf[1]);
             break;
@@ -520,6 +528,7 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
             TRACE("MIDI pitchbend 0xe0 event: %d %d",buf[1],buf[2]);
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
             break;
+*/
         default:
             TRACE("MIDI event unknown: cmd=%d, val1=%d, val2=%d",buf[0],buf[1],buf[2]);
             break;
@@ -656,7 +665,6 @@ void Dexed::setEngineType(uint8_t tp) {
     if(engineType==tp)
       return;
 
-    panic();
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             TRACE("DEXED_ENGINE_MARKI:%d",DEXED_ENGINE_MARKI);
@@ -675,6 +683,7 @@ void Dexed::setEngineType(uint8_t tp) {
             break;
     }
     engineType = tp;
+    panic();
 }
 
 bool Dexed::isMonoMode(void) {
