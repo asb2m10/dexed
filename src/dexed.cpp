@@ -467,12 +467,15 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 
             TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
        
-            if(voiceStatus.amp[op]<=1069) // this voice produces no audio output
+            if(voiceStatus.amp[op]<=1069 && voiceStatus.ampStep[op]==4) // this voice produces no audio output
               op_amp++;
           }
         }
         if(op_amp==op_carrier_num)
+	{
           voices[i].live=false; // every carrier produces no audio anymore
+          TRACE("Shutting down Voice[%2d]",i);
+        }
       }
 //    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
     }

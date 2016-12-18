@@ -77,8 +77,8 @@ uint8_t FmCore::op_out(uint8_t algorithm)
   {
     if((alg.ops[i]&OUT_BUS_ADD)==OUT_BUS_ADD)
       op_out|=1<<i;
-    TRACE("OP[%d]:",6-i);
-    TRACE("OUT_BUS_ONE=%d OUT_BUS_TWO=%d OUT_BUS_ADD=%d IN_BUS_ONE=%d IN_BUS_TWO=%d FB_IN=%d FB_OUT=%d",alg.ops[i]&OUT_BUS_ONE?1:0,alg.ops[i]&OUT_BUS_TWO?1:0,alg.ops[i]&OUT_BUS_ADD?1:0,alg.ops[i]&IN_BUS_ONE?1:0,alg.ops[i]&IN_BUS_TWO?1:0,alg.ops[i]&FB_IN?1:0,alg.ops[i]&FB_OUT?1:0);
+//    TRACE("OP[%d]:",6-i);
+//    TRACE("OUT_BUS_ONE=%d OUT_BUS_TWO=%d OUT_BUS_ADD=%d IN_BUS_ONE=%d IN_BUS_TWO=%d FB_IN=%d FB_OUT=%d",alg.ops[i]&OUT_BUS_ONE?1:0,alg.ops[i]&OUT_BUS_TWO?1:0,alg.ops[i]&OUT_BUS_ADD?1:0,alg.ops[i]&IN_BUS_ONE?1:0,alg.ops[i]&IN_BUS_TWO?1:0,alg.ops[i]&FB_IN?1:0,alg.ops[i]&FB_OUT?1:0);
   }
 
   return op_out;

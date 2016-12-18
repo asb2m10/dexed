@@ -204,6 +204,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
     params_[op].gain_out = gain;
   }
+#endif
 
 /*    int pitchbend = ctrls->values_[kControllerPitch];
     int32_t pb = (pitchbend - 0x2000);
@@ -219,7 +220,6 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     pitch_mod += pb;
     pitch_mod += ctrls->masterTune; */
 TRACE("pitch_mod=%d pb=%d");
-#endif
 
     // ==== AMP MOD ====
     uint32_t amod_1 = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
