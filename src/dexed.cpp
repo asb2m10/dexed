@@ -12,16 +12,13 @@
 #include "msfa/controllers.h"
 #include "PluginFx.h"
 #include <unistd.h>
+#include <limits.h>
 
 Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
   uint8_t i;
 
   TRACE("Hi");
-
-  engineMkI=new EngineMkI;
-  engineOpl=new EngineOpl;
-  engineMsfa=new FmCore;
 
   Exp2::init();
   Tanh::init();
@@ -32,6 +29,10 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   PitchEnv::init(rate);
   Env::init_sr(rate);
   fx.init(rate);
+
+  engineMkI=new EngineMkI;
+  engineOpl=new EngineOpl;
+  engineMsfa=new FmCore;
 
   for(i=0; i<MAX_ACTIVE_NOTES; ++i) {
     voices[i].dx7_note = new Dx7Note;
@@ -415,10 +416,11 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
           for (uint32_t j=0; j < N; ++j) {
-            int32_t val = audiobuf.get()[j];
+            /*int32_t val = audiobuf.get()[j];
             val = val >> 4;
-            int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-            float f = static_cast<float>(clip_val) / float(0x8000);
+            int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9; 
+            float f = static_cast<float>(clip_val)/0x8000; */
+            float f=static_cast<float>(audiobuf.get()[j]<<3)/INT_MAX;
             if(f>1.0)
               f=1.0;
             if(f<-1.0)
@@ -475,7 +477,7 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
             return;
             break;
         case 0x90 :
-            TRACE("MIDI keyup event: %d %d",buf[1],buf[2]);
+            TRACE("MIDI keydown event: %d %d",buf[1],buf[2]);
             keydown(buf[1], buf[2]);
             return;
             break;
