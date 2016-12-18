@@ -424,7 +424,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
             val = val >> 4;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9; 
             float f = static_cast<float>(clip_val)/0x8000; */
-            float f=static_cast<float>(audiobuf.get()[j]<<3)/INT_MAX;
+            float f=static_cast<float>(audiobuf.get()[j]<<2)/INT_MAX;
             if(f>1.0)
               f=1.0;
             if(f<-1.0)
@@ -447,8 +447,10 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
     extra_buf_size_ = i - n_samples;
   }
 
+if(++_param_counter>=16)
+{
   for(i=0;i < MAX_ACTIVE_NOTES;i++) {
-    if(voices[i].live==true && voices[i].keydown==false)
+    if(voices[i].live==true && voices[i].keydown==false && voices[i].sustained==false)
     {
       uint8_t op_amp=0;
       uint8_t op_out=controllers.core->op_out(data[134]);
@@ -474,6 +476,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
     }
 //    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
   }
+}
 }
 
 void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
