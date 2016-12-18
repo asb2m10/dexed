@@ -9,6 +9,18 @@
 <https://github.com/dcoredump/dexed.lv2>
     a lv2:Plugin ;
     doap:name "Dexed";
+    doap:shortdesc "An LV2 port of the Dexed plugin" ;
+    doap:homepage <https://github.com/dcoredump/dexed> ;
+        doap:maintainer [
+        foaf:name "Holger Wirtz";
+        foaf:homepage <https://github.com/dcoredump/dexed>;
+        foaf:mbox <mailto:dcoredump@googlemail.com>;
+    ] ;
+    doap:developer [
+        a foaf:Person ;
+        foaf:name "Pascal Gauthier" ;
+        foaf:mbox <mailto:asb2m10@gmail.com>
+    ] ;
     rdfs:seeAlso <Dexed.ttl> ;
     rdfs:seeAlso <modgui.ttl> .
 
