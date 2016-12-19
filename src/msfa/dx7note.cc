@@ -190,12 +190,26 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     int32_t pitch_mod = max(pmod_1, pmod_2);
     pitch_mod = pitchenv_.getsample() + (pitch_mod * (senslfo < 0 ? -1 : 1));
     
-/*    // ---- PITCH BEND ----
-    int pitchbend = ctrls->values_[kControllerPitch];
+#ifdef DEBUG
+    // ---- PITCH BEND ----
+  // hardcodes a pitchbend range of 3 semitones, TODO make configurable
+  int pitchbend = ctrls->values_[kControllerPitch];
+  int32_t pb = (pitchbend - 0x2000) << 9;
+  pitch_mod += pb;
+  for (int op = 0; op < 6; op++) {
+    params_[op].level_in = params_[op].gain_out;
+    int32_t level = env_[op].getsample();
+    int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
+    // int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
+    params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
+    params_[op].gain_out = gain;
+  }
+
+/*    int pitchbend = ctrls->values_[kControllerPitch];
     int32_t pb = (pitchbend - 0x2000);
     if (pb != 0) {
         if (ctrls->values_[kControllerPitchStep] == 0) {
-            pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRange]) / 12.0;
+            pb = ((float) (pb << 11)) * ((float)ctrls->values_[kControllerPitchRange]) / 12.0;
         } else {
             int stp = 12 / ctrls->values_[kControllerPitchStep];
             pb = pb * stp / 8191;
@@ -203,8 +217,10 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
         }
     }
     pitch_mod += pb;
-    pitch_mod += ctrls->masterTune;
-*/    
+    pitch_mod += ctrls->masterTune; */
+TRACE("pitch_mod=%d pb=%d");
+#endif
+
     // ==== AMP MOD ====
     uint32_t amod_1 = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
     amod_1 = ((int64_t) amod_1 * (int64_t) lfo_val) >> 24;

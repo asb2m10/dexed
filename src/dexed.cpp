@@ -41,7 +41,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[i].live = false;
   }
 
-  for(i=0;i<156;++i)
+  for(i=0;i<156+4;++i)
     data_float[i]=static_cast<float>(data[i]);
 
   currentNote = 0;

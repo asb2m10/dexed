@@ -11,7 +11,7 @@
     a lv2:Plugin ;
     doap:name "Dexed is a LV2 port of the famous DX-7 simulation which is based on MSFA." ;
     doap:description "Synth" ;
-    doap:shortdesc "An LV2 port of the Dexed plugin" ;
+    doap:shortdesc "Dexed" ;
     lv2:minorVersion 1; lv2:microVersion 0;
     doap:homepage <https://github.com/dcoredump/dexed/tree/native-lv2> ;
         doap:maintainer [
