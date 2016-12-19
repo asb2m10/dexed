@@ -331,10 +331,9 @@ void Dexed::run (uint32_t sample_count)
 
     Plugin::run(sample_count);
 
-    if(++_param_counter>=16)
+    if(++_param_counter%16)
     {
       set_params(); // pre_process: copy actual voice params
-      _param_counter=0;
     }
 
     for (LV2_Atom_Event* ev = lv2_atom_sequence_begin (&seq->body);
@@ -447,36 +446,37 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
     extra_buf_size_ = i - n_samples;
   }
 
-if(++_param_counter>=16)
-{
-  for(i=0;i < MAX_ACTIVE_NOTES;i++) {
-    if(voices[i].live==true && voices[i].keydown==false && voices[i].sustained==false)
+  if(++_param_counter%32)
+  {
+    for(i=0;i < MAX_ACTIVE_NOTES;i++)
     {
-      uint8_t op_amp=0;
-      uint8_t op_out=controllers.core->op_out(data[134]);
-      uint8_t op_carrier_num=0;
-
-      voices[i].dx7_note->peekVoiceStatus(voiceStatus);
-
-      for(uint8_t op=0;op<6;op++)
+      if(voices[i].live==true)
       {
-        if((op_out&op)==1)
-        {
-          // this voice is a carrier!
-          op_carrier_num++;
+        uint8_t op_amp=0;
+        uint8_t op_out=controllers.core->op_out(data[134]);
+        uint8_t op_carrier_num=0;
 
-          TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
+        voices[i].dx7_note->peekVoiceStatus(voiceStatus);
+
+        for(uint8_t op=0;op<6;op++)
+        {
+          if((op_out&op)==1)
+          {
+            // this voice is a carrier!
+            op_carrier_num++;
+
+            TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
        
-          if(voiceStatus.amp[op]<=1069)
-            op_amp++;
+            if(voiceStatus.amp[op]<=1069) // this voice produces no audio output
+              op_amp++;
+          }
         }
+        if(op_amp==op_carrier_num)
+          voices[i].live=false; // every carrier produces no audio anymore
       }
-      if(op_amp==op_carrier_num)
-        voices[i].live=false;
-    }
 //    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
+    }
   }
-}
 }
 
 void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
