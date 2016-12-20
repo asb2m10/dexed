@@ -137,7 +137,7 @@ Dx7Note::Dx7Note() {
 }
 
 //void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int fb_depth) {
-void Dx7Note::init(uint8_t patch[156], int midinote, int velocity, int fb_depth) {
+void Dx7Note::init(const uint8_t patch[160], int midinote, int velocity, int fb_depth) {
     int rates[4];
     int levels[4];
     for (int op = 0; op < 6; op++) {
@@ -190,23 +190,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     int32_t pitch_mod = max(pmod_1, pmod_2);
     pitch_mod = pitchenv_.getsample() + (pitch_mod * (senslfo < 0 ? -1 : 1));
     
-#ifdef DEBUG
-    // ---- PITCH BEND ----
-  // hardcodes a pitchbend range of 3 semitones, TODO make configurable
-  int pitchbend = ctrls->values_[kControllerPitch];
-  int32_t pb = (pitchbend - 0x2000) << 9;
-  pitch_mod += pb;
-  for (int op = 0; op < 6; op++) {
-    params_[op].level_in = params_[op].gain_out;
-    int32_t level = env_[op].getsample();
-    int32_t gain = Exp2::lookup(level - (14 * (1 << 24)));
-    // int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
-    params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
-    params_[op].gain_out = gain;
-  }
-#endif
-
-/*    int pitchbend = ctrls->values_[kControllerPitch];
+/*
+    int pitchbend = ctrls->values_[kControllerPitch];
     int32_t pb = (pitchbend - 0x2000);
     if (pb != 0) {
         if (ctrls->values_[kControllerPitchStep] == 0) {
@@ -218,8 +203,9 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
         }
     }
     pitch_mod += pb;
-    pitch_mod += ctrls->masterTune; */
-TRACE("pitch_mod=%d pb=%d");
+    pitch_mod += ctrls->masterTune;
+*/
+//TRACE("pitch_mod=%d pb=%d");
 
     // ==== AMP MOD ====
     uint32_t amod_1 = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D

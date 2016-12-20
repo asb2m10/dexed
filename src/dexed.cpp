@@ -41,7 +41,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[i].live = false;
   }
 
-  for(i=0;i<156+4;++i)
+  for(i=0;i<160;++i)
     data_float[i]=static_cast<float>(data[i]);
 
   currentNote = 0;
@@ -50,6 +50,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
+  controllers.masterTune=0;
 
   bufsize_=256;
 
@@ -69,6 +70,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   engineType=0xff;
   setEngineType(DEXED_ENGINE_MARKI);
+
+  onParam(155,static_cast<float>(0x3f)); // operator on/off => All OPs on
 
   //add_voices(new DexedVoice(rate));
 
@@ -125,6 +128,8 @@ void Dexed::deactivate(void)
 void Dexed::set_params(void)
 {
   //TRACE("Hi");
+
+  _param_change_counter=0;
 
   bool unisono=bool(*p(p_unisono));
   uint8_t engine=uint8_t(*p(p_engine));
@@ -313,11 +318,15 @@ void Dexed::set_params(void)
   onParam(143,*p(p_pitch_mod_sensitivity));
   onParam(144,*p(p_transpose));
   // 10 bytes (145-154) are the name of the patch
-  onParam(155,0x3f); // operator on/off => All OPs on
 
-  // Pitch bend
-  controllers.values_[kControllerPitchRange]=static_cast<int16_t>(*p(p_pitch_bend_range));
-  controllers.values_[kControllerPitchStep]=static_cast<int16_t>(*p(p_pitch_bend_step));
+  // Pitch bend (added at the end of the data[])
+  onParam(156,*p(p_pitch_bend_range));
+  onParam(157,*p(p_pitch_bend_step));
+  onParam(158,*p(p_mod_wheel_range));
+  onParam(159,*p(p_mod_wheel_step));
+
+  if(_param_change_counter>PARAM_CHANGE_LEVEL)
+    panic();
 
   //TRACE("Bye");
 }
@@ -448,19 +457,21 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 
   if(++_param_counter%32)
   {
+    uint8_t op_out=controllers.core->op_out(data[134]); // look for carriers
+
     for(i=0;i < MAX_ACTIVE_NOTES;i++)
     {
       if(voices[i].live==true)
       {
         uint8_t op_amp=0;
-        uint8_t op_out=controllers.core->op_out(data[134]);
         uint8_t op_carrier_num=0;
 
         voices[i].dx7_note->peekVoiceStatus(voiceStatus);
 
         for(uint8_t op=0;op<6;op++)
         {
-          if((op_out&op)==1)
+          TRACE("op=%d op_out=%d 2^op=%d %d",op,op_out,static_cast<uint8_t>(pow(2,op)),op_out&static_cast<uint8_t>(pow(2,op)));
+          if((op_out&static_cast<uint8_t>(pow(2,op)))>0)
           {
             // this voice is a carrier!
             op_carrier_num++;
@@ -663,12 +674,30 @@ void Dexed::onParam(uint8_t param_num,float param_val)
     uint8_t tmp=data[param_num];
 #endif
 
-    if(param_num==144)
+    _param_change_counter++;
+
+    if(param_num==144 || param_num==134)
       panic();
 
     refreshVoice=true;
     data[param_num]=static_cast<uint8_t>(param_val);
     data_float[param_num]=param_val;
+
+    switch(param_num)
+    {
+      case 156:
+        controllers.values_[kControllerPitchRange]=data[param_num];
+        break;
+      case 157:
+        controllers.values_[kControllerPitchStep]=data[param_num];
+        break;
+      case 158:
+        //controllers.values_[kControllerModRange]=data[param_num];
+        break;
+      case 159:
+        //controllers.values_[kControllerModStep]=data[param_num];
+        break;
+    }
 
     TRACE("Parameter %d change from %d to %d",param_num, tmp, data[param_num]);
   }

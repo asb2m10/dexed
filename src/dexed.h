@@ -34,6 +34,8 @@
 #include "trace.h"
 #endif
 
+#define PARAM_CHANGE_LEVEL 10 // when a sound change is recognized
+
 struct ProcessorVoice {
     uint8_t midi_note;
     bool keydown;
@@ -117,9 +119,10 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
   private:
     double _rate;
     uint8_t _param_counter;
-    float data_float[156+4];
-    //uint8_t data[156];
-    uint8_t data[156+4]={
+    uint8_t _param_change_counter;
+    float data_float[160];
+    //uint8_t data[160];
+    uint8_t data[160]={
       95, 29, 20, 50, 99, 95, 00, 00, 41, 00, 19, 00, 00, 03, 00, 06, 79, 00, 01, 00, 14,
       95, 20, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 00, 99, 00, 01, 00, 00,
       95, 29, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 06, 89, 00, 01, 00, 07,
