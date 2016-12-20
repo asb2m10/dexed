@@ -8,17 +8,18 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 <https://github.com/dcoredump/dexed.lv2>
-    a lv2:Plugin ;
+    a lv2:Plugin, doap:Project, lv2:SynthPlugin ;
     doap:name "Dexed" ;
     doap:description "Synth" ;
     doap:shortdesc "Dexed" ;
-    lv2:minorVersion 1; lv2:microVersion 0;
     doap:homepage <https://github.com/dcoredump/dexed/tree/native-lv2> ;
         doap:maintainer [
         foaf:name "dcoredump" ;
         foaf:homepage <https://github.com/dcoredump/dexed/tree/native-lv2> ;
         foaf:mbox <mailto:dcoredump@googlemail.com> ;
     ] ;
+    rdfs:comment "Dexed.lv2 is a native LV2 port of the famous DX-7 emulator Dexed.";
+    lv2:microVersion 1 ;lv2:minorVersion 0 ;
     doap:developer [
         a foaf:Person ;
         foaf:name "Pascal Gauthier" ;

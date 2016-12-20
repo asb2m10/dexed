@@ -68,7 +68,7 @@ int n_out(const FmAlgorithm &alg) {
   return count;
 }
 
-uint8_t FmCore::op_out(uint8_t algorithm)
+uint8_t FmCore::get_carrier_operators(uint8_t algorithm)
 {
   uint8_t op_out=0;
   FmAlgorithm alg=algorithms[algorithm];

@@ -428,11 +428,14 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
           for (uint32_t j=0; j < N; ++j) {
-            /*int32_t val = audiobuf.get()[j];
+#ifndef NON_DEXED_CLIP
+            int32_t val = audiobuf.get()[j];
             val = val >> 4;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9; 
-            float f = static_cast<float>(clip_val)/0x8000; */
+            float f = static_cast<float>(clip_val)/0x8000;
+#else
             float f=static_cast<float>(audiobuf.get()[j]<<2)/INT_MAX;
+#endif
             if(f>1.0)
               f=1.0;
             if(f<-1.0)
@@ -457,7 +460,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 
   if(++_param_counter%32)
   {
-    uint8_t op_out=controllers.core->op_out(data[134]); // look for carriers
+    uint8_t op_carrier=controllers.core->get_carrier_operators(data[134]); // look for carriers
 
     for(i=0;i < MAX_ACTIVE_NOTES;i++)
     {
@@ -470,8 +473,10 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 
         for(uint8_t op=0;op<6;op++)
         {
-          TRACE("op=%d op_out=%d 2^op=%d %d",op,op_out,static_cast<uint8_t>(pow(2,op)),op_out&static_cast<uint8_t>(pow(2,op)));
-          if((op_out&static_cast<uint8_t>(pow(2,op)))>0)
+          uint8_t op_bit=static_cast<uint8_t>(pow(2,op));
+
+          TRACE("op=%d op_out=%d 2^op=%d %d",op,op_out,op_bit,op_out&op_bit);
+          if((op_carrier&op_bit)>0)
           {
             // this voice is a carrier!
             op_carrier_num++;
@@ -484,7 +489,8 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
         }
         if(op_amp==op_carrier_num)
 	{
-          voices[i].live=false; // every carrier produces no audio anymore
+          // all carrier-operators are silent -> disable the voice
+          voices[i].live=false;
           TRACE("Shutting down Voice[%2d]",i);
         }
       }
