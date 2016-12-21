@@ -161,7 +161,7 @@ void Dexed::set_params(void)
   }
   if(fx.uiGain!=f_gain)
   {
-    fx.uiGain=f_gain;
+    fx.uiGain=f_gain-0.25;
     refreshVoice=true;
   }
 
