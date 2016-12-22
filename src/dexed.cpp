@@ -161,7 +161,7 @@ void Dexed::set_params(void)
   }
   if(fx.uiGain!=f_gain)
   {
-    fx.uiGain=f_gain*0.8;
+    fx.uiGain=f_gain;
     refreshVoice=true;
   }
 
@@ -430,7 +430,8 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
           for (uint32_t j=0; j < N; ++j) {
 #ifndef NON_DEXED_CLIP
             int32_t val = audiobuf.get()[j];
-            val = val >> 4;
+            //val = val >> 4;
+            val = val >> 5;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9; 
             float f = static_cast<float>(clip_val)/0x8000;
 #else
