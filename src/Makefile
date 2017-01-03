@@ -53,6 +53,8 @@ else
    CXXFLAGS += $(CFLAGS) $(CFLAGS_OPTIONS) -O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
 endif
 
+CXXFLAGS=$(CFLAGS) $(CFLAGS_OPTIONS) -DNON_DEXED_CLIP -O3
+
 all: $(BUNDLE) Makefile
 
 clean: Makefile

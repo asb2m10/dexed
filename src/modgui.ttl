@@ -1,4 +1,5 @@
 @prefix modgui: <http://moddevices.com/ns/modgui#> .
+@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .
 
 <https://github.com/dcoredump/dexed.lv2>
     modgui:gui [

@@ -69,7 +69,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
   engineType=0xff;
-  setEngineType(DEXED_ENGINE_MARKI);
+  setEngineType(DEXED_ENGINE_MODERN);
 
   onParam(155,static_cast<float>(0x3f)); // operator on/off => All OPs on
 
@@ -428,15 +428,10 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
           for (uint32_t j=0; j < N; ++j) {
-#ifndef NON_DEXED_CLIP
             int32_t val = audiobuf.get()[j];
-            //val = val >> 4;
-            val = val >> 5;
+            val = val >> 4;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9; 
             float f = static_cast<float>(clip_val)/0x8000;
-#else
-            float f=static_cast<float>(audiobuf.get()[j]<<2)/INT_MAX;
-#endif
             if(f>1.0)
               f=1.0;
             if(f<-1.0)
