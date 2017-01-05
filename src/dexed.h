@@ -51,6 +51,7 @@ enum DexedEngineResolution {
 };
 
 // GLOBALS
+static const float scaler = 0.0000000025;
 
 //==============================================================================
 

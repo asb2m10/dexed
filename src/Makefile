@@ -5,7 +5,6 @@ OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o ex
 CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false
 LDFLAGS=-L/usr/local/lib -llvtk_plugin2
 
-#CFLAGS_OPTIONS+=-DNON_DEXED_CLIP	# enable for non-dexed-cliping code
 #CFLAGS_OPTIONS+=-DPITCHWHEEL		# enable for adding pitchwheel code
 
 ifeq ($(ARCH),)
@@ -52,8 +51,6 @@ else
    #CXXFLAGS += -Ofast $(CFLAGS) $(CPU) $(FPU)
    CXXFLAGS += $(CFLAGS) $(CFLAGS_OPTIONS) -O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
 endif
-
-CXXFLAGS=$(CFLAGS) $(CFLAGS_OPTIONS) -DNON_DEXED_CLIP -O3
 
 all: $(BUNDLE) Makefile
 

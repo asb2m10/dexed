@@ -428,7 +428,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
           for (uint32_t j=0; j < N; ++j) {
-            int32_t val = audiobuf.get()[j];
+/*            int32_t val = audiobuf.get()[j];
             val = val >> 4;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9; 
             float f = static_cast<float>(clip_val)/0x8000;
@@ -436,7 +436,8 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
               f=1.0;
             if(f<-1.0)
               f=-1.0;
-            sumbuf[j]+=f;
+            sumbuf[j]+=f; */
+            sumbuf[j]+=static_cast<float>(audiobuf.get()[j])*scaler;
             audiobuf.get()[j]=0;
           }
         }
