@@ -324,6 +324,7 @@ void Dexed::set_params(void)
   onParam(157,*p(p_pitch_bend_step));
   onParam(158,*p(p_mod_wheel_range));
   onParam(159,*p(p_mod_wheel_step));
+  onParam(160,*p(p_master_tune));
 
   if(_param_change_counter>PARAM_CHANGE_LEVEL)
     panic();
@@ -678,6 +679,12 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 #endif
 
     _param_change_counter++;
+
+    if(param_num==160)
+    {
+       controllers.masterTune=param_val;
+       return;
+    }
 
     if(param_num==144 || param_num==134)
       panic();
