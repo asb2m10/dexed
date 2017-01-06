@@ -1832,7 +1832,7 @@
         lv2:index 152 ;
         lv2:symbol "pitch_bend_range" ;
         lv2:name "PITCH BEND RANGE" ;
-        lv2:default 12 ;
+        lv2:default 1 ;
         lv2:minimum 0 ;
         lv2:maximum 12 ;
 	lv2:portProperty lv2:integer ;
@@ -1872,9 +1872,9 @@
         lv2:index 156 ;
         lv2:symbol "master_tune" ;
         lv2:name "MASTER TUNE" ;
-        lv2:default 0 ;
-        lv2:minimum -100.0 ;
-        lv2:maximum 100.0 ;
+        lv2:default 0.0 ;
+        lv2:minimum -1.0 ;
+        lv2:maximum 1.0 ;
     ] ;
 
     doap:name "Dexed" ;

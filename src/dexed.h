@@ -136,7 +136,7 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
       03, 24,
       00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
       63,
-      12, 12, 12, 12, 00};
+      01, 12, 12, 12, 00};
 };
 
 #endif  // PLUGINPROCESSOR_H_INCLUDED

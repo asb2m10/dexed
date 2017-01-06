@@ -77,7 +77,7 @@ class Controllers {
     }
     
 public:
-    int values_[3];
+    int32_t values_[3];
     
     char opSwitch[7];
     

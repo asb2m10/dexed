@@ -4,8 +4,8 @@ TARGET=dexed.so
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false
 LDFLAGS=-L/usr/local/lib -llvtk_plugin2
-
-#CFLAGS_OPTIONS+=-DPITCHWHEEL		# enable for adding pitchwheel code
+#DEBUG=1
+#FILETRACE=1
 
 ifeq ($(ARCH),)
    ARCH := $(shell uname -m)

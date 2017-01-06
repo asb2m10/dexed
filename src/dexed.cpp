@@ -46,6 +46,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   currentNote = 0;
   controllers.values_[kControllerPitch] = 0x2000;
+  controllers.values_[kControllerPitchRange] = 12;
   controllers.modwheel_cc = 0;
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
@@ -106,10 +107,6 @@ void Dexed::activate(void)
   TRACE("Hi");
 
   set_params();
-
-#ifdef DEBUG
-  TRACE("Algorithm %d outputs: %d",data[134],controllers.core->op_out(data[134]));
-#endif
 
   Plugin::activate();
 
@@ -473,7 +470,6 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
         {
           uint8_t op_bit=static_cast<uint8_t>(pow(2,op));
 
-          TRACE("op=%d op_out=%d 2^op=%d %d",op,op_out,op_bit,op_out&op_bit);
           if((op_carrier&op_bit)>0)
           {
             // this voice is a carrier!
@@ -548,21 +544,23 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
             }
             break;
         }
-/*
-        case 0xc0 :
-            //setCurrentProgram(buf[1]);
-            break;
+
+//        case 0xc0 :
+//            setCurrentProgram(buf[1]);
+//            break; 
+
         // aftertouch
         case 0xd0 :
             TRACE("MIDI aftertouch 0xd0 event: %d %d",buf[1]);
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
             break;
+        // pitchbend
         case 0xe0 :
             TRACE("MIDI pitchbend 0xe0 event: %d %d",buf[1],buf[2]);
             controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
             break;
-*/
+
         default:
             TRACE("MIDI event unknown: cmd=%d, val1=%d, val2=%d",buf[0],buf[1],buf[2]);
             break;
@@ -682,8 +680,8 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     if(param_num==160)
     {
-       controllers.masterTune=param_val;
-       return;
+       int32_t tune=param_val*0x4000;
+       controllers.masterTune=(tune<<11)*(1.0/12);
     }
 
     if(param_num==144 || param_num==134)

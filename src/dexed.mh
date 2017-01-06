@@ -25,3 +25,10 @@ add https://github.com/dcoredump/dexed.lv2 0
 connect system:midi_capture_1 effect_0:midi_in
 connect effect_0:audio_out system:playback_1
 connect effect_0:audio_out system:playback_2
+
+dexed.lv2 triggered from Kawai MP5 (Variant)
+--------------------------------------------
+add https://github.com/dcoredump/dexed.lv2 0
+connect ttymidi:MIDI_in effect_0:midi_in
+connect effect_0:audio_out system:playback_1
+connect effect_0:audio_out system:playback_2
