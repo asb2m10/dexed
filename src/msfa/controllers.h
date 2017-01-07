@@ -31,6 +31,18 @@
 const int kControllerPitch = 0;
 const int kControllerPitchRange = 1;
 const int kControllerPitchStep = 2;
+const int kControllerMod = 4;
+const int kControllerModRange = 5;
+const int kControllerModAssign = 6;
+const int kControllerFoot = 7;
+const int kControllerFootRange = 8;
+const int kControllerFootAssign = 9;
+const int kControllerBreath = 10;
+const int kControllerBreathRange = 11;
+const int kControllerBreathAssign = 12;
+const int kControllerAT = 13;
+const int kControllerATRange = 14;
+const int kControllerATAssign = 15;
 
 class FmCore;
 
@@ -77,7 +89,7 @@ class Controllers {
     }
     
 public:
-    int32_t values_[3];
+    int32_t values_[16];
     
     char opSwitch[7];
     

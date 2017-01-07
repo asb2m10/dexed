@@ -19,7 +19,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -475,7 +508,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -931,7 +997,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -1387,7 +1486,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -1843,7 +1975,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -2299,7 +2464,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -2755,7 +2953,7 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -3211,7 +3409,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -3667,7 +3898,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -4123,7 +4387,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -4579,7 +4876,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -5035,7 +5365,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -5491,7 +5854,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -5947,7 +6343,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -6403,7 +6832,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -6859,7 +7321,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -7315,7 +7810,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -7771,7 +8299,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -8227,7 +8788,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -8683,7 +9277,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -9139,7 +9766,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -9595,7 +10255,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -10051,7 +10744,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -10507,7 +11233,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -10963,7 +11722,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -11419,7 +12211,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -11875,7 +12700,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -12331,7 +13189,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -12787,7 +13678,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -13243,7 +14167,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -13699,7 +14656,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;
@@ -14155,7 +15145,40 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
-                lv2:symbol "unisono" ;
+                lv2:symbol "polymono" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "pitch_bend_range" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "pitch_bend_step" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "mod_wheel_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "mod_wheel_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "foot_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "foot_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "breath_ctrl_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "breath_ctrl_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "aftertouch_range" ;
+                pset:value 99.0
+        ] , [
+                lv2:symbol "aftertouch_assign" ;
+                pset:value 0.0
+        ] , [
+                lv2:symbol "master_tune" ;
                 pset:value 0.0
         ] , [
                 lv2:symbol "op6_eg_rate_1" ;

@@ -45,8 +45,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     data_float[i]=static_cast<float>(data[i]);
 
   currentNote = 0;
+  memset(&controllers.values_, 0, sizeof(controllers.values_));
   controllers.values_[kControllerPitch] = 0x2000;
-  controllers.values_[kControllerPitchRange] = 12;
   controllers.modwheel_cc = 0;
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
@@ -128,15 +128,15 @@ void Dexed::set_params(void)
 
   _param_change_counter=0;
 
-  bool unisono=bool(*p(p_unisono));
+  bool polymono=bool(*p(p_polymono));
   uint8_t engine=uint8_t(*p(p_engine));
   float f_gain=*p(p_output);
   float f_cutoff=*p(p_cutoff);
   float f_reso=*p(p_resonance);
 
   // Dexed-Unisono
-  if(isMonoMode()!=unisono)
-    setMonoMode(unisono);
+  if(isMonoMode()!=polymono)
+    setMonoMode(polymono);
 
   // Dexed-Engine
   if(controllers.core==NULL || getEngineType()!=engine)
@@ -316,12 +316,18 @@ void Dexed::set_params(void)
   onParam(144,*p(p_transpose));
   // 10 bytes (145-154) are the name of the patch
 
-  // Pitch bend (added at the end of the data[])
-  onParam(156,*p(p_pitch_bend_range));
-  onParam(157,*p(p_pitch_bend_step));
-  onParam(158,*p(p_mod_wheel_range));
-  onParam(159,*p(p_mod_wheel_step));
-  onParam(160,*p(p_master_tune));
+  // Controllers (added at the end of the data[])
+  onParam(155,*p(p_pitch_bend_range));
+  onParam(156,*p(p_pitch_bend_step));
+  onParam(157,*p(p_mod_wheel_range));
+  onParam(158,*p(p_mod_wheel_assign));
+  onParam(159,*p(p_foot_ctrl_range));
+  onParam(160,*p(p_foot_ctrl_assign));
+  onParam(161,*p(p_breath_ctrl_range));
+  onParam(162,*p(p_breath_ctrl_assign));
+  onParam(163,*p(p_aftertouch_range));
+  onParam(164,*p(p_aftertouch_assign));
+  onParam(165,*p(p_master_tune));
 
   if(_param_change_counter>PARAM_CHANGE_LEVEL)
     panic();
@@ -678,7 +684,7 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     _param_change_counter++;
 
-    if(param_num==160)
+    if(param_num==165)
     {
        int32_t tune=param_val*0x4000;
        controllers.masterTune=(tune<<11)*(1.0/12);
@@ -693,17 +699,35 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     switch(param_num)
     {
-      case 156:
+      case 155:
         controllers.values_[kControllerPitchRange]=data[param_num];
         break;
-      case 157:
+      case 156:
         controllers.values_[kControllerPitchStep]=data[param_num];
         break;
+      case 157:
+        controllers.values_[kControllerModRange]=data[param_num];
+        break;
       case 158:
-        //controllers.values_[kControllerModRange]=data[param_num];
+        controllers.values_[kControllerModAssign]=data[param_num];
         break;
       case 159:
-        //controllers.values_[kControllerModStep]=data[param_num];
+        controllers.values_[kControllerFootRange]=data[param_num];
+        break;
+      case 160:
+        controllers.values_[kControllerFootAssign]=data[param_num];
+        break;
+      case 161:
+        controllers.values_[kControllerBreathRange]=data[param_num];
+        break;
+      case 162:
+        controllers.values_[kControllerBreathAssign]=data[param_num];
+        break;
+      case 163:
+        controllers.values_[kControllerATRange]=data[param_num];
+        break;
+      case 164:
+        controllers.values_[kControllerATAssign]=data[param_num];
         break;
     }
 
