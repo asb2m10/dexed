@@ -130,7 +130,40 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 7 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Pitch" ;
+            rdfs:comment "Pitch" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "Amp" ;
+            rdfs:comment "Amp" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "Amp+Pitch" ;
+            rdfs:comment "Amp+Pitch" ;
+        ], [
+            rdf:value 4 ;
+            rdfs:label "EG" ;
+            rdfs:comment "EG" ;
+        ], [
+            rdf:value 5 ;
+            rdfs:label "EG+Pitch" ;
+            rdfs:comment "EG+Pitch" ;
+        ], [
+            rdf:value 6 ;
+            rdfs:label "EG+Amp" ;
+            rdfs:comment "EG+Amp" ;
+        ], [
+            rdf:value 7 ;
+            rdfs:label "EG+Pitch+Amp" ;
+            rdfs:comment "EG+Pitch+Amp" ;
+	];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -150,7 +183,40 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 7 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Pitch" ;
+            rdfs:comment "Pitch" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "Amp" ;
+            rdfs:comment "Amp" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "Amp+Pitch" ;
+            rdfs:comment "Amp+Pitch" ;
+        ], [
+            rdf:value 4 ;
+            rdfs:label "EG" ;
+            rdfs:comment "EG" ;
+        ], [
+            rdf:value 5 ;
+            rdfs:label "EG+Pitch" ;
+            rdfs:comment "EG+Pitch" ;
+        ], [
+            rdf:value 6 ;
+            rdfs:label "EG+Amp" ;
+            rdfs:comment "EG+Amp" ;
+        ], [
+            rdf:value 7 ;
+            rdfs:label "EG+Pitch+Amp" ;
+            rdfs:comment "EG+Pitch+Amp" ;
+	];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -170,7 +236,40 @@
         lv2:default 0;
         lv2:minimum 0 ;
         lv2:maximum 7 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Pitch" ;
+            rdfs:comment "Pitch" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "Amp" ;
+            rdfs:comment "Amp" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "Amp+Pitch" ;
+            rdfs:comment "Amp+Pitch" ;
+        ], [
+            rdf:value 4 ;
+            rdfs:label "EG" ;
+            rdfs:comment "EG" ;
+        ], [
+            rdf:value 5 ;
+            rdfs:label "EG+Pitch" ;
+            rdfs:comment "EG+Pitch" ;
+        ], [
+            rdf:value 6 ;
+            rdfs:label "EG+Amp" ;
+            rdfs:comment "EG+Amp" ;
+        ], [
+            rdf:value 7 ;
+            rdfs:label "EG+Pitch+Amp" ;
+            rdfs:comment "EG+Pitch+Amp" ;
+	];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
@@ -190,7 +289,40 @@
         lv2:default 0 ;
         lv2:minimum 0 ;
         lv2:maximum 7 ;
-	lv2:portProperty lv2:integer ;
+	lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "Pitch" ;
+            rdfs:comment "Pitch" ;
+        ], [
+            rdf:value 2 ;
+            rdfs:label "Amp" ;
+            rdfs:comment "Amp" ;
+        ], [
+            rdf:value 3 ;
+            rdfs:label "Amp+Pitch" ;
+            rdfs:comment "Amp+Pitch" ;
+        ], [
+            rdf:value 4 ;
+            rdfs:label "EG" ;
+            rdfs:comment "EG" ;
+        ], [
+            rdf:value 5 ;
+            rdfs:label "EG+Pitch" ;
+            rdfs:comment "EG+Pitch" ;
+        ], [
+            rdf:value 6 ;
+            rdfs:label "EG+Amp" ;
+            rdfs:comment "EG+Amp" ;
+        ], [
+            rdf:value 7 ;
+            rdfs:label "EG+Pitch+Amp" ;
+            rdfs:comment "EG+Pitch+Amp" ;
+	];
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;

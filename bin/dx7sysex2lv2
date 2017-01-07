@@ -29,7 +29,8 @@ $DXSYX="/usr/local/bin/dxsyx";
 
 $LV2_BUNDLE_NAME="dexed.lv2";
 $LV2_URI="https://github.com/dcoredump/".$LV2_BUNDLE_NAME;
-$LV2_INSTALL_PATH=$ENV{'HOME'}."/.lv2";
+#$LV2_INSTALL_PATH=$ENV{'HOME'}."/.lv2";
+$LV2_INSTALL_PATH="/zynthian/zynthian-plugins/lv2/".$LV2_BUNDLE_NAME;
 
 $SYSEX=$ARGV[0];
 $BANK=$SYSEX;
@@ -115,7 +116,29 @@ sub write_preset_header
 	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("engine","2");
 	print $deeaxe_voice "        ] , [\n";
-        print_lv2_port("unisono","0");
+        print_lv2_port("polymono","0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("pitch_bend_range","1");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("pitch_bend_step","0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("mod_wheel_range","99");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("mod_wheel_assign","0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("foot_ctrl_range","99");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("foot_ctrl_assign","0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("breath_ctrl_range","99");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("breath_ctrl_assign","0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("aftertouch_range","99");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("aftertouch_assign","0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("master_tune","0.0");
 }
 
 sub write_manifest
