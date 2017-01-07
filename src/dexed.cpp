@@ -555,7 +555,7 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
 //            setCurrentProgram(buf[1]);
 //            break; 
 
-        // aftertouch
+        // channel aftertouch
         case 0xd0 :
             TRACE("MIDI aftertouch 0xd0 event: %d %d",buf[1]);
             controllers.aftertouch_cc = buf[1];
@@ -684,12 +684,6 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     _param_change_counter++;
 
-    if(param_num==165)
-    {
-       int32_t tune=param_val*0x4000;
-       controllers.masterTune=(tune<<11)*(1.0/12);
-    }
-
     if(param_num==144 || param_num==134)
       panic();
 
@@ -706,28 +700,32 @@ void Dexed::onParam(uint8_t param_num,float param_val)
         controllers.values_[kControllerPitchStep]=data[param_num];
         break;
       case 157:
-        controllers.values_[kControllerModRange]=data[param_num];
+        controllers.wheel.setRange(data[param_num]);
         break;
       case 158:
-        controllers.values_[kControllerModAssign]=data[param_num];
+        controllers.wheel.setConfig(data[param_num]);
         break;
       case 159:
-        controllers.values_[kControllerFootRange]=data[param_num];
+        controllers.foot.setRange(data[param_num]);
         break;
       case 160:
-        controllers.values_[kControllerFootAssign]=data[param_num];
+        controllers.foot.setConfig(data[param_num]);
         break;
       case 161:
-        controllers.values_[kControllerBreathRange]=data[param_num];
+        controllers.breath.setRange(data[param_num]);
         break;
       case 162:
-        controllers.values_[kControllerBreathAssign]=data[param_num];
+        controllers.breath.setConfig(data[param_num]);
         break;
       case 163:
-        controllers.values_[kControllerATRange]=data[param_num];
+        controllers.at.setRange(data[param_num]);
         break;
       case 164:
-        controllers.values_[kControllerATAssign]=data[param_num];
+        controllers.at.setConfig(data[param_num]);
+        break;
+      case 165:
+        int32_t tune=param_val*0x4000;
+        controllers.masterTune=(tune<<11)*(1.0/12);
         break;
     }
 

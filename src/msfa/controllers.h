@@ -31,23 +31,11 @@
 const int kControllerPitch = 0;
 const int kControllerPitchRange = 1;
 const int kControllerPitchStep = 2;
-const int kControllerMod = 4;
-const int kControllerModRange = 5;
-const int kControllerModAssign = 6;
-const int kControllerFoot = 7;
-const int kControllerFootRange = 8;
-const int kControllerFootAssign = 9;
-const int kControllerBreath = 10;
-const int kControllerBreathRange = 11;
-const int kControllerBreathAssign = 12;
-const int kControllerAT = 13;
-const int kControllerATRange = 14;
-const int kControllerATAssign = 15;
 
 class FmCore;
 
 struct FmMod {
-    int range;
+    uint8_t range;
     bool pitch;
     bool amp;
     bool eg;
@@ -59,18 +47,22 @@ struct FmMod {
         eg = false;
     }
 
-    void parseConfig(const char *cfg) {
-        int r = 0, p = 0, a = 0, e = 0;
-        sscanf(cfg, "%d %d %d %d", &r, &p, &a, &e);
-        
-        range = r < 0 && r > 127 ? 0 : r;
-        pitch = p != 0;
-        amp = a != 0;
-        eg = e != 0;
+public:
+    void setRange(uint8_t r) {
+        //range = r < 0 && r > 127 ? 0 : r;
+
+        range = r < 0 && r > 100 ? 0 : r;
     }
-    
-    void setConfig(char *cfg) {
-        snprintf(cfg, 13, "%d %d %d %d", range, pitch, amp, eg);
+
+    void setConfig(uint8_t assign) {
+        if(assign & 1)
+          pitch=true;
+
+        if(assign & (1<<1))
+          amp=true;
+
+        if(assign & (1<<2))
+          eg=true;
     }
 };
 
