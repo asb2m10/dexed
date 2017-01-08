@@ -41,8 +41,11 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[i].live = false;
   }
 
-  for(i=0;i<160;++i)
+  for(i=0;i<167;++i)
+  {
     data_float[i]=static_cast<float>(data[i]);
+    TRACE("%d->%f",i,data_float[i]);
+  }
 
   currentNote = 0;
   memset(&controllers.values_, 0, sizeof(controllers.values_));
@@ -105,8 +108,6 @@ Dexed::~Dexed()
 void Dexed::activate(void)
 {
   TRACE("Hi");
-
-  set_params();
 
   Plugin::activate();
 
@@ -315,19 +316,19 @@ void Dexed::set_params(void)
   onParam(143,*p(p_pitch_mod_sensitivity));
   onParam(144,*p(p_transpose));
   // 10 bytes (145-154) are the name of the patch
-
+  // 155 is reserved for bit-mask of enabled OPs (normaly 0x3f every time)
   // Controllers (added at the end of the data[])
-  onParam(155,*p(p_pitch_bend_range));
-  onParam(156,*p(p_pitch_bend_step));
-  onParam(157,*p(p_mod_wheel_range));
-  onParam(158,*p(p_mod_wheel_assign));
-  onParam(159,*p(p_foot_ctrl_range));
-  onParam(160,*p(p_foot_ctrl_assign));
-  onParam(161,*p(p_breath_ctrl_range));
-  onParam(162,*p(p_breath_ctrl_assign));
-  onParam(163,*p(p_aftertouch_range));
-  onParam(164,*p(p_aftertouch_assign));
-  onParam(165,*p(p_master_tune));
+  onParam(156,*p(p_pitch_bend_range));
+  onParam(157,*p(p_pitch_bend_step));
+  onParam(158,*p(p_mod_wheel_range));
+  onParam(159,*p(p_mod_wheel_assign));
+  onParam(160,*p(p_foot_ctrl_range));
+  onParam(161,*p(p_foot_ctrl_assign));
+  onParam(162,*p(p_breath_ctrl_range));
+  onParam(163,*p(p_breath_ctrl_assign));
+  onParam(164,*p(p_aftertouch_range));
+  onParam(165,*p(p_aftertouch_assign));
+  onParam(166,*p(p_master_tune));
 
   if(_param_change_counter>PARAM_CHANGE_LEVEL)
     panic();
@@ -344,7 +345,7 @@ void Dexed::run (uint32_t sample_count)
 
     Plugin::run(sample_count);
 
-    if(++_param_counter%16)
+    if(++_k_rate_counter%16)
     {
       set_params(); // pre_process: copy actual voice params
     }
@@ -459,7 +460,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
     extra_buf_size_ = i - n_samples;
   }
 
-  if(++_param_counter%32)
+  if(++_k_rate_counter%32 && !monoMode)
   {
     uint8_t op_carrier=controllers.core->get_carrier_operators(data[134]); // look for carriers
 
@@ -491,7 +492,9 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 	{
           // all carrier-operators are silent -> disable the voice
           voices[i].live=false;
-          TRACE("Shutting down Voice[%2d]",i);
+          voices[i].sustained=false;
+          voices[i].keydown=false;
+          TRACE("Shutted down Voice[%2d]",i);
         }
       }
 //    TRACE("Voice[%2d] live=%d keydown=%d",i,voices[i].live,voices[i].keydown);
@@ -591,10 +594,11 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
     }
     
     uint8_t note = currentNote;
+    uint8_t keydown_counter=0;
+
     for (uint8_t i=0; i<MAX_ACTIVE_NOTES; i++) {
         if (!voices[note].keydown) {
             currentNote = (note + 1) % MAX_ACTIVE_NOTES;
-            lfo.keydown();  // TODO: should only do this if # keys down was 0
             voices[note].midi_note = pitch;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
@@ -603,13 +607,18 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
                 voices[note].dx7_note->oscSync();
             break;
         }
+        else
+	  keydown_counter++;
+
         note = (note + 1) % MAX_ACTIVE_NOTES;
     }
     
+    if(keydown_counter==0)
+      lfo.keydown();
     if ( monoMode ) {
         for(uint8_t i=0; i<MAX_ACTIVE_NOTES; i++) {            
             if ( voices[i].live ) {
-                // all keys are up, only transfert signal
+                // all keys are up, only transfer signal
                 if ( ! voices[i].keydown ) {
                     voices[i].live = false;
                     voices[note].dx7_note->transferSignal(*voices[i].dx7_note);
@@ -650,9 +659,9 @@ TRACE("pitch=%d\n",pitch);
     }
     
     if ( monoMode ) {
-        uint8_t highNote = -1;
-        int target = 0;
-        for (int i=0; i<MAX_ACTIVE_NOTES;i++) {
+        int8_t highNote = -1;
+        int8_t target = 0;
+        for (int8_t i=0; i<MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].keydown && voices[i].midi_note > highNote ) {
                 target = i;
                 highNote = voices[i].midi_note;
@@ -676,8 +685,10 @@ TRACE("Bye");
 
 void Dexed::onParam(uint8_t param_num,float param_val)
 {
+
   if(param_val!=data_float[param_num])
   {
+    TRACE("Parameter %d change from %f to %f",param_num, data_float[param_num], param_val);
 #ifdef DEBUG
     uint8_t tmp=data[param_num];
 #endif
@@ -693,43 +704,43 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     switch(param_num)
     {
-      case 155:
+      case 156:
         controllers.values_[kControllerPitchRange]=data[param_num];
         break;
-      case 156:
+      case 157:
         controllers.values_[kControllerPitchStep]=data[param_num];
         break;
-      case 157:
+      case 158:
         controllers.wheel.setRange(data[param_num]);
         break;
-      case 158:
+      case 159:
         controllers.wheel.setConfig(data[param_num]);
         break;
-      case 159:
+      case 160:
         controllers.foot.setRange(data[param_num]);
         break;
-      case 160:
+      case 161:
         controllers.foot.setConfig(data[param_num]);
         break;
-      case 161:
+      case 162:
         controllers.breath.setRange(data[param_num]);
         break;
-      case 162:
+      case 163:
         controllers.breath.setConfig(data[param_num]);
         break;
-      case 163:
+      case 164:
         controllers.at.setRange(data[param_num]);
         break;
-      case 164:
+      case 165:
         controllers.at.setConfig(data[param_num]);
         break;
-      case 165:
+      case 166:
         int32_t tune=param_val*0x4000;
         controllers.masterTune=(tune<<11)*(1.0/12);
         break;
     }
 
-    TRACE("Parameter %d change from %d to %d",param_num, tmp, data[param_num]);
+    TRACE("Done :Parameter %d changed from %d to %d",param_num, tmp, data[param_num]);
   }
 }
 

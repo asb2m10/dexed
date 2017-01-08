@@ -58,10 +58,10 @@ public:
         if(assign & 1)
           pitch=true;
 
-        if(assign & (1<<1))
+        if(assign & 2)
           amp=true;
 
-        if(assign & (1<<2))
+        if(assign & 4)
           eg=true;
     }
 };

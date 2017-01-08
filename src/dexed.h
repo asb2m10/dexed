@@ -119,10 +119,10 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
 
   private:
     double _rate;
-    uint8_t _param_counter;
+    uint8_t _k_rate_counter;
     uint8_t _param_change_counter;
     float data_float[166];
-    uint8_t data[166]={
+    uint8_t data[167]={
       95, 29, 20, 50, 99, 95, 00, 00, 41, 00, 19, 00, 00, 03, 00, 06, 79, 00, 01, 00, 14,
       95, 20, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 00, 99, 00, 01, 00, 00,
       95, 29, 20, 50, 99, 95, 00, 00, 00, 00, 00, 00, 00, 03, 00, 06, 89, 00, 01, 00, 07,
@@ -134,8 +134,9 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
       34, 33, 00, 00, 00, 04,
       03, 24,
       00, 00, 00, 00, 00, 00, 00, 00, 00, 00,
+      63,
       01, 00, 99, 00, 99, 00, 99, 00, 99, 00,
-      63
+      00
    };
 };
 
