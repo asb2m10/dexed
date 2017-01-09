@@ -22,11 +22,10 @@ LV2 plugin (e.g. for mod-host).
 Currently (Oct 2016) it is not running or nearly ready. If someone has time and
 fun developing please contact dcoredump@gmail.com!
 
-'''
- git clone https://github.com/dcoredump/dexed.git
- git checkout origin native-lv2
- cd dexed/src
- make
- # make dexed-test
-'''
+```
+git clone https://github.com/dcoredump/dexed.git
+git checkout origin native-lv2
+cd dexed/src
+make install
+```
  
