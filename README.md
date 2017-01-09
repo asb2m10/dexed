@@ -15,12 +15,11 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 [Dexed User Website](http://asb2m10.github.io/dexed)
 
-This is a fork of the original Dexed JUCE plugin. Use the branch "native-lv2"
+This is a fork of the original Dexed JUCE plugin. Use the branch **native-lv2**
 for a stripped down version which has no own UI and should be used only as a
 LV2 plugin (e.g. for mod-host).
 
-Currently (Oct 2016) it is not running or nearly ready. If someone has time and
-fun developing please contact dcoredump@gmail.com!
+If someone has time and fun developing or finds a bug please contact dcoredump@gmail.com!
 
 ```
 git clone https://github.com/dcoredump/dexed.git
