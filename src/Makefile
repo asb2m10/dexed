@@ -1,5 +1,5 @@
 BUNDLE=dexed.lv2
-INSTALL_DIR=/zynthian/zynthian-plugins/lv2
+INSTALL_DIR=/zynthian/zynthian-plugins/mod-lv2
 TARGET=dexed.so
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false
@@ -11,6 +11,12 @@ ifeq ($(ARCH),)
    ARCH := $(shell uname -m)
 endif
 machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
+
+# Intel-PC
+ifneq (,$(findstring x86,$(machine)))
+  CPU = 
+  FPU = 
+endif
 
 # Raspberry Pi B+, Zero, etc
 ifneq (,$(findstring armv6l,$(machine)))
@@ -48,8 +54,8 @@ ifeq ($(DEBUG), 1)
       CXXFLAGS += -DDEBUG $(CFLAGS) $(CFLAGS_OPTIONS)
    endif
 else
-   #CXXFLAGS += -Ofast $(CFLAGS) $(CPU) $(FPU)
-   CXXFLAGS += $(CFLAGS) $(CFLAGS_OPTIONS) -O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
+   #CXXFLAGS += $(CFLAGS) $(CFLAGS_OPTIONS) -O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
+   CXXFLAGS += $(CFLAGS) $(CFLAGS_OPTIONS) -O3
 endif
 
 all: $(BUNDLE) Makefile
