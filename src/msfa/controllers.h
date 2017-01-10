@@ -55,14 +55,9 @@ public:
     }
 
     void setConfig(uint8_t assign) {
-        if(assign & 1)
-          pitch=true;
-
-        if(assign & 2)
-          amp=true;
-
-        if(assign & 4)
-          eg=true;
+          pitch=assign&1;
+          amp=assign&2;
+          eg=assign&4;
     }
 };
 
