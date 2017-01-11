@@ -131,7 +131,8 @@ void Dexed::set_params(void)
 
   bool polymono=bool(*p(p_polymono));
   uint8_t engine=uint8_t(*p(p_engine));
-  float f_gain=*p(p_output)*scaler;
+  //float f_gain=*p(p_output)*scaler;
+  float f_gain=*p(p_output);
   float f_cutoff=*p(p_cutoff);
   float f_reso=*p(p_resonance);
 
@@ -433,17 +434,15 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
         if (voices[note].live) {
           voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
           for (uint32_t j=0; j < N; ++j) {
-/*            int32_t val = audiobuf.get()[j];
+            int32_t val = audiobuf.get()[j];
             val = val >> 4;
             int32_t clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9; 
             float f = static_cast<float>(clip_val)/0x8000;
-            if(f>1.0)
-              f=1.0;
-            if(f<-1.0)
-              f=-1.0;
-            sumbuf[j]+=f; */
-            sumbuf[j]+=static_cast<float>(audiobuf.get()[j]);
+            if(f>1) f=1;
+            if(f<-1) f=-1;
+            sumbuf[j]+=f;
             audiobuf.get()[j]=0;
+            //sumbuf[j]+=static_cast<float>(audiobuf.get()[j]);
           }
         }
       }
