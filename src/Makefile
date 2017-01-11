@@ -1,5 +1,5 @@
 BUNDLE=dexed.lv2
-INSTALL_DIR=/zynthian/zynthian-plugins/mod-lv2
+INSTALL_DIR=/zynthian/zynthian-plugins/lv2
 TARGET=dexed.so
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false

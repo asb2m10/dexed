@@ -29,8 +29,7 @@ $DXSYX="/usr/local/bin/dxsyx";
 
 $LV2_BUNDLE_NAME="dexed.lv2";
 $LV2_URI="https://github.com/dcoredump/".$LV2_BUNDLE_NAME;
-#$LV2_INSTALL_PATH=$ENV{'HOME'}."/.lv2";
-$LV2_INSTALL_PATH="/zynthian/zynthian-plugins/lv2/".$LV2_BUNDLE_NAME;
+$LV2_INSTALL_PATH=$ENV{'HOME'}."/.lv2";
 
 $SYSEX=$ARGV[0];
 $BANK=$SYSEX;
@@ -51,8 +50,15 @@ while($s=<SYSEX>)
 		my($voice)=$1;
 		$voice=~s/\s+$//; # right trim
 		my($voice_name)=$voice;
-        	$voice=~tr/ /_/;
-        	$voice=~tr/-/_/;
+        	$voice=~tr/[ &-*+\"\'`\?\/\<\>\[\]\^\{\}]\|/_/;
+        	$voice=~s/%3c/_/i;
+        	$voice=~s/%3e/_/i;
+        	$voice=~s/%5b/_/i;
+        	$voice=~s/%5d/_/i;
+        	$voice=~s/%5e/_/i;
+        	$voice=~s/%7b/_/i;
+        	$voice=~s/%7d/_/i;
+        	$voice=~s/%7c/_/i;
 
 		if($deeaxe_voice)
 		{
@@ -61,12 +67,17 @@ while($s=<SYSEX>)
 		}
 
 		my($path)=$LV2_INSTALL_PATH."/".$_LV2_BUNDLE_NAME."-".$BANK."_".$voice.".lv2";
-		print "Writing ".$path."/".$BANK."_".$voice.".ttl\n";
 
+		if(!-d $LV2_INSTALL_PATH)
+		{
+			mkdir($LV2_INSTALL_PATH) || die("Cannot create dir \'$LV2_INSTALL_PATH\':$!\n");
+		}
 		if(!-d $path)
 		{
 			mkdir($path) || die("Cannot create dir \'$path\':$!\n");
 		}
+
+		print "Writing ".$path."/".$BANK."_".$voice.".ttl\n";
 
 		write_manifest($path,$voice);
 
@@ -106,7 +117,7 @@ sub write_preset_header
         print $deeaxe_voice "<>\n";
         print $deeaxe_voice "        a pset:Preset ;\n";
         print $deeaxe_voice "        lv2:appliesTo <".$LV2_URI."> ;\n";
-        print $deeaxe_voice "        rdfs:label \"".$voice_name."\" ;\n";
+        #print $deeaxe_voice "        rdfs:label \"".$voice_name."\" ;\n";
         print $deeaxe_voice "        lv2:port [\n";
         print_lv2_port("cutoff","1.0");
 	print $deeaxe_voice "        ] , [\n";
@@ -114,7 +125,7 @@ sub write_preset_header
 	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("output","1.0");
 	print $deeaxe_voice "        ] , [\n";
-        print_lv2_port("engine","2");
+        print_lv2_port("engine","0");
 	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("polymono","0");
 	print $deeaxe_voice "        ] , [\n";
@@ -160,6 +171,7 @@ sub write_manifest
         print MANIFEST "        lv2:appliesTo <".$LV2_URI."> ;\n";
         #print MANIFEST "        a pset:Bank $BANK ;\n";
         print MANIFEST "        a pset:Preset ;\n";
+        print MANIFEST "        rdfs:label \"".$voice."\" ;\n";
         print MANIFEST "        rdfs:seeAlso <".$BANK."_".$voice.".ttl> .\n";
         close(MANIFEST);
 }
