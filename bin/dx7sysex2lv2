@@ -150,6 +150,18 @@ sub write_preset_header
         print_lv2_port("aftertouch_assign","0");
 	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("master_tune","0.0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("op1_enable","1.0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("op2_enable","1.0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("op3_enable","1.0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("op4_enable","1.0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("op5_enable","1.0");
+	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("op6_enable","1.0");
 }
 
 sub write_manifest

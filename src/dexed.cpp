@@ -41,7 +41,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[i].live = false;
   }
 
-  for(i=0;i<167;++i)
+  for(i=0;i<173;++i)
   {
     data_float[i]=static_cast<float>(data[i]);
     TRACE("%d->%f",i,data_float[i]);
@@ -77,7 +77,12 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   engineType=0xff;
   setEngineType(DEXED_ENGINE_MODERN);
 
-  onParam(155,static_cast<float>(0x3f)); // operator on/off => All OPs on
+  onParam(166,1.0); // OP1: on
+  onParam(167,1.0); // OP2: on
+  onParam(168,1.0); // OP3: on
+  onParam(169,1.0); // OP4: on
+  onParam(170,1.0); // OP5: on
+  onParam(171,1.0); // OP6: on
 
   //add_voices(new DexedVoice(rate));
 
@@ -332,6 +337,12 @@ void Dexed::set_params(void)
   onParam(164,*p(p_aftertouch_range));
   onParam(165,*p(p_aftertouch_assign));
   onParam(166,*p(p_master_tune));
+  onParam(167,*p(p_op1_enable));
+  onParam(168,*p(p_op2_enable));
+  onParam(169,*p(p_op3_enable));
+  onParam(170,*p(p_op4_enable));
+  onParam(171,*p(p_op5_enable));
+  onParam(172,*p(p_op6_enable));
 
   if(_param_change_counter>PARAM_CHANGE_LEVEL)
     panic();
@@ -696,7 +707,7 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     _param_change_counter++;
 
-    if(param_num==144 || param_num==134 || param_num==155)
+    if(param_num==144 || param_num==134)
       panic();
 
     refreshVoice=true;
@@ -706,45 +717,50 @@ void Dexed::onParam(uint8_t param_num,float param_val)
     switch(param_num)
     {
       case 155:
-        controllers.opSwitch=data[param_num];
-        break;
-      case 156:
         controllers.values_[kControllerPitchRange]=data[param_num];
         break;
-      case 157:
+      case 156:
         controllers.values_[kControllerPitchStep]=data[param_num];
         break;
-      case 158:
+      case 157:
         controllers.wheel.setRange(data[param_num]);
         break;
-      case 159:
+      case 158:
         controllers.wheel.setConfig(data[param_num]);
         break;
-      case 160:
+      case 159:
         controllers.foot.setRange(data[param_num]);
         break;
-      case 161:
+      case 160:
         controllers.foot.setConfig(data[param_num]);
         break;
-      case 162:
+      case 161:
         controllers.breath.setRange(data[param_num]);
         break;
-      case 163:
+      case 162:
         controllers.breath.setConfig(data[param_num]);
         break;
-      case 164:
+      case 163:
         controllers.at.setRange(data[param_num]);
         break;
-      case 165:
+      case 164:
         controllers.at.setConfig(data[param_num]);
         break;
       case 166:
+      case 167:
+      case 168:
+      case 169:
+      case 170:
+      case 171:
+        controllers.opSwitch=data[166]|(data[167]<<1)|(data[168]<<2)|(data[169]<<3)|(data[170]<<4)|(data[171]<<5);
+        break;
+      case 165:
         int32_t tune=param_val*0x4000;
         controllers.masterTune=(tune<<11)*(1.0/12);
         break;
     }
 
-    TRACE("Done :Parameter %d changed from %d to %d",param_num, tmp, data[param_num]);
+    TRACE("Done: Parameter %d changed from %d to %d",param_num, tmp, data[param_num]);
   }
 }
 

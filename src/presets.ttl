@@ -489,6 +489,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#BASS____2>
@@ -978,6 +996,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#BRASS___1>
@@ -1467,6 +1503,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#BRASS___2>
@@ -1956,6 +2010,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#BRASS___3>
@@ -2445,6 +2517,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#CLAV____1>
@@ -2934,6 +3024,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#E.ORGAN_1>
@@ -3390,6 +3498,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#E.PIANO_1>
@@ -3879,6 +4005,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#FLUTE___1>
@@ -4368,6 +4512,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#GUITAR__1>
@@ -4857,6 +5019,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#GUITAR__2>
@@ -5346,6 +5526,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#HARPSICH_1>
@@ -5835,6 +6033,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#KOTO>
@@ -6324,6 +6540,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#MARIMBA>
@@ -6813,6 +7047,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#ORCH_CHIME>
@@ -7302,6 +7554,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#ORCHESTRA>
@@ -7791,6 +8061,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#PIANO___1>
@@ -8280,6 +8568,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#PIANO___2>
@@ -8769,6 +9075,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#PIANO___3>
@@ -9258,6 +9582,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#PIPES___1>
@@ -9747,6 +10089,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#REF_WHISL>
@@ -10236,6 +10596,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#STEEL_DRUM>
@@ -10725,6 +11103,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#STRING_1>
@@ -11214,6 +11610,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#STRINGS_2>
@@ -11703,6 +12117,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#STRINGS_3>
@@ -12192,6 +12624,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 12.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#SYN-LEAD_1>
@@ -12681,6 +13131,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 36.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#TAKE_OFF>
@@ -13170,6 +13638,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 0.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#TIMPANI>
@@ -13659,6 +14145,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#TRAIN>
@@ -14148,6 +14652,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#TUB_BELLS>
@@ -14637,6 +15159,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#VIBE____1>
@@ -15126,6 +15666,24 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .
 
 <https://github.com/dcoredump/dexed.lv2/presets#VOICE___1>
@@ -15615,4 +16173,22 @@
         ] , [
                 lv2:symbol "transpose" ;
                 pset:value 24.0
+        ] , [
+                lv2:symbol "op1_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op2_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op3_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op4_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op5_enable" ;
+                pset:value 1.0
+        ] , [
+                lv2:symbol "op6_enable" ;
+                pset:value 1.0
         ] .

@@ -2065,6 +2065,120 @@
         lv2:minimum 0 ;
         lv2:maximum 7 ;
 	lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 163 ;
+        lv2:symbol "op1_enable" ;
+        lv2:name "OP1 ENABLE" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "On" ;
+            rdfs:comment "On" ;
+        ];
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 164 ;
+        lv2:symbol "op2_enable" ;
+        lv2:name "OP2 ENABLE" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "On" ;
+            rdfs:comment "On" ;
+        ];
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 165 ;
+        lv2:symbol "op3_enable" ;
+        lv2:name "OP3 ENABLE" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "On" ;
+            rdfs:comment "On" ;
+        ];
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 166 ;
+        lv2:symbol "op4_enable" ;
+        lv2:name "OP4 ENABLE" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "On" ;
+            rdfs:comment "On" ;
+        ];
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 167 ;
+        lv2:symbol "op5_enable" ;
+        lv2:name "OP5 ENABLE" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "On" ;
+            rdfs:comment "On" ;
+        ];
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 168 ;
+        lv2:symbol "op6_enable" ;
+        lv2:name "OP6 ENABLE" ;
+        lv2:default 1 ;
+        lv2:minimum 0 ;
+        lv2:maximum 1 ;
+        lv2:portProperty lv2:enumeration, lv2:integer ;
+        lv2:scalePoint [
+            rdf:value 0 ;
+            rdfs:label "Off" ;
+            rdfs:comment "Off" ;
+        ], [
+            rdf:value 1 ;
+            rdfs:label "On" ;
+            rdfs:comment "On" ;
+        ];
     ] ;
 
     doap:name "Dexed" ;
