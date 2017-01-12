@@ -56,7 +56,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
   controllers.masterTune=0;
-  controllers.opSwitch=0;
+  controllers.opSwitch=0x3f; // enable all operators
 
   bufsize_=256;
 
@@ -76,13 +76,6 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   engineType=0xff;
   setEngineType(DEXED_ENGINE_MODERN);
-
-  onParam(166,1.0); // OP1: on
-  onParam(167,1.0); // OP2: on
-  onParam(168,1.0); // OP3: on
-  onParam(169,1.0); // OP4: on
-  onParam(170,1.0); // OP5: on
-  onParam(171,1.0); // OP6: on
 
   //add_voices(new DexedVoice(rate));
 
@@ -326,23 +319,23 @@ void Dexed::set_params(void)
   // 10 bytes (145-154) are the name of the patch
   // 155 is reserved for bit-mask of enabled OPs (normaly 0x3f every time)
   // Controllers (added at the end of the data[])
-  onParam(156,*p(p_pitch_bend_range));
-  onParam(157,*p(p_pitch_bend_step));
-  onParam(158,*p(p_mod_wheel_range));
-  onParam(159,*p(p_mod_wheel_assign));
-  onParam(160,*p(p_foot_ctrl_range));
-  onParam(161,*p(p_foot_ctrl_assign));
-  onParam(162,*p(p_breath_ctrl_range));
-  onParam(163,*p(p_breath_ctrl_assign));
-  onParam(164,*p(p_aftertouch_range));
-  onParam(165,*p(p_aftertouch_assign));
-  onParam(166,*p(p_master_tune));
-  onParam(167,*p(p_op1_enable));
-  onParam(168,*p(p_op2_enable));
-  onParam(169,*p(p_op3_enable));
-  onParam(170,*p(p_op4_enable));
-  onParam(171,*p(p_op5_enable));
-  onParam(172,*p(p_op6_enable));
+  onParam(155,*p(p_pitch_bend_range));
+  onParam(156,*p(p_pitch_bend_step));
+  onParam(157,*p(p_mod_wheel_range));
+  onParam(158,*p(p_mod_wheel_assign));
+  onParam(159,*p(p_foot_ctrl_range));
+  onParam(160,*p(p_foot_ctrl_assign));
+  onParam(161,*p(p_breath_ctrl_range));
+  onParam(162,*p(p_breath_ctrl_assign));
+  onParam(163,*p(p_aftertouch_range));
+  onParam(164,*p(p_aftertouch_assign));
+  onParam(165,*p(p_master_tune));
+  onParam(166,*p(p_op1_enable));
+  onParam(167,*p(p_op2_enable));
+  onParam(168,*p(p_op3_enable));
+  onParam(169,*p(p_op4_enable));
+  onParam(170,*p(p_op5_enable));
+  onParam(171,*p(p_op6_enable));
 
   if(_param_change_counter>PARAM_CHANGE_LEVEL)
     panic();
