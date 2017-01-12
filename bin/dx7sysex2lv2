@@ -29,7 +29,7 @@ $DXSYX="/usr/local/bin/dxsyx";
 
 $LV2_BUNDLE_NAME="dexed.lv2";
 $LV2_URI="https://github.com/dcoredump/".$LV2_BUNDLE_NAME;
-$LV2_INSTALL_PATH=$ENV{'HOME'}."/.lv2";
+$LV2_INSTALL_PATH="/zynthian/zynthian-my-plugins/lv2";
 
 $SYSEX=$ARGV[0];
 $BANK=$SYSEX;
@@ -50,7 +50,7 @@ while($s=<SYSEX>)
 		my($voice)=$1;
 		$voice=~s/\s+$//; # right trim
 		my($voice_name)=$voice;
-        	$voice=~tr/[ &-*+\"\'`\?\/\<\>\[\]\^\{\}]\|/_/;
+        	$voice=~tr/[ %§&-*+\"\'`\!\$\%\?\/\<\>\[\]\^\{\}]\|/_/;
         	$voice=~s/%3c/_/i;
         	$voice=~s/%3e/_/i;
         	$voice=~s/%5b/_/i;
