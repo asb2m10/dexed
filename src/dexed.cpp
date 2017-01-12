@@ -745,7 +745,7 @@ void Dexed::onParam(uint8_t param_num,float param_val)
       case 169:
       case 170:
       case 171:
-        controllers.opSwitch=data[166]|(data[167]<<1)|(data[168]<<2)|(data[169]<<3)|(data[170]<<4)|(data[171]<<5);
+        controllers.opSwitch=(data[166]<<5)|(data[167]<<4)|(data[168]<<3)|(data[169]<<2)|(data[170]<<1)|data[171];
         break;
       case 165:
         int32_t tune=param_val*0x4000;
