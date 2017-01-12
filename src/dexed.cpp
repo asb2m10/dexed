@@ -48,13 +48,15 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   }
 
   currentNote = 0;
-  memset(&controllers.values_, 0, sizeof(controllers.values_));
   controllers.values_[kControllerPitch] = 0x2000;
+  controllers.values_[kControllerPitchRange] = data[156];
+  controllers.values_[kControllerPitchStep] = data[157];
   controllers.modwheel_cc = 0;
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
   controllers.masterTune=0;
+  controllers.opSwitch=0;
 
   bufsize_=256;
 
@@ -694,7 +696,7 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     _param_change_counter++;
 
-    if(param_num==144 || param_num==134)
+    if(param_num==144 || param_num==134 || param_num==155)
       panic();
 
     refreshVoice=true;
@@ -703,6 +705,9 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     switch(param_num)
     {
+      case 155:
+        controllers.opSwitch=data[param_num];
+        break;
       case 156:
         controllers.values_[kControllerPitchRange]=data[param_num];
         break;

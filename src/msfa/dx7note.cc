@@ -216,7 +216,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     
     // ==== OP RENDER ====
     for (int op = 0; op < 6; op++) {
-        if ( ctrls->opSwitch[op] == '0' )  {
+        //if ( ctrls->opSwitch[op] == '0' )  {
+        if ( ctrls->opSwitch & (1<<op) )  {
             env_[op].getsample(); // advance the envelop even if it is not playing
             params_[op].level_in = 0;
         } else {

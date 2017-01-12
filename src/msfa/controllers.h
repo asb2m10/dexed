@@ -76,9 +76,7 @@ class Controllers {
     }
     
 public:
-    int32_t values_[16];
-    
-    char opSwitch[7];
+    int32_t values_[3];
     
     int amp_mod;
     int pitch_mod;
@@ -90,7 +88,9 @@ public:
     int modwheel_cc;
     
     int masterTune;
-    
+
+    uint8_t opSwitch;
+
     FmMod wheel;
     FmMod foot;
     FmMod breath;
@@ -100,7 +100,6 @@ public:
         amp_mod = 0;
         pitch_mod = 0;
         eg_mod = 0;
-        strcpy(opSwitch, "111111");        
     }
 
     void refresh() {
