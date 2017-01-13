@@ -41,7 +41,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[i].live = false;
   }
 
-  for(i=0;i<173;++i)
+  for(i=0;i<sizeof(data_float);++i)
   {
     data_float[i]=static_cast<float>(data[i]);
     TRACE("%d->%f",i,data_float[i]);
