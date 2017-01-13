@@ -49,8 +49,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   currentNote = 0;
   controllers.values_[kControllerPitch] = 0x2000;
-  controllers.values_[kControllerPitchRange] = data[156];
-  controllers.values_[kControllerPitchStep] = data[157];
+  controllers.values_[kControllerPitchRange] = data[155];
+  controllers.values_[kControllerPitchStep] = data[156];
   controllers.modwheel_cc = 0;
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
