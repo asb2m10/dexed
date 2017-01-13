@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 #
-# dx7sysex2lv2 - SysEx patchset to LV2 converter for
+# dx7sysex2lv2presets - SysEx patchset to LV2 converter for
 # Dexed.lv2 - LV2 plugin
+#
+# This generator builds the presets-ttl and a suitable manifest.ttl
 #
 # (c) by H. Wirtz <dcoredump@googlemail.com>
 #
@@ -31,76 +33,78 @@ $LV2_BUNDLE_NAME="dexed.lv2";
 $LV2_URI="https://github.com/dcoredump/".$LV2_BUNDLE_NAME;
 $LV2_INSTALL_PATH="/zynthian/zynthian-my-plugins/lv2";
 
-$SYSEX=$ARGV[0];
-$BANK=$SYSEX;
-$BANK=~s{.*/}{};      # removes path  
-$BANK=~s{\.[^.]+$}{}; # removes extension
-
-$_LV2_BUNDLE_NAME="dexed_lv2";
-
-open(SYSEX,"$DXSYX -y $SYSEX |") || die ("Cannot open \'$DXSYX -y $SYSEX\': $!");
-while($s=<SYSEX>)
+while($SYSEX=shift(@ARGV))
 {
-	chop($s);
-	next if($s=~/^\s*$/);
-	next if($s=~/^\s*---\s*$/);
-	next if($s=~/^\s*filename/);
-	if($s=~/^\s+voice_name:\s+(.+)\s*/)
+	$BANK=$SYSEX;
+	$BANK=~s{.*/}{};      # removes path  
+	$BANK=~s{\.[^.]+$}{}; # removes extension
+
+	$_LV2_BUNDLE_NAME="dexed_lv2";
+
+	open(SYSEX,"$DXSYX -y $SYSEX |") || die ("Cannot open \'$DXSYX -y $SYSEX\': $!");
+	while($s=<SYSEX>)
 	{
-		my($voice)=$1;
-		$voice=~s/\s+$//; # right trim
-		my($voice_name)=$voice;
-        	$voice=~tr/[ %§&-*+\"\'`\!\$\%\?\/\<\>\[\]\^\{\}]\|/_/;
-        	$voice=~s/%3c/_/i;
-        	$voice=~s/%3e/_/i;
-        	$voice=~s/%5b/_/i;
-        	$voice=~s/%5d/_/i;
-        	$voice=~s/%5e/_/i;
-        	$voice=~s/%7b/_/i;
-        	$voice=~s/%7d/_/i;
-        	$voice=~s/%7c/_/i;
-
-		if($deeaxe_voice)
+		chop($s);
+		next if($s=~/^\s*$/);
+		next if($s=~/^\s*---\s*$/);
+		next if($s=~/^\s*filename/);
+		if($s=~/^\s+voice_name:\s+(.+)\s*/)
 		{
-			print $deeaxe_voice "        ] .\n";
-			close($deeaxe_voice);
+			my($voice)=$1;
+			$voice=~s/\s+$//; # right trim
+			my($voice_name)=$voice;
+       		 	$voice=~tr/[ %§&-*+\"\'`\!\$\%\?\/\<\>\[\]\^\{\}]\|/_/;
+       		 	$voice=~s/%3c/_/i;
+       		 	$voice=~s/%3e/_/i;
+       		 	$voice=~s/%5b/_/i;
+       		 	$voice=~s/%5d/_/i;
+       		 	$voice=~s/%5e/_/i;
+       		 	$voice=~s/%7b/_/i;
+       		 	$voice=~s/%7d/_/i;
+       		 	$voice=~s/%7c/_/i;
+
+			if($deeaxe_voice)
+			{
+				print $deeaxe_voice "        ] .\n";
+				close($deeaxe_voice);
+			}
+	
+			my($path)=$LV2_INSTALL_PATH."/".$_LV2_BUNDLE_NAME."-".$BANK."_".$voice.".lv2";
+
+			if(!-d $LV2_INSTALL_PATH)
+			{
+				mkdir($LV2_INSTALL_PATH) || die("Cannot create dir \'$LV2_INSTALL_PATH\':$!\n");
+			}
+			if(!-d $path)
+			{
+				mkdir($path) || die("Cannot create dir \'$path\':$!\n");
+			}
+
+			print "Writing ".$path."/".$BANK."_".$voice.".ttl\n";
+
+			write_manifest($path,$voice);
+
+			open($deeaxe_voice,">".$path."/".$BANK."_".$voice.".ttl") || die ("Cannot open \'".$path."/".$BANK."_".$voice.".ttl\': $!");
+			write_preset_header($voice,$voice_name);
+			next;
 		}
-
-		my($path)=$LV2_INSTALL_PATH."/".$_LV2_BUNDLE_NAME."-".$BANK."_".$voice.".lv2";
-
-		if(!-d $LV2_INSTALL_PATH)
+		else
 		{
-			mkdir($LV2_INSTALL_PATH) || die("Cannot create dir \'$LV2_INSTALL_PATH\':$!\n");
+			print $deeaxe_voice "        ] , [\n";
 		}
-		if(!-d $path)
+		if($s=~/^\s+(.+):\s*(\d+)/)
 		{
-			mkdir($path) || die("Cannot create dir \'$path\':$!\n");
+			print_lv2_port($1,$2);
 		}
-
-		print "Writing ".$path."/".$BANK."_".$voice.".ttl\n";
-
-		write_manifest($path,$voice);
-
-		open($deeaxe_voice,">".$path."/".$BANK."_".$voice.".ttl") || die ("Cannot open \'".$path."/".$BANK."_".$voice.".ttl\': $!");
-		write_preset_header($voice,$voice_name);
-		next;
 	}
-	else
+
+	if($deeaxe_voice)
 	{
-		print $deeaxe_voice "        ] , [\n";
+		print $deeaxe_voice "        ] .\n";
+		close($deeaxe_voice);
 	}
-	if($s=~/^\s+(.+):\s*(\d+)/)
-	{
-		print_lv2_port($1,$2);
-	}
+	close(SYSEX);
 }
-
-if($deeaxe_voice)
-{
-	print $deeaxe_voice "        ] .\n";
-	close($deeaxe_voice);
-}
-close(SYSEX);
 
 sub write_preset_header
 {
@@ -117,7 +121,7 @@ sub write_preset_header
         print $deeaxe_voice "<>\n";
         print $deeaxe_voice "        a pset:Preset ;\n";
         print $deeaxe_voice "        lv2:appliesTo <".$LV2_URI."> ;\n";
-        #print $deeaxe_voice "        rdfs:label \"".$voice_name."\" ;\n";
+        #print $deeaxe_voice "        rdfs:label \"".$BANK."-".$voice_name."\" ;\n";
         print $deeaxe_voice "        lv2:port [\n";
         print_lv2_port("cutoff","1.0");
 	print $deeaxe_voice "        ] , [\n";
@@ -183,7 +187,7 @@ sub write_manifest
         print MANIFEST "        lv2:appliesTo <".$LV2_URI."> ;\n";
         #print MANIFEST "        a pset:Bank $BANK ;\n";
         print MANIFEST "        a pset:Preset ;\n";
-        print MANIFEST "        rdfs:label \"".$voice."\" ;\n";
+        print MANIFEST "        rdfs:label \"".$BANK."-".$voice."\" ;\n";
         print MANIFEST "        rdfs:seeAlso <".$BANK."_".$voice.".ttl> .\n";
         close(MANIFEST);
 }

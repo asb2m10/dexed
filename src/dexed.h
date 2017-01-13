@@ -51,7 +51,7 @@ enum DexedEngineResolution {
 };
 
 // GLOBALS
-float scaler = 0.0000000025;
+//float scaler = 0.0000000025;
 
 //==============================================================================
 
@@ -98,7 +98,8 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     void keydown(uint8_t pitch, uint8_t velo);
     void panic(void);
 
-    static const uint8_t MAX_ACTIVE_NOTES = 16;
+    //static const uint8_t MAX_ACTIVE_NOTES = 16;
+    static const uint8_t MAX_ACTIVE_NOTES = 32;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
     uint8_t currentNote;
     bool sustain;
