@@ -41,7 +41,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[i].live = false;
   }
 
-  for(i=0;i<sizeof(data_float);++i)
+  for(i=0;i<172;++i)
   {
     data_float[i]=static_cast<float>(data[i]);
     TRACE("%d->%f",i,data_float[i]);
@@ -49,8 +49,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   currentNote = 0;
   controllers.values_[kControllerPitch] = 0x2000;
-  controllers.values_[kControllerPitchRange] = data[155];
-  controllers.values_[kControllerPitchStep] = data[156];
+  controllers.values_[kControllerPitchRange] = 0;
+  controllers.values_[kControllerPitchStep] = 0;
   controllers.modwheel_cc = 0;
   controllers.foot_cc = 0;
   controllers.breath_cc = 0;
@@ -110,6 +110,8 @@ void Dexed::activate(void)
   TRACE("Hi");
 
   Plugin::activate();
+  controllers.values_[kControllerPitchRange] = data[155];
+  controllers.values_[kControllerPitchStep] = data[156];
 
   TRACE("Bye");
 }
@@ -317,7 +319,6 @@ void Dexed::set_params(void)
   onParam(143,*p(p_pitch_mod_sensitivity));
   onParam(144,*p(p_transpose));
   // 10 bytes (145-154) are the name of the patch
-  // 155 is reserved for bit-mask of enabled OPs (normaly 0x3f every time)
   // Controllers (added at the end of the data[])
   onParam(155,*p(p_pitch_bend_range));
   onParam(156,*p(p_pitch_bend_step));
