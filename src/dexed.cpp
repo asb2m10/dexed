@@ -41,7 +41,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
     voices[i].live = false;
   }
 
-  for(i=0;i<172;++i)
+  for(i=0;i<sizeof(data);++i)
   {
     data_float[i]=static_cast<float>(data[i]);
     TRACE("%d->%f",i,data_float[i]);
@@ -74,7 +74,6 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   memset(&voiceStatus, 0, sizeof(VoiceStatus));
 
-  engineType=0xff;
   setEngineType(DEXED_ENGINE_MODERN);
 
   //add_voices(new DexedVoice(rate));
@@ -720,25 +719,25 @@ void Dexed::onParam(uint8_t param_num,float param_val)
         controllers.wheel.setRange(data[param_num]);
         break;
       case 158:
-        controllers.wheel.setConfig(data[param_num]);
+        controllers.wheel.setTarget(data[param_num]);
         break;
       case 159:
         controllers.foot.setRange(data[param_num]);
         break;
       case 160:
-        controllers.foot.setConfig(data[param_num]);
+        controllers.foot.setTarget(data[param_num]);
         break;
       case 161:
         controllers.breath.setRange(data[param_num]);
         break;
       case 162:
-        controllers.breath.setConfig(data[param_num]);
+        controllers.breath.setTarget(data[param_num]);
         break;
       case 163:
         controllers.at.setRange(data[param_num]);
         break;
       case 164:
-        controllers.at.setConfig(data[param_num]);
+        controllers.at.setTarget(data[param_num]);
         break;
       case 166:
       case 167:

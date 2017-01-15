@@ -36,56 +36,46 @@ class FmCore;
 
 struct FmMod {
     uint8_t range;
-    bool pitch;
-    bool amp;
-    bool eg;
+    uint8_t target;
     
     FmMod() {
         range = 0;
-        pitch = false;
-        amp = false;
-        eg = false;
+        target= 0;
     }
 
 public:
     void setRange(uint8_t r) {
         //range = r < 0 && r > 127 ? 0 : r;
-
         range = r < 0 && r > 100 ? 0 : r;
     }
 
-    void setConfig(uint8_t assign) {
-          pitch=assign&1;
-          amp=assign&2;
-          eg=assign&4;
+    void setTarget(uint8_t assign) {
+          target=assign < 0 && assign > 7 ? 0 : assign;
     }
 };
 
 class Controllers {
     void applyMod(int cc, FmMod &mod) {
-        float range = 0.01 * mod.range;
-        int total = cc * range;
-        if ( mod.amp )
-            amp_mod = max(amp_mod, total);
-        
-        if ( mod.pitch )
-            pitch_mod = max(pitch_mod, total);
-        
-        if ( mod.eg )
-            eg_mod = max(eg_mod, total);
+        uint8_t total = (int)(cc * mod.range * 0.01);
+        if(mod.target&1) // AMP
+          amp_mod = max(amp_mod, total);
+        else if(mod.target&2) // PITCH
+          pitch_mod = max(pitch_mod, total);
+        else if(mod.target&4) // EG
+          eg_mod = max(eg_mod, total);
     }
     
 public:
     int32_t values_[3];
     
-    int amp_mod;
-    int pitch_mod;
-    int eg_mod;
+    uint8_t amp_mod;
+    uint8_t pitch_mod;
+    uint8_t eg_mod;
     
-    int aftertouch_cc;
-    int breath_cc;
-    int foot_cc;
-    int modwheel_cc;
+    uint8_t aftertouch_cc;
+    uint8_t breath_cc;
+    uint8_t foot_cc;
+    uint8_t modwheel_cc;
     
     int masterTune;
 
@@ -103,10 +93,8 @@ public:
     }
 
     void refresh() {
-        amp_mod = 0;
-        pitch_mod = 0;
-        eg_mod = 0;
-        
+        amp_mod=pitch_mod=eg_mod=0;
+
         applyMod(modwheel_cc, wheel);
         applyMod(breath_cc, breath);
         applyMod(foot_cc, foot);
