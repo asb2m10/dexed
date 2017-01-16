@@ -3,8 +3,12 @@ INSTALL_DIR=/zynthian/zynthian-plugins/lv2
 INSTALL_MYPLUGINS_DIR=/zynthian/zynthian-my-plugins/lv2
 TARGET=dexed.so
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
-CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false
-LDFLAGS=-L/usr/local/lib -llvtk_plugin2
+#CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false
+CFLAGS_LVTK=$(shell pkg-config --cflags --libs lvtk-plugin-2)
+CFLAGS=-fPIC -DPIC -std=c++11 -I. $(CFLAGS_LVTK) -DLVTK_DEBUG=false
+#LDFLAGS=-L/usr/local/lib -llvtk_plugin2
+LDFLAGS_LVTK=$(shell pkg-config --ldflags --libs lvtk-plugin-2)
+LDFLAGS=-L/usr/local/lib $(LDFLAGS_LVTK)
 #DEBUG=1
 #FILETRACE=1
 
