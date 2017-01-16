@@ -3,12 +3,10 @@ INSTALL_DIR=/zynthian/zynthian-plugins/lv2
 INSTALL_MYPLUGINS_DIR=/zynthian/zynthian-my-plugins/lv2
 TARGET=dexed.so
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
-#CFLAGS=-fPIC -DPIC -std=c++11 -I. -I/usr/local/include/lvtk-2 -DLVTK_DEBUG=false
-CFLAGS_LVTK=$(shell pkg-config --cflags --libs lvtk-plugin-2)
+CFLAGS_LVTK=$(shell pkg-config --cflags lvtk-plugin-2)
 CFLAGS=-fPIC -DPIC -std=c++11 -I. $(CFLAGS_LVTK) -DLVTK_DEBUG=false
-#LDFLAGS=-L/usr/local/lib -llvtk_plugin2
 LDFLAGS_LVTK=$(shell pkg-config --ldflags --libs lvtk-plugin-2)
-LDFLAGS=-L/usr/local/lib $(LDFLAGS_LVTK)
+LDFLAGS=$(LDFLAGS_LVTK)
 #DEBUG=1
 #FILETRACE=1
 
@@ -48,19 +46,23 @@ ifneq (,$(findstring aarch64,$(machine)))
   PLATFORM += -mabi=lp64 -mcmodel=tiny
 endif
 
+ifeq ($(MOD),1)
+  CPU = -O3 -mcpu=cortex-a7
+  PLATFORM += -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
+endif
+
 ifneq ($(findstring arm,$(ARCH)),)
    CXXFLAGS += 
 endif
 
 ifeq ($(DEBUG), 1)
    ifeq ($(FILETRACE), 1)
-      CXXFLAGS += -DDEBUG -DFILETRACE $(CFLAGS) $(CFLAGS_OPTIONS)
+      CXXFLAGS += -DDEBUG -DFILETRACE $(CFLAGS)
    else
-      CXXFLAGS += -DDEBUG $(CFLAGS) $(CFLAGS_OPTIONS)
+      CXXFLAGS += -DDEBUG $(CFLAGS)
    endif
 else
-   #CXXFLAGS += $(CFLAGS) $(CFLAGS_OPTIONS) -O3 -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
-   CXXFLAGS += $(CFLAGS) $(CFLAGS_OPTIONS) -O3
+   CXXFLAGS += $(CFLAGS) -O3
 endif
 
 all: $(BUNDLE) Makefile
@@ -84,7 +86,7 @@ $(BUNDLE): manifest.ttl Dexed.ttl modgui.ttl presets.ttl dexed.so
 	cp -R modgui $(BUNDLE)
 
 dexed.so: $(OBJ) dexed.o
-	$(CXX) $(CXXFLAGS) -shared dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
+	$(CXX) $(CXXFLAGS) -shared dexed.o $(OBJ) -o dexed.so
 
 dexed.o: Makefile dexed.cpp dexed.h dexed_ttl.h
 	$(CXX) $(CXXFLAGS) -Wall -c dexed.cpp
@@ -130,4 +132,3 @@ PluginFx.o: Makefile PluginFx.cpp
 
 dexed_ttl.h: Dexed.ttl
 	ttl2c Dexed.ttl dexed_ttl.h
-
