@@ -5,7 +5,7 @@ TARGET=dexed.so
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 CFLAGS_LVTK=$(shell pkg-config --cflags lvtk-plugin-2)
 CFLAGS=-fPIC -DPIC -std=c++11 -I. $(CFLAGS_LVTK) -DLVTK_DEBUG=false
-LDFLAGS_LVTK=$(shell pkg-config --ldflags --libs lvtk-plugin-2)
+LDFLAGS_LVTK=$(shell pkg-config --libs lvtk-plugin-2)
 LDFLAGS=$(LDFLAGS_LVTK)
 #DEBUG=1
 #FILETRACE=1
