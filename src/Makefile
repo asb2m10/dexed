@@ -19,6 +19,7 @@ machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 ifneq (,$(findstring x86,$(machine)))
   CPU = 
   FPU = 
+  CXXFLAGS += -ffast-math -fprefetch-loop-arrays -funroll-loops -funsafe-loop-optimizations
 endif
 
 # Raspberry Pi B+, Zero, etc
@@ -46,14 +47,13 @@ ifneq (,$(findstring aarch64,$(machine)))
   PLATFORM += -mabi=lp64 -mcmodel=tiny
 endif
 
+# MOD-Duo
 ifeq ($(MOD),1)
-  CPU = -O3 -mcpu=cortex-a7
-  PLATFORM += -mtune=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
+  CPU = -O3 -mtune=cortex-a7
+  PLATFORM += -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
 endif
 
-ifneq ($(findstring arm,$(ARCH)),)
-   CXXFLAGS += 
-endif
+CXXFLAGS += $(CPU) $(PLATFORM)
 
 ifeq ($(DEBUG), 1)
    ifeq ($(FILETRACE), 1)
