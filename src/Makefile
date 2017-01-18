@@ -12,8 +12,7 @@ OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o ex
 CFLAGS_LVTK=$(shell pkg-config --cflags lvtk-plugin-2)
 CFLAGS=-fPIC -DPIC -std=c++11 -I. $(CFLAGS_LVTK) -DLVTK_DEBUG=false
 LDFLAGS_LVTK=$(shell pkg-config --libs lvtk-plugin-2)
-LDFLAGS_LILV=$(shell pkg-config --libs lilv-0)
-LDFLAGS=-shared $(LDFLAGS_LVTK) $(LDFLAGS_LILV)
+LDFLAGS=-shared $(LDFLAGS_LVTK)
 
 machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 # Intel-PC
