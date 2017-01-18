@@ -1,20 +1,21 @@
 BUNDLE=dexed.lv2
-INSTALL_DIR=/zynthian/zynthian-plugins/lv2
-INSTALL_MYPLUGINS_DIR=/zynthian/zynthian-my-plugins/lv2
 TARGET=dexed.so
-OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
-CFLAGS_LVTK=$(shell pkg-config --cflags lvtk-plugin-2)
-CFLAGS=-fPIC -DPIC -std=c++11 -I. $(CFLAGS_LVTK) -DLVTK_DEBUG=false
-LDFLAGS_LVTK=$(shell pkg-config --libs lvtk-plugin-2)
-LDFLAGS=$(LDFLAGS_LVTK)
+
 #DEBUG=1
 #FILETRACE=1
 
-ifeq ($(ARCH),)
-   ARCH := $(shell uname -m)
-endif
-machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
+INSTALL_DIR=/zynthian/zynthian-plugins/lv2
+INSTALL_MYPLUGINS_DIR=/zynthian/zynthian-my-plugins/lv2
 
+OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
+
+CFLAGS_LVTK=$(shell pkg-config --cflags lvtk-plugin-2)
+CFLAGS=-fPIC -DPIC -std=c++11 -I. $(CFLAGS_LVTK) -DLVTK_DEBUG=false
+LDFLAGS_LVTK=$(shell pkg-config --libs lvtk-plugin-2)
+LDFLAGS_LILV=$(shell pkg-config --libs lilv-0)
+LDFLAGS=-shared $(LDFLAGS_LVTK) $(LDFLAGS_LILV)
+
+machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 # Intel-PC
 ifneq (,$(findstring x86,$(machine)))
   CPU = 
@@ -53,7 +54,7 @@ ifeq ($(MOD),1)
   PLATFORM += -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
 endif
 
-CXXFLAGS += $(CPU) $(PLATFORM)
+CXXFLAGS += $(CPU) $(FPU) $(PLATFORM)
 
 ifeq ($(DEBUG), 1)
    ifeq ($(FILETRACE), 1)
@@ -86,7 +87,7 @@ $(BUNDLE): manifest.ttl Dexed.ttl modgui.ttl presets.ttl dexed.so
 	cp -R modgui $(BUNDLE)
 
 dexed.so: $(OBJ) dexed.o
-	$(CXX) $(CXXFLAGS) -shared dexed.o $(OBJ) -o dexed.so
+	$(CXX) dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
 
 dexed.o: Makefile dexed.cpp dexed.h dexed_ttl.h
 	$(CXX) $(CXXFLAGS) -Wall -c dexed.cpp
