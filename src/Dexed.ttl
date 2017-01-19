@@ -12,10 +12,35 @@
 @prefix pprops: <http://lv2plug.in/ns/ext/port-props#>.
 @prefix pset: <http://lv2plug.in/ns/ext/presets#> .
 
+<https://github.com/dcoredump/dexed.lv2#me>
+        a foaf:Person ;
+        foaf:name "Holger Wirtz" ;
+        foaf:homepage <https://github.com/dcoredump/dexed.lv2> ;
+        foaf:mbox <mailto:dcoredump@googlemail.com> .
+
 <https://github.com/dcoredump/dexed.lv2>
     a lv2:InstrumentPlugin, lv2:Plugin ;
+    doap:name "Dexed" ;
+    doap:description "Synth" ;
+    doap:shortdesc "Dexed" ;
+    rdfs:comment "Dexed.lv2 is a native LV2 port of the famous DX-7 emulator Dexed.";
+    lv2:microVersion 2 ;lv2:minorVersion 0 ;
+    doap:developer [
+        a foaf:Person ;
+        foaf:name "Pascal Gauthier" ;
+        foaf:mbox <mailto:asb2m10@gmail.com> ;
+    ] ;
+    doap:maintainer <https://github.com/dcoredump/dexed.lv2#me> ;
+    doap:license <http://usefulinc.com/doap/licenses/asl20> ;
+    doap:license <http://usefulinc.com/doap/licenses/gpl> ;
     lv2:binary <dexed.so> ;
     ll:pegName "p";
+
+rdfs:comment """
+Dexed.lv2 is a native LV2 port of the famous DX-7 emulator Dexed. It is based on the FM-synthesis and tries to emulate the original as good as possible. With external scripts you can convert original SYSEX files to use them within Dexed.
+
+The original engine comes from MSFA (music synthesizer for android) which is based on the Apache 2.0 license. Additional sources for Dexed were done by Pascal Gauthier (asb2m10). The port to LV2 and some smaller modification were done by Holger Wirtz and reside also under GPL license.
+""";
 
     lv2:port [
         a lv2:InputPort, atom:AtomPort ;
@@ -443,7 +468,7 @@
             rdfs:label "Sine" ;
             rdfs:comment "Sine" ;
         ], [
-            rdf:value 6 ;
+            rdf:value 5 ;
             rdfs:label "Sample & Hold" ;
             rdfs:comment "Sample & Hold" ;
         ];

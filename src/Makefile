@@ -9,10 +9,10 @@ INSTALL_MYPLUGINS_DIR=/zynthian/zynthian-my-plugins/lv2
 
 OBJ=fm_core.o env.o lfo.o dx7note.o sin.o pitchenv.o fm_op_kernel.o freqlut.o exp2.o EngineMkI.o EngineOpl.o PluginFx.o trace.o
 
-CFLAGS_LVTK=$(shell pkg-config --cflags lvtk-plugin-2)
-CFLAGS=-fPIC -DPIC -std=c++11 -I. $(CFLAGS_LVTK) -DLVTK_DEBUG=false
+CXXFLAGS_LVTK=$(shell pkg-config --cflags lvtk-plugin-2)
+CXXFLAGS+=-fPIC -DPIC -std=c++11 -I. $(CXXFLAGS_LVTK) -DLVTK_DEBUG=false
 LDFLAGS_LVTK=$(shell pkg-config --libs lvtk-plugin-2)
-LDFLAGS=-shared $(LDFLAGS_LVTK)
+LDFLAGS+=-shared $(LDFLAGS_LVTK)
 
 machine = $(shell sh -c 'uname -m 2>/dev/null || echo unknown')
 # Intel-PC
@@ -49,20 +49,20 @@ endif
 
 # MOD-Duo
 ifeq ($(MOD),1)
-  CPU = -O3 -mtune=cortex-a7
-  PLATFORM += -mfpu=neon-vfpv4 -mfloat-abi=hard -mvectorize-with-neon-quad
+  CPU = 
+  PLATFORM = 
 endif
 
 CXXFLAGS += $(CPU) $(FPU) $(PLATFORM)
 
 ifeq ($(DEBUG), 1)
    ifeq ($(FILETRACE), 1)
-      CXXFLAGS += -DDEBUG -DFILETRACE $(CFLAGS)
+      CXXFLAGS += -DDEBUG -DFILETRACE 
    else
-      CXXFLAGS += -DDEBUG $(CFLAGS)
+      CXXFLAGS += -DDEBUG
    endif
 else
-   CXXFLAGS += $(CFLAGS) -O3
+   CXXFLAGS += -O3
 endif
 
 all: $(BUNDLE) Makefile
