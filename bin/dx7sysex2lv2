@@ -3,7 +3,7 @@
 # dx7sysex2lv2presets - SysEx patchset to LV2 converter for
 # Dexed.lv2 - LV2 plugin
 #
-# This generator builds the presets-ttl and a suitable manifest.ttl
+# This generator converts DX7 SYSEX to LV2 suitable sounds for Dexed
 #
 # (c) by H. Wirtz <dcoredump@googlemail.com>
 #
@@ -33,13 +33,33 @@ $LV2_BUNDLE_NAME="dexed.lv2";
 $LV2_URI="https://github.com/dcoredump/".$LV2_BUNDLE_NAME;
 $LV2_INSTALL_PATH="/zynthian/zynthian-my-plugins/lv2";
 
+@CMD_OPTION=@ARGV;
+while($option=shift(@CMD_OPTION))
+{
+	if($option=~/^-(.+)\s*/)
+	{
+		if($1=~/b/i)
+		{
+			$option{'bank'}=1;
+		}
+		elsif($1=~/n/i)
+		{
+			$option{'voice_no'}=1;
+		}
+	}
+}
+
 while($SYSEX=shift(@ARGV))
 {
+	next if($SYSEX=~/^-/);
+
 	$BANK=$SYSEX;
 	$BANK=~s{.*/}{};      # removes path  
 	$BANK=~s{\.[^.]+$}{}; # removes extension
 
 	$_LV2_BUNDLE_NAME="dexed_lv2";
+
+	$voice_no=0;
 
 	open(SYSEX,"$DXSYX -y $SYSEX |") || die ("Cannot open \'$DXSYX -y $SYSEX\': $!");
 	while($s=<SYSEX>)
@@ -51,6 +71,7 @@ while($SYSEX=shift(@ARGV))
 		if($s=~/^\s+voice_name:\s+(.+)\s*/)
 		{
 			my($voice)=$1;
+			$voice_no++;
 			$voice=~s/\s+$//; # right trim
 			my($voice_name)=$voice;
        		 	$voice=~tr/[ %§&-*+\"\'`\!\$\%\?\/\<\>\[\]\^\{\}]\|/_/;
@@ -63,13 +84,26 @@ while($SYSEX=shift(@ARGV))
        		 	$voice=~s/%7d/_/i;
        		 	$voice=~s/%7c/_/i;
 
+			if(defined($option{'voice_no'}) && defined($option{'bank'}))
+			{
+				$voice=$BANK."__".$voice_no."__".$voice;
+			}
+			elsif(defined($option{'bank'}))
+			{
+				$voice=$BANK."__".$voice;
+			}
+			elsif(defined($option{'voice_no'}))
+			{
+				$voice=$voice_no."__".$voice;
+			}
+
 			if($deeaxe_voice)
 			{
 				print $deeaxe_voice "        ] .\n";
 				close($deeaxe_voice);
 			}
 	
-			my($path)=$LV2_INSTALL_PATH."/".$_LV2_BUNDLE_NAME."-".$BANK."_".$voice.".lv2";
+			my($path)=$LV2_INSTALL_PATH."/".$_LV2_BUNDLE_NAME."-".$voice.".lv2";
 
 			if(!-d $LV2_INSTALL_PATH)
 			{
@@ -80,11 +114,11 @@ while($SYSEX=shift(@ARGV))
 				mkdir($path) || die("Cannot create dir \'$path\':$!\n");
 			}
 
-			print "Writing ".$path."/".$BANK."_".$voice.".ttl\n";
+			print "Writing ".$path."/".$voice.".ttl\n";
 
 			write_manifest($path,$voice);
 
-			open($deeaxe_voice,">".$path."/".$BANK."_".$voice.".ttl") || die ("Cannot open \'".$path."/".$BANK."_".$voice.".ttl\': $!");
+			open($deeaxe_voice,">".$path."/".$voice.".ttl") || die ("Cannot open \'".$path."/".$voice.".ttl\': $!");
 			write_preset_header($voice,$voice_name);
 			next;
 		}
@@ -117,11 +151,11 @@ sub write_preset_header
         print $deeaxe_voice "\@prefix state: <http://lv2plug.in/ns/ext/state#> .\n";
         print $deeaxe_voice "\@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n";
         print $deeaxe_voice "\n";
-        #print $deeaxe_voice "<".$LV2_URI."#".$BANK."_".$voice.">\n";
+        #print $deeaxe_voice "<".$LV2_URI."#".$voice.">\n";
         print $deeaxe_voice "<>\n";
         print $deeaxe_voice "        a pset:Preset ;\n";
         print $deeaxe_voice "        lv2:appliesTo <".$LV2_URI."> ;\n";
-        #print $deeaxe_voice "        rdfs:label \"".$BANK."-".$voice_name."\" ;\n";
+        #print $deeaxe_voice "        rdfs:label \"".$voice_name."\" ;\n";
         print $deeaxe_voice "        lv2:port [\n";
         print_lv2_port("cutoff","1.0");
 	print $deeaxe_voice "        ] , [\n";
@@ -182,13 +216,13 @@ sub write_manifest
         print MANIFEST "\@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n";
 
         print MANIFEST "\n";
-        #print MANIFEST "<".$LV2_URI."#".$BANK."_".$voice.">\n";
-        print MANIFEST "<".$BANK."_".$voice.".ttl>\n";
+        #print MANIFEST "<".$LV2_URI."#".$voice.">\n";
+        print MANIFEST "<".$voice.".ttl>\n";
         print MANIFEST "        lv2:appliesTo <".$LV2_URI."> ;\n";
         #print MANIFEST "        a pset:Bank $BANK ;\n";
         print MANIFEST "        a pset:Preset ;\n";
-        print MANIFEST "        rdfs:label \"".$BANK."-".$voice."\" ;\n";
-        print MANIFEST "        rdfs:seeAlso <".$BANK."_".$voice.".ttl> .\n";
+        print MANIFEST "        rdfs:label \"".$voice."\" ;\n";
+        print MANIFEST "        rdfs:seeAlso <".$voice.".ttl> .\n";
         close(MANIFEST);
 }
 

@@ -2,6 +2,9 @@ docker pull moddevices/mod-plugin-builder
 docker run -ti --name mpb -p 9000:9000 -v ~/src/mod/local-mod-folder:/tmp/local-mod-folder moddevices/mod-plugin-builder
 docker start -i mpb
 
+Create archive:
+cd ~/mod-workdir/plugins/
+tar cvzf /tmp/local-mod-folder/dexed.lv2.tar.gz dexed.lv2
 
 Install:
 curl http://web1.moddevices.com/shared/mod-loopswitch4.lv2.tar.gz | base64 | curl -F 'package=@-' http://192.168.51.1/sdk/install

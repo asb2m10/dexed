@@ -1,0 +1,99 @@
+#!/usr/bin/perl
+#
+# dx7lv2sounds2preset - create a presets.ttl and add this to manifest.ttl for
+# Dexed.lv2 - LV2 plugin
+#
+# This generator builds the presets-ttl and a suitable manifest.ttl
+#
+# (c) by H. Wirtz <dcoredump@googlemail.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software Foundation,
+# Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+#
+
+open(MANIFEST,">manifest.ttl")||die("Cannot open manifest.ttl for writing: $!\n");
+print MANIFEST "\@prefix lv2:  <http://lv2plug.in/ns/lv2core#> .\n";
+print MANIFEST "\@prefix pset: <http://lv2plug.in/ns/ext/presets#> .\n";
+print MANIFEST "\@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n";
+print MANIFEST "\@prefix ui:   <http://lv2plug.in/ns/extensions/ui#> .\n";
+print MANIFEST "\@prefix mdap: <http://moddevices.com/plugins/mda/presets#> .\n";
+print MANIFEST "\@prefix pset: <http://lv2plug.in/ns/ext/presets#> .\n";
+print MANIFEST "\@prefix doap: <http://usefulinc.com/ns/doap#> .\n";
+print MANIFEST "\@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n";
+print MANIFEST "\n";
+print MANIFEST "<https://github.com/dcoredump/dexed.lv2>\n";
+print MANIFEST "    a lv2:Plugin, doap:Project, lv2:SynthPlugin ;\n";
+print MANIFEST "    rdfs:seeAlso <Dexed.ttl> ;\n";
+print MANIFEST "    rdfs:seeAlso <modgui.ttl> .\n";
+print MANIFEST "\n";
+
+open(PRESETS,">presets.ttl")||die("Cannot open presets.ttl for writing: $!\n");
+print PRESETS "\@prefix lv2: <http://lv2plug.in/ns/lv2core#> .\n";
+print PRESETS "\@prefix pset: <http://lv2plug.in/ns/ext/presets#> .\n";
+print PRESETS "\@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n";
+print PRESETS "\n";
+
+while($voice=shift(@ARGV))
+{
+	insert_data($voice);
+}
+
+close(PRESETS);
+close(MANIFEST);
+
+sub insert_data
+{
+	my($voice)=@_;
+
+	open(M_VOICE,"<".$voice."/manifest.ttl")||die("Cannot open ".$voice."/manifest.ttl: $!\n");
+	while($l=<M_VOICE>)
+	{
+		if($l=~/^\s*rdfs:label \"(.+)\"/)
+		{
+			$voice_name=$1
+		}
+		elsif($l=~/\s*rdfs:seeAlso <(.+)>/)
+		{
+			$file=$1;
+		}
+	}
+	close(M_VOICE);
+
+	if($voice_name eq "" || $file eq "")
+	{
+		print "Voice data for ".$voice."/manifest.ttl is not consistent\n";
+		print "voice: [$voice_name] file: [$file]\n";
+		return;
+	}
+
+	print MANIFEST "<https://github.com/dcoredump/dexed.lv2#".$voice_name.">\n";
+	print MANIFEST "    a pset:Preset ;\n";
+	print MANIFEST "    rdfs:label \"".$voice_name."\"\n";
+	print MANIFEST "    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;\n";
+	print MANIFEST "    rdfs:seeAlso <presets.ttl> .\n";
+	print MANIFEST "\n";
+
+	print PRESETS "<https://github.com/dcoredump/dexed.lv2#".$voice_name.">\n";
+
+	open(VOICE,"<".$voice."/".$file)||die("Cannot open ".$voice."/".$file.": $!");
+	while($l=<VOICE>)
+	{
+		next if($l=~/^\s*$/);
+		next if($l=~/^[^ ]/);
+		print PRESETS $l;
+	}
+	close(VOICE);
+
+	print PRESETS "\n";
+}

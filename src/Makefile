@@ -68,7 +68,7 @@ endif
 all: $(BUNDLE) Makefile
 
 clean: Makefile
-	rm -f *.o *~ *.bak *.gch dexed_ttl.h *.so *.gch msfa/*.gch
+	rm -f *.o *~ *.bak *.gch *.so *.gch msfa/*.gch
 	rm -rf $(BUNDLE)
 
 install: $(BUNDLE)
