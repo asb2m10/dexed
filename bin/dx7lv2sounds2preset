@@ -79,7 +79,7 @@ sub insert_data
 
 	print MANIFEST "<https://github.com/dcoredump/dexed.lv2#".$voice_name.">\n";
 	print MANIFEST "    a pset:Preset ;\n";
-	print MANIFEST "    rdfs:label \"".$voice_name."\"\n";
+	print MANIFEST "    rdfs:label \"".$voice_name."\" ;\n";
 	print MANIFEST "    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;\n";
 	print MANIFEST "    rdfs:seeAlso <presets.ttl> .\n";
 	print MANIFEST "\n";
