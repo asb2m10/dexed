@@ -86,7 +86,14 @@ while($SYSEX=shift(@ARGV))
 
 			if(defined($option{'voice_no'}) && defined($option{'bank'}))
 			{
-				$voice=$BANK."__".$voice_no."__".$voice;
+				if($voice_no<10)
+				{
+					$voice=$BANK."__0".$voice_no."__".$voice;
+				}
+				else
+				{
+					$voice=$BANK."__".$voice_no."__".$voice;
+				}
 			}
 			elsif(defined($option{'bank'}))
 			{
