@@ -8,7 +8,7 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 <https://github.com/dcoredump/dexed.lv2>
-    a lv2:Plugin, doap:Project, lv2:SynthPlugin ;
+    a lv2:Plugin, doap:Project, lv2:InstrumentPlugin ;
     rdfs:seeAlso <Dexed.ttl> ;
     rdfs:seeAlso <modgui.ttl> .
 
