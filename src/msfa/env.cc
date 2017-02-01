@@ -19,7 +19,6 @@
 #include "synth.h"
 #include "env.h"
 
-#include "../Dexed.h"
 //using namespace std;
 
 uint32_t Env::sr_multiplier = (1<<24);

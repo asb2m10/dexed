@@ -1,4 +1,22 @@
-// from: http://ll-plugins.nongnu.org/lv2pftci/#A_synth
+/**
+ *
+ * Copyright (c) 2016-2017 Holger Wirtz <dcoredump@googlemail.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ *
+ */
 
 #include <lvtk/synth.hpp>
 #include "dexed.h"
@@ -48,6 +66,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   }
 
   currentNote = 0;
+  max_notes=16;
   controllers.values_[kControllerPitch] = 0x2000;
   controllers.values_[kControllerPitchRange] = 0;
   controllers.values_[kControllerPitchStep] = 0;
@@ -132,7 +151,6 @@ void Dexed::set_params(void)
 
   bool polymono=bool(*p(p_polymono));
   uint8_t engine=uint8_t(*p(p_engine));
-  //float f_gain=*p(p_output)*scaler;
   float f_gain=*p(p_output);
   float f_cutoff=*p(p_cutoff);
   float f_reso=*p(p_resonance);
@@ -336,6 +354,7 @@ void Dexed::set_params(void)
   onParam(169,*p(p_op4_enable));
   onParam(170,*p(p_op5_enable));
   onParam(171,*p(p_op6_enable));
+  onParam(172,*p(p_number_of_voices));
 
   if(_param_change_counter>PARAM_CHANGE_LEVEL)
     panic();
@@ -400,7 +419,6 @@ void Dexed::run (uint32_t sample_count)
 void Dexed::GetSamples(uint32_t n_samples, float* buffer)
 {
   uint32_t i;
-
   if(refreshVoice) {
     for(i=0;i < MAX_ACTIVE_NOTES;i++) {
       if ( voices[i].live )
@@ -594,9 +612,9 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
 
     pitch += data[144] - 24;
     
-    if ( normalizeDxVelocity ) {
-        velo = ((float)velo) * 0.7874015; // 100/127
-    }
+    //if ( normalizeDxVelocity ) {
+    //    velo = ((float)velo) * 0.7874015; // 100/127
+    //}
     
     uint8_t note = currentNote;
     uint8_t keydown_counter=0;
@@ -646,10 +664,9 @@ TRACE("Bye");
 void Dexed::keyup(uint8_t pitch) {
 TRACE("Hi");
 TRACE("pitch=%d\n",pitch);
+    uint8_t note;
 
     pitch += data[144] - 24;
-
-    uint8_t note;
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
         if ( voices[note].midi_note == pitch && voices[note].keydown ) {
             voices[note].keydown = false;
@@ -700,7 +717,7 @@ void Dexed::onParam(uint8_t param_num,float param_val)
 
     _param_change_counter++;
 
-    if(param_num==144 || param_num==134)
+    if(param_num==144 || param_num==134 || param_num==172)
       panic();
 
     refreshVoice=true;

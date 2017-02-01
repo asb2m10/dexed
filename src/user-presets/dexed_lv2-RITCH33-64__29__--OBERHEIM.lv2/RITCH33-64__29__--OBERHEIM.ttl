@@ -22,6 +22,9 @@
                 lv2:symbol "engine" ;
                 pset:value 0.0
         ] , [
+                lv2:symbol "number_of_voices" ;
+                pset:value 16.0
+        ] , [
                 lv2:symbol "polymono" ;
                 pset:value 0.0
         ] , [

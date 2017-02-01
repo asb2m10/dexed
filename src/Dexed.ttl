@@ -110,6 +110,16 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     [
         a lv2:InputPort, lv2:ControlPort ;
         lv2:index 6 ;
+        lv2:symbol "number_of_voices" ;
+        lv2:name "NUMBER OF VOICES" ;
+        lv2:default 16 ;
+        lv2:minimum 1 ;
+        lv2:maximum 32 ;
+	lv2:portProperty lv2:integer ;
+    ] ,
+    [
+        a lv2:InputPort, lv2:ControlPort ;
+        lv2:index 7 ;
         lv2:symbol "polymono" ;
         lv2:name "POLY-MONO" ;
         lv2:default 0 ;
@@ -119,7 +129,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 7 ;
+        lv2:index 8 ;
         lv2:symbol "pitch_bend_range" ;
         lv2:name "PB RANGE" ;
         lv2:default 1 ;
@@ -129,7 +139,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 8 ;
+        lv2:index 9 ;
         lv2:symbol "pitch_bend_step" ;
         lv2:name "PB STEP" ;
         lv2:default 0 ;
@@ -139,7 +149,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 9 ;
+        lv2:index 10 ;
         lv2:symbol "mod_wheel_range" ;
         lv2:name "MW RANGE" ;
         lv2:default 99 ;
@@ -149,7 +159,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 10 ;
+        lv2:index 11 ;
         lv2:symbol "mod_wheel_assign" ;
         lv2:name "MW ASSIGN" ;
         lv2:default 0 ;
@@ -192,7 +202,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 11 ;
+        lv2:index 12 ;
         lv2:symbol "foot_ctrl_range" ;
         lv2:name "FC RANGE" ;
         lv2:default 99 ;
@@ -202,7 +212,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 12 ;
+        lv2:index 13 ;
         lv2:symbol "foot_ctrl_assign" ;
         lv2:name "FC ASSIGN" ;
         lv2:default 0 ;
@@ -245,7 +255,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 13 ;
+        lv2:index 14 ;
         lv2:symbol "breath_ctrl_range" ;
         lv2:name "BC RANGE" ;
         lv2:default 99 ;
@@ -255,7 +265,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 14 ;
+        lv2:index 15 ;
         lv2:symbol "breath_ctrl_assign" ;
         lv2:name "BC ASSIGN" ;
         lv2:default 0;
@@ -298,7 +308,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 15 ;
+        lv2:index 16 ;
         lv2:symbol "aftertouch_range" ;
         lv2:name "AT RANGE" ;
         lv2:default 99 ;
@@ -308,7 +318,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 16 ;
+        lv2:index 17 ;
         lv2:symbol "aftertouch_assign" ;
         lv2:name "AT ASSIGN" ;
         lv2:default 0 ;
@@ -351,7 +361,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 17 ;
+        lv2:index 18 ;
         lv2:symbol "master_tune" ;
         lv2:name "MASTER TUNE" ;
         lv2:default 0.0 ;
@@ -360,7 +370,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 18 ;
+        lv2:index 19 ;
         lv2:symbol "algorithm_num" ;
         lv2:name "ALGORITHM" ;
         lv2:default 5 ;
@@ -370,7 +380,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 19 ;
+        lv2:index 20 ;
         lv2:symbol "feedback" ;
         lv2:name "FEEDBACK" ;
         lv2:default 6 ;
@@ -380,7 +390,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 20 ;
+        lv2:index 21 ;
         lv2:symbol "oscillator_sync" ;
         lv2:name "OSC KEY SYNC" ;
         lv2:default 0 ;
@@ -390,7 +400,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 21 ;
+        lv2:index 22 ;
         lv2:symbol "lfo_speed" ;
         lv2:name "LFO SPEED" ;
         lv2:default 34 ;
@@ -400,7 +410,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 22 ;
+        lv2:index 23 ;
         lv2:symbol "lfo_delay" ;
         lv2:name "LFO DELAY" ;
         lv2:default 33 ;
@@ -410,7 +420,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 23 ;
+        lv2:index 24 ;
         lv2:symbol "lfo_pitch_mod_depth" ;
         lv2:name "LFO PM DEPTH" ;
         lv2:default 0 ;
@@ -420,7 +430,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 24 ;
+        lv2:index 25 ;
         lv2:symbol "lfo_amp_mod_depth" ;
         lv2:name "LFO AM DEPTH" ;
         lv2:default 0 ;
@@ -430,7 +440,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 25 ;
+        lv2:index 26 ;
         lv2:symbol "lfo_sync" ;
         lv2:name "LFO KEY SYNC" ;
         lv2:default 0 ;
@@ -440,7 +450,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 26 ;
+        lv2:index 27 ;
         lv2:symbol "lfo_waveform" ;
         lv2:name "LFO WAVE" ;
         lv2:default 4 ;
@@ -475,7 +485,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 27 ;
+        lv2:index 28 ;
         lv2:symbol "transpose" ;
         lv2:name "MIDDLE C" ;
         lv2:default 24 ;
@@ -485,7 +495,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 28 ;
+        lv2:index 29 ;
         lv2:symbol "pitch_mod_sensitivity" ;
         lv2:name "P MODE SENS." ;
         lv2:default 3 ;
@@ -495,7 +505,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 29 ;
+        lv2:index 30 ;
         lv2:symbol "pitch_eg_rate_1" ;
         lv2:name "PITCH EG RATE 1" ;
         lv2:default 94 ;
@@ -505,7 +515,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 30 ;
+        lv2:index 31 ;
         lv2:symbol "pitch_eg_rate_2" ;
         lv2:name "PITCH EG RATE 2" ;
         lv2:default 67 ;
@@ -515,7 +525,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 31 ;
+        lv2:index 32 ;
         lv2:symbol "pitch_eg_rate_3" ;
         lv2:name "PITCH EG RATE 3" ;
         lv2:default 95 ;
@@ -525,7 +535,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 32 ;
+        lv2:index 33 ;
         lv2:symbol "pitch_eg_rate_4" ;
         lv2:name "PITCH EG RATE 4" ;
         lv2:default 60 ;
@@ -535,7 +545,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 33 ;
+        lv2:index 34 ;
         lv2:symbol "pitch_eg_level_1" ;
         lv2:name "PITCH EG LEVEL 1" ;
         lv2:default 50 ;
@@ -545,7 +555,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 34 ;
+        lv2:index 35 ;
         lv2:symbol "pitch_eg_level_2" ;
         lv2:name "PITCH EG LEVEL 2" ;
         lv2:default 50 ;
@@ -555,7 +565,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 35 ;
+        lv2:index 36 ;
         lv2:symbol "pitch_eg_level_3" ;
         lv2:name "PITCH EG LEVEL 3" ;
         lv2:default 50 ;
@@ -565,7 +575,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 36 ;
+        lv2:index 37 ;
         lv2:symbol "pitch_eg_level_4" ;
         lv2:name "PITCH EG LEVEL 4" ;
         lv2:default 50 ;
@@ -575,7 +585,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 37 ;
+        lv2:index 38 ;
         lv2:symbol "op1_eg_rate_1" ;
         lv2:name "OP1 EG RATE 1" ;
         lv2:default 96 ;
@@ -585,7 +595,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 38 ;
+        lv2:index 39 ;
         lv2:symbol "op1_eg_rate_2" ;
         lv2:name "OP1 EG RATE 2" ;
         lv2:default 25 ;
@@ -595,7 +605,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 39 ;
+        lv2:index 40 ;
         lv2:symbol "op1_eg_rate_3" ;
         lv2:name "OP1 EG RATE 3" ;
         lv2:default 25 ;
@@ -605,7 +615,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 40 ;
+        lv2:index 41 ;
         lv2:symbol "op1_eg_rate_4" ;
         lv2:name "OP1 EG RATE 4" ;
         lv2:default 67 ;
@@ -615,7 +625,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 41 ;
+        lv2:index 42 ;
         lv2:symbol "op1_eg_level_1" ;
         lv2:name "OP1 EG LEVEL 1" ;
         lv2:default 99 ;
@@ -625,7 +635,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 42 ;
+        lv2:index 43 ;
         lv2:symbol "op1_eg_level_2" ;
         lv2:name "OP1 EG LEVEL 2" ;
         lv2:default 75 ;
@@ -635,7 +645,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 43 ;
+        lv2:index 44 ;
         lv2:symbol "op1_eg_level_3" ;
         lv2:name "OP1 EG LEVEL 3" ;
         lv2:default 0 ;
@@ -645,7 +655,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 44 ;
+        lv2:index 45 ;
         lv2:symbol "op1_eg_level_4" ;
         lv2:name "OP1 EG LEVEL 4" ;
         lv2:default 0 ;
@@ -655,7 +665,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 45 ;
+        lv2:index 46 ;
         lv2:symbol "op1_operator_output_level" ;
         lv2:name "OP1 OUTPUT LEVEL" ;
         lv2:default 99 ;
@@ -665,7 +675,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 46 ;
+        lv2:index 47 ;
         lv2:symbol "op1_osc_mode" ;
         lv2:name "OP1 MODE" ;
         lv2:default 0 ;
@@ -684,7 +694,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 47 ;
+        lv2:index 48 ;
         lv2:symbol "op1_osc_freq_coarse" ;
         lv2:name "OP1 F COARSE" ;
         lv2:default 1 ;
@@ -694,7 +704,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 48 ;
+        lv2:index 49 ;
         lv2:symbol "op1_osc_freq_fine" ;
         lv2:name "OP1 F FINE" ;
         lv2:default 0 ;
@@ -704,7 +714,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 49 ;
+        lv2:index 50 ;
         lv2:symbol "op1_osc_detune" ;
         lv2:name "OP1 OSC DETUNE" ;
         lv2:default 3 ;
@@ -714,7 +724,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 50 ;
+        lv2:index 51 ;
         lv2:symbol "op1_kbd_lev_scl_brk_pt" ;
         lv2:name "OP1 BREAK POINT" ;
         lv2:default 0 ;
@@ -724,7 +734,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 51 ;
+        lv2:index 52 ;
         lv2:symbol "op1_kbd_lev_scl_lft_depth" ;
         lv2:name "OP1 L SCALE DEPTH" ;
         lv2:default 0 ;
@@ -734,7 +744,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 52 ;
+        lv2:index 53 ;
         lv2:symbol "op1_kbd_lev_scl_rht_depth" ;
         lv2:name "OP1 R SCALE DEPTH" ;
         lv2:default 0 ;
@@ -744,7 +754,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 53 ;
+        lv2:index 54 ;
         lv2:symbol "op1_kbd_lev_scl_lft_curve" ;
         lv2:name "OP1 L KEY CURVE" ;
         lv2:default 0 ;
@@ -771,7 +781,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 54 ;
+        lv2:index 55 ;
         lv2:symbol "op1_kbd_lev_scl_rht_curve" ;
         lv2:name "OP1 R KEY CURVE" ;
         lv2:default 0 ;
@@ -798,7 +808,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 55 ;
+        lv2:index 56 ;
         lv2:symbol "op1_kbd_rate_scaling" ;
         lv2:name "OP1 RATE SCALING" ;
         lv2:default 3 ;
@@ -808,7 +818,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 56 ;
+        lv2:index 57 ;
         lv2:symbol "op1_amp_mod_sensitivity" ;
         lv2:name "OP1 A MOD SENS." ;
         lv2:default 0 ;
@@ -818,7 +828,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 57 ;
+        lv2:index 58 ;
         lv2:symbol "op1_key_vel_sensitivity" ;
         lv2:name "OP1 KEY VELOCITY" ;
         lv2:default 2 ;
@@ -828,7 +838,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 58 ;
+        lv2:index 59 ;
         lv2:symbol "op2_eg_rate_1" ;
         lv2:name "OP2 EG RATE 1" ;
         lv2:default 95 ;
@@ -838,7 +848,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 59 ;
+        lv2:index 60 ;
         lv2:symbol "op2_eg_rate_2" ;
         lv2:name "OP2 EG RATE 2" ;
         lv2:default 50 ;
@@ -848,7 +858,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 60 ;
+        lv2:index 61 ;
         lv2:symbol "op2_eg_rate_3" ;
         lv2:name "OP2 EG RATE 3" ;
         lv2:default 35 ;
@@ -858,7 +868,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 61 ;
+        lv2:index 62 ;
         lv2:symbol "op2_eg_rate_4" ;
         lv2:name "OP2 EG RATE 4" ;
         lv2:default 78 ;
@@ -868,7 +878,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 62 ;
+        lv2:index 63 ;
         lv2:symbol "op2_eg_level_1" ;
         lv2:name "OP2 EG LEVEL 1" ;
         lv2:default 99 ;
@@ -878,7 +888,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 63 ;
+        lv2:index 64 ;
         lv2:symbol "op2_eg_level_2" ;
         lv2:name "OP2 EG LEVEL 2" ;
         lv2:default 75 ;
@@ -888,7 +898,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 64 ;
+        lv2:index 65 ;
         lv2:symbol "op2_eg_level_3" ;
         lv2:name "OP2 EG LEVEL 3" ;
         lv2:default 0 ;
@@ -898,7 +908,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 65 ;
+        lv2:index 66 ;
         lv2:symbol "op2_eg_level_4" ;
         lv2:name "OP2 EG LEVEL 4" ;
         lv2:default 0 ;
@@ -908,7 +918,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 66 ;
+        lv2:index 67 ;
         lv2:symbol "op2_operator_output_level" ;
         lv2:name "OP2 OUTPUT LEVEL" ;
         lv2:default 58 ;
@@ -918,7 +928,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 67 ;
+        lv2:index 68 ;
         lv2:symbol "op2_osc_mode" ;
         lv2:name "OP2 MODE" ;
         lv2:default 0 ;
@@ -937,7 +947,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 68 ;
+        lv2:index 69 ;
         lv2:symbol "op2_osc_freq_coarse" ;
         lv2:name "OP2 F COARSE" ;
         lv2:default 14 ;
@@ -947,7 +957,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 69 ;
+        lv2:index 70 ;
         lv2:symbol "op2_osc_freq_fine" ;
         lv2:name "OP2 F FINE" ;
         lv2:default 0 ;
@@ -957,7 +967,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 70 ;
+        lv2:index 71 ;
         lv2:symbol "op2_osc_detune" ;
         lv2:name "OP2 OSC DETUNE" ;
         lv2:default 0 ;
@@ -967,7 +977,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 71 ;
+        lv2:index 72 ;
         lv2:symbol "op2_kbd_lev_scl_brk_pt" ;
         lv2:name "OP2 BREAK POINT" ;
         lv2:default 0 ;
@@ -977,7 +987,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 72 ;
+        lv2:index 73 ;
         lv2:symbol "op2_kbd_lev_scl_lft_depth" ;
         lv2:name "OP2 L SCALE DEPTH" ;
         lv2:default 0 ;
@@ -987,7 +997,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 73 ;
+        lv2:index 74 ;
         lv2:symbol "op2_kbd_lev_scl_rht_depth" ;
         lv2:name "OP2 R SCALE DEPTH" ;
         lv2:default 0 ;
@@ -997,7 +1007,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 74 ;
+        lv2:index 75 ;
         lv2:symbol "op2_kbd_lev_scl_lft_curve" ;
         lv2:name "OP2 L KEY CURVE" ;
         lv2:default 0 ;
@@ -1024,7 +1034,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 75 ;
+        lv2:index 76 ;
         lv2:symbol "op2_kbd_lev_scl_rht_curve" ;
         lv2:name "OP2 R KEY CURVE" ;
         lv2:default 0 ;
@@ -1051,7 +1061,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 76 ;
+        lv2:index 77 ;
         lv2:symbol "op2_kbd_rate_scaling" ;
         lv2:name "OP2 RATE SCALING" ;
         lv2:default 3 ;
@@ -1061,7 +1071,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 77 ;
+        lv2:index 78 ;
         lv2:symbol "op2_amp_mod_sensitivity" ;
         lv2:name "OP2 A MOD SENS." ;
         lv2:default 0 ;
@@ -1071,7 +1081,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 78 ;
+        lv2:index 79 ;
         lv2:symbol "op2_key_vel_sensitivity" ;
         lv2:name "OP2 KEY VELOCITY" ;
         lv2:default 7 ;
@@ -1081,7 +1091,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 79 ;
+        lv2:index 80 ;
         lv2:symbol "op3_eg_rate_1" ;
         lv2:name "OP3 EG RATE 1" ;
         lv2:default 95 ;
@@ -1091,7 +1101,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 80 ;
+        lv2:index 81 ;
         lv2:symbol "op3_eg_rate_2" ;
         lv2:name "OP3 EG RATE 2" ;
         lv2:default 20 ;
@@ -1101,7 +1111,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 81 ;
+        lv2:index 82 ;
         lv2:symbol "op3_eg_rate_3" ;
         lv2:name "OP3 EG RATE 3" ;
         lv2:default 20 ;
@@ -1111,7 +1121,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 82 ;
+        lv2:index 83 ;
         lv2:symbol "op3_eg_rate_4" ;
         lv2:name "OP3 EG RATE 4" ;
         lv2:default 50 ;
@@ -1121,7 +1131,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 83 ;
+        lv2:index 84 ;
         lv2:symbol "op3_eg_level_1" ;
         lv2:name "OP3 EG LEVEL 1" ;
         lv2:default 99 ;
@@ -1131,7 +1141,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 84 ;
+        lv2:index 85 ;
         lv2:symbol "op3_eg_level_2" ;
         lv2:name "OP3 EG LEVEL 2" ;
         lv2:default 95 ;
@@ -1141,7 +1151,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 85 ;
+        lv2:index 86 ;
         lv2:symbol "op3_eg_level_3" ;
         lv2:name "OP3 EG LEVEL 3" ;
         lv2:default 0 ;
@@ -1151,7 +1161,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 86 ;
+        lv2:index 87 ;
         lv2:symbol "op3_eg_level_4" ;
         lv2:name "OP3 EG LEVEL 4" ;
         lv2:default 0 ;
@@ -1161,7 +1171,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 87 ;
+        lv2:index 88 ;
         lv2:symbol "op3_operator_output_level" ;
         lv2:name "OP3 OUTPUT LEVEL" ;
         lv2:default 99 ;
@@ -1171,7 +1181,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 88 ;
+        lv2:index 89 ;
         lv2:symbol "op3_osc_mode" ;
         lv2:name "OP3 MODE" ;
         lv2:default 0 ;
@@ -1190,7 +1200,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 89 ;
+        lv2:index 90 ;
         lv2:symbol "op3_osc_freq_coarse" ;
         lv2:name "OP3 F COARSE" ;
         lv2:default 1 ;
@@ -1200,7 +1210,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 90 ;
+        lv2:index 91 ;
         lv2:symbol "op3_osc_freq_fine" ;
         lv2:name "OP3 F FINE" ;
         lv2:default 0 ;
@@ -1210,7 +1220,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 91 ;
+        lv2:index 92 ;
         lv2:symbol "op3_osc_detune" ;
         lv2:name "OP3 OSC DETUNE" ;
         lv2:default 0 ;
@@ -1220,7 +1230,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 92 ;
+        lv2:index 93 ;
         lv2:symbol "op3_kbd_lev_scl_brk_pt" ;
         lv2:name "OP3 BREAK POINT" ;
         lv2:default 0 ;
@@ -1230,7 +1240,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 93 ;
+        lv2:index 94 ;
         lv2:symbol "op3_kbd_lev_scl_lft_depth" ;
         lv2:name "OP3 L SCALE DEPTH" ;
         lv2:default 0 ;
@@ -1240,7 +1250,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 94 ;
+        lv2:index 95 ;
         lv2:symbol "op3_kbd_lev_scl_rht_depth" ;
         lv2:name "OP3 R SCALE DEPTH" ;
         lv2:default 0 ;
@@ -1250,7 +1260,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 95 ;
+        lv2:index 96 ;
         lv2:symbol "op3_kbd_lev_scl_lft_curve" ;
         lv2:name "OP3 L KEY CURVE" ;
         lv2:default 0 ;
@@ -1277,7 +1287,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 96 ;
+        lv2:index 97 ;
         lv2:symbol "op3_kbd_lev_scl_rht_curve" ;
         lv2:name "OP3 R KEY CURVE" ;
         lv2:default 0 ;
@@ -1304,7 +1314,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 97 ;
+        lv2:index 98 ;
         lv2:symbol "op3_kbd_rate_scaling" ;
         lv2:name "OP3 RATE SCALING" ;
         lv2:default 3 ;
@@ -1314,7 +1324,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 98 ;
+        lv2:index 99 ;
         lv2:symbol "op3_amp_mod_sensitivity" ;
         lv2:name "OP3 A MOD SENS." ;
         lv2:default 0 ;
@@ -1324,7 +1334,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 99 ;
+        lv2:index 100 ;
         lv2:symbol "op3_key_vel_sensitivity" ;
         lv2:name "OP3 KEY VELOCITY" ;
         lv2:default 2 ;
@@ -1334,7 +1344,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 100 ;
+        lv2:index 101 ;
         lv2:symbol "op4_eg_rate_1" ;
         lv2:name "OP4 EG RATE 1" ;
         lv2:default 95 ;
@@ -1344,7 +1354,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 101 ;
+        lv2:index 102 ;
         lv2:symbol "op4_eg_rate_2" ;
         lv2:name "OP4 EG RATE 2" ;
         lv2:default 29 ;
@@ -1354,7 +1364,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 102 ;
+        lv2:index 103 ;
         lv2:symbol "op4_eg_rate_3" ;
         lv2:name "OP4 EG RATE 3" ;
         lv2:default 20 ;
@@ -1364,7 +1374,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 103 ;
+        lv2:index 104 ;
         lv2:symbol "op4_eg_rate_4" ;
         lv2:name "OP4 EG RATE 4" ;
         lv2:default 50 ;
@@ -1374,7 +1384,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 104 ;
+        lv2:index 105 ;
         lv2:symbol "op4_eg_level_1" ;
         lv2:name "OP4 EG LEVEL 1" ;
         lv2:default 99 ;
@@ -1384,7 +1394,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 105 ;
+        lv2:index 106 ;
         lv2:symbol "op4_eg_level_2" ;
         lv2:name "OP4 EG LEVEL 2" ;
         lv2:default 95 ;
@@ -1394,7 +1404,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 106 ;
+        lv2:index 107 ;
         lv2:symbol "op4_eg_level_3" ;
         lv2:name "OP4 EG LEVEL 3" ;
         lv2:default 0 ;
@@ -1404,7 +1414,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 107 ;
+        lv2:index 108 ;
         lv2:symbol "op4_eg_level_4" ;
         lv2:name "OP4 EG LEVEL 4" ;
         lv2:default 0 ;
@@ -1414,7 +1424,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 108 ;
+        lv2:index 109 ;
         lv2:symbol "op4_operator_output_level" ;
         lv2:name "OP4 OUTPUT LEVEL" ;
         lv2:default 89 ;
@@ -1424,7 +1434,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 109 ;
+        lv2:index 110 ;
         lv2:symbol "op4_osc_mode" ;
         lv2:name "OP4 MODE" ;
         lv2:default 0 ;
@@ -1443,7 +1453,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 110 ;
+        lv2:index 111 ;
         lv2:symbol "op4_osc_freq_coarse" ;
         lv2:name "OP4 F COARSE" ;
         lv2:default 1 ;
@@ -1453,7 +1463,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 111 ;
+        lv2:index 112 ;
         lv2:symbol "op4_osc_freq_fine" ;
         lv2:name "OP4 F FINE" ;
         lv2:default 0 ;
@@ -1463,7 +1473,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 112 ;
+        lv2:index 113 ;
         lv2:symbol "op4_osc_detune" ;
         lv2:name "OP4 OSC DETUNE" ;
         lv2:default 0 ;
@@ -1473,7 +1483,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 113 ;
+        lv2:index 114 ;
         lv2:symbol "op4_kbd_lev_scl_brk_pt" ;
         lv2:name "OP4 BREAK POINT" ;
         lv2:default 0 ;
@@ -1483,7 +1493,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 114 ;
+        lv2:index 115 ;
         lv2:symbol "op4_kbd_lev_scl_lft_depth" ;
         lv2:name "OP4 L SCALE DEPTH" ;
         lv2:default 0 ;
@@ -1493,7 +1503,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 115 ;
+        lv2:index 116 ;
         lv2:symbol "op4_kbd_lev_scl_rht_depth" ;
         lv2:name "OP4 R SCALE DEPTH" ;
         lv2:default 0 ;
@@ -1503,7 +1513,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 116 ;
+        lv2:index 117 ;
         lv2:symbol "op4_kbd_lev_scl_lft_curve" ;
         lv2:name "OP4 L KEY CURVE" ;
         lv2:default 0 ;
@@ -1530,7 +1540,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 117 ;
+        lv2:index 118 ;
         lv2:symbol "op4_kbd_lev_scl_rht_curve" ;
         lv2:name "OP4 R KEY CURVE" ;
         lv2:default 0 ;
@@ -1557,7 +1567,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 118 ;
+        lv2:index 119 ;
         lv2:symbol "op4_kbd_rate_scaling" ;
         lv2:name "OP4 RATE SCALING" ;
         lv2:default 3 ;
@@ -1567,7 +1577,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 119 ;
+        lv2:index 120 ;
         lv2:symbol "op4_amp_mod_sensitivity" ;
         lv2:name "OP4 A MOD SENS." ;
         lv2:default 0 ;
@@ -1577,7 +1587,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 120 ;
+        lv2:index 121 ;
         lv2:symbol "op4_key_vel_sensitivity" ;
         lv2:name "OP4 KEY VELOCITY" ;
         lv2:default 6 ;
@@ -1587,7 +1597,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 121 ;
+        lv2:index 122 ;
         lv2:symbol "op5_eg_rate_1" ;
         lv2:name "OP5 EG RATE 1" ;
         lv2:default 95 ;
@@ -1597,7 +1607,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 122 ;
+        lv2:index 123 ;
         lv2:symbol "op5_eg_rate_2" ;
         lv2:name "OP5 EG RATE 2" ;
         lv2:default 20 ;
@@ -1607,7 +1617,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 123 ;
+        lv2:index 124 ;
         lv2:symbol "op5_eg_rate_3" ;
         lv2:name "OP5 EG RATE 3" ;
         lv2:default 20 ;
@@ -1617,7 +1627,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 124 ;
+        lv2:index 125 ;
         lv2:symbol "op5_eg_rate_4" ;
         lv2:name "OP5 EG RATE 4" ;
         lv2:default 50 ;
@@ -1627,7 +1637,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 125 ;
+        lv2:index 126 ;
         lv2:symbol "op5_eg_level_1" ;
         lv2:name "OP5 EG LEVEL 1" ;
         lv2:default 99 ;
@@ -1637,7 +1647,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 126 ;
+        lv2:index 127 ;
         lv2:symbol "op5_eg_level_2" ;
         lv2:name "OP5 EG LEVEL 2" ;
         lv2:default 95 ;
@@ -1647,7 +1657,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 127 ;
+        lv2:index 128 ;
         lv2:symbol "op5_eg_level_3" ;
         lv2:name "OP5 EG LEVEL 3" ;
         lv2:default 0 ;
@@ -1657,7 +1667,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 128 ;
+        lv2:index 129 ;
         lv2:symbol "op5_eg_level_4" ;
         lv2:name "OP5 EG LEVEL 4" ;
         lv2:default 0 ;
@@ -1667,7 +1677,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 129 ;
+        lv2:index 130 ;
         lv2:symbol "op5_operator_output_level" ;
         lv2:name "OP5 OUTPUT LEVEL" ;
         lv2:default 99 ;
@@ -1677,7 +1687,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 130 ;
+        lv2:index 131 ;
         lv2:symbol "op5_osc_mode" ;
         lv2:name "OP5 MODE" ;
         lv2:default 0 ;
@@ -1696,7 +1706,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 131 ;
+        lv2:index 132 ;
         lv2:symbol "op5_osc_freq_coarse" ;
         lv2:name "OP5 F COARSE" ;
         lv2:default 1 ;
@@ -1706,7 +1716,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 132 ;
+        lv2:index 133 ;
         lv2:symbol "op5_osc_freq_fine" ;
         lv2:name "OP5 F FINE" ;
         lv2:default 0 ;
@@ -1716,7 +1726,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 133 ;
+        lv2:index 134 ;
         lv2:symbol "op5_osc_detune" ;
         lv2:name "OP5 OSC DETUNE" ;
         lv2:default -7 ;
@@ -1726,7 +1736,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 134 ;
+        lv2:index 135 ;
         lv2:symbol "op5_kbd_lev_scl_brk_pt" ;
         lv2:name "OP5 BREAK POINT" ;
         lv2:default 0 ;
@@ -1736,7 +1746,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 135 ;
+        lv2:index 136 ;
         lv2:symbol "op5_kbd_lev_scl_lft_depth" ;
         lv2:name "OP5 L SCALE DEPTH" ;
         lv2:default 0 ;
@@ -1746,7 +1756,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 136 ;
+        lv2:index 137 ;
         lv2:symbol "op5_kbd_lev_scl_rht_depth" ;
         lv2:name "OP5 R SCALE DEPTH" ;
         lv2:default 0 ;
@@ -1756,7 +1766,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 137 ;
+        lv2:index 138 ;
         lv2:symbol "op5_kbd_lev_scl_lft_curve" ;
         lv2:name "OP5 L KEY CURVE" ;
         lv2:default 0 ;
@@ -1783,7 +1793,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 138 ;
+        lv2:index 139 ;
         lv2:symbol "op5_kbd_lev_scl_rht_curve" ;
         lv2:name "OP5 R KEY CURVE" ;
         lv2:default 0 ;
@@ -1810,7 +1820,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 139 ;
+        lv2:index 140 ;
         lv2:symbol "op5_kbd_rate_scaling" ;
         lv2:name "OP5 RATE SCALING" ;
         lv2:default 3 ;
@@ -1820,7 +1830,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 140 ;
+        lv2:index 141 ;
         lv2:symbol "op5_amp_mod_sensitivity" ;
         lv2:name "OP5 A MOD SENS." ;
         lv2:default 0 ;
@@ -1830,7 +1840,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 141 ;
+        lv2:index 142 ;
         lv2:symbol "op5_key_vel_sensitivity" ;
         lv2:name "OP5 KEY VELOCITY" ;
         lv2:default 0 ;
@@ -1840,7 +1850,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 142 ;
+        lv2:index 143 ;
         lv2:symbol "op6_eg_rate_1" ;
         lv2:name "OP6 EG RATE 1" ;
         lv2:default 95 ;
@@ -1850,7 +1860,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 143 ;
+        lv2:index 144 ;
         lv2:symbol "op6_eg_rate_2" ;
         lv2:name "OP6 EG RATE 2" ;
         lv2:default 29 ;
@@ -1860,7 +1870,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 144 ;
+        lv2:index 145 ;
         lv2:symbol "op6_eg_rate_3" ;
         lv2:name "OP6 EG RATE 3" ;
         lv2:default 20 ;
@@ -1870,7 +1880,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 145 ;
+        lv2:index 146 ;
         lv2:symbol "op6_eg_rate_4" ;
         lv2:name "OP6 EG RATE 4" ;
         lv2:default 50 ;
@@ -1880,7 +1890,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 146 ;
+        lv2:index 147 ;
         lv2:symbol "op6_eg_level_1" ;
         lv2:name "OP6 EG LEVEL 1" ;
         lv2:default 99 ;
@@ -1890,7 +1900,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 147 ;
+        lv2:index 148 ;
         lv2:symbol "op6_eg_level_2" ;
         lv2:name "OP6 EG LEVEL 2" ;
         lv2:default 95 ;
@@ -1900,7 +1910,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 148 ;
+        lv2:index 149 ;
         lv2:symbol "op6_eg_level_3" ;
         lv2:name "OP6 EG LEVEL 3" ;
         lv2:default 0 ;
@@ -1910,7 +1920,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 149 ;
+        lv2:index 150 ;
         lv2:symbol "op6_eg_level_4" ;
         lv2:name "OP6 EG LEVEL 4" ;
         lv2:default 0 ;
@@ -1920,7 +1930,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 150 ;
+        lv2:index 151 ;
         lv2:symbol "op6_operator_output_level" ;
         lv2:name "OP6 OUTPUT LEVEL" ;
         lv2:default 79 ;
@@ -1930,7 +1940,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 151 ;
+        lv2:index 152 ;
         lv2:symbol "op6_osc_mode" ;
         lv2:name "OP6 MODE" ;
         lv2:default 0 ;
@@ -1949,7 +1959,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 152 ;
+        lv2:index 153 ;
         lv2:symbol "op6_osc_freq_coarse" ;
         lv2:name "OP6 F COARSE" ;
         lv2:default 1 ;
@@ -1959,7 +1969,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 153 ;
+        lv2:index 154 ;
         lv2:symbol "op6_osc_freq_fine" ;
         lv2:name "OP6 F FINE" ;
         lv2:default 0 ;
@@ -1969,7 +1979,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 154 ;
+        lv2:index 155 ;
         lv2:symbol "op6_osc_detune" ;
         lv2:name "OP6 OSC DETUNE" ;
         lv2:default 7 ;
@@ -1979,7 +1989,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 155 ;
+        lv2:index 156 ;
         lv2:symbol "op6_kbd_lev_scl_brk_pt" ;
         lv2:name "OP6 BREAK POINT" ;
         lv2:default 41 ;
@@ -1989,7 +1999,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 156 ;
+        lv2:index 157 ;
         lv2:symbol "op6_kbd_lev_scl_lft_depth" ;
         lv2:name "OP6 L SCALE DEPTH" ;
         lv2:default 0 ;
@@ -1999,7 +2009,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 157 ;
+        lv2:index 158 ;
         lv2:symbol "op6_kbd_lev_scl_rht_depth" ;
         lv2:name "OP6 R SCALE DEPTH" ;
         lv2:default 19 ;
@@ -2009,7 +2019,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 158 ;
+        lv2:index 159 ;
         lv2:symbol "op6_kbd_lev_scl_lft_curve" ;
         lv2:name "OP6 L KEY CURVE" ;
         lv2:default 0 ;
@@ -2036,7 +2046,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 159 ;
+        lv2:index 160 ;
         lv2:symbol "op6_kbd_lev_scl_rht_curve" ;
         lv2:name "OP6 R KEY CURVE" ;
         lv2:default 0 ;
@@ -2063,7 +2073,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 160 ;
+        lv2:index 161 ;
         lv2:symbol "op6_kbd_rate_scaling" ;
         lv2:name "OP6 RATE SCALING" ;
         lv2:default 3 ;
@@ -2073,7 +2083,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 161 ;
+        lv2:index 162 ;
         lv2:symbol "op6_amp_mod_sensitivity" ;
         lv2:name "OP6 A MOD SENS." ;
         lv2:default 0 ;
@@ -2083,7 +2093,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 162 ;
+        lv2:index 163 ;
         lv2:symbol "op6_key_vel_sensitivity" ;
         lv2:name "OP6 KEY VELOCITY" ;
         lv2:default 6 ;
@@ -2093,7 +2103,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 163 ;
+        lv2:index 164 ;
         lv2:symbol "op1_enable" ;
         lv2:name "OP1 ENABLE" ;
         lv2:default 1 ;
@@ -2112,7 +2122,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 164 ;
+        lv2:index 165 ;
         lv2:symbol "op2_enable" ;
         lv2:name "OP2 ENABLE" ;
         lv2:default 1 ;
@@ -2131,7 +2141,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 165 ;
+        lv2:index 166 ;
         lv2:symbol "op3_enable" ;
         lv2:name "OP3 ENABLE" ;
         lv2:default 1 ;
@@ -2150,7 +2160,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 166 ;
+        lv2:index 167 ;
         lv2:symbol "op4_enable" ;
         lv2:name "OP4 ENABLE" ;
         lv2:default 1 ;
@@ -2169,7 +2179,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 167 ;
+        lv2:index 168 ;
         lv2:symbol "op5_enable" ;
         lv2:name "OP5 ENABLE" ;
         lv2:default 1 ;
@@ -2188,7 +2198,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
     ] ,
     [
         a lv2:InputPort, lv2:ControlPort ;
-        lv2:index 168 ;
+        lv2:index 169 ;
         lv2:symbol "op6_enable" ;
         lv2:name "OP6 ENABLE" ;
         lv2:default 1 ;

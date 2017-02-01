@@ -18,7 +18,6 @@
 #define __CONTROLLERS_H
 
 #include "synth.h"
-#include "../Dexed.h"
 #include <stdio.h>
 #include <string.h>
 #include "trace.h"

@@ -8,1555 +8,1543 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
 <https://github.com/dcoredump/dexed.lv2>
-    a lv2:Plugin, doap:Project, lv2:InstrumentPlugin ;
+    a lv2:Plugin, doap:Project, lv2:SynthPlugin ;
     rdfs:seeAlso <Dexed.ttl> ;
     rdfs:seeAlso <modgui.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#..GOTCHA..>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__01__BRASS___1>
     a pset:Preset ;
-    rdfs:label "..GOTCHA.." ;
+    rdfs:label "ROM1A__01__BRASS___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#60-S_ORGAN>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__02__BRASS___2>
     a pset:Preset ;
-    rdfs:label "60-S_ORGAN" ;
+    rdfs:label "ROM1A__02__BRASS___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ACCORDION>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__03__BRASS___3>
     a pset:Preset ;
-    rdfs:label "ACCORDION" ;
+    rdfs:label "ROM1A__03__BRASS___3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#B.DRM-SNAR>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__04__STRINGS_1>
     a pset:Preset ;
-    rdfs:label "B.DRM-SNAR" ;
+    rdfs:label "ROM1A__04__STRINGS_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BANJO>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__05__STRINGS_2>
     a pset:Preset ;
-    rdfs:label "BANJO" ;
+    rdfs:label "ROM1A__05__STRINGS_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BASSOON>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__06__STRINGS_3>
     a pset:Preset ;
-    rdfs:label "BASSOON" ;
+    rdfs:label "ROM1A__06__STRINGS_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BASS____1>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__07__ORCHESTRA>
     a pset:Preset ;
-    rdfs:label "BASS____1" ;
+    rdfs:label "ROM1A__07__ORCHESTRA" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BASS____2>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__08__PIANO___1>
     a pset:Preset ;
-    rdfs:label "BASS____2" ;
+    rdfs:label "ROM1A__08__PIANO___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BASS____3>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__09__PIANO___2>
     a pset:Preset ;
-    rdfs:label "BASS____3" ;
+    rdfs:label "ROM1A__09__PIANO___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BASS____4>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__10__PIANO___3>
     a pset:Preset ;
-    rdfs:label "BASS____4" ;
+    rdfs:label "ROM1A__10__PIANO___3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BC_Sax>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__11__E.PIANO_1>
     a pset:Preset ;
-    rdfs:label "BC_Sax" ;
+    rdfs:label "ROM1A__11__E.PIANO_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BC_Trumpet>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__12__GUITAR__1>
     a pset:Preset ;
-    rdfs:label "BC_Trumpet" ;
+    rdfs:label "ROM1A__12__GUITAR__1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BELL-FLUTE>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__13__GUITAR__2>
     a pset:Preset ;
-    rdfs:label "BELL-FLUTE" ;
+    rdfs:label "ROM1A__13__GUITAR__2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BELLS>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__14__SYN-LEAD_1>
     a pset:Preset ;
-    rdfs:label "BELLS" ;
+    rdfs:label "ROM1A__14__SYN-LEAD_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BLOCK>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__15__BASS____1>
     a pset:Preset ;
-    rdfs:label "BLOCK" ;
+    rdfs:label "ROM1A__15__BASS____1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASSHORNS>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__16__BASS____2>
     a pset:Preset ;
-    rdfs:label "BRASSHORNS" ;
+    rdfs:label "ROM1A__16__BASS____2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS_5THS>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__17__E.ORGAN_1>
     a pset:Preset ;
-    rdfs:label "BRASS_5THS" ;
+    rdfs:label "ROM1A__17__E.ORGAN_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS_6_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__18__PIPES___1>
     a pset:Preset ;
-    rdfs:label "BRASS_6_BC" ;
+    rdfs:label "ROM1A__18__PIPES___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__19__HARPSICH_1>
     a pset:Preset ;
-    rdfs:label "BRASS_BC" ;
+    rdfs:label "ROM1A__19__HARPSICH_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS_S_H>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__20__CLAV____1>
     a pset:Preset ;
-    rdfs:label "BRASS_S_H" ;
+    rdfs:label "ROM1A__20__CLAV____1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS___1>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__21__VIBE____1>
     a pset:Preset ;
-    rdfs:label "BRASS___1" ;
+    rdfs:label "ROM1A__21__VIBE____1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS___2>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__22__MARIMBA>
     a pset:Preset ;
-    rdfs:label "BRASS___2" ;
+    rdfs:label "ROM1A__22__MARIMBA" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS___3>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__23__KOTO>
     a pset:Preset ;
-    rdfs:label "BRASS___3" ;
+    rdfs:label "ROM1A__23__KOTO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS___4>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__24__FLUTE___1>
     a pset:Preset ;
-    rdfs:label "BRASS___4" ;
+    rdfs:label "ROM1A__24__FLUTE___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS___5>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__25__ORCH-CHIME>
     a pset:Preset ;
-    rdfs:label "BRASS___5" ;
+    rdfs:label "ROM1A__25__ORCH-CHIME" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS___7>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__26__TUB_BELLS>
     a pset:Preset ;
-    rdfs:label "BRASS___7" ;
+    rdfs:label "ROM1A__26__TUB_BELLS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRASS___8>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__27__STEEL_DRUM>
     a pset:Preset ;
-    rdfs:label "BRASS___8" ;
+    rdfs:label "ROM1A__27__STEEL_DRUM" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRIGHT_BOW>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__28__TIMPANI>
     a pset:Preset ;
-    rdfs:label "BRIGHT_BOW" ;
+    rdfs:label "ROM1A__28__TIMPANI" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BRS-CHIME>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__29__REFS_WHISL>
     a pset:Preset ;
-    rdfs:label "BRS-CHIME" ;
+    rdfs:label "ROM1A__29__REFS_WHISL" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BR_TRUMPET>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__30__VOICE___1>
     a pset:Preset ;
-    rdfs:label "BR_TRUMPET" ;
+    rdfs:label "ROM1A__30__VOICE___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Bells>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__31__TRAIN>
     a pset:Preset ;
-    rdfs:label "Bells" ;
+    rdfs:label "ROM1A__31__TRAIN" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BopBass>
+<https://github.com/dcoredump/dexed.lv2#ROM1A__32__TAKE_OFF>
     a pset:Preset ;
-    rdfs:label "BopBass" ;
+    rdfs:label "ROM1A__32__TAKE_OFF" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#BriteOrgan>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__01__PIANO___4>
     a pset:Preset ;
-    rdfs:label "BriteOrgan" ;
+    rdfs:label "ROM1B__01__PIANO___4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CALIOPE>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__02__PIANO___5>
     a pset:Preset ;
-    rdfs:label "CALIOPE" ;
+    rdfs:label "ROM1B__02__PIANO___5" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CELESTE>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__03__E.PIANO_2>
     a pset:Preset ;
-    rdfs:label "CELESTE" ;
+    rdfs:label "ROM1B__03__E.PIANO_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CHIME-STRG>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__04__E.PIANO_3>
     a pset:Preset ;
-    rdfs:label "CHIME-STRG" ;
+    rdfs:label "ROM1B__04__E.PIANO_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CHIMES>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__05__E.PIANO_4>
     a pset:Preset ;
-    rdfs:label "CHIMES" ;
+    rdfs:label "ROM1B__05__E.PIANO_4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLARINET>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__06__PIANO_5THS>
     a pset:Preset ;
-    rdfs:label "CLARINET" ;
+    rdfs:label "ROM1B__06__PIANO_5THS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLAS.GUIT>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__07__CELESTE>
     a pset:Preset ;
-    rdfs:label "CLAS.GUIT" ;
+    rdfs:label "ROM1B__07__CELESTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLAV-E.PNO>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__08__TOY_PIANO>
     a pset:Preset ;
-    rdfs:label "CLAV-E.PNO" ;
+    rdfs:label "ROM1B__08__TOY_PIANO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLAV_ENS>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__09__HARPSICH_2>
     a pset:Preset ;
-    rdfs:label "CLAV_ENS" ;
+    rdfs:label "ROM1B__09__HARPSICH_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLAV_ENS_2>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__10__HARPSICH_3>
     a pset:Preset ;
-    rdfs:label "CLAV_ENS_2" ;
+    rdfs:label "ROM1B__10__HARPSICH_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLAV____1>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__11__CLAV____2>
     a pset:Preset ;
-    rdfs:label "CLAV____1" ;
+    rdfs:label "ROM1B__11__CLAV____2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLAV____2>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__12__CLAV____3>
     a pset:Preset ;
-    rdfs:label "CLAV____2" ;
+    rdfs:label "ROM1B__12__CLAV____3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLAV____3>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__13__E.ORGAN_2>
     a pset:Preset ;
-    rdfs:label "CLAV____3" ;
+    rdfs:label "ROM1B__13__E.ORGAN_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CLV-BRS_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__14__E.ORGAN_3>
     a pset:Preset ;
-    rdfs:label "CLV-BRS_BC" ;
+    rdfs:label "ROM1B__14__E.ORGAN_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#COWBELL>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__15__E.ORGAN_4>
     a pset:Preset ;
-    rdfs:label "COWBELL" ;
+    rdfs:label "ROM1B__15__E.ORGAN_4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#COW_BELL>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__16__E.ORGAN_5>
     a pset:Preset ;
-    rdfs:label "COW_BELL" ;
+    rdfs:label "ROM1B__16__E.ORGAN_5" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Celeste>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__17__PIPES___2>
     a pset:Preset ;
-    rdfs:label "Celeste" ;
+    rdfs:label "ROM1B__17__PIPES___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Clavecin>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__18__PIPES___3>
     a pset:Preset ;
-    rdfs:label "Clavecin" ;
+    rdfs:label "ROM1B__18__PIPES___3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ClaviBrass>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__19__PIPES___4>
     a pset:Preset ;
-    rdfs:label "ClaviBrass" ;
+    rdfs:label "ROM1B__19__PIPES___4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ClaviPluck>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__20__CALIOPE>
     a pset:Preset ;
-    rdfs:label "ClaviPluck" ;
+    rdfs:label "ROM1B__20__CALIOPE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#CongaClave>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__21__ACCORDION>
     a pset:Preset ;
-    rdfs:label "CongaClave" ;
+    rdfs:label "ROM1B__21__ACCORDION" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#DESCENT>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__22__SITAR>
     a pset:Preset ;
-    rdfs:label "DESCENT" ;
+    rdfs:label "ROM1B__22__SITAR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.BASS__1>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__23__GUITAR__3>
     a pset:Preset ;
-    rdfs:label "E.BASS__1" ;
+    rdfs:label "ROM1B__23__GUITAR__3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.BASS__2>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__24__GUITAR__4>
     a pset:Preset ;
-    rdfs:label "E.BASS__2" ;
+    rdfs:label "ROM1B__24__GUITAR__4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.GRAND_1>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__25__GUITAR__5>
     a pset:Preset ;
-    rdfs:label "E.GRAND_1" ;
+    rdfs:label "ROM1B__25__GUITAR__5" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.GRAND_2>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__26__GUITAR__6>
     a pset:Preset ;
-    rdfs:label "E.GRAND_2" ;
+    rdfs:label "ROM1B__26__GUITAR__6" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.ORGAN_1>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__27__LUTE>
     a pset:Preset ;
-    rdfs:label "E.ORGAN_1" ;
+    rdfs:label "ROM1B__27__LUTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.ORGAN_2>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__28__BANJO>
     a pset:Preset ;
-    rdfs:label "E.ORGAN_2" ;
+    rdfs:label "ROM1B__28__BANJO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.ORGAN_3>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__29__HARP____1>
     a pset:Preset ;
-    rdfs:label "E.ORGAN_3" ;
+    rdfs:label "ROM1B__29__HARP____1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.ORGAN_4>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__30__HARP____2>
     a pset:Preset ;
-    rdfs:label "E.ORGAN_4" ;
+    rdfs:label "ROM1B__30__HARP____2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.ORGAN_5>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__31__BASS____3>
     a pset:Preset ;
-    rdfs:label "E.ORGAN_5" ;
+    rdfs:label "ROM1B__31__BASS____3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.P-BRS_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM1B__32__BASS____4>
     a pset:Preset ;
-    rdfs:label "E.P-BRS_BC" ;
+    rdfs:label "ROM1B__32__BASS____4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.PIANO_1>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__01__PICCOLO>
     a pset:Preset ;
-    rdfs:label "E.PIANO_1" ;
+    rdfs:label "ROM2A__01__PICCOLO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.PIANO_2>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__02__FLUTE___2>
     a pset:Preset ;
-    rdfs:label "E.PIANO_2" ;
+    rdfs:label "ROM2A__02__FLUTE___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.PIANO_3>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__03__OBOE>
     a pset:Preset ;
-    rdfs:label "E.PIANO_3" ;
+    rdfs:label "ROM2A__03__OBOE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#E.PIANO_4>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__04__CLARINET>
     a pset:Preset ;
-    rdfs:label "E.PIANO_4" ;
+    rdfs:label "ROM2A__04__CLARINET" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#EVOLUTION>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__05__SAX_BC>
     a pset:Preset ;
-    rdfs:label "EVOLUTION" ;
+    rdfs:label "ROM2A__05__SAX_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#EXPLOSION>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__06__BASSOON>
     a pset:Preset ;
-    rdfs:label "EXPLOSION" ;
+    rdfs:label "ROM2A__06__BASSOON" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ElecBrass>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__07__STRINGS_4>
     a pset:Preset ;
-    rdfs:label "ElecBrass" ;
+    rdfs:label "ROM2A__07__STRINGS_4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ElectroBak>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__08__STRINGS_5>
     a pset:Preset ;
-    rdfs:label "ElectroBak" ;
+    rdfs:label "ROM2A__08__STRINGS_5" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Englishorn>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__09__STRINGS_6>
     a pset:Preset ;
-    rdfs:label "Englishorn" ;
+    rdfs:label "ROM2A__09__STRINGS_6" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Explosion>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__10__STRINGS_7>
     a pset:Preset ;
-    rdfs:label "Explosion" ;
+    rdfs:label "ROM2A__10__STRINGS_7" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FC_Choir>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__11__STRINGS_8>
     a pset:Preset ;
-    rdfs:label "FC_Choir" ;
+    rdfs:label "ROM2A__11__STRINGS_8" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FC_Strings>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__12__BRASS___4>
     a pset:Preset ;
-    rdfs:label "FC_Strings" ;
+    rdfs:label "ROM2A__12__BRASS___4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FILTER_SWP>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__13__BRASS___5>
     a pset:Preset ;
-    rdfs:label "FILTER_SWP" ;
+    rdfs:label "ROM2A__13__BRASS___5" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FLEXATONE>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__14__BRASS_6_BC>
     a pset:Preset ;
-    rdfs:label "FLEXATONE" ;
+    rdfs:label "ROM2A__14__BRASS_6_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FLUTE___1>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__15__BRASS___7>
     a pset:Preset ;
-    rdfs:label "FLUTE___1" ;
+    rdfs:label "ROM2A__15__BRASS___7" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FLUTE___2>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__16__BRASS___8>
     a pset:Preset ;
-    rdfs:label "FLUTE___2" ;
+    rdfs:label "ROM2A__16__BRASS___8" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FOLK_GUIT>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__17__RECORDER>
     a pset:Preset ;
-    rdfs:label "FOLK_GUIT" ;
+    rdfs:label "ROM2A__17__RECORDER" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FRETLESS_1>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__18__HARMONICA1>
     a pset:Preset ;
-    rdfs:label "FRETLESS_1" ;
+    rdfs:label "ROM2A__18__HARMONICA1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FRETLESS_2>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__19__HRMNCA2_BC>
     a pset:Preset ;
-    rdfs:label "FRETLESS_2" ;
+    rdfs:label "ROM2A__19__HRMNCA2_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FUNKY_RISE>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__20__VOICE___2>
     a pset:Preset ;
-    rdfs:label "FUNKY_RISE" ;
+    rdfs:label "ROM2A__20__VOICE___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FUNK_CLAV>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__21__VOICE___3>
     a pset:Preset ;
-    rdfs:label "FUNK_CLAV" ;
+    rdfs:label "ROM2A__21__VOICE___3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Fifths>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__22__GLOKENSPL>
     a pset:Preset ;
-    rdfs:label "Fifths" ;
+    rdfs:label "ROM2A__22__GLOKENSPL" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#FrenchHorn>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__23__VIBE____2>
     a pset:Preset ;
-    rdfs:label "FrenchHorn" ;
+    rdfs:label "ROM2A__23__VIBE____2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GLOKENSPL>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__24__XYLOPHONE>
     a pset:Preset ;
-    rdfs:label "GLOKENSPL" ;
+    rdfs:label "ROM2A__24__XYLOPHONE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GONG____1>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__25__CHIMES>
     a pset:Preset ;
-    rdfs:label "GONG____1" ;
+    rdfs:label "ROM2A__25__CHIMES" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GONG____2>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__26__GONG____1>
     a pset:Preset ;
-    rdfs:label "GONG____2" ;
+    rdfs:label "ROM2A__26__GONG____1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GRAND_PRIX>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__27__GONG____2>
     a pset:Preset ;
-    rdfs:label "GRAND_PRIX" ;
+    rdfs:label "ROM2A__27__GONG____2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GUITAR__1>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__28__BELLS>
     a pset:Preset ;
-    rdfs:label "GUITAR__1" ;
+    rdfs:label "ROM2A__28__BELLS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GUITAR__2>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__29__COW_BELL>
     a pset:Preset ;
-    rdfs:label "GUITAR__2" ;
+    rdfs:label "ROM2A__29__COW_BELL" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GUITAR__3>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__30__BLOCK>
     a pset:Preset ;
-    rdfs:label "GUITAR__3" ;
+    rdfs:label "ROM2A__30__BLOCK" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GUITAR__4>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__31__FLEXATONE>
     a pset:Preset ;
-    rdfs:label "GUITAR__4" ;
+    rdfs:label "ROM2A__31__FLEXATONE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GUITAR__5>
+<https://github.com/dcoredump/dexed.lv2#ROM2A__32__LOG_DRUM>
     a pset:Preset ;
-    rdfs:label "GUITAR__5" ;
+    rdfs:label "ROM2A__32__LOG_DRUM" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#GUITAR__6>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__01__SYN-LEAD_2>
     a pset:Preset ;
-    rdfs:label "GUITAR__6" ;
+    rdfs:label "ROM2B__01__SYN-LEAD_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Glastine_A>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__02__SYN-LEAD_3>
     a pset:Preset ;
-    rdfs:label "Glastine_A" ;
+    rdfs:label "ROM2B__02__SYN-LEAD_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Glastine_B>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__03__SYN-LEAD_4>
     a pset:Preset ;
-    rdfs:label "Glastine_B" ;
+    rdfs:label "ROM2B__03__SYN-LEAD_4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARMONICA1>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__04__SYN-LEAD_5>
     a pset:Preset ;
-    rdfs:label "HARMONICA1" ;
+    rdfs:label "ROM2B__04__SYN-LEAD_5" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARP-FLUTE>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__05__SYN-CLAV_1>
     a pset:Preset ;
-    rdfs:label "HARP-FLUTE" ;
+    rdfs:label "ROM2B__05__SYN-CLAV_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARPSI-STG>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__06__SYN-CLAV_2>
     a pset:Preset ;
-    rdfs:label "HARPSI-STG" ;
+    rdfs:label "ROM2B__06__SYN-CLAV_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARPSICH_1>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__07__SYN-CLAV_3>
     a pset:Preset ;
-    rdfs:label "HARPSICH_1" ;
+    rdfs:label "ROM2B__07__SYN-CLAV_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARPSICH_2>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__08__SYN-PIANO>
     a pset:Preset ;
-    rdfs:label "HARPSICH_2" ;
+    rdfs:label "ROM2B__08__SYN-PIANO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARPSICH_3>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__09__SYNBRASS_1>
     a pset:Preset ;
-    rdfs:label "HARPSICH_3" ;
+    rdfs:label "ROM2B__09__SYNBRASS_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARP____1>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__10__SYNBRASS_2>
     a pset:Preset ;
-    rdfs:label "HARP____1" ;
+    rdfs:label "ROM2B__10__SYNBRASS_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HARP____2>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__11__SYNORGAN_1>
     a pset:Preset ;
-    rdfs:label "HARP____2" ;
+    rdfs:label "ROM2B__11__SYNORGAN_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HEAVYMETAL>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__12__SYNORGAN_2>
     a pset:Preset ;
-    rdfs:label "HEAVYMETAL" ;
+    rdfs:label "ROM2B__12__SYNORGAN_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HIGH_STRGS>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__13__SYN-VOX>
     a pset:Preset ;
-    rdfs:label "HIGH_STRGS" ;
+    rdfs:label "ROM2B__13__SYN-VOX" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HONKY_TONK>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__14__SYN-ORCH>
     a pset:Preset ;
-    rdfs:label "HONKY_TONK" ;
+    rdfs:label "ROM2B__14__SYN-ORCH" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HORNS>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__15__SYN-BASS_1>
     a pset:Preset ;
-    rdfs:label "HORNS" ;
+    rdfs:label "ROM2B__15__SYN-BASS_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HRMNCA2_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__16__SYN-BASS_2>
     a pset:Preset ;
-    rdfs:label "HRMNCA2_BC" ;
+    rdfs:label "ROM2B__16__SYN-BASS_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Handrum>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__17__HARP-FLUTE>
     a pset:Preset ;
-    rdfs:label "Handrum" ;
+    rdfs:label "ROM2B__17__HARP-FLUTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HardBass>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__18__BELL-FLUTE>
     a pset:Preset ;
-    rdfs:label "HardBass" ;
+    rdfs:label "ROM2B__18__BELL-FLUTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HardBones>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__19__E.P-BRS_BC>
     a pset:Preset ;
-    rdfs:label "HardBones" ;
+    rdfs:label "ROM2B__19__E.P-BRS_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HardTines>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__20__T.BL-EXPA>
     a pset:Preset ;
-    rdfs:label "HardTines" ;
+    rdfs:label "ROM2B__20__T.BL-EXPA" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HardTrumps>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__21__CHIME-STRG>
     a pset:Preset ;
-    rdfs:label "HardTrumps" ;
+    rdfs:label "ROM2B__21__CHIME-STRG" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HarmoSynth>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__22__B.DRM-SNAR>
     a pset:Preset ;
-    rdfs:label "HarmoSynth" ;
+    rdfs:label "ROM2B__22__B.DRM-SNAR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Harmonica>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__23__SHIMMER>
     a pset:Preset ;
-    rdfs:label "Harmonica" ;
+    rdfs:label "ROM2B__23__SHIMMER" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#HarmoniumB>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__24__EVOLUTION>
     a pset:Preset ;
-    rdfs:label "HarmoniumB" ;
+    rdfs:label "ROM2B__24__EVOLUTION" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#INIT_VOICE>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__25__WATER_GDN>
     a pset:Preset ;
-    rdfs:label "INIT_VOICE" ;
+    rdfs:label "ROM2B__25__WATER_GDN" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#JAZZ_GUIT1>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__26__WASP_STING>
     a pset:Preset ;
-    rdfs:label "JAZZ_GUIT1" ;
+    rdfs:label "ROM2B__26__WASP_STING" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#JAZZ_GUIT2>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__27__LASER_GUN>
     a pset:Preset ;
-    rdfs:label "JAZZ_GUIT2" ;
+    rdfs:label "ROM2B__27__LASER_GUN" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#JazzBass>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__28__DESCENT>
     a pset:Preset ;
-    rdfs:label "JazzBass" ;
+    rdfs:label "ROM2B__28__DESCENT" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#KOTO>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__29__OCTAVE_WAR>
     a pset:Preset ;
-    rdfs:label "KOTO" ;
+    rdfs:label "ROM2B__29__OCTAVE_WAR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#KoikeCycle>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__30__GRAND_PRIX>
     a pset:Preset ;
-    rdfs:label "KoikeCycle" ;
+    rdfs:label "ROM2B__30__GRAND_PRIX" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LASERSWEEP>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__31__ST.HELENS>
     a pset:Preset ;
-    rdfs:label "LASERSWEEP" ;
+    rdfs:label "ROM2B__31__ST.HELENS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LASER_GUN>
+<https://github.com/dcoredump/dexed.lv2#ROM2B__32__EXPLOSION>
     a pset:Preset ;
-    rdfs:label "LASER_GUN" ;
+    rdfs:label "ROM2B__32__EXPLOSION" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LEAD_BRASS>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__01__FLUTE___1>
     a pset:Preset ;
-    rdfs:label "LEAD_BRASS" ;
+    rdfs:label "ROM3A__01__FLUTE___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LEAD_GUITR>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__02__HARPSICH_1>
     a pset:Preset ;
-    rdfs:label "LEAD_GUITR" ;
+    rdfs:label "ROM3A__02__HARPSICH_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LOG_DRUM>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__03__STRG_ENS_1>
     a pset:Preset ;
-    rdfs:label "LOG_DRUM" ;
+    rdfs:label "ROM3A__03__STRG_ENS_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LUTE>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__04__BRIGHT_BOW>
     a pset:Preset ;
-    rdfs:label "LUTE" ;
+    rdfs:label "ROM3A__04__BRIGHT_BOW" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LadyVox>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__05__BRASSHORNS>
     a pset:Preset ;
-    rdfs:label "LadyVox" ;
+    rdfs:label "ROM3A__05__BRASSHORNS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LeadaPicka>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__06__BR_TRUMPET>
     a pset:Preset ;
-    rdfs:label "LeadaPicka" ;
+    rdfs:label "ROM3A__06__BR_TRUMPET" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#LongGong>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__07__MARIMBA>
     a pset:Preset ;
-    rdfs:label "LongGong" ;
+    rdfs:label "ROM3A__07__MARIMBA" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#MARIMBA>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__08__E.PIANO_1>
     a pset:Preset ;
-    rdfs:label "MARIMBA" ;
+    rdfs:label "ROM3A__08__E.PIANO_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#MULTI_NOTE>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__09__PIANO___1>
     a pset:Preset ;
-    rdfs:label "MULTI_NOTE" ;
+    rdfs:label "ROM3A__09__PIANO___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#MaleChoir>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__10__PIPES___1>
     a pset:Preset ;
-    rdfs:label "MaleChoir" ;
+    rdfs:label "ROM3A__10__PIPES___1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#MilkyWays>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__11__E.ORGAN_1>
     a pset:Preset ;
-    rdfs:label "MilkyWays" ;
+    rdfs:label "ROM3A__11__E.ORGAN_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#NewOrchest>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__12__E.BASS__1>
     a pset:Preset ;
-    rdfs:label "NewOrchest" ;
+    rdfs:label "ROM3A__12__E.BASS__1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#OBOE>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__13__CLAV____1>
     a pset:Preset ;
-    rdfs:label "OBOE" ;
+    rdfs:label "ROM3A__13__CLAV____1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#OCTAVE_WAR>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__14__HARMONICA1>
     a pset:Preset ;
-    rdfs:label "OCTAVE_WAR" ;
+    rdfs:label "ROM3A__14__HARMONICA1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ORCH-CHIME>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__15__JAZZ_GUIT1>
     a pset:Preset ;
-    rdfs:label "ORCH-CHIME" ;
+    rdfs:label "ROM3A__15__JAZZ_GUIT1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ORCHESTRA>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__16__PRC_SYNTH1>
     a pset:Preset ;
-    rdfs:label "ORCHESTRA" ;
+    rdfs:label "ROM3A__16__PRC_SYNTH1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ORG-BRS_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__17__SAX_BC>
     a pset:Preset ;
-    rdfs:label "ORG-BRS_BC" ;
+    rdfs:label "ROM3A__17__SAX_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#OctiLate>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__18__FRETLESS_1>
     a pset:Preset ;
-    rdfs:label "OctiLate" ;
+    rdfs:label "ROM3A__18__FRETLESS_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#OwlBass>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__19__HARP____1>
     a pset:Preset ;
-    rdfs:label "OwlBass" ;
+    rdfs:label "ROM3A__19__HARP____1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PAN_FLUTE>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__20__TIMPANI>
     a pset:Preset ;
-    rdfs:label "PAN_FLUTE" ;
+    rdfs:label "ROM3A__20__TIMPANI" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PERC_BRASS>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__21__HEAVYMETAL>
     a pset:Preset ;
-    rdfs:label "PERC_BRASS" ;
+    rdfs:label "ROM3A__21__HEAVYMETAL" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PERC_CLAV>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__22__STEEL_DRUM>
     a pset:Preset ;
-    rdfs:label "PERC_CLAV" ;
+    rdfs:label "ROM3A__22__STEEL_DRUM" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIANO-BRS>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__23__SYN-LEAD_1>
     a pset:Preset ;
-    rdfs:label "PIANO-BRS" ;
+    rdfs:label "ROM3A__23__SYN-LEAD_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIANO_5THS>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__24__VOICES_BC>
     a pset:Preset ;
-    rdfs:label "PIANO_5THS" ;
+    rdfs:label "ROM3A__24__VOICES_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIANO___1>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__25__CLAV_ENS>
     a pset:Preset ;
-    rdfs:label "PIANO___1" ;
+    rdfs:label "ROM3A__25__CLAV_ENS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIANO___2>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__26__LASERSWEEP>
     a pset:Preset ;
-    rdfs:label "PIANO___2" ;
+    rdfs:label "ROM3A__26__LASERSWEEP" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIANO___3>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__27__TUB_ERUPT>
     a pset:Preset ;
-    rdfs:label "PIANO___3" ;
+    rdfs:label "ROM3A__27__TUB_ERUPT" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIANO___4>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__28__GRAND_PRIX>
     a pset:Preset ;
-    rdfs:label "PIANO___4" ;
+    rdfs:label "ROM3A__28__GRAND_PRIX" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIANO___5>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__29__REFS_WHISL>
     a pset:Preset ;
-    rdfs:label "PIANO___5" ;
+    rdfs:label "ROM3A__29__REFS_WHISL" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PICCOLO>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__30__TRAIN>
     a pset:Preset ;
-    rdfs:label "PICCOLO" ;
+    rdfs:label "ROM3A__30__TRAIN" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIPES___1>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__31__BRASS_S_H>
     a pset:Preset ;
-    rdfs:label "PIPES___1" ;
+    rdfs:label "ROM3A__31__BRASS_S_H" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIPES___2>
+<https://github.com/dcoredump/dexed.lv2#ROM3A__32__TAKE_OFF>
     a pset:Preset ;
-    rdfs:label "PIPES___2" ;
+    rdfs:label "ROM3A__32__TAKE_OFF" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIPES___3>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__01__PIANO___2>
     a pset:Preset ;
-    rdfs:label "PIPES___3" ;
+    rdfs:label "ROM3B__01__PIANO___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIPES___4>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__02__E.GRAND_1>
     a pset:Preset ;
-    rdfs:label "PIPES___4" ;
+    rdfs:label "ROM3B__02__E.GRAND_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PIZZ_STGS>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__03__E.GRAND_2>
     a pset:Preset ;
-    rdfs:label "PIZZ_STGS" ;
+    rdfs:label "ROM3B__03__E.GRAND_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PLUCK_BASS>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__04__HONKY_TONK>
     a pset:Preset ;
-    rdfs:label "PLUCK_BASS" ;
+    rdfs:label "ROM3B__04__HONKY_TONK" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PRC_SYNTH1>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__05__E.PIANO_2>
     a pset:Preset ;
-    rdfs:label "PRC_SYNTH1" ;
+    rdfs:label "ROM3B__05__E.PIANO_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PRC_SYNTH2>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__06__E.PIANO_3>
     a pset:Preset ;
-    rdfs:label "PRC_SYNTH2" ;
+    rdfs:label "ROM3B__06__E.PIANO_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PanFloot>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__07__E.PIANO_4>
     a pset:Preset ;
-    rdfs:label "PanFloot" ;
+    rdfs:label "ROM3B__07__E.PIANO_4" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Piccolo>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__08__CELESTE>
     a pset:Preset ;
-    rdfs:label "Piccolo" ;
+    rdfs:label "ROM3B__08__CELESTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PipeOrgan>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__09__FUNK_CLAV>
     a pset:Preset ;
-    rdfs:label "PipeOrgan" ;
+    rdfs:label "ROM3B__09__FUNK_CLAV" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PizzEcho>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__10__CLAV_ENS_2>
     a pset:Preset ;
-    rdfs:label "PizzEcho" ;
+    rdfs:label "ROM3B__10__CLAV_ENS_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PizzReverb>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__11__PERC_CLAV>
     a pset:Preset ;
-    rdfs:label "PizzReverb" ;
+    rdfs:label "ROM3B__11__PERC_CLAV" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Plukatan>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__12__HARPSICH_2>
     a pset:Preset ;
-    rdfs:label "Plukatan" ;
+    rdfs:label "ROM3B__12__HARPSICH_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PuffOrgan>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__13__E.ORGAN_2>
     a pset:Preset ;
-    rdfs:label "PuffOrgan" ;
+    rdfs:label "ROM3B__13__E.ORGAN_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#PuffPipes>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__14__E.ORGAN_3>
     a pset:Preset ;
-    rdfs:label "PuffPipes" ;
+    rdfs:label "ROM3B__14__E.ORGAN_3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#RECORDER>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__15__60-S_ORGAN>
     a pset:Preset ;
-    rdfs:label "RECORDER" ;
+    rdfs:label "ROM3B__15__60-S_ORGAN" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#RECORDERS>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__16__PIPES___2>
     a pset:Preset ;
-    rdfs:label "RECORDERS" ;
+    rdfs:label "ROM3B__16__PIPES___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#REFS_WHISL>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__17__PIPES___3>
     a pset:Preset ;
-    rdfs:label "REFS_WHISL" ;
+    rdfs:label "ROM3B__17__PIPES___3" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#RaspySax>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__18__CALIOPE>
     a pset:Preset ;
-    rdfs:label "RaspySax" ;
+    rdfs:label "ROM3B__18__CALIOPE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#RubbaRoad>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__19__ACCORDION>
     a pset:Preset ;
-    rdfs:label "RubbaRoad" ;
+    rdfs:label "ROM3B__19__ACCORDION" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#RubberGong>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__20__TOY_PIANO>
     a pset:Preset ;
-    rdfs:label "RubberGong" ;
+    rdfs:label "ROM3B__20__TOY_PIANO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SAX_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__21__SITAR>
     a pset:Preset ;
-    rdfs:label "SAX_BC" ;
+    rdfs:label "ROM3B__21__SITAR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SHIMMER>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__22__KOTO>
     a pset:Preset ;
-    rdfs:label "SHIMMER" ;
+    rdfs:label "ROM3B__22__KOTO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SITAR>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__23__JAZZ_GUIT2>
     a pset:Preset ;
-    rdfs:label "SITAR" ;
+    rdfs:label "ROM3B__23__JAZZ_GUIT2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SOLO_TBONE>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__24__SPANISHGTR>
     a pset:Preset ;
-    rdfs:label "SOLO_TBONE" ;
+    rdfs:label "ROM3B__24__SPANISHGTR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SPANISHGTR>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__25__FOLK_GUIT>
     a pset:Preset ;
-    rdfs:label "SPANISHGTR" ;
+    rdfs:label "ROM3B__25__FOLK_GUIT" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#ST.HELENS>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__26__LUTE>
     a pset:Preset ;
-    rdfs:label "ST.HELENS" ;
+    rdfs:label "ROM3B__26__LUTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STEEL_DRUM>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__27__BANJO>
     a pset:Preset ;
-    rdfs:label "STEEL_DRUM" ;
+    rdfs:label "ROM3B__27__BANJO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STGS_5THS>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__28__CLAS.GUIT>
     a pset:Preset ;
-    rdfs:label "STGS_5THS" ;
+    rdfs:label "ROM3B__28__CLAS.GUIT" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STG_CRSNDO>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__29__HARP____2>
     a pset:Preset ;
-    rdfs:label "STG_CRSNDO" ;
+    rdfs:label "ROM3B__29__HARP____2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRG-CHIME>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__30__E.BASS__2>
     a pset:Preset ;
-    rdfs:label "STRG-CHIME" ;
+    rdfs:label "ROM3B__30__E.BASS__2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRG-MARIM>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__31__FRETLESS_2>
     a pset:Preset ;
-    rdfs:label "STRG-MARIM" ;
+    rdfs:label "ROM3B__31__FRETLESS_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRG-PIZZT>
+<https://github.com/dcoredump/dexed.lv2#ROM3B__32__PLUCK_BASS>
     a pset:Preset ;
-    rdfs:label "STRG-PIZZT" ;
+    rdfs:label "ROM3B__32__PLUCK_BASS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRGS_LOW>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__01__PICCOLO>
     a pset:Preset ;
-    rdfs:label "STRGS_LOW" ;
+    rdfs:label "ROM4A__01__PICCOLO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRG_ENS_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__02__FLUTE___2>
     a pset:Preset ;
-    rdfs:label "STRG_ENS_1" ;
+    rdfs:label "ROM4A__02__FLUTE___2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRG_ENS_2>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__03__OBOE>
     a pset:Preset ;
-    rdfs:label "STRG_ENS_2" ;
+    rdfs:label "ROM4A__03__OBOE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRG_QRT_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__04__CLARINET>
     a pset:Preset ;
-    rdfs:label "STRG_QRT_1" ;
+    rdfs:label "ROM4A__04__CLARINET" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__05__BASSOON>
     a pset:Preset ;
-    rdfs:label "STRINGS_1" ;
+    rdfs:label "ROM4A__05__BASSOON" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_2>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__06__PAN_FLUTE>
     a pset:Preset ;
-    rdfs:label "STRINGS_2" ;
+    rdfs:label "ROM4A__06__PAN_FLUTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_3>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__07__LEAD_BRASS>
     a pset:Preset ;
-    rdfs:label "STRINGS_3" ;
+    rdfs:label "ROM4A__07__LEAD_BRASS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_4>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__08__HORNS>
     a pset:Preset ;
-    rdfs:label "STRINGS_4" ;
+    rdfs:label "ROM4A__08__HORNS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_5>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__09__SOLO_TBONE>
     a pset:Preset ;
-    rdfs:label "STRINGS_5" ;
+    rdfs:label "ROM4A__09__SOLO_TBONE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_6>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__10__BRASS_BC>
     a pset:Preset ;
-    rdfs:label "STRINGS_6" ;
+    rdfs:label "ROM4A__10__BRASS_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_7>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__11__BRASS_5THS>
     a pset:Preset ;
-    rdfs:label "STRINGS_7" ;
+    rdfs:label "ROM4A__11__BRASS_5THS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#STRINGS_8>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__12__SYNTHBRASS>
     a pset:Preset ;
-    rdfs:label "STRINGS_8" ;
+    rdfs:label "ROM4A__12__SYNTHBRASS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-BASS_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__13__STRG_QRT_1>
     a pset:Preset ;
-    rdfs:label "SYN-BASS_1" ;
+    rdfs:label "ROM4A__13__STRG_QRT_1" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-BASS_2>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__14__STRG_ENS_2>
     a pset:Preset ;
-    rdfs:label "SYN-BASS_2" ;
+    rdfs:label "ROM4A__14__STRG_ENS_2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-CLAV_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__15__VIOLA_SECN>
     a pset:Preset ;
-    rdfs:label "SYN-CLAV_1" ;
+    rdfs:label "ROM4A__15__VIOLA_SECN" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-CLAV_2>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__16__STRGS_LOW>
     a pset:Preset ;
-    rdfs:label "SYN-CLAV_2" ;
+    rdfs:label "ROM4A__16__STRGS_LOW" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-CLAV_3>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__17__HIGH_STRGS>
     a pset:Preset ;
-    rdfs:label "SYN-CLAV_3" ;
+    rdfs:label "ROM4A__17__HIGH_STRGS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-LEAD_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__18__PIZZ_STGS>
     a pset:Preset ;
-    rdfs:label "SYN-LEAD_1" ;
+    rdfs:label "ROM4A__18__PIZZ_STGS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-LEAD_2>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__19__STG_CRSNDO>
     a pset:Preset ;
-    rdfs:label "SYN-LEAD_2" ;
+    rdfs:label "ROM4A__19__STG_CRSNDO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-LEAD_3>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__20__STGS_5THS>
     a pset:Preset ;
-    rdfs:label "SYN-LEAD_3" ;
+    rdfs:label "ROM4A__20__STGS_5THS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-LEAD_4>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__21__BELLS>
     a pset:Preset ;
-    rdfs:label "SYN-LEAD_4" ;
+    rdfs:label "ROM4A__21__BELLS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-LEAD_5>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__22__TUB_BELLS>
     a pset:Preset ;
-    rdfs:label "SYN-LEAD_5" ;
+    rdfs:label "ROM4A__22__TUB_BELLS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-ORCH>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__23__RECORDERS>
     a pset:Preset ;
-    rdfs:label "SYN-ORCH" ;
+    rdfs:label "ROM4A__23__RECORDERS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-PIANO>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__24__CHIMES>
     a pset:Preset ;
-    rdfs:label "SYN-PIANO" ;
+    rdfs:label "ROM4A__24__CHIMES" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYN-VOX>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__25__VOICES>
     a pset:Preset ;
-    rdfs:label "SYN-VOX" ;
+    rdfs:label "ROM4A__25__VOICES" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYNBRASS_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__26__XYLOPHONE>
     a pset:Preset ;
-    rdfs:label "SYNBRASS_1" ;
+    rdfs:label "ROM4A__26__XYLOPHONE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYNBRASS_2>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__27__COWBELL>
     a pset:Preset ;
-    rdfs:label "SYNBRASS_2" ;
+    rdfs:label "ROM4A__27__COWBELL" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYNORGAN_1>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__28__WOOD_BLOCK>
     a pset:Preset ;
-    rdfs:label "SYNORGAN_1" ;
+    rdfs:label "ROM4A__28__WOOD_BLOCK" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYNORGAN_2>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__29__FLEXATONE>
     a pset:Preset ;
-    rdfs:label "SYNORGAN_2" ;
+    rdfs:label "ROM4A__29__FLEXATONE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SYNTHBRASS>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__30__LOG_DRUM>
     a pset:Preset ;
-    rdfs:label "SYNTHBRASS" ;
+    rdfs:label "ROM4A__30__LOG_DRUM" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Science>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__31__GLOKENSPL>
     a pset:Preset ;
-    rdfs:label "Science" ;
+    rdfs:label "ROM4A__31__GLOKENSPL" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SmoohBass>
+<https://github.com/dcoredump/dexed.lv2#ROM4A__32__VIBE>
     a pset:Preset ;
-    rdfs:label "SmoohBass" ;
+    rdfs:label "ROM4A__32__VIBE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SpaceVox>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__01__CLAV-E.PNO>
     a pset:Preset ;
-    rdfs:label "SpaceVox" ;
+    rdfs:label "ROM4B__01__CLAV-E.PNO" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#SpitFlute>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__02__PERC_BRASS>
     a pset:Preset ;
-    rdfs:label "SpitFlute" ;
+    rdfs:label "ROM4B__02__PERC_BRASS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#StonePhone>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__03__PRC_SYNTH2>
     a pset:Preset ;
-    rdfs:label "StonePhone" ;
+    rdfs:label "ROM4B__03__PRC_SYNTH2" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Swissnare>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__04__HARPSI-STG>
     a pset:Preset ;
-    rdfs:label "Swissnare" ;
+    rdfs:label "ROM4B__04__HARPSI-STG" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#T.BL-EXPA>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__05__CHIME-STRG>
     a pset:Preset ;
-    rdfs:label "T.BL-EXPA" ;
+    rdfs:label "ROM4B__05__CHIME-STRG" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#TAKE_OFF>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__06__HARP-FLUTE>
     a pset:Preset ;
-    rdfs:label "TAKE_OFF" ;
+    rdfs:label "ROM4B__06__HARP-FLUTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#TIMPANI>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__07__BELL-FLUTE>
     a pset:Preset ;
-    rdfs:label "TIMPANI" ;
+    rdfs:label "ROM4B__07__BELL-FLUTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#TOY_PIANO>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__08__STRG-CHIME>
     a pset:Preset ;
-    rdfs:label "TOY_PIANO" ;
+    rdfs:label "ROM4B__08__STRG-CHIME" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#TRAIN>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__09__STRG-MARIM>
     a pset:Preset ;
-    rdfs:label "TRAIN" ;
+    rdfs:label "ROM4B__09__STRG-MARIM" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#TUB_BELLS>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__10__STRG-PIZZT>
     a pset:Preset ;
-    rdfs:label "TUB_BELLS" ;
+    rdfs:label "ROM4B__10__STRG-PIZZT" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#TUB_ERUPT>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__11__ORCHESTRA>
     a pset:Preset ;
-    rdfs:label "TUB_ERUPT" ;
+    rdfs:label "ROM4B__11__ORCHESTRA" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Thunderon>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__12__LEAD_GUITR>
     a pset:Preset ;
-    rdfs:label "Thunderon" ;
+    rdfs:label "ROM4B__12__LEAD_GUITR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Timpani>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__13__PIANO-BRS>
     a pset:Preset ;
-    rdfs:label "Timpani" ;
+    rdfs:label "ROM4B__13__PIANO-BRS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#TingVoice>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__14__BRS-CHIME>
     a pset:Preset ;
-    rdfs:label "TingVoice" ;
+    rdfs:label "ROM4B__14__BRS-CHIME" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Tuba>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__15__B.DRM-SNAR>
     a pset:Preset ;
-    rdfs:label "Tuba" ;
+    rdfs:label "ROM4B__15__B.DRM-SNAR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VIBE>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__16__E.P-BRS_BC>
     a pset:Preset ;
-    rdfs:label "VIBE" ;
+    rdfs:label "ROM4B__16__E.P-BRS_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VIBE____1>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__17__ORG-BRS_BC>
     a pset:Preset ;
-    rdfs:label "VIBE____1" ;
+    rdfs:label "ROM4B__17__ORG-BRS_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VIBE____2>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__18__CLV-BRS_BC>
     a pset:Preset ;
-    rdfs:label "VIBE____2" ;
+    rdfs:label "ROM4B__18__CLV-BRS_BC" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VIOLA_SECN>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__19__WHISTLES>
     a pset:Preset ;
-    rdfs:label "VIOLA_SECN" ;
+    rdfs:label "ROM4B__19__WHISTLES" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VOICES>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__20__FILTER_SWP>
     a pset:Preset ;
-    rdfs:label "VOICES" ;
+    rdfs:label "ROM4B__20__FILTER_SWP" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VOICES_BC>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__21__FUNKY_RISE>
     a pset:Preset ;
-    rdfs:label "VOICES_BC" ;
+    rdfs:label "ROM4B__21__FUNKY_RISE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VOICE___1>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__22__WILD_BOAR>
     a pset:Preset ;
-    rdfs:label "VOICE___1" ;
+    rdfs:label "ROM4B__22__WILD_BOAR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VOICE___2>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__23__SHIMMER>
     a pset:Preset ;
-    rdfs:label "VOICE___2" ;
+    rdfs:label "ROM4B__23__SHIMMER" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#VOICE___3>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__24__EVOLUTION>
     a pset:Preset ;
-    rdfs:label "VOICE___3" ;
+    rdfs:label "ROM4B__24__EVOLUTION" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Violins>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__25__WATER_GDN>
     a pset:Preset ;
-    rdfs:label "Violins" ;
+    rdfs:label "ROM4B__25__WATER_GDN" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#WASP_STING>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__26__WASP_STING>
     a pset:Preset ;
-    rdfs:label "WASP_STING" ;
+    rdfs:label "ROM4B__26__WASP_STING" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#WATER_GDN>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__27__MULTI_NOTE>
     a pset:Preset ;
-    rdfs:label "WATER_GDN" ;
+    rdfs:label "ROM4B__27__MULTI_NOTE" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#WHISTLES>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__28__DESCENT>
     a pset:Preset ;
-    rdfs:label "WHISTLES" ;
+    rdfs:label "ROM4B__28__DESCENT" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#WILD_BOAR>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__29__OCTAVE_WAR>
     a pset:Preset ;
-    rdfs:label "WILD_BOAR" ;
+    rdfs:label "ROM4B__29__OCTAVE_WAR" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#WOOD_BLOCK>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__30__..GOTCHA..>
     a pset:Preset ;
-    rdfs:label "WOOD_BLOCK" ;
+    rdfs:label "ROM4B__30__..GOTCHA.." ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#WhapSynth>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__31__ST.HELENS>
     a pset:Preset ;
-    rdfs:label "WhapSynth" ;
+    rdfs:label "ROM4B__31__ST.HELENS" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
-<https://github.com/dcoredump/dexed.lv2#Whasers>
+<https://github.com/dcoredump/dexed.lv2#ROM4B__32__EXPLOSION>
     a pset:Preset ;
-    rdfs:label "Whasers" ;
-    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
-    rdfs:seeAlso <presets.ttl> .
-
-<https://github.com/dcoredump/dexed.lv2#XYLOPHONE>
-    a pset:Preset ;
-    rdfs:label "XYLOPHONE" ;
-    lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
-    rdfs:seeAlso <presets.ttl> .
-
-<https://github.com/dcoredump/dexed.lv2#YesBunk>
-    a pset:Preset ;
-    rdfs:label "YesBunk" ;
+    rdfs:label "ROM4B__32__EXPLOSION" ;
     lv2:appliesTo <https://github.com/dcoredump/dexed.lv2> ;
     rdfs:seeAlso <presets.ttl> .
 
