@@ -172,6 +172,8 @@ sub write_preset_header
 	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("engine","0");
 	print $deeaxe_voice "        ] , [\n";
+        print_lv2_port("number_of_voices","16");
+	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("polymono","0");
 	print $deeaxe_voice "        ] , [\n";
         print_lv2_port("pitch_bend_range","1");
