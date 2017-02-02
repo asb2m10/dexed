@@ -97,14 +97,14 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     void keydown(uint8_t pitch, uint8_t velo);
     void panic(void);
 
-    static const uint8_t MAX_ACTIVE_NOTES = 16;
+    static const uint8_t MAX_ACTIVE_NOTES = 32;
+    uint8_t max_notes=MAX_ACTIVE_NOTES;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
-    uint8_t max_notes;
     uint8_t currentNote;
     bool sustain;
     bool monoMode;
     bool refreshVoice;
-    bool normalizeDxVelocity;
+    //bool normalizeDxVelocity;
     uint8_t engineType;
     uint8_t feedback_bitdepth;
     PluginFx fx;
