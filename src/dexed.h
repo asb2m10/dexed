@@ -91,12 +91,11 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     VoiceStatus voiceStatus;
 
   protected:
-    void ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size);
+    bool ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size);
     void onParam(uint8_t param_num,float param_val);
     void keyup(uint8_t pitch);
     void keydown(uint8_t pitch, uint8_t velo);
     void panic(void);
-    void all_sound_off(void);
 
     static const uint8_t MAX_ACTIVE_NOTES = 32;
     uint8_t max_notes=MAX_ACTIVE_NOTES;
@@ -105,7 +104,6 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     bool sustain;
     bool monoMode;
     bool refreshVoice;
-    //bool normalizeDxVelocity;
     uint8_t engineType;
     uint8_t feedback_bitdepth;
     PluginFx fx;
