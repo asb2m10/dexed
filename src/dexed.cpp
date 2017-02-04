@@ -138,6 +138,7 @@ void Dexed::deactivate(void)
 {
   TRACE("Hi");
 
+  panic();
   Plugin::deactivate();
 
   TRACE("Bye");
