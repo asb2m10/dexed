@@ -15,7 +15,7 @@
 <https://github.com/dcoredump/dexed.lv2#me>
         a foaf:Person ;
         foaf:name "dcoredump" ;
-        foaf:homepage <https://github.com/dcoredump/dexed.lv2> ;
+        foaf:homepage <https://github.com/dcoredump/dexed/tree/native-lv2> ;
         foaf:mbox <mailto:dcoredump@googlemail.com> .
 
 <https://github.com/dcoredump/dexed.lv2>
