@@ -581,7 +581,7 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
                     break;
                 case 120:
                     TRACE("MIDI all-sound-off: %d %d",ctrl,value);
-                    panic();
+                    all_sound_off();
                     break;
             }
             break;
@@ -836,6 +836,15 @@ void Dexed::panic(void) {
     voices[i].keydown = false;
     voices[i].live = false;
     voices[i].sustained = false;
+    if ( voices[i].dx7_note != NULL ) {
+      voices[i].dx7_note->oscSync();
+    }
+  }
+}
+
+void Dexed::all_sound_off(void) {
+  for(uint8_t i=0;i<MAX_ACTIVE_NOTES;i++) {
+    voices[i].dx7_note->init(data, 0, 0, feedback_bitdepth);
     if ( voices[i].dx7_note != NULL ) {
       voices[i].dx7_note->oscSync();
     }
