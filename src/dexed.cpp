@@ -128,6 +128,7 @@ void Dexed::activate(void)
   TRACE("Hi");
 
   Plugin::activate();
+  panic();
   controllers.values_[kControllerPitchRange] = data[155];
   controllers.values_[kControllerPitchStep] = data[156];
 
@@ -138,7 +139,6 @@ void Dexed::deactivate(void)
 {
   TRACE("Hi");
 
-  panic();
   Plugin::deactivate();
 
   TRACE("Bye");
@@ -574,6 +574,14 @@ void Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
                             }
                         }
                     }
+                    break;
+                case 123:
+                    TRACE("MIDI all-notes-off: %d %d",ctrl,value);
+                    panic();
+                    break;
+                case 120:
+                    TRACE("MIDI all-sound-off: %d %d",ctrl,value);
+                    panic();
                     break;
             }
             break;
