@@ -671,6 +671,8 @@ void DexedAudioProcessor::loadPreference() {
     if ( prop.containsKey( String("aftertouchMod") ) ) {
         controllers.at.parseConfig(prop.getValue(String("aftertouchMod")).toRawUTF8());
     }
+    
+    controllers.refresh();
 }
 
 void DexedAudioProcessor::savePreference() {
