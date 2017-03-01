@@ -31,7 +31,7 @@ class SyxFileFilter : public FileFilter {
 public:
     SyxFileFilter() : FileFilter(".syx") {}
     bool isFileSuitable(const File &file) const {
-        return file.getFileExtension().toLowerCase() == ".syx" && file.getSize() >= 4104;
+        return file.getFileExtension().toLowerCase() == ".syx" && file.getSize() >= 4096;
     }
     bool isDirectorySuitable(const File &file) const {
         return true;
@@ -320,7 +320,7 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
         
         if ( file.isDirectory() )
             return;
-        if ( file.getSize() != 4104 )
+        if ( file.getSize() != 4104 && file.getSize() != 4096 )
             return;
 
         Cartridge cart;

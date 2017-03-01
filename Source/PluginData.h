@@ -110,58 +110,61 @@ public:
      * Returns 2 if no sysex data found, probably random data
      */
     int load(const uint8_t *stream, int size) {
-        const uint8 voiceHeaderBroken[] = { 0xF0, 0x43, 0x00, 0x00, 0x20, 0x00 };
-        // I've added a stupid bug that saved the wrong sysex data for dx7 sysex (0.9.1)
-        // This is there to support this version. One day we will be able to remove this. :(
+        const uint8 *pos = stream;
         
-        uint8 voiceHeader[] = SYSEX_HEADER;
-        uint8 tmp[65535];
-        uint8 *pos = tmp;
-        int status = 3;
-        
-        if ( size > 65535 )
-            size = 65535;
-        
-        memcpy(tmp, stream, size);
-        
-        while(size >= 4104) {
-            // random data
-            if ( pos[0] != 0xF0 ) {
-                if ( status != 3 )
-                    return status;
-                memcpy(voiceData, pos+6, 4096);
-                return 2;
-            }
-            
-            pos[3] = 0;
-            if ( memcmp(pos, voiceHeader, 6) == 0 || memcmp(pos, voiceHeaderBroken, 6) == 0) {
-                memcpy(voiceData, pos, SYSEX_SIZE);
-                if ( sysexChecksum(voiceData + 6, 4096) == pos[4102] )
-                    status = 0;
-                else
-                    status = 1;
-                size -= 4104;
-                pos += 4104;
-                continue;
-            }
-
-            // other sysex
-            int i;
-            for(i=0;i<size-1;i++) {
-                if ( pos[i] == 0xF7 )
-                    break;
-            }
-            size -= i;
-            stream += i;
-        }
-        
-        // nothing good has been found, map it then to random data
-        if ( status > 1 ) {
-            memcpy(voiceData, pos+6, 4096);
+        if ( size < 4096 ) {
+            memcpy(voiceData+6, pos, size);
+            TRACE("too small sysex rc=2");
             return 2;
         }
         
-        return status;
+        if ( pos[0] != 0xF0 ) {
+            // it is not, just copy the first 4096 bytes
+            memcpy(voiceData + 6, pos, 4096);
+            TRACE("stream is not a sysex rc=2");
+            return 2;
+        }
+        
+        // limit the size of the sysex scan
+        if ( size > 65535 )
+            size = 65535;
+        
+        // we loop until we find something that looks like a DX7 cartridge (based on size)
+        while(size >= 4104) {
+            // it was a sysex first, now random data; return random
+            if ( pos[0] != 0xF0 ) {
+                memcpy(voiceData + 6, stream, 4096);
+                TRACE("stream was a sysex, but not anymore rc=2");
+                return 2;
+            }
+            
+            // check if this is the size of a DX7 sysex cartridge
+            for(int i=0;i<size;i++) {
+                if ( pos[i] == 0xF7 ) {
+                    if ( i == SYSEX_SIZE - 1 ) {
+                        memcpy(voiceData, pos, SYSEX_SIZE);
+                        if ( sysexChecksum(voiceData + 6, 4096) == pos[4102] ) {
+                            TRACE("valid sysex found!");
+                            return 0;
+                        } else {
+                            TRACE("sysex found, but checksum doesn't match rc=1");
+                            return 1;
+                        }
+                    }
+                    size -= i;
+                    pos += i;
+                    TRACE("end of sysex with wrong DX size... still scanning stream: size=%d", i);
+                    break;
+                }
+            }
+            TRACE("sysex stream parsed without any end message, skipping...");
+            break;
+        }
+        
+        // it is a sysex, but doesn't seems to be related to any DX series ...
+        memcpy(voiceData + 6, stream, 4096);
+        TRACE("nothing in the sysex stream was DX related rc=2");
+        return 2;
     }
     
     int saveVoice(File f) {
