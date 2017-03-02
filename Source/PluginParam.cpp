@@ -68,6 +68,39 @@ public:
     }
 };
 
+class CtrlDXSwitch : public CtrlDX {
+public:
+    CtrlDXSwitch(String name, int steps, int offset) : CtrlDX(name, steps, offset, 0) {
+    };
+    
+    String getValueDisplay() {
+        return getValue() ? String("ON") : String("OFF");
+    }
+};
+
+class CtrlDXOpMode : public CtrlDX {
+public:
+    CtrlDXOpMode(String name, int steps, int offset) : CtrlDX(name, steps, offset, 0) {
+    };
+    
+    String getValueDisplay() {
+        return getValue() ? String("FIXED") : String("RATIO");
+    }
+};
+
+class CtrlDXBreakpoint : public CtrlDX {
+public:
+    CtrlDXBreakpoint(String name, int steps, int offset) : CtrlDX(name, steps, offset, 0) {
+    };
+    
+    String getValueDisplay() {
+        const char *breakNames[] = {"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
+        String ret;
+        ret << breakNames[getValue()%12] << (getValue()+9) / 12 - 1;
+        return ret;
+    }
+};
+
 class CtrlTune : public Ctrl {
 public:
     DexedAudioProcessor *processor;
@@ -359,7 +392,7 @@ void DexedAudioProcessor::initCtrl() {
     feedback = new CtrlDX("FEEDBACK", 7, 135);
     ctrl.add(feedback);
     
-    oscSync = new CtrlDX("OSC KEY SYNC", 1, 136);
+    oscSync = new CtrlDXSwitch("OSC KEY SYNC", 1, 136);
     ctrl.add(oscSync);
     
     lfoRate = new CtrlDX("LFO SPEED", 99, 137);
@@ -374,7 +407,7 @@ void DexedAudioProcessor::initCtrl() {
     lfoAmpDepth = new CtrlDX("LFO AM DEPTH", 99, 140);
     ctrl.add(lfoAmpDepth);
     
-    lfoSync = new CtrlDX("LFO KEY SYNC", 1, 141);
+    lfoSync = new CtrlDXSwitch("LFO KEY SYNC", 1, 141);
     ctrl.add(lfoSync);
     
     StringArray lbl;
@@ -443,7 +476,7 @@ void DexedAudioProcessor::initCtrl() {
 
         String opMode;
         opMode << opName << " MODE";
-        opCtrl[opVal].opMode = new CtrlDX(opMode, 1, opTarget + 17);
+        opCtrl[opVal].opMode = new CtrlDXOpMode(opMode, 1, opTarget + 17);
         ctrl.add(opCtrl[opVal].opMode);
 
         String coarse;
@@ -463,7 +496,7 @@ void DexedAudioProcessor::initCtrl() {
 
         String sclBrkPt;
         sclBrkPt << opName << " BREAK POINT";
-        opCtrl[opVal].sclBrkPt = new CtrlDX(sclBrkPt, 99, opTarget + 8);
+        opCtrl[opVal].sclBrkPt = new CtrlDXBreakpoint(sclBrkPt, 99, opTarget + 8);
         ctrl.add(opCtrl[opVal].sclBrkPt);
 
         String sclLeftDepth;

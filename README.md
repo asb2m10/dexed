@@ -18,7 +18,8 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 #### Version 0.9.3
-
+* Added midi 'All Note Off (0x7B)' support
+* Correctly read any file that is the size of a DX cartridge
 * Fix LFO delay issue issues upon large values
 * Fix for receiving sysex cartridge. thanks @Sentinel77
 * Fix for breakpoint levels. thanks @Sentinel77
@@ -27,7 +28,7 @@ Changelog
 * Mark I engine is now the default engine
 * Added operator mute switch
 * Added Tune (MASTER TUNE ADJ) knob
-* Correct feedback implementation for Algo 4 and 6
+* Correct feedback implementation for Algo 4 and 6 (engine Mk I only)
 * Single click program select
 * Fix sysex issue with wrong machine ID
 * Fix for parameter hosts values. thanks @Sentinel77
@@ -61,12 +62,13 @@ Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
 * Graphical design : [AZur Studio](http://bji.yukihotaru.com/)
+* Sentinel77 for numerous engine fixes
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
 * PPPlay : Great [OPL3](https://github.com/stohrendorf/ppplay) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * falkTX [distrho](http://distrho.sourceforge.net/)
-* Sentinel77 for parameter host value fix
+
 
 TODO - Dexed 
 ------------
