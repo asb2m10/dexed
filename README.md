@@ -18,11 +18,14 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 #### Version 0.9.3
-* Added midi 'All Note Off (0x7B)' support
-* Correctly read any file that is the size of a DX cartridge
-* Fix LFO delay issue issues upon large values
-* Fix for receiving sysex cartridge. thanks @Sentinel77
-* Fix for breakpoint levels. thanks @Sentinel77
+* Support for incoming parameter change messages
+* More permissive on cartridge sysex type; the validation is now done on size (4104/4096 bytes)
+* Midi 'All Note Off; 0x7B' support
+* Breakpoint values are now shown as notes. thanks @tico-tico
+* Fixed for breakpoint levels. thanks @Sentinel77
+* Fixed LFO delay issue issues upon large values
+* Fixed for receiving sysex cartridge. thanks @Sentinel77
+* Fixed operator switch changes are now sent via sysex
 
 #### Version 0.9.2
 * Mark I engine is now the default engine
@@ -30,8 +33,8 @@ Changelog
 * Added Tune (MASTER TUNE ADJ) knob
 * Correct feedback implementation for Algo 4 and 6 (engine Mk I only)
 * Single click program select
-* Fix sysex issue with wrong machine ID
-* Fix for parameter hosts values. thanks @Sentinel77
+* Fixed sysex issue with wrong machine ID
+* Fixed for parameter hosts values. thanks @Sentinel77
 
 #### Version 0.9.1
 * Mark I engine now uses 10-bit sine/exp tables. Still a work in progress but we are getting there
@@ -52,16 +55,10 @@ Changelog
 * Fixed the UI corruption when more than one Dexed instance was loaded
 * Fixed wrong display value issues (coarse and fine)
 
-#### Version 0.8.0
-* New UI by [AZur Studio](http://bji.yukihotaru.com/)
-* You can now copy/paste the operator/envelopes values by using the right-click mouse button on the operator
-* Fixed some of mono mode ticks on lower frequencies
-* SynprezFM preset are now in a submenu
-
 Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
-* Graphical design : [AZur Studio](http://bji.yukihotaru.com/)
+* Graphical design : AZur Studio
 * Sentinel77 for numerous engine fixes
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
 * PPPlay : Great [OPL3](https://github.com/stohrendorf/ppplay) implementation, with documented code :D
@@ -69,17 +66,14 @@ Credits & thanks
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * falkTX [distrho](http://distrho.sourceforge.net/)
 
-
 TODO - Dexed 
 ------------
-* Yamaha 4 operators (DX21/DX27/DX100) sysex import
-* UI threaded messaging to avoid DAW automation 'clicks' 
-* Zomby UI changes: this occurs in Live
 * Various code cleanup
+* Yamaha 4 operators (DX21/DX27/DX100) sysex import
+* Zomby UI changes: this occurs in Live
 * More smoothness in mono mode
 
 TODO - msfa
 -----------
 * Portamento implementation
 * Better Amplitude Modulation
-* Test maximum delay lfo values that seems to be reset

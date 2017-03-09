@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2016 Pascal Gauthier.
+ * Copyright (c) 2013-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,9 +135,11 @@ public:
 };
 
 class CtrlOpSwitch : public Ctrl {
+    DexedAudioProcessor *processor;
     char *value;
-    public :
-    CtrlOpSwitch(String name, char *switchValue) : Ctrl(name) {
+public :
+    CtrlOpSwitch(String name, char *switchValue, DexedAudioProcessor *owner) : Ctrl(name) {
+        processor = owner;
         value = switchValue;
     }
     
@@ -146,6 +148,10 @@ class CtrlOpSwitch : public Ctrl {
             *value = '0';
         else
             *value = '1';
+        updateDisplayName();
+        
+        // the value is based on the controller
+        parent->setDxValue(155, -1);
     }
     
     float getValueHost() {
@@ -169,6 +175,15 @@ class CtrlOpSwitch : public Ctrl {
                 button->setToggleState(true, dontSendNotification);
             }
         }
+    }
+    
+    void updateDisplayName() {
+        DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
+        if ( editor == NULL ) {
+            return;
+        }
+        editor->global.setParamMessage(getValueDisplay());
+        editor->global.repaint();
     }
 };
 
@@ -248,7 +263,7 @@ void Ctrl::updateDisplayName() {
 }
 
 // ************************************************************************
-// CtrlDX - control DX mapping
+// CtrlFloat - control float values
 CtrlFloat::CtrlFloat(String name, float *storageValue) : Ctrl(name) {
     vPointer = storageValue;
 }
@@ -536,7 +551,7 @@ void DexedAudioProcessor::initCtrl() {
         
         String opSwitchLabel;
         opSwitchLabel << opName << " SWITCH";
-        opCtrl[opVal].opSwitch = new CtrlOpSwitch(opSwitchLabel, (char *)&(controllers.opSwitch)+(5-i));
+        opCtrl[opVal].opSwitch = new CtrlOpSwitch(opSwitchLabel, (char *)&(controllers.opSwitch)+(5-i), this);
         ctrl.add(opCtrl[opVal].opSwitch);
     }
     
@@ -550,7 +565,12 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
     if (offset < 0)
         return;
 
-    if ( data[offset] != v ) {
+    if ( offset == 155 ) {
+        // used on op switch that are not part of a Sysex packed cartridge, we render it
+        // ourselves.
+        packOpSwitch();
+        v = data[155];
+    } else if ( data[offset] != v ) {
         TRACE("setting dx %d %d", offset, v);
         data[offset] = v;
     } else {
@@ -572,6 +592,7 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
     msg[4] = offset & 0x7F;
     
     if ( sysexComm.isOutputActive() ) {
+        //TRACE("SENDING SYSEX: %.2X%.2X %.2X%.2X %.2X%.2X %.2X", msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6]);
         sysexComm.send(MidiMessage(msg,7));
     }
 }

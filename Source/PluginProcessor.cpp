@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2015 Pascal Gauthier.
+ * Copyright (c) 2013-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,8 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
  *
  */
+
+#include <bitset>
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
@@ -436,43 +438,72 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 
     sysexComm.inActivity = true;
 
-    if ( ! message.isSysEx() )
-        return;
-
-    //const uint8 *buf = msg->getSysExData();
     const uint8 *buf = message.getRawData();
     int sz = message.getRawDataSize();
 
-    if ( sz < 3 )
+    //TRACE("%X %X %X %X %X %X", buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6]);
+
+    if ( ! message.isSysEx() )
         return;
-
-    TRACE("SYSEX RECEIVED %d", sz);
-
+    
     // test if it is a Yamaha Sysex
     if ( buf[1] != 0x43 ) {
         TRACE("not a yamaha sysex %d", buf[0]);
         return;
     }
+    
+    int substatus = buf[2] >> 4;
+    
+    if ( substatus == 0 ) {
+        // single voice dump
+        if ( buf[3] == 0 ) {
+            if ( sz < 156 ) {
+                TRACE("wrong single voice datasize %d", sz);
+                return;
+            }
+            
+            updateProgramFromSysex(buf+6);
+        }
         
-    // single voice dump
-    if ( buf[3] == 0 ) {
-         if ( sz < 155 ) {
-            TRACE("wrong single voice datasize %d", sz);
+        // 32 voice dump
+        if ( buf[3] == 9 ) {
+            if ( sz < 4104 ) {
+                TRACE("wrong 32 voice dump data size %d", sz);
+                return;
+            }
+            
+            Cartridge received;
+            if ( received.load(buf, sz) == 0 ) {
+                loadCartridge(received);
+                setCurrentProgram(0);
+            }
+        }
+    } else if ( substatus == 1 ) {
+        // parameter change
+        if ( sz < 7 ) {
+           TRACE("wrong single voice datasize %d", sz);
+           return;
+        }
+        
+        uint8 offset = (buf[3] << 7) + buf[4];
+        uint8 value = buf[5];
+        
+        TRACE("parameter change message offset:%d value:%d", offset, value);
+        
+        if ( offset > 155 ) {
+            TRACE("wrong offset size");
             return;
         }
-
-        updateProgramFromSysex(buf+6);
-    }
-
-    // 32 voice dump
-    if ( buf[3] == 9 ) {
-        Cartridge received;
-        if ( received.load(buf, sz) == 0 ) {
-            loadCartridge(received);
-            setCurrentProgram(0);
+        
+        if ( offset == 155 ) {
+            unpackOpSwitch(value);
+        } else {
+            data[offset] = value;
         }
+    } else {
+        TRACE("unknown sysex substatus: %d", substatus);
     }
-
+    
     updateHostDisplay();
     forceRefreshUI = true;
 }

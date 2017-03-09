@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2015 Pascal Gauthier.
+ * Copyright (c) 2013-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +117,9 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     void resolvAppDir();
 
     int feedback_bitdepth;
+    
+    void unpackOpSwitch(char packOpValue);
+    void packOpSwitch();
     
 public :
     // in MIDI units (0x4000 is neutral)

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014-2016 Pascal Gauthier.
+ * Copyright (c) 2014-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,9 +43,7 @@ void exportSysexPgm(uint8_t *dest, uint8_t *src) {
     
     // copy 1 unpacked voices
     memcpy(dest+6, src, 155);
-    
-    // put some logic to "mute" an operator if the level is 0
-    
+        
     // make checksum for dump
     uint8_t footer[] = { sysexChecksum(src, 155), 0xF7 };
     
@@ -161,12 +159,7 @@ void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
     unpackPgm[142] = (lpms_lfw_lks >> 1) & 7;
     unpackPgm[143] = lpms_lfw_lks >> 4;
     memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
-    unpackPgm[155] = 1;  // operator on/off (DEPRECATED)
-    unpackPgm[156] = 1;
-    unpackPgm[157] = 1;
-    unpackPgm[158] = 1;
-    unpackPgm[159] = 1;
-    unpackPgm[160] = 1;
+    unpackPgm[155] = 63;  // operator on/off (DEPRECATED)
 }
 
 void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
@@ -174,8 +167,28 @@ void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
     currentCart.getProgramNames(programNames);
 }
 
+void DexedAudioProcessor::packOpSwitch() {
+    char value = (controllers.opSwitch[5] == '1') << 5;
+    value += (controllers.opSwitch[4] == '1') << 4;
+    value += (controllers.opSwitch[3] == '1') << 3;
+    value += (controllers.opSwitch[2] == '1') << 2;
+    value += (controllers.opSwitch[1] == '1') << 1;
+    value += (controllers.opSwitch[0] == '1');
+    data[155] = value;
+}
+
+void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
+    controllers.opSwitch[5] = (packOpValue & 32) + 48;
+    controllers.opSwitch[4] = (packOpValue & 16) + 48;
+    controllers.opSwitch[3] = (packOpValue & 8) + 48;
+    controllers.opSwitch[2] = (packOpValue & 4) + 48;
+    controllers.opSwitch[1] = (packOpValue & 2) + 48;
+    controllers.opSwitch[0] = (packOpValue & 1) + 48;
+}
+
 void DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
-    memcpy(data, rawdata, 161);
+    memcpy(data, rawdata, 155);
+    unpackOpSwitch(rawdata[155]);
     lfo.reset(data + 137);
     triggerAsyncUpdate();
 }
@@ -235,6 +248,7 @@ void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
 void DexedAudioProcessor::sendCurrentSysexProgram() {
     uint8_t raw[163];
     
+    packOpSwitch();
     exportSysexPgm(raw, data);
     if ( sysexComm.isOutputActive() ) {
         sysexComm.send(MidiMessage(raw, 163));

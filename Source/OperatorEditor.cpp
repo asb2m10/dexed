@@ -263,7 +263,12 @@ void OperatorEditor::paint (Graphics& g)
     //[/UserPrePaint]
 
     //[UserPaint] Add your own custom painting code here..
-    g.setColour (Colours::white);
+    
+    if ( opSwitch->getToggleState() )
+        g.setColour(Colours::white);
+    else
+        g.setColour(Colours::grey);
+    
     g.setFont(Font (30.00f, Font::plain));
     g.drawText(opNum, 250, 14, 30, 30, Justification::centred, true);
 
