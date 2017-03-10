@@ -115,8 +115,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     char clipboardContent;
     
     void resolvAppDir();
-
-    int feedback_bitdepth;
     
     void unpackOpSwitch(char packOpValue);
     void packOpSwitch();

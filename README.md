@@ -22,6 +22,7 @@ Changelog
 * More permissive on cartridge sysex type; the validation is now done on size (4104/4096 bytes)
 * Midi 'All Note Off; 0x7B' support
 * Breakpoint values are now shown as notes. thanks @tico-tico
+* Fixed op feedback calibrated for Mark I engine
 * Fixed for breakpoint levels. thanks @Sentinel77
 * Fixed LFO delay issue issues upon large values
 * Fixed for receiving sysex cartridge. thanks @Sentinel77

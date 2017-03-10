@@ -325,14 +325,14 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
                     switch ( algorithm ) {
                         // three operator feedback, process exception for ALGO 4
                         case 3 :
-                            compute_fb3(outptr, params, gain1, gain2, fb_buf, feedback_shift);
+                            compute_fb3(outptr, params, gain1, gain2, fb_buf, min((feedback_shift+2), 16));
                             params[1].phase += params[1].freq << LG_N; // hack, we already processed op-5 - op-4
                             params[2].phase += params[2].freq << LG_N; // yuk yuk
                             op += 2; // ignore the 2 other operators
                             break;
                         // two operator feedback, process exception for ALGO 6
                         case 5 :
-                            compute_fb2(outptr, params, gain1, gain2, fb_buf, feedback_shift);
+                            compute_fb2(outptr, params, gain1, gain2, fb_buf, min((feedback_shift+2), 16));
                             params[1].phase += params[1].freq << LG_N;  // yuk, hack, we already processed op-5
                             op++; // ignore next operator;
                             break;

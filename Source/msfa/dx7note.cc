@@ -23,6 +23,8 @@
 #include "controllers.h"
 #include "dx7note.h"
 
+const int FEEDBACK_BITDEPTH = 8;
+
 int32_t midinote_to_logfreq(int midinote) {
     const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
     const int step = (1 << 24) / 12;
@@ -136,7 +138,7 @@ Dx7Note::Dx7Note() {
     }
 }
 
-void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int fb_depth) {
+void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
     int rates[4];
     int levels[4];
     for (int op = 0; op < 6; op++) {
@@ -172,7 +174,7 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int fb_
     pitchenv_.set(rates, levels);
     algorithm_ = patch[134];
     int feedback = patch[135];
-    fb_shift_ = feedback != 0 ? fb_depth - feedback : 16;
+    fb_shift_ = feedback != 0 ? FEEDBACK_BITDEPTH - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
@@ -245,7 +247,7 @@ void Dx7Note::keyup() {
     pitchenv_.keydown(false);
 }
 
-void Dx7Note::update(const uint8_t patch[156], int midinote, int fb_depth) {
+void Dx7Note::update(const uint8_t patch[156], int midinote) {
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];
@@ -257,7 +259,7 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int fb_depth) {
     }
     algorithm_ = patch[134];
     int feedback = patch[135];
-    fb_shift_ = feedback != 0 ? 11 - feedback : 16;
+    fb_shift_ = feedback != 0 ? FEEDBACK_BITDEPTH - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;

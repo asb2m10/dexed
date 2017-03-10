@@ -151,7 +151,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     if ( refreshVoice ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
+                voices[i].dx7_note->update(data, voices[i].midi_note);
         }
         lfo.reset(data + 137);
         refreshVoice = false;
@@ -350,7 +350,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             voices[note].midi_note = pitch;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo, feedback_bitdepth);
+            voices[note].dx7_note->init(data, pitch, velo);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;
@@ -518,15 +518,12 @@ void DexedAudioProcessor::setEngineType(int tp) {
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             controllers.core = &engineMkI;
-            feedback_bitdepth = 11;
             break;
         case DEXED_ENGINE_OPL:
             controllers.core = &engineOpl;
-            feedback_bitdepth = 11;
             break;
         default:
             controllers.core = &engineMsfa;
-            feedback_bitdepth = 8;
             break;
     }
     engineType = tp;
