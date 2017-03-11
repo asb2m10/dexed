@@ -636,6 +636,15 @@ void GlobalEditor::updateVu(float f) {
 void GlobalEditor::setMonoState(bool state)  {
     monoMode->setToggleState(state ? Button::buttonDown : Button::buttonNormal, dontSendNotification);
 }
+
+void GlobalEditor::mouseDown(const MouseEvent &e) {
+    if ( e.mods.isRightButtonDown() || e.mods.isAnyModifierKeyDown() ) {
+        PopupMenu popup;
+        popup.addItem(1, "Send current program to DX7");
+        if ( popup.show() == 1 )
+           processor->sendCurrentSysexProgram();
+    }
+}
 //[/MiscUserCode]
 
 

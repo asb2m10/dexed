@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2015 Pascal Gauthier.
+ * Copyright (c) 2015-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ void CartManager::fileDoubleClicked(const File& file) {
 }
 
 void CartManager::fileClicked(const File& file, const MouseEvent& e) {
-    if ( e.mods.isRightButtonDown() ) {
+    if ( e.mods.isRightButtonDown() || e.mods.isAnyModifierKeyDown() ) {
         PopupMenu menu;
         
         menu.addItem(1000, "Open location");

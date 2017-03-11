@@ -61,6 +61,8 @@ public:
     void setMonoState(bool state);
     ProgramSelector *programs;
     ScopedPointer<Component> midiMonitor;
+    
+    void mouseDown(const MouseEvent& e) override;    
     //[/UserMethods]
 
     void paint (Graphics& g);

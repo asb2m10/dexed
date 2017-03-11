@@ -515,7 +515,7 @@ void OperatorEditor::updateEnvPos(char pos) {
 }
 
 void OperatorEditor::mouseDown(const MouseEvent &event) {
-    if ( event.mods.isRightButtonDown() ) {
+    if ( event.mods.isRightButtonDown()  || event.mods.isAnyModifierKeyDown()) {
         PopupMenu popup;
 
         popup.addItem(1, "Copy Operator Values");
