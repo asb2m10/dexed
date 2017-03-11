@@ -37,6 +37,7 @@
 
 struct ProcessorVoice {
     int midi_note;
+    int velocity;
     bool keydown;
     bool sustained;
     bool live;

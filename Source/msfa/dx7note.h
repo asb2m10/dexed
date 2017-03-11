@@ -1,4 +1,5 @@
 /*
+ * Copyright 2016-2017 Pascal Gauthier.
  * Copyright 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +52,7 @@ public:
     // keyup, that won't work.
     
     // PG:add the update
-    void update(const uint8_t patch[156], int midinote);
+    void update(const uint8_t patch[156], int midinote, int velocity);
     void peekVoiceStatus(VoiceStatus &status);
     void transferState(Dx7Note& src);
     void transferSignal(Dx7Note &src);

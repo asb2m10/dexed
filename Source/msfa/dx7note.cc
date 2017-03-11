@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pascal Gauthier.
+ * Copyright 2016-2017 Pascal Gauthier.
  * Copyright 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -247,7 +247,9 @@ void Dx7Note::keyup() {
     pitchenv_.keydown(false);
 }
 
-void Dx7Note::update(const uint8_t patch[156], int midinote) {
+void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
+    int rates[4];
+    int levels[4];
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];
@@ -256,6 +258,22 @@ void Dx7Note::update(const uint8_t patch[156], int midinote) {
         int detune = patch[off + 20];
         basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
+        
+        for (int i = 0; i < 4; i++) {
+            rates[i] = patch[off + i];
+            levels[i] = patch[off + 4 + i];
+        }
+        int outlevel = patch[off + 16];
+        outlevel = Env::scaleoutlevel(outlevel);
+        int level_scaling = ScaleLevel(midinote, patch[off + 8], patch[off + 9],
+                                       patch[off + 10], patch[off + 11], patch[off + 12]);
+        outlevel += level_scaling;
+        outlevel = min(127, outlevel);
+        outlevel = outlevel << 5;
+        outlevel += ScaleVelocity(velocity, patch[off + 15]);
+        outlevel = max(0, outlevel);
+        int rate_scaling = ScaleRate(midinote, patch[off + 13]);
+        env_[op].update(rates, levels, outlevel, rate_scaling);
     }
     algorithm_ = patch[134];
     int feedback = patch[135];

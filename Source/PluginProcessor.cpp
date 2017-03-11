@@ -151,7 +151,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     if ( refreshVoice ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note);
+                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity);
         }
         lfo.reset(data + 137);
         refreshVoice = false;
@@ -348,6 +348,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             currentNote = (note + 1) % MAX_ACTIVE_NOTES;
             lfo.keydown();  // TODO: should only do this if # keys down was 0
             voices[note].midi_note = pitch;
+            voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
             voices[note].dx7_note->init(data, pitch, velo);

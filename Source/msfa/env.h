@@ -1,4 +1,5 @@
 /*
+ * Copyright 2017 Pascal Gauthier. 
  * Copyright 2012 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +32,8 @@ class Env {
   void init(const int rates[4], const int levels[4], int outlevel,
       int rate_scaling);
 
+  void update(const int rates[4], const int levels[4], int outlevel,
+      int rate_scaling);
   // Result is in Q24/doubling log format. Also, result is subsampled
   // for every N samples.
   // A couple more things need to happen for this to be used as a gain
@@ -40,7 +43,6 @@ class Env {
   int32_t getsample();
 
   void keydown(bool down);
-  void setparam(int param, int value);
   static int scaleoutlevel(int outlevel);
   void getPosition(char *step);
     
