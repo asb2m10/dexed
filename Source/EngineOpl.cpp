@@ -26,7 +26,7 @@
 #include "EngineOpl.h"
 
 #ifdef _WIN32
-    __declspec(align(16)) int zeros[N] = {0};
+    __declspec(align(16)) const int zeros[N] = {0};
 #else
     const int32_t __attribute__ ((aligned(16))) zeros[N] = {0};
 #endif
