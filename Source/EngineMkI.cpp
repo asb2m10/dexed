@@ -35,13 +35,15 @@
 #endif
 
 #ifdef _WIN32
+#if _MSC_VER < 1800
     double log2(double n)  {  
         return log(n) / log(2.0);  
     }
     double round(double n) {
         return n < 0.0 ? ceil(n - 0.5) : floor(n + 0.5);
     }
-    __declspec(align(16)) int zeros[N] = {0};
+#endif
+    __declspec(align(16)) const int zeros[N] = {0};
 #else
     const int32_t __attribute__ ((aligned(16))) zeros[N] = {0};
 #endif
