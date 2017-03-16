@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014-2017 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,9 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class AlgoDisplay : public Component {
+    void displayOp(Graphics &g, char id, int x, int y, char link, char fb);
 public:
+    const char *opStatus;
     AlgoDisplay();
     char *algo;
     void paint(Graphics &g);

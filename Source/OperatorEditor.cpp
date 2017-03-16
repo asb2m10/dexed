@@ -267,7 +267,7 @@ void OperatorEditor::paint (Graphics& g)
     if ( opSwitch->getToggleState() )
         g.setColour(Colours::white);
     else
-        g.setColour(Colours::grey);
+        g.setColour(DXLookNFeel::roundBackground);
     
     g.setFont(Font (30.00f, Font::plain));
     g.drawText(opNum, 250, 14, 30, 30, Justification::centred, true);

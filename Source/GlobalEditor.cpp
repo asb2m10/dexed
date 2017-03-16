@@ -601,6 +601,8 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     algoDisplay->algo = (char *) &(processor->data[134]);
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 
+    algoDisplay->opStatus = processor->controllers.opSwitch;
+    
     editor = edit;
 
     midiMonitor = new MidiMonitor(&(processor->sysexComm));
