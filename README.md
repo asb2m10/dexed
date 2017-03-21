@@ -1,6 +1,8 @@
 Dexed - FM Plugin Synth
 =======================
 
+Please see [Dexed User Website](http://asb2m10.github.io/dexed) for user and download information.
+
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
 Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android) 
 for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
@@ -13,12 +15,10 @@ the original machine.
 Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa 
 in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
 
-[Dexed User Website](http://asb2m10.github.io/dexed)
-
 Changelog
 ---------
 #### Version 0.9.3
-* Live operator level update
+* Preliminary live operator level update
 * Support for incoming parameter change messages
 * More permissive on cartridge sysex type; the validation is now done on size (4104/4096 bytes)
 * Midi 'All Note Off; 0x7B' support
@@ -61,7 +61,7 @@ Credits & thanks
 ----------------
 * DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
 * Graphical design : AZur Studio
-* Sentinel77 for numerous engine fixes
+* [Sentinel77](https://github.com/Sentinel77) for numerous engine fixes
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
 * PPPlay : Great [OPL3](https://github.com/stohrendorf/ppplay) implementation, with documented code :D
 * DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
@@ -71,11 +71,14 @@ Credits & thanks
 TODO - Dexed 
 ------------
 * Various code cleanup
-* Yamaha 4 operators (DX21/DX27/DX100) sysex import
 * Zomby UI changes: this occurs in Live
 * More smoothness in mono mode
+* Yamaha 4 operators (DX21/DX27/DX100) sysex import
 
 TODO - msfa
 -----------
+* Better implementation of detune
 * Portamento implementation
 * Better Amplitude Modulation
+* Accurate live operator level envelope updates
+
