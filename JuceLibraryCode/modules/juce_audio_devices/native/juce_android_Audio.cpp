@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -195,25 +201,51 @@ public:
                                                       STREAM_MUSIC, sampleRate, CHANNEL_OUT_STEREO, ENCODING_PCM_16BIT,
                                                       (jint) (minBufferSizeOut * numDeviceOutputChannels * sizeof (int16)), MODE_STREAM));
 
-            if (env->CallIntMethod (outputDevice, AudioTrack.getState) != STATE_UNINITIALIZED)
+            int outputDeviceState = env->CallIntMethod (outputDevice, AudioTrack.getState);
+            if (outputDeviceState > 0)
+            {
                 isRunning = true;
+            }
             else
-                outputDevice.clear(); // failed to open the device
+            {
+                 // failed to open the device
+                outputDevice.clear();
+                lastError = "Error opening audio output device: android.media.AudioTrack failed with state = " + String (outputDeviceState);
+            }
         }
 
         if (numClientInputChannels > 0 && numDeviceInputChannelsAvailable > 0)
         {
-            numDeviceInputChannels = jmin (numClientInputChannels, numDeviceInputChannelsAvailable);
-            inputDevice = GlobalRef (env->NewObject (AudioRecord, AudioRecord.constructor,
-                                                     0 /* (default audio source) */, sampleRate,
-                                                     numDeviceInputChannelsAvailable > 1 ? CHANNEL_IN_STEREO : CHANNEL_IN_MONO,
-                                                     ENCODING_PCM_16BIT,
-                                                     (jint) (minBufferSizeIn * numDeviceInputChannels * sizeof (int16))));
+            if (! RuntimePermissions::isGranted (RuntimePermissions::recordAudio))
+            {
+                // If you hit this assert, you probably forgot to get RuntimePermissions::recordAudio
+                // before trying to open an audio input device. This is not going to work!
+                jassertfalse;
 
-            if (env->CallIntMethod (inputDevice, AudioRecord.getState) != STATE_UNINITIALIZED)
-                isRunning = true;
+                inputDevice.clear();
+                lastError = "Error opening audio input device: the app was not granted android.permission.RECORD_AUDIO";
+            }
             else
-                inputDevice.clear(); // failed to open the device
+            {
+                numDeviceInputChannels = jmin (numClientInputChannels, numDeviceInputChannelsAvailable);
+                inputDevice = GlobalRef (env->NewObject (AudioRecord, AudioRecord.constructor,
+                                                         0 /* (default audio source) */, sampleRate,
+                                                         numDeviceInputChannelsAvailable > 1 ? CHANNEL_IN_STEREO : CHANNEL_IN_MONO,
+                                                         ENCODING_PCM_16BIT,
+                                                         (jint) (minBufferSizeIn * numDeviceInputChannels * sizeof (int16))));
+
+                int inputDeviceState = env->CallIntMethod (inputDevice, AudioRecord.getState);
+                if (inputDeviceState > 0)
+                {
+                    isRunning = true;
+                }
+                else
+                {
+                     // failed to open the device
+                    inputDevice.clear();
+                    lastError = "Error opening audio input device: android.media.AudioRecord failed with state = " + String (inputDeviceState);
+                }
+            }
         }
 
         if (isRunning)
@@ -368,7 +400,7 @@ public:
     int minBufferSizeOut, minBufferSizeIn;
 
 private:
-    //==================================================================================================
+    //==============================================================================
     CriticalSection callbackLock;
     AudioIODeviceCallback* callback;
     jint sampleRate;

@@ -66,6 +66,8 @@ public:
 
     void drawAlertBox (Graphics&, AlertWindow&, const Rectangle<int>& textArea, TextLayout&) override;
     int getAlertBoxWindowFlags() override;
+
+    Array<int> getWidthsForTextButtons (AlertWindow&, const Array<TextButton*>&) override;
     int getAlertWindowButtonHeight() override;
 
     /** Override this function to supply a custom font for the alert window title.
@@ -162,6 +164,7 @@ public:
     void getIdealPopupMenuItemSize (const String& text, bool isSeparator, int standardMenuItemHeight,
                                     int& idealWidth, int& idealHeight) override;
     int getMenuWindowFlags() override;
+    void preparePopupMenuWindow (Component&) override;
 
     void drawMenuBarBackground (Graphics&, int width, int height, bool isMouseOverBar, MenuBarComponent&) override;
     int getMenuBarItemWidth (MenuBarComponent&, int itemIndex, const String& itemText) override;
@@ -172,6 +175,8 @@ public:
                           int itemIndex, const String& itemText,
                           bool isMouseOverItem, bool isMenuOpen, bool isMouseOverBar,
                           MenuBarComponent&) override;
+
+    Component* getParentComponentForMenuOptions (const PopupMenu::Options& options) override;
 
     //==============================================================================
     void drawComboBox (Graphics&, int width, int height, bool isButtonDown,

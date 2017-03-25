@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -38,9 +40,30 @@
     - One of JUCE_WINDOWS, JUCE_MAC JUCE_LINUX, JUCE_IOS, JUCE_ANDROID, etc.
     - Either JUCE_32BIT or JUCE_64BIT, depending on the architecture.
     - Either JUCE_LITTLE_ENDIAN or JUCE_BIG_ENDIAN.
-    - Either JUCE_INTEL or JUCE_PPC
-    - Either JUCE_GCC or JUCE_MSVC
+    - Either JUCE_INTEL or JUCE_ARM
+    - Either JUCE_GCC or JUCE_CLANG or JUCE_MSVC
 */
+
+//==============================================================================
+#ifdef JUCE_APP_CONFIG_HEADER
+ #include JUCE_APP_CONFIG_HEADER
+#elif ! defined (JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED)
+ /*
+    Most projects will contain a global header file containing various settings that
+    should be applied to all the code in your project. If you use the projucer, it'll
+    set up a global header file for you automatically, but if you're doing things manually,
+    you may want to set the JUCE_APP_CONFIG_HEADER macro with the name of a file to include,
+    or just include one before all the module cpp files, in which you set
+    JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED=1 to silence this error.
+    (Or if you don't need a global header, then you can just define JUCE_GLOBAL_MODULE_SETTINGS_INCLUDED
+    globally to avoid this error).
+
+    Note for people who hit this error when trying to compile a JUCE project created by
+    a pre-v4.2 version of the Introjucer/Projucer, it's very easy to fix: just re-save
+    your project with the latest version of the Projucer, and it'll magically fix this!
+ */
+ #error "No global header file was included!"
+#endif
 
 //==============================================================================
 #if (defined (_WIN32) || defined (_WIN64))
@@ -52,11 +75,8 @@
 #elif defined (LINUX) || defined (__linux__)
   #define     JUCE_LINUX 1
 #elif defined (__APPLE_CPP__) || defined(__APPLE_CC__)
-  #define Point CarbonDummyPointName // (workaround to avoid definition of "Point" by old Carbon headers)
-  #define Component CarbonDummyCompName
   #include <CoreFoundation/CoreFoundation.h> // (needed to find out what platform we're using)
-  #undef Point
-  #undef Component
+  #include "../native/juce_mac_ClangBugWorkaround.h"
 
   #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
     #define     JUCE_IPHONE 1
@@ -123,19 +143,19 @@
   #endif
 
   #if defined (__ppc__) || defined (__ppc64__)
-    #define JUCE_PPC 1
+    #error "PowerPC is no longer supported by JUCE!"
   #elif defined (__arm__) || defined (__arm64__)
     #define JUCE_ARM 1
   #else
     #define JUCE_INTEL 1
   #endif
 
-  #if JUCE_MAC && MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_4
-    #error "Building for OSX 10.3 is no longer supported!"
+  #if JUCE_MAC && MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
+    #error "Building for OSX 10.4 is no longer supported!"
   #endif
 
-  #if JUCE_MAC && ! defined (MAC_OS_X_VERSION_10_5)
-    #error "To build with 10.4 compatibility, use a 10.5 or 10.6 SDK and set the deployment target to 10.4"
+  #if JUCE_MAC && ! defined (MAC_OS_X_VERSION_10_6)
+    #error "To build with 10.5 compatibility, use a later SDK and set the deployment target to 10.5"
   #endif
 #endif
 
@@ -172,8 +192,7 @@
 // Compiler type macros.
 
 #ifdef __clang__
- #define JUCE_CLANG 1
- #define JUCE_GCC 1
+  #define JUCE_CLANG 1
 #elif defined (__GNUC__)
   #define JUCE_GCC 1
 #elif defined (_MSC_VER)
@@ -183,16 +202,8 @@
     #define JUCE_VC8_OR_EARLIER 1
 
     #if _MSC_VER < 1400
-      #define JUCE_VC7_OR_EARLIER 1
-
-      #if _MSC_VER < 1300
-        #warning "MSVC 6.0 is no longer supported!"
-      #endif
+      #error "Visual Studio 2003 and earlier are no longer supported!"
     #endif
-  #endif
-
-  #if JUCE_64BIT || ! JUCE_VC7_OR_EARLIER
-    #define JUCE_USE_MSVC_INTRINSICS 1
   #endif
 #else
   #error unknown compiler

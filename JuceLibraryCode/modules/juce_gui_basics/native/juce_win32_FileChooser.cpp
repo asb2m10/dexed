@@ -130,7 +130,8 @@ bool FileChooser::isPlatformDialogAvailable()
 void FileChooser::showPlatformDialog (Array<File>& results, const String& title_, const File& currentFileOrDirectory,
                                       const String& filter, bool selectsDirectory, bool /*selectsFiles*/,
                                       bool isSaveDialogue, bool warnAboutOverwritingExistingFiles,
-                                      bool selectMultipleFiles, FilePreviewComponent* extraInfoComponent)
+                                      bool selectMultipleFiles, bool /*treatFilePackagesAsDirs*/,
+                                      FilePreviewComponent* extraInfoComponent)
 {
     using namespace FileChooserHelpers;
 
@@ -146,7 +147,7 @@ void FileChooser::showPlatformDialog (Array<File>& results, const String& title_
 
     // use a modal window as the parent for this dialog box
     // to block input from other app windows
-    Component parentWindow (String::empty);
+    Component parentWindow;
     const Rectangle<int> mainMon (Desktop::getInstance().getDisplays().getMainDisplay().userArea);
     parentWindow.setBounds (mainMon.getX() + mainMon.getWidth() / 4,
                             mainMon.getY() + mainMon.getHeight() / 4,
@@ -225,7 +226,7 @@ void FileChooser::showPlatformDialog (Array<File>& results, const String& title_
         filter.copyToUTF16 (filters + (bytesWritten / sizeof (WCHAR)),
                             ((filterSpaceNumChars - 1) * sizeof (WCHAR) - bytesWritten));
 
-        for (int i = 0; i < filterSpaceNumChars; ++i)
+        for (size_t i = 0; i < filterSpaceNumChars; ++i)
             if (filters[i] == '|')
                 filters[i] = 0;
 
@@ -281,7 +282,7 @@ void FileChooser::showPlatformDialog (Array<File>& results, const String& title_
 
         while (*filename != 0)
         {
-            results.add (File (String (files) + "\\" + String (filename)));
+            results.add (File (String (files)).getChildFile (String (filename)));
             filename += wcslen (filename) + 1;
         }
     }

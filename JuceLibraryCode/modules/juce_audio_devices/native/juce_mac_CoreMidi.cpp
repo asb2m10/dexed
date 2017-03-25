@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -37,7 +43,7 @@ namespace CoreMidiHelpers
         Logger::writeToLog ("CoreMIDI error: " + String (lineNum) + " - " + String::toHexString ((int) err));
        #endif
 
-        (void) lineNum;
+        ignoreUnused (lineNum);
         return false;
     }
 
@@ -171,6 +177,10 @@ namespace CoreMidiHelpers
 
     static StringArray findDevices (const bool forInput)
     {
+        // It seems that OSX can be a bit picky about the thread that's first used to
+        // search for devices. It's safest to use the message thread for calling this.
+        jassert (MessageManager::getInstance()->isThisTheMessageThread());
+
         const ItemCount num = forInput ? MIDIGetNumberOfSources()
                                        : MIDIGetNumberOfDestinations();
         StringArray s;
@@ -215,6 +225,14 @@ namespace CoreMidiHelpers
             // Since OSX 10.6, the MIDIClientCreate function will only work
             // correctly when called from the message thread!
             jassert (MessageManager::getInstance()->isThisTheMessageThread());
+
+           #if TARGET_OS_SIMULATOR
+            // Enable MIDI for iOS simulator
+            MIDINetworkSession* session = [MIDINetworkSession defaultSession];
+            session.enabled = YES;
+            session.connectionPolicy = MIDINetworkConnectionPolicy_Anyone;
+           #endif
+
 
             CoreMidiHelpers::ScopedCFString name;
             name.cfString = getGlobalMidiClientName().toCFString();
@@ -332,10 +350,11 @@ MidiOutput* MidiOutput::openDevice (int index)
         {
             MIDIClientRef client = CoreMidiHelpers::getGlobalMidiClient();
             MIDIPortRef port;
+            String deviceName = CoreMidiHelpers::getConnectedEndpointName (endPoint);
 
             if (client != 0 && CHECK_ERROR (MIDIOutputPortCreate (client, pname.cfString, &port)))
             {
-                mo = new MidiOutput();
+                mo = new MidiOutput (deviceName);
                 mo->internal = new CoreMidiHelpers::MidiPortAndEndpoint (port, endPoint);
             }
         }
@@ -354,7 +373,7 @@ MidiOutput* MidiOutput::createNewDevice (const String& deviceName)
 
     if (client != 0 && CHECK_ERROR (MIDISourceCreate (client, name.cfString, &endPoint)))
     {
-        MidiOutput* mo = new MidiOutput();
+        MidiOutput* mo = new MidiOutput (deviceName);
         mo->internal = new CoreMidiHelpers::MidiPortAndEndpoint (0, endPoint);
         return mo;
     }

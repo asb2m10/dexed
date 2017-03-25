@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -32,10 +38,10 @@ class MessageQueue
 public:
     MessageQueue()
     {
-       #if MAC_OS_X_VERSION_MIN_REQUIRED > MAC_OS_X_VERSION_10_4 && ! JUCE_IOS
-        runLoop = CFRunLoopGetMain();
-       #else
+       #if JUCE_IOS
         runLoop = CFRunLoopGetCurrent();
+       #else
+        runLoop = CFRunLoopGetMain();
        #endif
 
         CFRunLoopSourceContext sourceContext;
@@ -46,7 +52,7 @@ public:
         CFRunLoopAddSource (runLoop, runLoopSource, kCFRunLoopCommonModes);
     }
 
-    ~MessageQueue()
+    ~MessageQueue() noexcept
     {
         CFRunLoopRemoveSource (runLoop, runLoopSource, kCFRunLoopCommonModes);
         CFRunLoopSourceInvalidate (runLoopSource);
@@ -56,14 +62,19 @@ public:
     void post (MessageManager::MessageBase* const message)
     {
         messages.add (message);
-        CFRunLoopSourceSignal (runLoopSource);
-        CFRunLoopWakeUp (runLoop);
+        wakeUp();
     }
 
 private:
-    ReferenceCountedArray <MessageManager::MessageBase, CriticalSection> messages;
+    ReferenceCountedArray<MessageManager::MessageBase, CriticalSection> messages;
     CFRunLoopRef runLoop;
     CFRunLoopSourceRef runLoopSource;
+
+    void wakeUp() noexcept
+    {
+        CFRunLoopSourceSignal (runLoopSource);
+        CFRunLoopWakeUp (runLoop);
+    }
 
     bool deliverNextMessage()
     {
@@ -84,19 +95,18 @@ private:
         return true;
     }
 
-    void runLoopCallback()
+    void runLoopCallback() noexcept
     {
         for (int i = 4; --i >= 0;)
             if (! deliverNextMessage())
                 return;
 
-        CFRunLoopSourceSignal (runLoopSource);
-        CFRunLoopWakeUp (runLoop);
+        wakeUp();
     }
 
-    static void runLoopSourceCallback (void* info)
+    static void runLoopSourceCallback (void* info) noexcept
     {
-        static_cast <MessageQueue*> (info)->runLoopCallback();
+        static_cast<MessageQueue*> (info)->runLoopCallback();
     }
 };
 

@@ -25,11 +25,13 @@
 FileChooser::FileChooser (const String& chooserBoxTitle,
                           const File& currentFileOrDirectory,
                           const String& fileFilters,
-                          const bool useNativeBox)
+                          const bool useNativeBox,
+                          const bool treatFilePackagesAsDirectories)
     : title (chooserBoxTitle),
       filters (fileFilters),
       startingFile (currentFileOrDirectory),
-      useNativeDialogBox (useNativeBox && isPlatformDialogAvailable())
+      useNativeDialogBox (useNativeBox && isPlatformDialogAvailable()),
+      treatFilePackagesAsDirs (treatFilePackagesAsDirectories)
 {
     if (! fileFilters.containsNonWhitespaceChars())
         filters = "*";
@@ -106,17 +108,20 @@ bool FileChooser::showDialog (const int flags, FilePreviewComponent* const previ
     {
         showPlatformDialog (results, title, startingFile, filters,
                             selectsDirectories, selectsFiles, isSave,
-                            warnAboutOverwrite, selectMultiple, previewComp);
+                            warnAboutOverwrite, selectMultiple, treatFilePackagesAsDirs,
+                            previewComp);
     }
     else
     {
-        WildcardFileFilter wildcard (selectsFiles ? filters : String::empty,
-                                     selectsDirectories ? "*" : String::empty,
-                                     String::empty);
+        ignoreUnused (selectMultiple);
+
+        WildcardFileFilter wildcard (selectsFiles ? filters : String(),
+                                     selectsDirectories ? "*" : String(),
+                                     String());
 
         FileBrowserComponent browserComponent (flags, startingFile, &wildcard, previewComp);
 
-        FileChooserDialogBox box (title, String::empty,
+        FileChooserDialogBox box (title, String(),
                                   browserComponent, warnAboutOverwrite,
                                   browserComponent.findColour (AlertWindow::backgroundColourId));
 

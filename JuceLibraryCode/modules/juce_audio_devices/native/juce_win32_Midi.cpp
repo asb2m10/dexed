@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -116,7 +122,7 @@ public:
     static void CALLBACK midiInCallback (HMIDIIN, UINT uMsg, DWORD_PTR dwInstance,
                                          DWORD_PTR midiMessage, DWORD_PTR timeStamp)
     {
-        MidiInCollector* const collector = reinterpret_cast <MidiInCollector*> (dwInstance);
+        MidiInCollector* const collector = reinterpret_cast<MidiInCollector*> (dwInstance);
 
         if (activeMidiCollectors.contains (collector))
         {
@@ -270,8 +276,8 @@ MidiInput* MidiInput::openDevice (const int index, MidiInputCallback* const call
         }
     }
 
-    ScopedPointer <MidiInput> in (new MidiInput (name));
-    ScopedPointer <MidiInCollector> collector (new MidiInCollector (in, *callback));
+    ScopedPointer<MidiInput> in (new MidiInput (name));
+    ScopedPointer<MidiInCollector> collector (new MidiInCollector (in, *callback));
 
     HMIDIIN h;
     MMRESULT err = midiInOpen (&h, deviceId,
@@ -362,6 +368,7 @@ MidiOutput* MidiOutput::openDevice (int index)
     UINT deviceId = MIDI_MAPPER;
     const UINT num = midiOutGetNumDevs();
     int n = 0;
+    String deviceName;
 
     for (UINT i = 0; i < num; ++i)
     {
@@ -369,13 +376,16 @@ MidiOutput* MidiOutput::openDevice (int index)
 
         if (midiOutGetDevCaps (i, &mc, sizeof (mc)) == MMSYSERR_NOERROR)
         {
+            String name = String (mc.szPname, sizeof (mc.szPname));
+
             // use the microsoft sw synth as a default - best not to allow deviceId
             // to be MIDI_MAPPER, or else device sharing breaks
-            if (String (mc.szPname, sizeof (mc.szPname)).containsIgnoreCase ("microsoft"))
+            if (name.containsIgnoreCase ("microsoft"))
                 deviceId = i;
 
             if (index == n)
             {
+                deviceName = name;
                 deviceId = i;
                 break;
             }
@@ -392,7 +402,7 @@ MidiOutput* MidiOutput::openDevice (int index)
         {
             han->refCount++;
 
-            MidiOutput* const out = new MidiOutput();
+            MidiOutput* const out = new MidiOutput (deviceName);
             out->internal = han;
             return out;
         }
@@ -411,7 +421,7 @@ MidiOutput* MidiOutput::openDevice (int index)
             han->handle = h;
             MidiOutHandle::activeHandles.add (han);
 
-            MidiOutput* const out = new MidiOutput();
+            MidiOutput* const out = new MidiOutput (deviceName);
             out->internal = han;
             return out;
         }

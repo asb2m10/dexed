@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -60,17 +62,33 @@ namespace
     template <typename RectangleType>
     static NSRect makeNSRect (const RectangleType& r) noexcept
     {
-        return NSMakeRect (static_cast <CGFloat> (r.getX()),
-                           static_cast <CGFloat> (r.getY()),
-                           static_cast <CGFloat> (r.getWidth()),
-                           static_cast <CGFloat> (r.getHeight()));
+        return NSMakeRect (static_cast<CGFloat> (r.getX()),
+                           static_cast<CGFloat> (r.getY()),
+                           static_cast<CGFloat> (r.getWidth()),
+                           static_cast<CGFloat> (r.getHeight()));
     }
+   #endif
+  #if JUCE_MAC || JUCE_IOS
+   #if JUCE_COMPILER_SUPPORTS_VARIADIC_TEMPLATES
+
+    // This is necessary as on iOS builds, some arguments may be passed on registers
+    // depending on the argument type. The re-cast objc_msgSendSuper to a function
+    // take the same arguments as the target method.
+    template <typename ReturnValue, typename... Params>
+    static inline ReturnValue ObjCMsgSendSuper (struct objc_super* s, SEL sel, Params... params)
+    {
+        typedef ReturnValue (*SuperFn)(struct objc_super*, SEL, Params...);
+        SuperFn fn = reinterpret_cast<SuperFn> (objc_msgSendSuper);
+        return fn (s, sel, params...);
+    }
+
+   #endif
 
     // These hacks are a workaround for newer Xcode builds which by default prevent calls to these objc functions..
     typedef id (*MsgSendSuperFn) (struct objc_super*, SEL, ...);
     static inline MsgSendSuperFn getMsgSendSuperFn() noexcept   { return (MsgSendSuperFn) (void*) objc_msgSendSuper; }
 
-   #if ! JUCE_PPC
+   #if ! JUCE_IOS
     typedef double (*MsgSendFPRetFn) (id, SEL op, ...);
     static inline MsgSendFPRetFn getMsgSendFPRetFn() noexcept   { return (MsgSendFPRetFn) (void*) objc_msgSend_fpret; }
    #endif
@@ -115,14 +133,14 @@ struct ObjCClass
     void addIvar (const char* name)
     {
         BOOL b = class_addIvar (cls, name, sizeof (Type), (uint8_t) rint (log2 (sizeof (Type))), @encode (Type));
-        jassert (b); (void) b;
+        jassert (b); ignoreUnused (b);
     }
 
     template <typename FunctionType>
     void addMethod (SEL selector, FunctionType callbackFn, const char* signature)
     {
         BOOL b = class_addMethod (cls, selector, (IMP) callbackFn, signature);
-        jassert (b); (void) b;
+        jassert (b); ignoreUnused (b);
     }
 
     template <typename FunctionType>
@@ -146,10 +164,10 @@ struct ObjCClass
     void addProtocol (Protocol* protocol)
     {
         BOOL b = class_addProtocol (cls, protocol);
-        jassert (b); (void) b;
+        jassert (b); ignoreUnused (b);
     }
 
-   #if JUCE_MAC
+   #if JUCE_MAC || JUCE_IOS
     static id sendSuperclassMessage (id self, SEL selector)
     {
         objc_super s = { self, [SuperclassType class] };
@@ -162,7 +180,7 @@ struct ObjCClass
     {
         void* v = nullptr;
         object_getInstanceVariable (self, name, &v);
-        return static_cast <Type> (v);
+        return static_cast<Type> (v);
     }
 
     Class cls;
@@ -175,6 +193,38 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE (ObjCClass)
 };
+
+#if JUCE_COMPILER_SUPPORTS_VARIADIC_TEMPLATES
+
+template <typename ReturnT, class Class, typename... Params>
+ReturnT (^CreateObjCBlock(Class* object, ReturnT (Class::*fn)(Params...))) (Params...)
+{
+    __block Class* _this = object;
+    __block ReturnT (Class::*_fn)(Params...) = fn;
+
+    return [[^ReturnT (Params... params) { return (_this->*_fn) (params...); } copy] autorelease];
+}
+
+template <typename BlockType>
+class ObjCBlock
+{
+public:
+    ObjCBlock()  { block = nullptr; }
+    template <typename R, class C, typename... P>
+    ObjCBlock (C* _this, R (C::*fn)(P...))  : block (CreateObjCBlock (_this, fn)) {}
+    ObjCBlock (BlockType b) : block ([b copy]) {}
+    ObjCBlock& operator= (const BlockType& other) { if (block != nullptr) { [block release]; } block = [other copy]; return *this; }
+    bool operator== (const void* ptr) const  { return (block == ptr); }
+    bool operator!= (const void* ptr) const  { return (block != ptr); }
+    ~ObjCBlock() { if (block != nullptr) [block release]; }
+
+    operator BlockType() { return block; }
+
+private:
+    BlockType block;
+};
+
+#endif
 
 
 #endif   // JUCE_OSX_OBJCHELPERS_H_INCLUDED

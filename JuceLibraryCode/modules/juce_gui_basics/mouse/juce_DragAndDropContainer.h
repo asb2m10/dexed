@@ -41,7 +41,7 @@
 
     Note: If all that you need to do is to respond to files being drag-and-dropped from
     the operating system onto your component, you don't need any of these classes: you can do this
-    simply by overriding Component::filesDropped().
+    simply by overriding FileDragAndDropTarget::filesDropped().
 
     @see DragAndDropTarget
 */
@@ -86,7 +86,7 @@ public:
     */
     void startDragging (const var& sourceDescription,
                         Component* sourceComponent,
-                        Image dragImage = Image::null,
+                        Image dragImage = Image(),
                         bool allowDraggingToOtherJuceWindows = false,
                         const Point<int>* imageOffsetFromMouse = nullptr);
 
@@ -152,10 +152,10 @@ public:
     static bool performExternalDragDropOfText (const String& text);
 
 protected:
-    /** Override this if you want to be able to perform an external drag a set of files
+    /** Override this if you want to be able to perform an external drag of a set of files
         when the user drags outside of this container component.
 
-        This method will be called when a drag operation moves outside the Juce-based window,
+        This method will be called when a drag operation moves outside the JUCE window,
         and if you want it to then perform a file drag-and-drop, add the filenames you want
         to the array passed in, and return true.
 
@@ -163,16 +163,30 @@ protected:
         @param files            on return, the filenames you want to drag
         @param canMoveFiles     on return, true if it's ok for the receiver to move the files; false if
                                 it must make a copy of them (see the performExternalDragDropOfFiles() method)
-        @see performExternalDragDropOfFiles
+        @see performExternalDragDropOfFiles, shouldDropTextWhenDraggedExternally
     */
     virtual bool shouldDropFilesWhenDraggedExternally (const DragAndDropTarget::SourceDetails& sourceDetails,
                                                        StringArray& files, bool& canMoveFiles);
 
+    /** Override this if you want to be able to perform an external drag of text
+        when the user drags outside of this container component.
+
+        This method will be called when a drag operation moves outside the JUCE window,
+        and if you want it to then perform a text drag-and-drop, copy the text you want to
+        be dragged into the argument provided and return true.
+
+        @param sourceDetails    information about the source of the drag operation
+        @param text             on return, the text you want to drag
+        @see shouldDropFilesWhenDraggedExternally
+    */
+    virtual bool shouldDropTextWhenDraggedExternally (const DragAndDropTarget::SourceDetails& sourceDetails,
+                                                      String& text);
+
     /** Subclasses can override this to be told when a drag starts. */
-    virtual void dragOperationStarted();
+    virtual void dragOperationStarted (const DragAndDropTarget::SourceDetails&);
 
     /** Subclasses can override this to be told when a drag finishes. */
-    virtual void dragOperationEnded();
+    virtual void dragOperationEnded (const DragAndDropTarget::SourceDetails&);
 
 private:
     //==============================================================================
@@ -181,7 +195,14 @@ private:
     friend struct ContainerDeletePolicy<DragImageComponent>;
     ScopedPointer<DragImageComponent> dragImageComponent;
 
-    JUCE_DEPRECATED (virtual bool shouldDropFilesWhenDraggedExternally (const String&, Component*, StringArray&, bool&)) { return false; }
+   #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
+    // This is just here to cause a compile error in old code that hasn't been changed to use the new
+    // version of this method.
+    virtual int dragOperationStarted()              { return 0; }
+    virtual int dragOperationEnded()                { return 0; }
+   #endif
+
+    JUCE_DEPRECATED_WITH_BODY (virtual bool shouldDropFilesWhenDraggedExternally (const String&, Component*, StringArray&, bool&), { return false; })
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DragAndDropContainer)
 };

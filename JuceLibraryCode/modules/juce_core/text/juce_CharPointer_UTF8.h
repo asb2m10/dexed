@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -41,7 +43,7 @@ public:
     typedef char CharType;
 
     inline explicit CharPointer_UTF8 (const CharType* const rawPointer) noexcept
-        : data (const_cast <CharType*> (rawPointer))
+        : data (const_cast<CharType*> (rawPointer))
     {
     }
 
@@ -58,7 +60,7 @@ public:
 
     inline CharPointer_UTF8 operator= (const CharType* text) noexcept
     {
-        data = const_cast <CharType*> (text);
+        data = const_cast<CharType*> (text);
         return *this;
     }
 
@@ -90,9 +92,9 @@ public:
         uint32 n = (uint32) (uint8) byte;
         uint32 mask = 0x7f;
         uint32 bit = 0x40;
-        size_t numExtraValues = 0;
+        int numExtraValues = 0;
 
-        while ((n & bit) != 0 && bit > 0x10)
+        while ((n & bit) != 0 && bit > 0x8)
         {
             mask >>= 1;
             ++numExtraValues;
@@ -101,9 +103,9 @@ public:
 
         n &= mask;
 
-        for (size_t i = 1; i <= numExtraValues; ++i)
+        for (int i = 1; i <= numExtraValues; ++i)
         {
-            const uint8 nextByte = (uint8) data [i];
+            const uint32 nextByte = (uint32) (uint8) data[i];
 
             if ((nextByte & 0xc0) != 0x80)
                 break;
@@ -312,9 +314,8 @@ public:
     static size_t getBytesRequiredFor (CharPointer text) noexcept
     {
         size_t count = 0;
-        juce_wchar n;
 
-        while ((n = text.getAndAdvance()) != 0)
+        while (juce_wchar n = text.getAndAdvance())
             count += getBytesRequiredFor (n);
 
         return count;
@@ -421,13 +422,7 @@ public:
     /** Compares this string with another one. */
     int compareIgnoreCase (const CharPointer_UTF8 other) const noexcept
     {
-       #if JUCE_MSVC
-        return stricmp (data, other.data);
-       #elif JUCE_MINGW
         return CharacterFunctions::compareIgnoreCase (*this, other);
-       #else
-        return strcasecmp (data, other.data);
-       #endif
     }
 
     /** Compares this string with another one, up to a specified number of characters. */
@@ -527,6 +522,9 @@ public:
                         return false;
                 }
 
+                if (numExtraValues == 0)
+                    return false;
+
                 maxBytesToRead -= numExtraValues;
                 if (maxBytesToRead < 0)
                     return false;
@@ -543,7 +541,7 @@ public:
     /** Atomically swaps this pointer for a new value, returning the previous value. */
     CharPointer_UTF8 atomicSwap (const CharPointer_UTF8 newValue)
     {
-        return CharPointer_UTF8 (reinterpret_cast <Atomic<CharType*>&> (data).exchange (newValue.data));
+        return CharPointer_UTF8 (reinterpret_cast<Atomic<CharType*>&> (data).exchange (newValue.data));
     }
 
     /** These values are the byte-order mark (BOM) values for a UTF-8 stream. */

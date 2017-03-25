@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -81,7 +87,7 @@ void MidiKeyboardState::noteOnInternal  (const int midiChannel, const int midiNo
     }
 }
 
-void MidiKeyboardState::noteOff (const int midiChannel, const int midiNoteNumber)
+void MidiKeyboardState::noteOff (const int midiChannel, const int midiNoteNumber, const float velocity)
 {
     const ScopedLock sl (lock);
 
@@ -91,18 +97,18 @@ void MidiKeyboardState::noteOff (const int midiChannel, const int midiNoteNumber
         eventsToAdd.addEvent (MidiMessage::noteOff (midiChannel, midiNoteNumber), timeNow);
         eventsToAdd.clear (0, timeNow - 500);
 
-        noteOffInternal (midiChannel, midiNoteNumber);
+        noteOffInternal (midiChannel, midiNoteNumber, velocity);
     }
 }
 
-void MidiKeyboardState::noteOffInternal  (const int midiChannel, const int midiNoteNumber)
+void MidiKeyboardState::noteOffInternal  (const int midiChannel, const int midiNoteNumber, const float velocity)
 {
     if (isNoteOn (midiChannel, midiNoteNumber))
     {
         noteStates [midiNoteNumber] &= ~(1 << (midiChannel - 1));
 
         for (int i = listeners.size(); --i >= 0;)
-            listeners.getUnchecked(i)->handleNoteOff (this, midiChannel, midiNoteNumber);
+            listeners.getUnchecked(i)->handleNoteOff (this, midiChannel, midiNoteNumber, velocity);
     }
 }
 
@@ -118,7 +124,7 @@ void MidiKeyboardState::allNotesOff (const int midiChannel)
     else
     {
         for (int i = 0; i < 128; ++i)
-            noteOff (midiChannel, i);
+            noteOff (midiChannel, i, 0.0f);
     }
 }
 
@@ -130,12 +136,12 @@ void MidiKeyboardState::processNextMidiEvent (const MidiMessage& message)
     }
     else if (message.isNoteOff())
     {
-        noteOffInternal (message.getChannel(), message.getNoteNumber());
+        noteOffInternal (message.getChannel(), message.getNoteNumber(), message.getFloatVelocity());
     }
     else if (message.isAllNotesOff())
     {
         for (int i = 0; i < 128; ++i)
-            noteOffInternal (message.getChannel(), i);
+            noteOffInternal (message.getChannel(), i, 0.0f);
     }
 }
 

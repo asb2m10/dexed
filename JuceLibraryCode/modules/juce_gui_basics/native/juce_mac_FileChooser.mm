@@ -141,6 +141,7 @@ void FileChooser::showPlatformDialog (Array<File>& results,
                                       bool isSaveDialogue,
                                       bool /*warnAboutOverwritingExistingFiles*/,
                                       bool selectMultipleFiles,
+                                      bool treatFilePackagesAsDirs,
                                       FilePreviewComponent* extraInfoComponent)
 {
     JUCE_AUTORELEASEPOOL
@@ -150,7 +151,7 @@ void FileChooser::showPlatformDialog (Array<File>& results,
             tempMenu = new TemporaryMainMenuWithStandardCommands();
 
         StringArray* filters = new StringArray();
-        filters->addTokens (filter.replaceCharacters (",:", ";;"), ";", String::empty);
+        filters->addTokens (filter.replaceCharacters (",:", ";;"), ";", String());
         filters->trim();
         filters->removeEmptyStrings();
 
@@ -177,6 +178,9 @@ void FileChooser::showPlatformDialog (Array<File>& results,
             [openPanel setCanChooseFiles: selectsFiles];
             [openPanel setAllowsMultipleSelection: selectMultipleFiles];
             [openPanel setResolvesAliases: YES];
+
+            if (treatFilePackagesAsDirs)
+                [openPanel setTreatsFilePackagesAsDirectories: YES];
         }
 
         if (extraInfoComponent != nullptr)
@@ -260,6 +264,7 @@ void FileChooser::showPlatformDialog (Array<File>&,
                                       bool /*isSaveDialogue*/,
                                       bool /*warnAboutOverwritingExistingFiles*/,
                                       bool /*selectMultipleFiles*/,
+                                      bool /*treatFilePackagesAsDirs*/,
                                       FilePreviewComponent*)
 {
     jassertfalse; //there's no such thing in iOS

@@ -69,6 +69,8 @@ LookAndFeel_V2::LookAndFeel_V2()
         TextButton::textColourOffId,                0xff000000,
 
         ToggleButton::textColourId,                 0xff000000,
+        ToggleButton::tickColourId,                 0xff000000,
+        ToggleButton::tickDisabledColourId,         0xff808080,
 
         TextEditor::backgroundColourId,             0xffffffff,
         TextEditor::textColourId,                   0xff000000,
@@ -91,6 +93,8 @@ LookAndFeel_V2::LookAndFeel_V2()
         TreeView::backgroundColourId,               0x00000000,
         TreeView::dragAndDropIndicatorColourId,     0x80ff0000,
         TreeView::selectedItemBackgroundColourId,   0x00000000,
+        TreeView::oddItemsColourId,                 0x00000000,
+        TreeView::evenItemsColourId,                0x00000000,
 
         PopupMenu::backgroundColourId,              0xffffffff,
         PopupMenu::textColourId,                    0xff000000,
@@ -265,13 +269,12 @@ void LookAndFeel_V2::drawButtonText (Graphics& g, TextButton& button, bool /*isM
     const int fontHeight = roundToInt (font.getHeight() * 0.6f);
     const int leftIndent  = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnLeft() ? 4 : 2));
     const int rightIndent = jmin (fontHeight, 2 + cornerSize / (button.isConnectedOnRight() ? 4 : 2));
+    const int textWidth = button.getWidth() - leftIndent - rightIndent;
 
-    g.drawFittedText (button.getButtonText(),
-                      leftIndent,
-                      yIndent,
-                      button.getWidth() - leftIndent - rightIndent,
-                      button.getHeight() - yIndent * 2,
-                      Justification::centred, 2);
+    if (textWidth > 0)
+        g.drawFittedText (button.getButtonText(),
+                          leftIndent, yIndent, textWidth, button.getHeight() - yIndent * 2,
+                          Justification::centred, 2);
 }
 
 void LookAndFeel_V2::drawTickBox (Graphics& g, Component& component,
@@ -296,10 +299,11 @@ void LookAndFeel_V2::drawTickBox (Graphics& g, Component& component,
         tick.lineTo (3.0f, 6.0f);
         tick.lineTo (6.0f, 0.0f);
 
-        g.setColour (isEnabled ? Colours::black : Colours::grey);
+        g.setColour (component.findColour (isEnabled ? ToggleButton::tickColourId
+                                                     : ToggleButton::tickDisabledColourId));
 
         const AffineTransform trans (AffineTransform::scale (w / 9.0f, h / 9.0f)
-                                         .translated (x, y));
+                                                     .translated (x, y));
 
         g.strokePath (tick, PathStrokeType (2.5f), trans);
     }
@@ -483,6 +487,19 @@ int LookAndFeel_V2::getAlertBoxWindowFlags()
 {
     return ComponentPeer::windowAppearsOnTaskbar
             | ComponentPeer::windowHasDropShadow;
+}
+
+Array<int> LookAndFeel_V2::getWidthsForTextButtons (AlertWindow&, const Array<TextButton*>& buttons)
+{
+    const int n = buttons.size();
+    Array<int> buttonWidths;
+
+    const int buttonHeight = getAlertWindowButtonHeight();
+
+    for (int i = 0; i < n; ++i)
+        buttonWidths.add (getTextButtonWidthToFitText (*buttons.getReference (i), buttonHeight));
+
+    return buttonWidths;
 }
 
 int LookAndFeel_V2::getAlertWindowButtonHeight()
@@ -1073,6 +1090,13 @@ void LookAndFeel_V2::drawMenuBarItem (Graphics& g, int width, int height,
     g.drawFittedText (itemText, 0, 0, width, height, Justification::centred, 1);
 }
 
+Component* LookAndFeel_V2::getParentComponentForMenuOptions (const PopupMenu::Options& options)
+{
+    return options.getParentComponent();
+}
+
+void LookAndFeel_V2::preparePopupMenuWindow (Component&) {}
+
 //==============================================================================
 void LookAndFeel_V2::fillTextEditorBackground (Graphics& g, int /*width*/, int /*height*/, TextEditor& textEditor)
 {
@@ -1167,7 +1191,7 @@ Font LookAndFeel_V2::getComboBoxFont (ComboBox& box)
 
 Label* LookAndFeel_V2::createComboBoxTextBox (ComboBox&)
 {
-    return new Label (String::empty, String::empty);
+    return new Label (String(), String());
 }
 
 void LookAndFeel_V2::positionComboBoxText (ComboBox& box, Label& label)
@@ -1445,13 +1469,13 @@ void LookAndFeel_V2::drawRotarySlider (Graphics& g, int x, int y, int width, int
 
 Button* LookAndFeel_V2::createSliderButton (Slider&, const bool isIncrement)
 {
-    return new TextButton (isIncrement ? "+" : "-", String::empty);
+    return new TextButton (isIncrement ? "+" : "-", String());
 }
 
 class LookAndFeel_V2::SliderLabelComp  : public Label
 {
 public:
-    SliderLabelComp() : Label (String::empty, String::empty) {}
+    SliderLabelComp() : Label (String(), String()) {}
 
     void mouseWheelMove (const MouseEvent&, const MouseWheelDetails&) {}
 };
@@ -1605,7 +1629,7 @@ void LookAndFeel_V2::layoutFilenameComponent (FilenameComponent& filenameComp,
 {
     browseButton->setSize (80, filenameComp.getHeight());
 
-    if (TextButton* const tb = dynamic_cast <TextButton*> (browseButton))
+    if (TextButton* const tb = dynamic_cast<TextButton*> (browseButton))
         tb->changeWidthToFitText();
 
     browseButton->setTopRightPosition (filenameComp.getWidth(), 0);
@@ -1719,6 +1743,9 @@ void LookAndFeel_V2::drawDocumentWindowTitleBar (DocumentWindow& window, Graphic
                                                  int w, int h, int titleSpaceX, int titleSpaceW,
                                                  const Image* icon, bool drawTitleTextOnLeft)
 {
+    if (w * h == 0)
+        return;
+
     const bool isActive = window.isActiveWindow();
 
     g.setGradientFill (ColourGradient (window.getBackgroundColour(),
@@ -2575,7 +2602,7 @@ void LookAndFeel_V2::layoutFileBrowserComponent (FileBrowserComponent& browserCo
 
     y += controlsHeight + 4;
 
-    if (Component* const listAsComp = dynamic_cast <Component*> (fileListComponent))
+    if (Component* const listAsComp = dynamic_cast<Component*> (fileListComponent))
     {
         listAsComp->setBounds (x, y, w, browserComp.getHeight() - y - bottomSectionHeight);
         y = listAsComp->getBottom() + 4;

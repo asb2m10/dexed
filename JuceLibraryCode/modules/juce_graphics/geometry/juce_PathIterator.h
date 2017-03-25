@@ -52,8 +52,8 @@ public:
                             less lines, so can be generated faster, but will be less smooth.
     */
     PathFlatteningIterator (const Path& path,
-                            const AffineTransform& transform = AffineTransform::identity,
-                            float tolerance = defaultTolerance);
+                            const AffineTransform& transform = AffineTransform(),
+                            float tolerance = Path::defaultToleranceForMeasurement);
 
     /** Destructor. */
     ~PathFlatteningIterator();
@@ -90,9 +90,6 @@ public:
     /** Returns true if the current segment is the last in the current sub-path. */
     bool isLastInSubpath() const noexcept;
 
-    /** This is the default value that should be used for the tolerance value (see the constructor parameters). */
-    static const float defaultTolerance;
-
 private:
     //==============================================================================
     const Path& path;
@@ -102,7 +99,7 @@ private:
     float subPathCloseX, subPathCloseY;
     const bool isIdentityTransform;
 
-    HeapBlock <float> stackBase;
+    HeapBlock<float> stackBase;
     float* stackPos;
     size_t index, stackSize;
 

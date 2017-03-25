@@ -70,7 +70,13 @@ int ColourGradient::addColour (const double proportionAlongGradient, Colour colo
     // must be within the two end-points
     jassert (proportionAlongGradient >= 0 && proportionAlongGradient <= 1.0);
 
-    const double pos = jlimit (0.0, 1.0, proportionAlongGradient);
+    if (proportionAlongGradient <= 0)
+    {
+        colours.set (0, ColourPoint (0.0, colour));
+        return 0;
+    }
+
+    const double pos = jmin (1.0, proportionAlongGradient);
 
     int i;
     for (i = 0; i < colours.size(); ++i)
@@ -178,7 +184,7 @@ void ColourGradient::createLookupTable (PixelARGB* const lookupTable, const int 
         lookupTable [index++] = pix1;
 }
 
-int ColourGradient::createLookupTable (const AffineTransform& transform, HeapBlock <PixelARGB>& lookupTable) const
+int ColourGradient::createLookupTable (const AffineTransform& transform, HeapBlock<PixelARGB>& lookupTable) const
 {
     JUCE_COLOURGRADIENT_CHECK_COORDS_INITIALISED // Trying to use this object without setting its coordinates?
     jassert (colours.size() >= 2);

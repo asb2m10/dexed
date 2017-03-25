@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -47,6 +53,18 @@ public:
 
     /** Replaces this sequence with another one. */
     MidiMessageSequence& operator= (const MidiMessageSequence&);
+
+   #if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS
+    MidiMessageSequence (MidiMessageSequence&& other) noexcept
+        : list (static_cast<OwnedArray<MidiEventHolder>&&> (other.list))
+    {}
+
+    MidiMessageSequence& operator= (MidiMessageSequence&& other) noexcept
+    {
+        list = static_cast<OwnedArray<MidiEventHolder>&&> (other.list);
+        return *this;
+    }
+   #endif
 
     /** Destructor. */
     ~MidiMessageSequence();
@@ -109,7 +127,7 @@ public:
     int getIndexOfMatchingKeyUp (int index) const noexcept;
 
     /** Returns the index of an event. */
-    int getIndexOf (MidiEventHolder* event) const noexcept;
+    int getIndexOf (const MidiEventHolder* event) const noexcept;
 
     /** Returns the index of the first event on or after the given timestamp.
         If the time is beyond the end of the sequence, this will return the
@@ -160,7 +178,6 @@ public:
     void deleteEvent (int index, bool deleteMatchingNoteUp);
 
     /** Merges another sequence into this one.
-
         Remember to call updateMatchedPairs() after using this method.
 
         @param other                    the sequence to add from
@@ -177,6 +194,16 @@ public:
                       double timeAdjustmentDelta,
                       double firstAllowableDestTime,
                       double endOfAllowableDestTimes);
+
+    /** Merges another sequence into this one.
+        Remember to call updateMatchedPairs() after using this method.
+
+        @param other                    the sequence to add from
+        @param timeAdjustmentDelta      an amount to add to the timestamps of the midi events
+                                        as they are read from the other sequence
+    */
+    void addSequence (const MidiMessageSequence& other,
+                      double timeAdjustmentDelta);
 
     //==============================================================================
     /** Makes sure all the note-on and note-off pairs are up-to-date.

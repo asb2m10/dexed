@@ -695,7 +695,7 @@ private:
             win[0][i + 18] = win[3][i + 18] = (float) (0.5 * std::sin (double_Pi / 72.0 * (2 * (i + 18) + 1)) / std::cos (double_Pi * (2 * (i + 18) + 19) / 72.0));
         }
 
-        const double piOver72 = double_Pi;
+        const double piOver72 = double_Pi / 72.0;
 
         for (i = 0; i < 6; ++i)
         {
@@ -1613,7 +1613,7 @@ private:
         headerParsed = sideParsed = dataParsed = isFreeFormat = wasFreeFormat = false;
         lastFrameSize = -1;
         needToSyncBitStream = true;
-        frameSize = sideInfoSize = dataSize = frameSize = bitIndex = 0;
+        frameSize = sideInfoSize = dataSize = bitIndex = 0;
         lastFrameSizeNoPadding = bufferSpaceIndex = 0;
         bufferPointer = bufferSpace[bufferSpaceIndex] + 512;
         synthBo = 1;
@@ -2020,7 +2020,7 @@ private:
             for (int i = 0; i < jsbound; ++i)
             {
                 const int16 step = allocTable->bits;
-                allocTable += (1 << step);
+                allocTable += (static_cast<intptr_t> (1) << step);
                 si.allocation[i][0] = getBitsUint8 (step);
                 si.allocation[i][1] = getBitsUint8 (step);
             }
@@ -2029,7 +2029,7 @@ private:
             {
                 const int16 step = allocTable->bits;
                 const uint8 b0 = getBitsUint8 (step);
-                allocTable += (1 << step);
+                allocTable += (static_cast<intptr_t> (1) << step);
                 si.allocation[i][0] = b0;
                 si.allocation[i][1] = b0;
             }
@@ -2045,7 +2045,7 @@ private:
             for (int i = 0; i < sblimit; ++i)
             {
                 const int16 step = allocTable->bits;
-                allocTable += (1 << step);
+                allocTable += (static_cast<intptr_t> (1) << step);
                 si.allocation[i][0] = getBitsUint8 (step);
             }
 
@@ -2131,7 +2131,7 @@ private:
                 }
             }
 
-            allocTable += (1 << step);
+            allocTable += (static_cast<intptr_t> (1) << step);
         }
 
         for (int i = jsbound; i < frame.layer2SubBandLimit; ++i)
@@ -2182,7 +2182,7 @@ private:
                 fraction[0][0][i] = fraction[0][1][i] = fraction[0][2][i] = 0;
                 fraction[1][0][i] = fraction[1][1][i] = fraction[1][2][i] = 0;
             }
-            allocTable += (1 << step);
+            allocTable += (static_cast<intptr_t> (1) << step);
         }
 
         for (int ch = 0; ch < frame.numChannels; ++ch)
@@ -3020,7 +3020,7 @@ public:
             }
 
             const int numToCopy = jmin (decodedEnd - decodedStart, numSamples);
-            float* const* const dst = reinterpret_cast <float**> (destSamples);
+            float* const* const dst = reinterpret_cast<float**> (destSamples);
             memcpy (dst[0] + startOffsetInDestBuffer, decoded0 + decodedStart, sizeof (float) * (size_t) numToCopy);
 
             if (numDestChannels > 1 && dst[1] != nullptr)

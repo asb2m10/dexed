@@ -22,7 +22,7 @@
   ==============================================================================
 */
 
-#if JUCE_PLUGINHOST_VST || DOXYGEN
+#if (JUCE_PLUGINHOST_VST && (JUCE_MAC || JUCE_WINDOWS || JUCE_LINUX || JUCE_IOS)) || DOXYGEN
 
 //==============================================================================
 /**
@@ -36,7 +36,7 @@ public:
     ~VSTPluginFormat();
 
     //==============================================================================
-    /** Attempts to retreive the VSTXML data from a plugin.
+    /** Attempts to retrieve the VSTXML data from a plugin.
         Will return nullptr if the plugin isn't a VST, or if it doesn't have any VSTXML.
     */
     static const XmlElement* getVSTXML (AudioPluginInstance* plugin);
@@ -52,6 +52,13 @@ public:
 
     /** Attempts to set a VST's state from a chunk of memory. */
     static bool setChunkData (AudioPluginInstance* plugin, const void* data, int size, bool isPreset);
+
+    /** Given a suitable function pointer to a VSTPluginMain function, this will attempt to
+        instantiate and return a plugin for it.
+    */
+    static AudioPluginInstance* createCustomVSTFromMainCall (void* entryPointFunction,
+                                                             double initialSampleRate,
+                                                             int initialBufferSize);
 
     //==============================================================================
     /** Base class for some extra functions that can be attached to a VST plugin instance. */
@@ -75,23 +82,21 @@ public:
     static void setExtraFunctions (AudioPluginInstance* plugin, ExtraFunctions* functions);
 
     //==============================================================================
-   #if JUCE_64BIT
-    typedef int64 VstIntPtr;
-   #else
-    typedef int32 VstIntPtr;
-   #endif
-
     /** This simply calls directly to the VST's AEffect::dispatcher() function. */
-    static VstIntPtr JUCE_CALLTYPE dispatcher (AudioPluginInstance*, int32, int32, VstIntPtr, void*, float);
+    static pointer_sized_int JUCE_CALLTYPE dispatcher (AudioPluginInstance*, int32, int32, pointer_sized_int, void*, float);
+
+    /** Given a VstEffectInterface* (aka vst::AEffect*), this will return the juce AudioPluginInstance
+        that is being used to wrap it
+    */
+    static AudioPluginInstance* getPluginInstanceFromVstEffectInterface (void* aEffect);
 
     //==============================================================================
     String getName() const override                { return "VST"; }
     void findAllTypesForFile (OwnedArray<PluginDescription>&, const String& fileOrIdentifier) override;
-    AudioPluginInstance* createInstanceFromDescription (const PluginDescription&, double, int) override;
     bool fileMightContainThisPluginType (const String& fileOrIdentifier) override;
     String getNameOfPluginFromIdentifier (const String& fileOrIdentifier) override;
     bool pluginNeedsRescanning (const PluginDescription&) override;
-    StringArray searchPathsForPlugins (const FileSearchPath&, bool recursive) override;
+    StringArray searchPathsForPlugins (const FileSearchPath&, bool recursive, bool) override;
     bool doesPluginStillExist (const PluginDescription&) override;
     FileSearchPath getDefaultLocationsToSearch() override;
     bool canScanForPlugins() const override        { return true; }
@@ -102,6 +107,14 @@ public:
         this is called.
     */
     virtual void aboutToScanVSTShellPlugin (const PluginDescription&);
+
+private:
+    //==============================================================================
+    void createPluginInstance (const PluginDescription&, double initialSampleRate,
+                               int initialBufferSize, void* userData,
+                               void (*callback) (void*, AudioPluginInstance*, const String&)) override;
+
+    bool requiresUnblockedMessageThreadDuringCreation (const PluginDescription&) const noexcept override;
 
 private:
     void recursiveFileSearch (StringArray&, const File&, bool recursive);

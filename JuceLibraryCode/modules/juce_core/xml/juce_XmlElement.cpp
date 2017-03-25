@@ -1,30 +1,66 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
+
+namespace
+{
+    inline bool isValidXmlNameStartCharacter (const juce_wchar character) noexcept
+    {
+        return character == ':'
+            || character == '_'
+            || (character >= 'a'     && character <= 'z')
+            || (character >= 'A'     && character <= 'Z')
+            || (character >= 0xc0    && character <= 0xd6)
+            || (character >= 0xd8    && character <= 0xf6)
+            || (character >= 0xf8    && character <= 0x2ff)
+            || (character >= 0x370   && character <= 0x37d)
+            || (character >= 0x37f   && character <= 0x1fff)
+            || (character >= 0x200c  && character <= 0x200d)
+            || (character >= 0x2070  && character <= 0x218f)
+            || (character >= 0x2c00  && character <= 0x2fef)
+            || (character >= 0x3001  && character <= 0xd7ff)
+            || (character >= 0xf900  && character <= 0xfdcf)
+            || (character >= 0xfdf0  && character <= 0xfffd)
+            || (character >= 0x10000 && character <= 0xeffff);
+    }
+
+    inline bool isValidXmlNameBodyCharacter (const juce_wchar character) noexcept
+    {
+        return isValidXmlNameStartCharacter (character)
+            || character == '-'
+            || character == '.'
+            || character == 0xb7
+            || (character >= '0'    && character <= '9')
+            || (character >= 0x300  && character <= 0x036f)
+            || (character >= 0x203f && character <= 0x2040);
+    }
+}
 
 XmlElement::XmlAttributeNode::XmlAttributeNode (const XmlAttributeNode& other) noexcept
     : name (other.name),
@@ -35,58 +71,44 @@ XmlElement::XmlAttributeNode::XmlAttributeNode (const XmlAttributeNode& other) n
 XmlElement::XmlAttributeNode::XmlAttributeNode (const Identifier& n, const String& v) noexcept
     : name (n), value (v)
 {
-   #if JUCE_DEBUG
-    // this checks whether the attribute name string contains any illegal characters..
-    for (String::CharPointerType t (name.getCharPointer()); ! t.isEmpty(); ++t)
-        jassert (t.isLetterOrDigit() || *t == '_' || *t == '-' || *t == ':');
-   #endif
+    jassert (isValidXmlName (name));
 }
 
 XmlElement::XmlAttributeNode::XmlAttributeNode (String::CharPointerType nameStart, String::CharPointerType nameEnd)
     : name (nameStart, nameEnd)
 {
+    jassert (isValidXmlName (name));
 }
 
 //==============================================================================
-static void sanityCheckTagName (const String& tag)
-{
-    (void) tag;
-
-    // the tag name mustn't be empty, or it'll look like a text element!
-    jassert (tag.containsNonWhitespaceChars());
-
-    // The tag can't contain spaces or other characters that would create invalid XML!
-    jassert (! tag.containsAnyOf (" <>/&(){}"));
-}
-
 XmlElement::XmlElement (const String& tag)
     : tagName (StringPool::getGlobalPool().getPooledString (tag))
 {
-    sanityCheckTagName (tagName);
+    jassert (isValidXmlName (tagName));
 }
 
 XmlElement::XmlElement (const char* tag)
     : tagName (StringPool::getGlobalPool().getPooledString (tag))
 {
-    sanityCheckTagName (tagName);
+    jassert (isValidXmlName (tagName));
 }
 
 XmlElement::XmlElement (StringRef tag)
     : tagName (StringPool::getGlobalPool().getPooledString (tag))
 {
-    sanityCheckTagName (tagName);
+    jassert (isValidXmlName (tagName));
 }
 
 XmlElement::XmlElement (const Identifier& tag)
     : tagName (tag.toString())
 {
-    sanityCheckTagName (tagName);
+    jassert (isValidXmlName (tagName));
 }
 
 XmlElement::XmlElement (String::CharPointerType tagNameStart, String::CharPointerType tagNameEnd)
     : tagName (StringPool::getGlobalPool().getPooledString (tagNameStart, tagNameEnd))
 {
-    sanityCheckTagName (tagName);
+    jassert (isValidXmlName (tagName));
 }
 
 XmlElement::XmlElement (int /*dummy*/) noexcept
@@ -387,6 +409,11 @@ bool XmlElement::writeToFile (const File& file,
             return false;
 
         writeToStream (out, dtdToUse, false, true, encodingType, lineWrapLength);
+
+        out.flush(); // (called explicitly to force an fsync on posix)
+
+        if (out.getStatus().failed())
+            return false;
     }
 
     return tempFile.overwriteTargetFileWithTemporary();
@@ -435,12 +462,22 @@ int XmlElement::getNumAttributes() const noexcept
     return attributes.size();
 }
 
+static const String& getEmptyStringRef() noexcept
+{
+   #if JUCE_ALLOW_STATIC_NULL_VARIABLES
+    return String::empty;
+   #else
+    static String empty;
+    return empty;
+   #endif
+}
+
 const String& XmlElement::getAttributeName (const int index) const noexcept
 {
     if (const XmlAttributeNode* const att = attributes [index])
         return att->name.toString();
 
-    return String::empty;
+    return getEmptyStringRef();
 }
 
 const String& XmlElement::getAttributeValue (const int index) const noexcept
@@ -448,7 +485,7 @@ const String& XmlElement::getAttributeValue (const int index) const noexcept
     if (const XmlAttributeNode* const att = attributes [index])
         return att->value;
 
-    return String::empty;
+    return getEmptyStringRef();
 }
 
 XmlElement::XmlAttributeNode* XmlElement::getAttribute (StringRef attributeName) const noexcept
@@ -471,7 +508,7 @@ const String& XmlElement::getStringAttribute (StringRef attributeName) const noe
     if (const XmlAttributeNode* att = getAttribute (attributeName))
         return att->value;
 
-    return String::empty;
+    return getEmptyStringRef();
 }
 
 String XmlElement::getStringAttribute (StringRef attributeName, const String& defaultReturnValue) const
@@ -867,6 +904,21 @@ XmlElement* XmlElement::createTextElement (const String& text)
     XmlElement* const e = new XmlElement ((int) 0);
     e->setAttribute (juce_xmltextContentAttributeName, text);
     return e;
+}
+
+bool XmlElement::isValidXmlName (StringRef text) noexcept
+{
+    if (text.isEmpty() || ! isValidXmlNameStartCharacter (text.text.getAndAdvance()))
+        return false;
+
+    for (;;)
+    {
+        if (text.isEmpty())
+            return true;
+
+        if (! isValidXmlNameBodyCharacter (text.text.getAndAdvance()))
+            return false;
+    }
 }
 
 void XmlElement::addTextElement (const String& text)

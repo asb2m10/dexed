@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -34,9 +36,9 @@
 
     See also SystemStats::getJUCEVersion() for a string version.
 */
-#define JUCE_MAJOR_VERSION      3
-#define JUCE_MINOR_VERSION      2
-#define JUCE_BUILDNUMBER        0
+#define JUCE_MAJOR_VERSION      4
+#define JUCE_MINOR_VERSION      3
+#define JUCE_BUILDNUMBER        1
 
 /** Current Juce version number.
 
@@ -50,33 +52,23 @@
 
 
 //==============================================================================
-#include <vector>  // included before platform defs to provide a definition of _LIBCPP_VERSION
+#include <memory>
+#include <cmath>
+#include <vector>
+#include <iostream>
+#include <functional>
+#include <algorithm>
+#include <limits>
 
-#include "juce_PlatformDefs.h"
+//==============================================================================
 #include "juce_CompilerSupport.h"
+#include "juce_PlatformDefs.h"
 
 //==============================================================================
 // Now we'll include some common OS headers..
 #if JUCE_MSVC
  #pragma warning (push)
  #pragma warning (disable: 4514 4245 4100)
-#endif
-
-#include <cstdlib>
-#include <cstdarg>
-#include <climits>
-#include <limits>
-#include <cmath>
-#include <cwchar>
-#include <stdexcept>
-#include <typeinfo>
-#include <cstring>
-#include <cstdio>
-#include <iostream>
-#include <algorithm>
-#include <functional>
-
-#if JUCE_USE_MSVC_INTRINSICS
  #include <intrin.h>
 #endif
 
@@ -85,6 +77,7 @@
 #endif
 
 #if JUCE_LINUX
+ #include <cstring>
  #include <signal.h>
 
  #if __INTEL_COMPILER
@@ -104,18 +97,24 @@
  #pragma warning (pop)
 #endif
 
+#if JUCE_MINGW
+ #include <cstring>
+ #include <sys/types.h>
+#endif
+
 #if JUCE_ANDROID
+ #include <cstring>
  #include <atomic>
  #include <byteswap.h>
 #endif
 
 // undef symbols that are sometimes set by misguided 3rd-party headers..
-#undef check
 #undef TYPE_BOOL
 #undef max
 #undef min
 #undef major
 #undef minor
+#undef KeyPress
 
 //==============================================================================
 // DLL building settings on Windows

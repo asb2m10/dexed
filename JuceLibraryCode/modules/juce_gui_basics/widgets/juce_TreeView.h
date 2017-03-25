@@ -133,7 +133,9 @@ public:
     TreeViewItem* getParentItem() const noexcept        { return parentItem; }
 
     //==============================================================================
-    /** True if this item is currently open in the treeview. */
+    /** True if this item is currently open in the treeview.
+        @see getOpenness
+    */
     bool isOpen() const noexcept;
 
     /** Opens or closes the item.
@@ -142,9 +144,37 @@ public:
         and a subclass should use this callback to create and add any sub-items that
         it needs to.
 
-        @see itemOpennessChanged, mightContainSubItems
+        Note that if this is called when the item is in its default openness state, and
+        this call would not change whether it's open or closed, then no change will be
+        stored. If you want to explicitly set the openness state to be non-default then
+        you should use setOpenness instead.
+
+        @see setOpenness, itemOpennessChanged, mightContainSubItems
     */
     void setOpen (bool shouldBeOpen);
+
+    /** An enum of states to describe the explicit or implicit openness of an item. */
+    enum Openness
+    {
+        opennessDefault = 0,
+        opennessClosed = 1,
+        opennessOpen = 2
+    };
+
+    /** Returns the openness state of this item.
+        @see isOpen
+    */
+    Openness getOpenness() const noexcept;
+
+    /** Opens or closes the item.
+
+        If this causes the value of isOpen() to change, then the item's itemOpennessChanged()
+        method will be called, and a subclass should use this callback to create and add any
+        sub-items that it needs to.
+
+        @see setOpen
+    */
+    void setOpenness (Openness newOpenness);
 
     /** True if this item is currently selected.
         Use this when painting the node, to decide whether to draw it as selected or not.
@@ -364,6 +394,9 @@ public:
     */
     virtual void itemSelectionChanged (bool isNowSelected);
 
+    /** Called when the owner view changes */
+    virtual void ownerViewChanged (TreeView* newOwner);
+
     /** The item can return a tool tip string here if it wants to.
         @see TooltipClient
     */
@@ -540,7 +573,7 @@ public:
 
     private:
         TreeViewItem& treeViewItem;
-        ScopedPointer <XmlElement> oldOpenness;
+        ScopedPointer<XmlElement> oldOpenness;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OpennessRestorer)
     };
@@ -612,7 +645,7 @@ public:
         Once you've got a treeview component, you'll need to give it something to
         display, using the setRootItem() method.
     */
-    TreeView (const String& componentName = String::empty);
+    TreeView (const String& componentName = String());
 
     /** Destructor. */
     ~TreeView();
@@ -811,7 +844,9 @@ public:
         backgroundColourId             = 0x1000500, /**< A background colour to fill the component with. */
         linesColourId                  = 0x1000501, /**< The colour to draw the lines with.*/
         dragAndDropIndicatorColourId   = 0x1000502, /**< The colour to use for the drag-and-drop target position indicator. */
-        selectedItemBackgroundColourId = 0x1000503  /**< The colour to use to fill the background of any selected items. */
+        selectedItemBackgroundColourId = 0x1000503, /**< The colour to use to fill the background of any selected items. */
+        oddItemsColourId               = 0x1000504, /**< The colour to use to fill the backround of the odd numbered items. */
+        evenItemsColourId              = 0x1000505  /**< The colour to use to fill the backround of the even numbered items. */
     };
 
     //==============================================================================

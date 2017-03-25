@@ -1,53 +1,67 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
 
+
+/*******************************************************************************
+ The block below describes the properties of this module, and is read by
+ the Projucer to automatically generate project code that uses it.
+ For details about the syntax and how to create or use a module, see the
+ JUCE Module Format.txt file.
+
+
+ BEGIN_JUCE_MODULE_DECLARATION
+
+  ID:               juce_core
+  vendor:           juce
+  version:          4.3.1
+  name:             JUCE core classes
+  description:      The essential set of basic JUCE classes, as required by all the other JUCE modules. Includes text, container, memory, threading and i/o functionality.
+  website:          http://www.juce.com/juce
+  license:          ISC
+
+  dependencies:
+  OSXFrameworks:    Cocoa IOKit
+  iOSFrameworks:    Foundation
+  linuxLibs:        rt dl pthread
+  linuxPackages:    libcurl
+  mingwLibs:        uuid wsock32 wininet version ole32 ws2_32 oleaut32 imm32 comdlg32 shlwapi rpcrt4 winmm
+
+ END_JUCE_MODULE_DECLARATION
+
+*******************************************************************************/
+
+
 #ifndef JUCE_CORE_H_INCLUDED
 #define JUCE_CORE_H_INCLUDED
 
-#ifndef JUCE_MODULE_AVAILABLE_juce_core
- /* If you fail to make sure that all your compile units are building JUCE with the same set of
-    option flags, then there's a risk that different compile units will treat the classes as having
-    different memory layouts, leading to very nasty memory corruption errors when they all get
-    linked together. That's why it's best to always include the Introjucer-generated AppConfig.h
-    file before any juce headers.
-
-    Note that if you do have an AppConfig.h file and hit this warning, it means that it doesn't
-    contain the JUCE_MODULE_AVAILABLE_xxx flags, which are necessary for some inter-module
-    functionality to work correctly. In that case, you should either rebuild your AppConfig.h with
-    the latest introjucer, or fix it manually to contain these flags.
- */
- #ifdef _MSC_VER
-  #pragma message ("Have you included your AppConfig.h file before including the JUCE headers?")
- #else
-  #warning "Have you included your AppConfig.h file before including the JUCE headers?"
- #endif
-#endif
-
+//==============================================================================
 #ifdef _MSC_VER
  #pragma warning (push)
  // Disable warnings for long class names, padding, and undefined preprocessor definitions.
@@ -57,10 +71,9 @@
  #endif
 #endif
 
-//==============================================================================
 #include "system/juce_TargetPlatform.h"
 
-//=============================================================================
+//==============================================================================
 /** Config: JUCE_FORCE_DEBUG
 
     Normally, JUCE_DEBUG is set to 1 or 0 based on compiler and project settings,
@@ -70,7 +83,7 @@
  //#define JUCE_FORCE_DEBUG 0
 #endif
 
-//=============================================================================
+//==============================================================================
 /** Config: JUCE_LOG_ASSERTIONS
 
     If this flag is enabled, the jassert and jassertfalse macros will always use Logger::writeToLog()
@@ -90,7 +103,7 @@
  #endif
 #endif
 
-//=============================================================================
+//==============================================================================
 /** Config: JUCE_CHECK_MEMORY_LEAKS
 
     Enables a memory-leak check for certain objects when the app terminates. See the LeakedObjectDetector
@@ -100,7 +113,7 @@
  #define JUCE_CHECK_MEMORY_LEAKS 1
 #endif
 
-//=============================================================================
+//==============================================================================
 /** Config: JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES
 
     In a Visual C++  build, this can be used to stop the required system libs being
@@ -128,7 +141,7 @@
 
 /** Config: JUCE_USE_CURL
     Enables http/https support via libcurl (Linux only). Enabling this will add an additional
-    run-time dynmic dependency to libcurl.
+    run-time dynamic dependency to libcurl.
 
     If you disable this then https/ssl support will not be available on linux.
 */
@@ -137,7 +150,7 @@
 #endif
 
 
-/*  Config: JUCE_CATCH_UNHANDLED_EXCEPTIONS
+/** Config: JUCE_CATCH_UNHANDLED_EXCEPTIONS
     If enabled, this will add some exception-catching code to forward unhandled exceptions
     to your JUCEApplicationBase::unhandledException() callback.
 */
@@ -145,12 +158,26 @@
  //#define JUCE_CATCH_UNHANDLED_EXCEPTIONS 1
 #endif
 
+/** Config: JUCE_ALLOW_STATIC_NULL_VARIABLES
+    If disabled, this will turn off dangerous static globals like String::empty, var::null, etc
+    which can cause nasty order-of-initialisation problems if they are referenced during static
+    constructor code.
+*/
+#ifndef JUCE_ALLOW_STATIC_NULL_VARIABLES
+ #define JUCE_ALLOW_STATIC_NULL_VARIABLES 1
+#endif
+
+
 #ifndef JUCE_STRING_UTF_TYPE
  #define JUCE_STRING_UTF_TYPE 8
 #endif
 
-//=============================================================================
-//=============================================================================
+//==============================================================================
+//==============================================================================
+
+#if JUCE_CORE_INCLUDE_NATIVE_HEADERS
+ #include "native/juce_BasicNativeHeaders.h"
+#endif
 
 #include "system/juce_StandardHeader.h"
 
@@ -168,7 +195,7 @@ class FileOutputStream;
 class XmlElement;
 class JSONFormatter;
 
-extern JUCE_API bool JUCE_CALLTYPE juce_isRunningUnderDebugger();
+extern JUCE_API bool JUCE_CALLTYPE juce_isRunningUnderDebugger() noexcept;
 extern JUCE_API void JUCE_CALLTYPE logAssertion (const char* file, int line) noexcept;
 
 #include "memory/juce_Memory.h"
@@ -207,10 +234,12 @@ extern JUCE_API void JUCE_CALLTYPE logAssertion (const char* file, int line) noe
 #include "threads/juce_CriticalSection.h"
 #include "maths/juce_Range.h"
 #include "maths/juce_NormalisableRange.h"
+#include "maths/juce_StatisticsAccumulator.h"
 #include "containers/juce_ElementComparator.h"
 #include "containers/juce_ArrayAllocationBase.h"
 #include "containers/juce_Array.h"
 #include "containers/juce_LinkedListPointer.h"
+#include "containers/juce_ListenerList.h"
 #include "containers/juce_OwnedArray.h"
 #include "containers/juce_ReferenceCountedArray.h"
 #include "containers/juce_ScopedValueSetter.h"
@@ -224,6 +253,7 @@ extern JUCE_API void JUCE_CALLTYPE logAssertion (const char* file, int line) noe
 #include "text/juce_StringPairArray.h"
 #include "text/juce_TextDiff.h"
 #include "text/juce_LocalisedStrings.h"
+#include "text/juce_Base64.h"
 #include "misc/juce_Result.h"
 #include "containers/juce_Variant.h"
 #include "containers/juce_NamedValueSet.h"
@@ -254,6 +284,7 @@ extern JUCE_API void JUCE_CALLTYPE logAssertion (const char* file, int line) noe
 #include "maths/juce_BigInteger.h"
 #include "maths/juce_Expression.h"
 #include "maths/juce_Random.h"
+#include "misc/juce_RuntimePermissions.h"
 #include "misc/juce_Uuid.h"
 #include "misc/juce_WindowsRegistry.h"
 #include "system/juce_SystemStats.h"
@@ -276,6 +307,7 @@ extern JUCE_API void JUCE_CALLTYPE logAssertion (const char* file, int line) noe
 #include "network/juce_NamedPipe.h"
 #include "network/juce_Socket.h"
 #include "network/juce_URL.h"
+#include "network/juce_WebInputStream.h"
 #include "time/juce_PerformanceCounter.h"
 #include "unit_tests/juce_UnitTest.h"
 #include "xml/juce_XmlDocument.h"
@@ -286,10 +318,48 @@ extern JUCE_API void JUCE_CALLTYPE logAssertion (const char* file, int line) noe
 #include "containers/juce_PropertySet.h"
 #include "memory/juce_SharedResourcePointer.h"
 
+#if JUCE_CORE_INCLUDE_OBJC_HELPERS && (JUCE_MAC || JUCE_IOS)
+ #include "native/juce_osx_ObjCHelpers.h"
+#endif
+
+#if JUCE_CORE_INCLUDE_COM_SMART_PTR && JUCE_WINDOWS
+ #include "native/juce_win32_ComSmartPtr.h"
+#endif
+
+#if JUCE_CORE_INCLUDE_JNI_HELPERS && JUCE_ANDROID
+ #include "native/juce_android_JNIHelpers.h"
+#endif
+
+
+#ifndef DOXYGEN
+ /*
+    As the very long class names here try to explain, the purpose of this code is to cause
+    a linker error if not all of your compile units are consistent in the options that they
+    enable before including JUCE headers. The reason this is important is that if you have
+    two cpp files, and one includes the juce headers with debug enabled, and another does so
+    without that, then each will be generating code with different class layouts, and you'll
+    get subtle and hard-to-track-down memory corruption!
+ */
+ #if JUCE_DEBUG
+  struct JUCE_API this_will_fail_to_link_if_some_of_your_compile_units_are_built_in_debug_mode
+  { this_will_fail_to_link_if_some_of_your_compile_units_are_built_in_debug_mode() noexcept; };
+  static this_will_fail_to_link_if_some_of_your_compile_units_are_built_in_debug_mode compileUnitMismatchSentinel;
+ #else
+  struct JUCE_API this_will_fail_to_link_if_some_of_your_compile_units_are_built_in_release_mode
+  { this_will_fail_to_link_if_some_of_your_compile_units_are_built_in_release_mode() noexcept; };
+  static this_will_fail_to_link_if_some_of_your_compile_units_are_built_in_release_mode compileUnitMismatchSentinel;
+ #endif
+#endif
+
 }
 
 #if JUCE_MSVC
  #pragma warning (pop)
+
+ // In DLL builds, need to disable this warnings for other modules
+ #if defined (JUCE_DLL_BUILD) || defined (JUCE_DLL)
+  #pragma warning (disable: 4251)
+ #endif
 #endif
 
 #endif   // JUCE_CORE_H_INCLUDED

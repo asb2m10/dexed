@@ -58,10 +58,17 @@ Image ImageType::convert (const Image& source) const
     Image newImage (create (src.pixelFormat, src.width, src.height, false));
     Image::BitmapData dest (newImage, Image::BitmapData::writeOnly);
 
-    jassert (src.pixelStride == dest.pixelStride && src.pixelFormat == dest.pixelFormat);
-
-    for (int y = 0; y < dest.height; ++y)
-        memcpy (dest.getLinePointer (y), src.getLinePointer (y), (size_t) dest.lineStride);
+    if (src.pixelStride == dest.pixelStride && src.pixelFormat == dest.pixelFormat)
+    {
+        for (int y = 0; y < dest.height; ++y)
+            memcpy (dest.getLinePointer (y), src.getLinePointer (y), (size_t) dest.lineStride);
+    }
+    else
+    {
+        for (int y = 0; y < dest.height; ++y)
+            for (int x = 0; x < dest.width; ++x)
+                dest.setPixelColour (x, y, src.getPixelColour (x, y));
+    }
 
     return newImage;
 }
@@ -95,7 +102,7 @@ public:
             sendDataChangeMessage();
     }
 
-    ImagePixelData* clone() override
+    ImagePixelData::Ptr clone() override
     {
         SoftwarePixelData* s = new SoftwarePixelData (pixelFormat, width, height, false);
         memcpy (s->imageData, imageData, (size_t) (lineStride * height));
@@ -146,13 +153,13 @@ class SubsectionPixelData  : public ImagePixelData
 public:
     SubsectionPixelData (ImagePixelData* const im, const Rectangle<int>& r)
         : ImagePixelData (im->pixelFormat, r.getWidth(), r.getHeight()),
-          image (im), area (r)
+          sourceImage (im), area (r)
     {
     }
 
     LowLevelGraphicsContext* createLowLevelContext() override
     {
-        LowLevelGraphicsContext* g = image->createLowLevelContext();
+        LowLevelGraphicsContext* g = sourceImage->createLowLevelContext();
         g->clipToRectangle (area);
         g->setOrigin (area.getPosition());
         return g;
@@ -160,16 +167,16 @@ public:
 
     void initialiseBitmapData (Image::BitmapData& bitmap, int x, int y, Image::BitmapData::ReadWriteMode mode) override
     {
-        image->initialiseBitmapData (bitmap, x + area.getX(), y + area.getY(), mode);
+        sourceImage->initialiseBitmapData (bitmap, x + area.getX(), y + area.getY(), mode);
 
         if (mode != Image::BitmapData::readOnly)
             sendDataChangeMessage();
     }
 
-    ImagePixelData* clone() override
+    ImagePixelData::Ptr clone() override
     {
         jassert (getReferenceCount() > 0); // (This method can't be used on an unowned pointer, as it will end up self-deleting)
-        const ScopedPointer<ImageType> type (image->createType());
+        const ScopedPointer<ImageType> type (createType());
 
         Image newImage (type->create (pixelFormat, area.getWidth(), area.getHeight(), pixelFormat != Image::RGB));
 
@@ -178,18 +185,17 @@ public:
             g.drawImageAt (Image (this), 0, 0);
         }
 
-        newImage.getPixelData()->incReferenceCount();
         return newImage.getPixelData();
     }
 
-    ImageType* createType() const override          { return image->createType(); }
+    ImageType* createType() const override          { return sourceImage->createType(); }
 
     /* as we always hold a reference to image, don't double count */
-    int getSharedCount() const noexcept override    { return getReferenceCount() + image->getSharedCount() - 1; }
+    int getSharedCount() const noexcept override    { return getReferenceCount() + sourceImage->getSharedCount() - 1; }
 
 private:
     friend class Image;
-    const ImagePixelData::Ptr image;
+    const ImagePixelData::Ptr sourceImage;
     const Rectangle<int> area;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SubsectionPixelData)
@@ -238,13 +244,13 @@ Image& Image::operator= (const Image& other)
 
 #if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS
 Image::Image (Image&& other) noexcept
-    : image (static_cast <ImagePixelData::Ptr&&> (other.image))
+    : image (static_cast<ImagePixelData::Ptr&&> (other.image))
 {
 }
 
 Image& Image::operator= (Image&& other) noexcept
 {
-    image = static_cast <ImagePixelData::Ptr&&> (other.image);
+    image = static_cast<ImagePixelData::Ptr&&> (other.image);
     return *this;
 }
 #endif
@@ -253,7 +259,9 @@ Image::~Image()
 {
 }
 
+#if JUCE_ALLOW_STATIC_NULL_VARIABLES
 const Image Image::null;
+#endif
 
 int Image::getReferenceCount() const noexcept           { return image == nullptr ? 0 : image->getSharedCount(); }
 int Image::getWidth() const noexcept                    { return image == nullptr ? 0 : image->width; }

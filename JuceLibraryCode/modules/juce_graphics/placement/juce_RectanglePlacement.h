@@ -28,7 +28,7 @@
 
 //==============================================================================
 /**
-    Defines the method used to postion some kind of rectangular object within
+    Defines the method used to position some kind of rectangular object within
     a rectangular viewport.
 
     Although similar to Justification, this is more specific, and has some extra
@@ -151,10 +151,10 @@ public:
                                     const Rectangle<ValueType>& destination) const noexcept
     {
         double x = source.getX(), y = source.getY(), w = source.getWidth(), h = source.getHeight();
-        applyTo (x, y, w, h, static_cast <double> (destination.getX()), static_cast <double> (destination.getY()),
-                 static_cast <double> (destination.getWidth()), static_cast <double> (destination.getHeight()));
-        return Rectangle<ValueType> (static_cast <ValueType> (x), static_cast <ValueType> (y),
-                                     static_cast <ValueType> (w), static_cast <ValueType> (h));
+        applyTo (x, y, w, h, static_cast<double> (destination.getX()), static_cast<double> (destination.getY()),
+                 static_cast<double> (destination.getWidth()), static_cast<double> (destination.getHeight()));
+        return Rectangle<ValueType> (static_cast<ValueType> (x), static_cast<ValueType> (y),
+                                     static_cast<ValueType> (w), static_cast<ValueType> (h));
     }
 
     /** Returns the transform that should be applied to these source coordinates to fit them

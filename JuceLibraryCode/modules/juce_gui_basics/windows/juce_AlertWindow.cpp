@@ -89,7 +89,7 @@ void AlertWindow::addButton (const String& name,
                              const KeyPress& shortcutKey1,
                              const KeyPress& shortcutKey2)
 {
-    TextButton* const b = new TextButton (name, String::empty);
+    TextButton* const b = new TextButton (name, String());
     buttons.add (b);
 
     b->setWantsKeyboardFocus (true);
@@ -98,7 +98,18 @@ void AlertWindow::addButton (const String& name,
     b->addShortcut (shortcutKey1);
     b->addShortcut (shortcutKey2);
     b->addListener (this);
-    b->changeWidthToFitText (getLookAndFeel().getAlertWindowButtonHeight());
+
+    Array<TextButton*> buttonsArray (buttons.begin(), buttons.size());
+
+    const int buttonHeight        = getLookAndFeel().getAlertWindowButtonHeight();
+    const Array<int> buttonWidths = getLookAndFeel().getWidthsForTextButtons (*this, buttonsArray);
+
+    jassert (buttonWidths.size() == buttons.size());
+
+    const int n = buttonWidths.size();
+
+    for (int i = 0; i < n; ++i)
+        buttons.getUnchecked (i)->setSize (buttonWidths.getReference (i), buttonHeight);
 
     addAndMakeVisible (b, 0);
 
@@ -143,9 +154,9 @@ void AlertWindow::addTextEditor (const String& name,
 
     ed->setColour (TextEditor::outlineColourId, findColour (ComboBox::outlineColourId));
     ed->setFont (getLookAndFeel().getAlertWindowMessageFont());
+    addAndMakeVisible (ed);
     ed->setText (initialContents);
     ed->setCaretPosition (initialContents.length());
-    addAndMakeVisible (ed);
     textboxNames.add (onScreenLabel);
 
     updateLayout (false);
@@ -165,7 +176,7 @@ String AlertWindow::getTextEditorContents (const String& nameOfTextEditor) const
     if (TextEditor* const t = getTextEditor (nameOfTextEditor))
         return t->getText();
 
-    return String::empty;
+    return String();
 }
 
 
@@ -197,11 +208,10 @@ ComboBox* AlertWindow::getComboBoxComponent (const String& nameOfList) const
 }
 
 //==============================================================================
-class AlertTextComp : public TextEditor
+class AlertTextComp  : public TextEditor
 {
 public:
-    AlertTextComp (const String& message,
-                   const Font& font)
+    AlertTextComp (AlertWindow& owner, const String& message, const Font& font)
     {
         setReadOnly (true);
         setMultiLine (true, true);
@@ -214,6 +224,9 @@ public:
         setText (message, false);
 
         bestWidth = 2 * (int) std::sqrt (font.getHeight() * font.getStringWidth (message));
+
+        if (owner.isColourSpecified (AlertWindow::textColourId))
+            setColour (TextEditor::textColourId, owner.findColour (AlertWindow::textColourId));
 
         setColour (TextEditor::backgroundColourId, Colours::transparentBlack);
         setColour (TextEditor::outlineColourId, Colours::transparentBlack);
@@ -241,7 +254,7 @@ private:
 
 void AlertWindow::addTextBlock (const String& textBlock)
 {
-    AlertTextComp* const c = new AlertTextComp (textBlock, getLookAndFeel().getAlertWindowMessageFont());
+    AlertTextComp* const c = new AlertTextComp (*this, textBlock, getLookAndFeel().getAlertWindowMessageFont());
     textBlocks.add (c);
     allComps.add (c);
 
@@ -428,18 +441,9 @@ void AlertWindow::updateLayout (const bool onlyIncreaseSize)
     }
 
     if (! isVisible())
-    {
         centreAroundComponent (associatedComponent, w, h);
-    }
     else
-    {
-        const int cx = getX() + getWidth() / 2;
-        const int cy = getY() + getHeight() / 2;
-
-        setBounds (cx - w / 2,
-                   cy - h / 2,
-                   w, h);
-    }
+        setBounds (getBounds().withSizeKeepingCentre (w, h));
 
     textArea.setBounds (edgeGap, edgeGap, w - (edgeGap * 2), h - edgeGap);
 
@@ -600,6 +604,8 @@ private:
 
         jassert (alertBox != nullptr); // you have to return one of these!
 
+        alertBox->setAlwaysOnTop (juce_areThereAnyAlwaysOnTopWindows());
+
        #if JUCE_MODAL_LOOPS_PERMITTED
         if (modal)
         {
@@ -608,7 +614,7 @@ private:
         else
        #endif
         {
-            (void) modal; // (to avoid an unused variable warning)
+            ignoreUnused (modal);
 
             alertBox->enterModalState (true, callback, true);
             alertBox.release();

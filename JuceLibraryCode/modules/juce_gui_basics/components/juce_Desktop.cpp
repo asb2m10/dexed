@@ -36,6 +36,7 @@ Desktop::Desktop()
 Desktop::~Desktop()
 {
     setScreenSaverEnabled (true);
+    animator.cancelAllAnimations (false);
 
     jassert (instance == this);
     instance = nullptr;
@@ -92,7 +93,7 @@ LookAndFeel& Desktop::getDefaultLookAndFeel() noexcept
     if (currentLookAndFeel == nullptr)
     {
         if (defaultLookAndFeel == nullptr)
-            defaultLookAndFeel = new LookAndFeel_V2();
+            defaultLookAndFeel = new LookAndFeel_V3();
 
         currentLookAndFeel = defaultLookAndFeel;
     }
@@ -246,7 +247,7 @@ void Desktop::sendMouseMove()
             const Time now (Time::getCurrentTime());
 
             const MouseEvent me (getMainMouseSource(), pos, ModifierKeys::getCurrentModifiers(),
-                                 target, target, now, pos, now, 0, false);
+                                 MouseInputSource::invalidPressure, target, target, now, pos, now, 0, false);
 
             if (me.mods.isAnyMouseButtonDown())
                 mouseListeners.callChecked (checker, &MouseListener::mouseDrag, me);
@@ -386,10 +387,14 @@ void Desktop::setKioskModeComponent (Component* componentToUse, const bool allow
 //==============================================================================
 void Desktop::setOrientationsEnabled (const int newOrientations)
 {
-    // Dodgy set of flags being passed here! Make sure you specify at least one permitted orientation.
-    jassert (newOrientations != 0 && (newOrientations & ~allOrientations) == 0);
+    if (allowedOrientations != newOrientations)
+    {
+        // Dodgy set of flags being passed here! Make sure you specify at least one permitted orientation.
+        jassert (newOrientations != 0 && (newOrientations & ~allOrientations) == 0);
 
-    allowedOrientations = newOrientations;
+        allowedOrientations = newOrientations;
+        allowedOrientationsChanged();
+    }
 }
 
 bool Desktop::isOrientationEnabled (const DisplayOrientation orientation) const noexcept

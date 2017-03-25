@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -64,6 +66,8 @@ public:
         MacOSX_10_8     = MacOSX | 8,
         MacOSX_10_9     = MacOSX | 9,
         MacOSX_10_10    = MacOSX | 10,
+        MacOSX_10_11    = MacOSX | 11,
+        MacOSX_10_12    = MacOSX | 12,
 
         Win2000         = Windows | 1,
         WinXP           = Windows | 2,
@@ -151,13 +155,16 @@ public:
     */
     static String getCpuVendor();
 
-    static bool hasMMX() noexcept;   /**< Returns true if Intel MMX instructions are available. */
-    static bool has3DNow() noexcept; /**< Returns true if AMD 3DNOW instructions are available. */
-    static bool hasSSE() noexcept;   /**< Returns true if Intel SSE instructions are available. */
-    static bool hasSSE2() noexcept;  /**< Returns true if Intel SSE2 instructions are available. */
-    static bool hasSSE3() noexcept;  /**< Returns true if Intel SSE2 instructions are available. */
-    static bool hasSSSE3() noexcept; /**< Returns true if Intel SSSE3 instructions are available. */
-    static bool hasAVX() noexcept;   /**< Returns true if Intel AVX instructions are available. */
+    static bool hasMMX() noexcept;    /**< Returns true if Intel MMX instructions are available. */
+    static bool has3DNow() noexcept;  /**< Returns true if AMD 3DNOW instructions are available. */
+    static bool hasSSE() noexcept;    /**< Returns true if Intel SSE instructions are available. */
+    static bool hasSSE2() noexcept;   /**< Returns true if Intel SSE2 instructions are available. */
+    static bool hasSSE3() noexcept;   /**< Returns true if Intel SSE3 instructions are available. */
+    static bool hasSSSE3() noexcept;  /**< Returns true if Intel SSSE3 instructions are available. */
+    static bool hasSSE41() noexcept;  /**< Returns true if Intel SSE4.1 instructions are available. */
+    static bool hasSSE42() noexcept;  /**< Returns true if Intel SSE4.2 instructions are available. */
+    static bool hasAVX() noexcept;    /**< Returns true if Intel AVX instructions are available. */
+    static bool hasAVX2() noexcept;   /**< Returns true if Intel AVX2 instructions are available. */
 
     //==============================================================================
     /** Finds out how much RAM is in the machine.
@@ -188,6 +195,12 @@ public:
         where the problem happened and log it, etc.
     */
     static void setApplicationCrashHandler (CrashHandlerFunction);
+
+    /** Returns true if this code is running inside an app extension sandbox.
+
+        This function will always return false on windows, linux and android.
+    */
+    static bool isRunningInAppExtensionSandbox() noexcept;
 
 private:
     //==============================================================================

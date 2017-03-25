@@ -49,7 +49,7 @@ struct TextAtom
             return atomText.substring (0, numChars);
 
         if (isNewLine())
-            return String::empty;
+            return String();
 
         return String::repeatedString (String::charToString (passwordCharacter), numChars);
     }
@@ -111,7 +111,7 @@ public:
 
     UniformTextSection* split (const int indexToBreakAt, const juce_wchar passwordChar)
     {
-        UniformTextSection* const section2 = new UniformTextSection (String::empty, font, colour, passwordChar);
+        UniformTextSection* const section2 = new UniformTextSection (String(), font, colour, passwordChar);
         int index = 0;
 
         for (int i = 0; i < atoms.size(); ++i)
@@ -723,19 +723,19 @@ public:
     {
     }
 
-    bool perform()
+    bool perform() override
     {
         owner.insert (text, insertIndex, font, colour, 0, newCaretPos);
         return true;
     }
 
-    bool undo()
+    bool undo() override
     {
         owner.remove (Range<int> (insertIndex, insertIndex + text.length()), 0, oldCaretPos);
         return true;
     }
 
-    int getSizeInUnits()
+    int getSizeInUnits() override
     {
         return text.length() + 16;
     }
@@ -767,20 +767,20 @@ public:
         removedSections.addArray (oldSections);
     }
 
-    bool perform()
+    bool perform() override
     {
         owner.remove (range, 0, newCaretPos);
         return true;
     }
 
-    bool undo()
+    bool undo() override
     {
         owner.reinsert (range.getStart(), removedSections);
         owner.moveCaretTo (oldCaretPos, false);
         return true;
     }
 
-    int getSizeInUnits()
+    int getSizeInUnits() override
     {
         int n = 16;
         for (int i = removedSections.size(); --i >= 0;)
@@ -902,6 +902,7 @@ TextEditor::TextEditor (const String& name,
     : Component (name),
       borderSize (1, 1, 1, 3),
       readOnly (false),
+      caretVisible (true),
       multiline (false),
       wordWrap (false),
       returnKeyStartsNewLine (false),
@@ -914,6 +915,7 @@ TextEditor::TextEditor (const String& name,
       menuActive (false),
       valueTextNeedsUpdating (false),
       consumeEscAndReturnKeys (true),
+      styleChanged (false),
       leftIndent (4),
       topIndent (4),
       lastTransactionTime (0),
@@ -933,7 +935,7 @@ TextEditor::TextEditor (const String& name,
     viewport->setScrollBarsShown (false, false);
 
     setWantsKeyboardFocus (true);
-    setCaretVisible (true);
+    recreateCaret();
 }
 
 TextEditor::~TextEditor()
@@ -1020,7 +1022,7 @@ void TextEditor::setReadOnly (const bool shouldBeReadOnly)
     }
 }
 
-bool TextEditor::isReadOnly() const
+bool TextEditor::isReadOnly() const noexcept
 {
     return readOnly || ! isEnabled();
 }
@@ -1079,24 +1081,47 @@ void TextEditor::colourChanged()
 {
     setOpaque (findColour (backgroundColourId).isOpaque());
     repaint();
+    styleChanged = true;
 }
 
 void TextEditor::lookAndFeelChanged()
 {
-    if (isCaretVisible())
-    {
-        setCaretVisible (false);
-        setCaretVisible (true);
-        updateCaretPosition();
-    }
+    colourChanged();
+
+    caret = nullptr;
+    recreateCaret();
+    repaint();
+}
+
+void TextEditor::parentHierarchyChanged()
+{
+    lookAndFeelChanged();
+}
+
+void TextEditor::enablementChanged()
+{
+    recreateCaret();
+    repaint();
 }
 
 void TextEditor::setCaretVisible (const bool shouldCaretBeVisible)
 {
-    if (shouldCaretBeVisible && ! isReadOnly())
+    if (caretVisible != shouldCaretBeVisible)
+    {
+        caretVisible = shouldCaretBeVisible;
+        recreateCaret();
+    }
+}
+
+void TextEditor::recreateCaret()
+{
+    if (isCaretVisible())
     {
         if (caret == nullptr)
+        {
             textHolder->addChildComponent (caret = getLookAndFeel().createCaretComponent (this));
+            updateCaretPosition();
+        }
     }
     else
     {
@@ -1132,8 +1157,7 @@ void TextEditor::setInputFilter (InputFilter* newFilter, bool takeOwnership)
     inputFilter.set (newFilter, takeOwnership);
 }
 
-void TextEditor::setInputRestrictions (const int maxLen,
-                                       const String& chars)
+void TextEditor::setInputRestrictions (const int maxLen, const String& chars)
 {
     setInputFilter (new LengthAndCharacterRestriction (maxLen, chars), true);
 }
@@ -1171,7 +1195,7 @@ void TextEditor::setText (const String& newText,
 {
     const int newLength = newText.length();
 
-    if (newLength != getTotalNumChars() || getText() != newText)
+    if (newLength != getTotalNumChars() || getText() != newText || styleChanged)
     {
         textValue = newText;
 
@@ -1196,6 +1220,8 @@ void TextEditor::setText (const String& newText,
         updateTextHolderSize();
         scrollToMakeSureCursorIsVisible();
         undoManager.clearUndoHistory();
+
+        styleChanged = false;
 
         repaint();
     }
@@ -1563,7 +1589,7 @@ void TextEditor::cut()
     if (! isReadOnly())
     {
         moveCaret (selection.getEnd());
-        insertTextAtCaret (String::empty);
+        insertTextAtCaret (String());
     }
 }
 
@@ -2124,11 +2150,6 @@ void TextEditor::handleCommandMessage (const int commandId)
     }
 }
 
-void TextEditor::enablementChanged()
-{
-    repaint();
-}
-
 void TextEditor::setTemporaryUnderlining (const Array<Range<int> >& newUnderlinedSections)
 {
     underlinedSections = newUnderlinedSections;
@@ -2353,7 +2374,7 @@ String TextEditor::getText() const
 String TextEditor::getTextInRange (const Range<int>& range) const
 {
     if (range.isEmpty())
-        return String::empty;
+        return String();
 
     MemoryOutputStream mo;
     mo.preallocate ((size_t) jmin (getTotalNumChars(), range.getLength()));

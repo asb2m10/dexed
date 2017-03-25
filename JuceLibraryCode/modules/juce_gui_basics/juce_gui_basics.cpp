@@ -22,7 +22,7 @@
   ==============================================================================
 */
 
-#if defined (JUCE_GUI_BASICS_H_INCLUDED) && ! JUCE_AMALGAMATED_INCLUDE
+#ifdef JUCE_GUI_BASICS_H_INCLUDED
  /* When you add this cpp file to your project, you mustn't include it in a file where you've
     already included any other headers - just put it inside a file on its own, possibly with your config
     flags preceding it, but don't include anything else. That also includes avoiding any automatic prefix
@@ -31,30 +31,24 @@
  #error "Incorrect use of JUCE cpp file"
 #endif
 
-// Your project must contain an AppConfig.h file with your project-specific settings in it,
-// and your header search path must make it accessible to the module's files.
-#include "AppConfig.h"
-
 #define NS_FORMAT_FUNCTION(F,A) // To avoid spurious warnings from GCC
 
-#include "../juce_core/native/juce_BasicNativeHeaders.h"
-#include "juce_gui_basics.h"
+#define JUCE_CORE_INCLUDE_OBJC_HELPERS 1
+#define JUCE_CORE_INCLUDE_COM_SMART_PTR 1
+#define JUCE_CORE_INCLUDE_JNI_HELPERS 1
+#define JUCE_CORE_INCLUDE_NATIVE_HEADERS 1
+#define JUCE_EVENTS_INCLUDE_WIN32_MESSAGE_WINDOW 1
+#define JUCE_GRAPHICS_INCLUDE_COREGRAPHICS_HELPERS 1
 
-#if JUCE_MODULE_AVAILABLE_juce_opengl
- #include "../juce_opengl/juce_opengl.h"
-#endif
+#include "juce_gui_basics.h"
 
 //==============================================================================
 #if JUCE_MAC
  #import <WebKit/WebKit.h>
  #import <IOKit/pwr_mgt/IOPMLib.h>
 
- #if JUCE_SUPPORT_CARBON && ! (defined (MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_6)
-  #define Point CarbonDummyPointName
-  #define Component CarbonDummyCompName
+ #if JUCE_SUPPORT_CARBON
   #import <Carbon/Carbon.h> // still needed for SetSystemUIMode()
-  #undef Point
-  #undef Component
  #endif
 
 //==============================================================================
@@ -259,14 +253,16 @@ extern bool juce_areThereAnyAlwaysOnTopWindows();
 #include "misc/juce_BubbleComponent.cpp"
 #include "misc/juce_DropShadower.cpp"
 
+// these classes are C++11-only
+#if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS && JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS && JUCE_COMPILER_SUPPORTS_LAMBDAS
+ #include "layout/juce_FlexBox.cpp"
+#endif
+
 #if JUCE_IOS || JUCE_WINDOWS
  #include "native/juce_MultiTouchMapper.h"
 #endif
 
 #if JUCE_MAC || JUCE_IOS
- #include "../juce_core/native/juce_osx_ObjCHelpers.h"
- #include "../juce_graphics/native/juce_mac_CoreGraphicsHelpers.h"
- #include "../juce_graphics/native/juce_mac_CoreGraphicsContext.h"
 
  #if JUCE_IOS
   #include "native/juce_ios_UIViewComponentPeer.mm"
@@ -281,8 +277,6 @@ extern bool juce_areThereAnyAlwaysOnTopWindows();
  #include "native/juce_mac_FileChooser.mm"
 
 #elif JUCE_WINDOWS
- #include "../juce_core/native/juce_win32_ComSmartPtr.h"
- #include "../juce_events/native/juce_win32_HiddenMessageWindow.h"
  #include "native/juce_win32_Windowing.cpp"
  #include "native/juce_win32_DragAndDrop.cpp"
  #include "native/juce_win32_FileChooser.cpp"
@@ -293,7 +287,6 @@ extern bool juce_areThereAnyAlwaysOnTopWindows();
  #include "native/juce_linux_FileChooser.cpp"
 
 #elif JUCE_ANDROID
- #include "../juce_core/native/juce_android_JNIHelpers.h"
  #include "native/juce_android_Windowing.cpp"
  #include "native/juce_android_FileChooser.cpp"
 

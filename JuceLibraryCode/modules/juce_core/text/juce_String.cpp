@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -86,12 +88,7 @@ public:
         if (text.getAddress() == nullptr || text.isEmpty())
             return CharPointerType (&(emptyString.text));
 
-        CharPointer t (text);
-        size_t bytesNeeded = sizeof (CharType);
-
-        while (! t.isEmpty())
-            bytesNeeded += CharPointerType::getBytesRequiredFor (t.getAndAdvance());
-
+        const size_t bytesNeeded = sizeof (CharType) + CharPointerType::getBytesRequiredFor (text);
         const CharPointerType dest (createUninitialisedBytes (bytesNeeded));
         CharPointerType (dest).writeAll (text);
         return dest;
@@ -242,7 +239,9 @@ private:
     }
 };
 
+#if JUCE_ALLOW_STATIC_NULL_VARIABLES
 const String String::empty;
+#endif
 
 //==============================================================================
 String::String() noexcept  : text (&(emptyString.text))
@@ -324,7 +323,7 @@ String::String (const char* const t)
         because there's no other way to represent these strings in a way that isn't dependent on
         the compiler, source code editor and platform.
 
-        Note that the Introjucer has a handy string literal generator utility that will convert
+        Note that the Projucer has a handy string literal generator utility that will convert
         any unicode string to a valid C++ string literal, creating ascii escape sequences that will
         work in any compiler.
     */
@@ -347,7 +346,7 @@ String::String (const char* const t, const size_t maxChars)
         because there's no other way to represent these strings in a way that isn't dependent on
         the compiler, source code editor and platform.
 
-        Note that the Introjucer has a handy string literal generator utility that will convert
+        Note that the Projucer has a handy string literal generator utility that will convert
         any unicode string to a valid C++ string literal, creating ascii escape sequences that will
         work in any compiler.
     */
@@ -370,6 +369,7 @@ String::String (const CharPointer_UTF16 start, const CharPointer_UTF16 end)  : t
 String::String (const CharPointer_UTF32 start, const CharPointer_UTF32 end)  : text (StringHolder::createFromCharPointer (start, end)) {}
 
 String::String (const std::string& s) : text (StringHolder::createFromFixedLength (s.data(), s.size())) {}
+String::String (StringRef s)          : text (StringHolder::createFromCharPointer (s.text)) {}
 
 String String::charToString (const juce_wchar character)
 {
@@ -434,7 +434,22 @@ namespace NumberToStringConverters
         return t;
     }
 
-    static char* numberToString (char* t, unsigned int v) noexcept
+    static char* numberToString (char* t, const unsigned int v) noexcept
+    {
+        return printDigits (t, v);
+    }
+
+    static char* numberToString (char* t, const long n) noexcept
+    {
+        if (n >= 0)
+            return printDigits (t, static_cast<unsigned long> (n));
+
+        t = printDigits (t, static_cast<unsigned long> (-(n + 1)) + 1);
+        *--t = '-';
+        return t;
+    }
+
+    static char* numberToString (char* t, const unsigned long v) noexcept
     {
         return printDigits (t, v);
     }
@@ -521,6 +536,8 @@ String::String (const short number)          : text (NumberToStringConverters::c
 String::String (const unsigned short number) : text (NumberToStringConverters::createFromInteger ((unsigned int) number)) {}
 String::String (const int64  number)         : text (NumberToStringConverters::createFromInteger (number)) {}
 String::String (const uint64 number)         : text (NumberToStringConverters::createFromInteger (number)) {}
+String::String (const long number)           : text (NumberToStringConverters::createFromInteger (number)) {}
+String::String (const unsigned long number)  : text (NumberToStringConverters::createFromInteger (number)) {}
 
 String::String (const float  number)         : text (NumberToStringConverters::createFromDouble ((double) number, 0)) {}
 String::String (const double number)         : text (NumberToStringConverters::createFromDouble (number, 0)) {}
@@ -657,7 +674,7 @@ static int stringCompareLeft (String::CharPointerType s1, String::CharPointerTyp
     }
 }
 
-static int naturalStringCompare (String::CharPointerType s1, String::CharPointerType s2) noexcept
+static int naturalStringCompare (String::CharPointerType s1, String::CharPointerType s2, bool isCaseSensitive) noexcept
 {
     bool firstLoop = true;
 
@@ -686,7 +703,7 @@ static int naturalStringCompare (String::CharPointerType s1, String::CharPointer
         juce_wchar c1 = s1.getAndAdvance();
         juce_wchar c2 = s2.getAndAdvance();
 
-        if (c1 != c2)
+        if (c1 != c2 && ! isCaseSensitive)
         {
             c1 = CharacterFunctions::toUpperCase (c1);
             c2 = CharacterFunctions::toUpperCase (c2);
@@ -712,9 +729,9 @@ static int naturalStringCompare (String::CharPointerType s1, String::CharPointer
     }
 }
 
-int String::compareNatural (StringRef other) const noexcept
+int String::compareNatural (StringRef other, bool isCaseSensitive) const noexcept
 {
-    return naturalStringCompare (getCharPointer(), other.text);
+    return naturalStringCompare (getCharPointer(), other.text, isCaseSensitive);
 }
 
 //==============================================================================
@@ -773,6 +790,11 @@ String& String::operator+= (const String& other)
     return *this;
 }
 
+String& String::operator+= (StringRef other)
+{
+    return operator+= (String (other));
+}
+
 String& String::operator+= (const char ch)
 {
     const char asString[] = { ch, 0 };
@@ -794,33 +816,28 @@ String& String::operator+= (const juce_wchar ch)
 }
 #endif
 
-String& String::operator+= (const int number)
+namespace StringHelpers
 {
-    char buffer [16];
-    char* end = buffer + numElementsInArray (buffer);
-    char* start = NumberToStringConverters::numberToString (end, number);
+    template <typename T>
+    inline String& operationAddAssign (String& str, const T number)
+    {
+        char buffer [(sizeof(T) * 8) / 2];
+        char* end = buffer + numElementsInArray (buffer);
+        char* start = NumberToStringConverters::numberToString (end, number);
 
-   #if (JUCE_STRING_UTF_TYPE == 8)
-    appendCharPointer (CharPointerType (start), CharPointerType (end));
-   #else
-    appendCharPointer (CharPointer_ASCII (start), CharPointer_ASCII (end));
-   #endif
-    return *this;
+       #if JUCE_STRING_UTF_TYPE == 8
+        str.appendCharPointer (String::CharPointerType (start), String::CharPointerType (end));
+       #else
+        str.appendCharPointer (CharPointer_ASCII (start), CharPointer_ASCII (end));
+       #endif
+
+        return str;
+    }
 }
 
-String& String::operator+= (int64 number)
-{
-    char buffer [32];
-    char* end = buffer + numElementsInArray (buffer);
-    char* start = NumberToStringConverters::numberToString (end, number);
-
-   #if (JUCE_STRING_UTF_TYPE == 8)
-    appendCharPointer (CharPointerType (start), CharPointerType (end));
-   #else
-    appendCharPointer (CharPointer_ASCII (start), CharPointer_ASCII (end));
-   #endif
-    return *this;
-}
+String& String::operator+= (const int number)          { return StringHelpers::operationAddAssign<int>          (*this, number); }
+String& String::operator+= (const int64 number)        { return StringHelpers::operationAddAssign<int64>        (*this, number); }
+String& String::operator+= (const uint64 number)       { return StringHelpers::operationAddAssign<uint64>       (*this, number); }
 
 //==============================================================================
 JUCE_API String JUCE_CALLTYPE operator+ (const char* const s1, const String& s2)    { String s (s1); return s += s2; }
@@ -848,14 +865,17 @@ JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const wchar_t s2)        
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const char* const s2)        { return s1 += s2; }
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const wchar_t* const s2)     { return s1 += s2; }
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const String& s2)            { return s1 += s2; }
+JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, StringRef s2)                { return s1 += s2; }
 
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const int number)            { return s1 += number; }
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const short number)          { return s1 += (int) number; }
-JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const long number)           { return s1 += (int) number; }
+JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const unsigned short number) { return s1 += (uint64) number; }
+JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const long number)           { return s1 += String (number); }
+JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const unsigned long number)  { return s1 += String (number); }
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const int64 number)          { return s1 += String (number); }
+JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const uint64 number)         { return s1 += String (number); }
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const float number)          { return s1 += String (number); }
 JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const double number)         { return s1 += String (number); }
-JUCE_API String& JUCE_CALLTYPE operator<< (String& s1, const uint64 number)         { return s1 += String (number); }
 
 JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, const String& text)
 {
@@ -877,11 +897,6 @@ JUCE_API OutputStream& JUCE_CALLTYPE operator<< (OutputStream& stream, StringRef
    #endif
 
     return stream;
-}
-
-JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, const NewLine&)
-{
-    return string1 += NewLine::getDefault();
 }
 
 //==============================================================================
@@ -1376,6 +1391,10 @@ String String::replaceCharacter (const juce_wchar charToReplace, const juce_wcha
 
 String String::replaceCharacters (StringRef charactersToReplace, StringRef charactersToInsertInstead) const
 {
+    // Each character in the first string must have a matching one in the
+    // second, so the two strings must be the same length.
+    jassert (charactersToReplace.length() == charactersToInsertInstead.length());
+
     StringCreationHelper builder (text);
 
     for (;;)
@@ -1852,7 +1871,9 @@ String String::formatted (const String pf, ... )
         const int num = (int) _vsnwprintf (temp.getData(), bufferSize - 1, pf.toWideCharPointer(), args);
        #elif JUCE_ANDROID
         HeapBlock<char> temp (bufferSize);
-        const int num = (int) vsnprintf (temp.getData(), bufferSize - 1, pf.toUTF8(), args);
+        int num = (int) vsnprintf (temp.getData(), bufferSize - 1, pf.toUTF8(), args);
+        if (num >= bufferSize)
+            num = -1;
        #else
         HeapBlock<wchar_t> temp (bufferSize);
         const int num = (int) vswprintf (temp.getData(), bufferSize - 1, pf.toWideCharPointer(), args);
@@ -1937,7 +1958,7 @@ String String::toHexString (const void* const d, const int size, const int group
 
     String s (PreallocationBytes (sizeof (CharPointerType::CharType) * (size_t) numChars));
 
-    const unsigned char* data = static_cast <const unsigned char*> (d);
+    const unsigned char* data = static_cast<const unsigned char*> (d);
     CharPointerType dest (s.text);
 
     for (int i = 0; i < size; ++i)
@@ -1958,7 +1979,18 @@ int   String::getHexValue32() const noexcept    { return CharacterFunctions::Hex
 int64 String::getHexValue64() const noexcept    { return CharacterFunctions::HexParser<int64>::parse (text); }
 
 //==============================================================================
-String String::createStringFromData (const void* const unknownData, const int size)
+static String getStringFromWindows1252Codepage (const char* data, size_t num)
+{
+    HeapBlock<juce_wchar> unicode (num + 1);
+
+    for (size_t i = 0; i < num; ++i)
+        unicode[i] = CharacterFunctions::getUnicodeCharFromWindows1252Codepage ((uint8) data[i]);
+
+    unicode[num] = 0;
+    return CharPointer_UTF32 (unicode);
+}
+
+String String::createStringFromData (const void* const unknownData, int size)
 {
     const uint8* const data = static_cast<const uint8*> (unknownData);
 
@@ -1992,13 +2024,19 @@ String String::createStringFromData (const void* const unknownData, const int si
         return builder.result;
     }
 
-    const uint8* start = data;
+    const char* start = (const char*) data;
 
     if (size >= 3 && CharPointer_UTF8::isByteOrderMark (data))
+    {
         start += 3;
+        size -= 3;
+    }
 
-    return String (CharPointer_UTF8 ((const char*) start),
-                   CharPointer_UTF8 ((const char*) (data + size)));
+    if (CharPointer_UTF8::isValidString (start, size))
+        return String (CharPointer_UTF8 (start),
+                       CharPointer_UTF8 (start + size));
+
+    return getStringFromWindows1252Codepage (start, (size_t) size);
 }
 
 //==============================================================================
@@ -2177,7 +2215,8 @@ StringRef::StringRef (const String& string) noexcept  : text (string.getCharPoin
 //==============================================================================
 //==============================================================================
 #if JUCE_UNIT_TESTS
-
+ #define STRINGIFY2(X) #X
+ #define STRINGIFY(X) STRINGIFY2(X)
 class StringTests  : public UnitTest
 {
 public:
@@ -2229,7 +2268,7 @@ public:
         return CharPointer_UTF32 (buffer);
     }
 
-    void runTest()
+    void runTest() override
     {
         Random r = getRandom();
 
@@ -2237,7 +2276,7 @@ public:
             beginTest ("Basics");
 
             expect (String().length() == 0);
-            expect (String() == String::empty);
+            expect (String() == String());
             String s1, s2 ("abcd");
             expect (s1.isEmpty() && ! s1.isNotEmpty());
             expect (s2.isNotEmpty() && ! s2.isEmpty());
@@ -2249,16 +2288,16 @@ public:
             expect (String ("abcdefg", 4) == L"abcd");
             expect (String ("abcdefg", 4) == String (L"abcdefg", 4));
             expect (String::charToString ('x') == "x");
-            expect (String::charToString (0) == String::empty);
+            expect (String::charToString (0) == String());
             expect (s2 + "e" == "abcde" && s2 + 'e' == "abcde");
             expect (s2 + L'e' == "abcde" && s2 + L"e" == "abcde");
             expect (s1.equalsIgnoreCase ("abcD") && s1 < "abce" && s1 > "abbb");
             expect (s1.startsWith ("ab") && s1.startsWith ("abcd") && ! s1.startsWith ("abcde"));
             expect (s1.startsWithIgnoreCase ("aB") && s1.endsWithIgnoreCase ("CD"));
             expect (s1.endsWith ("bcd") && ! s1.endsWith ("aabcd"));
-            expectEquals (s1.indexOf (String::empty), 0);
-            expectEquals (s1.indexOfIgnoreCase (String::empty), 0);
-            expect (s1.startsWith (String::empty) && s1.endsWith (String::empty) && s1.contains (String::empty));
+            expectEquals (s1.indexOf (String()), 0);
+            expectEquals (s1.indexOfIgnoreCase (String()), 0);
+            expect (s1.startsWith (String()) && s1.endsWith (String()) && s1.contains (String()));
             expect (s1.contains ("cd") && s1.contains ("ab") && s1.contains ("abcd"));
             expect (s1.containsChar ('a'));
             expect (! s1.containsChar ('x'));
@@ -2313,6 +2352,10 @@ public:
             expect (String ("abcdEFGH").toLowerCase() == String ("abcdefgh"));
             expect (String ("abcdEFGH").toUpperCase() == String ("ABCDEFGH"));
 
+            expect (String (StringRef ("abc")) == "abc");
+            expect (String (StringRef ("abc")) == StringRef ("abc"));
+            expect (String ("abc") + StringRef ("def") == "abcdef");
+
             String s2 ("123");
             s2 << ((int) 4) << ((short) 5) << "678" << L"9" << '0';
             s2 += "xyz";
@@ -2321,11 +2364,123 @@ public:
             expect (s2 == "1234567890xyz123");
             s2 += (int64) 123;
             expect (s2 == "1234567890xyz123123");
+            s2 << StringRef ("def");
+            expect (s2 == "1234567890xyz123123def");
+
+            // int16
+            {
+                String numStr (std::numeric_limits<int16>::max());
+                expect (numStr == "32767");
+            }
+            {
+                String numStr (std::numeric_limits<int16>::min());
+                expect (numStr == "-32768");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<int16>::max();
+                expect (numStr == "32767");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<int16>::min();
+                expect (numStr == "-32768");
+            }
+            // uint16
+            {
+                String numStr (std::numeric_limits<uint16>::max());
+                expect (numStr == "65535");
+            }
+            {
+                String numStr (std::numeric_limits<uint16>::min());
+                expect (numStr == "0");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<uint16>::max();
+                expect (numStr == "65535");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<uint16>::min();
+                expect (numStr == "0");
+            }
+            // int32
+            {
+                String numStr (std::numeric_limits<int32>::max());
+                expect (numStr == "2147483647");
+            }
+            {
+                String numStr (std::numeric_limits<int32>::min());
+                expect (numStr == "-2147483648");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<int32>::max();
+                expect (numStr == "2147483647");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<int32>::min();
+                expect (numStr == "-2147483648");
+            }
+            // uint32
+            {
+                String numStr (std::numeric_limits<uint32>::max());
+                expect (numStr == "4294967295");
+            }
+            {
+                String numStr (std::numeric_limits<uint32>::min());
+                expect (numStr == "0");
+            }
+            // int64
+            {
+                String numStr (std::numeric_limits<int64>::max());
+                expect (numStr == "9223372036854775807");
+            }
+            {
+                String numStr (std::numeric_limits<int64>::min());
+                expect (numStr == "-9223372036854775808");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<int64>::max();
+                expect (numStr == "9223372036854775807");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<int64>::min();
+                expect (numStr == "-9223372036854775808");
+            }
+            // uint64
+            {
+                String numStr (std::numeric_limits<uint64>::max());
+                expect (numStr == "18446744073709551615");
+            }
+            {
+                String numStr (std::numeric_limits<uint64>::min());
+                expect (numStr == "0");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<uint64>::max();
+                expect (numStr == "18446744073709551615");
+            }
+            {
+                String numStr;
+                numStr << std::numeric_limits<uint64>::min();
+                expect (numStr == "0");
+            }
+            // size_t
+            {
+                String numStr (std::numeric_limits<size_t>::min());
+                expect (numStr == "0");
+            }
 
             beginTest ("Numeric conversions");
-            expect (String::empty.getIntValue() == 0);
-            expect (String::empty.getDoubleValue() == 0.0);
-            expect (String::empty.getFloatValue() == 0.0f);
+            expect (String().getIntValue() == 0);
+            expect (String().getDoubleValue() == 0.0);
+            expect (String().getFloatValue() == 0.0f);
             expect (s.getIntValue() == 12345678);
             expect (s.getLargeIntValue() == (int64) 12345678);
             expect (s.getDoubleValue() == 12345678.0);
@@ -2362,11 +2517,11 @@ public:
             expect (s3.containsAnyOf (String (L"zzzFs")));
             expect (s3.startsWith ("abcd"));
             expect (s3.startsWithIgnoreCase (String (L"abCD")));
-            expect (s3.startsWith (String::empty));
+            expect (s3.startsWith (String()));
             expect (s3.startsWithChar ('a'));
             expect (s3.endsWith (String ("HIJ")));
             expect (s3.endsWithIgnoreCase (String (L"Hij")));
-            expect (s3.endsWith (String::empty));
+            expect (s3.endsWith (String()));
             expect (s3.endsWithChar (L'J'));
             expect (s3.indexOf ("HIJ") == 7);
             expect (s3.indexOf (String (L"HIJK")) == -1);
@@ -2416,28 +2571,28 @@ public:
             expect (! String ("xx?y").matchesWildcard ("xx?y?", true));
             expect (String ("xx?y").matchesWildcard ("xx??", true));
 
-            expectEquals (s5.fromFirstOccurrenceOf (String::empty, true, false), s5);
+            expectEquals (s5.fromFirstOccurrenceOf (String(), true, false), s5);
             expectEquals (s5.fromFirstOccurrenceOf ("xword2", true, false), s5.substring (100));
             expectEquals (s5.fromFirstOccurrenceOf (String (L"word2"), true, false), s5.substring (5));
             expectEquals (s5.fromFirstOccurrenceOf ("Word2", true, true), s5.substring (5));
             expectEquals (s5.fromFirstOccurrenceOf ("word2", false, false), s5.getLastCharacters (6));
             expectEquals (s5.fromFirstOccurrenceOf ("Word2", false, true), s5.getLastCharacters (6));
 
-            expectEquals (s5.fromLastOccurrenceOf (String::empty, true, false), s5);
+            expectEquals (s5.fromLastOccurrenceOf (String(), true, false), s5);
             expectEquals (s5.fromLastOccurrenceOf ("wordx", true, false), s5);
             expectEquals (s5.fromLastOccurrenceOf ("word", true, false), s5.getLastCharacters (5));
             expectEquals (s5.fromLastOccurrenceOf ("worD", true, true), s5.getLastCharacters (5));
             expectEquals (s5.fromLastOccurrenceOf ("word", false, false), s5.getLastCharacters (1));
             expectEquals (s5.fromLastOccurrenceOf ("worD", false, true), s5.getLastCharacters (1));
 
-            expect (s5.upToFirstOccurrenceOf (String::empty, true, false).isEmpty());
+            expect (s5.upToFirstOccurrenceOf (String(), true, false).isEmpty());
             expectEquals (s5.upToFirstOccurrenceOf ("word4", true, false), s5);
             expectEquals (s5.upToFirstOccurrenceOf ("word2", true, false), s5.substring (0, 10));
             expectEquals (s5.upToFirstOccurrenceOf ("Word2", true, true), s5.substring (0, 10));
             expectEquals (s5.upToFirstOccurrenceOf ("word2", false, false), s5.substring (0, 5));
             expectEquals (s5.upToFirstOccurrenceOf ("Word2", false, true), s5.substring (0, 5));
 
-            expectEquals (s5.upToLastOccurrenceOf (String::empty, true, false), s5);
+            expectEquals (s5.upToLastOccurrenceOf (String(), true, false), s5);
             expectEquals (s5.upToLastOccurrenceOf ("zword", true, false), s5);
             expectEquals (s5.upToLastOccurrenceOf ("word", true, false), s5.dropLastCharacters (1));
             expectEquals (s5.dropLastCharacters(1).upToLastOccurrenceOf ("word", true, false), s5.dropLastCharacters (1));
@@ -2455,9 +2610,9 @@ public:
             expect (s5.replaceCharacters ("wo", "xy") != s5);
             expectEquals (s5.replaceCharacters ("wo", "xy").replaceCharacters ("xy", "wo"), s5);
             expectEquals (s5.retainCharacters ("1wordxya"), String ("wordwordword"));
-            expect (s5.retainCharacters (String::empty).isEmpty());
+            expect (s5.retainCharacters (String()).isEmpty());
             expect (s5.removeCharacters ("1wordxya") == " 2 3");
-            expectEquals (s5.removeCharacters (String::empty), s5);
+            expectEquals (s5.removeCharacters (String()), s5);
             expect (s5.initialSectionContainingOnly ("word") == L"word");
             expect (String ("word").initialSectionContainingOnly ("word") == L"word");
             expectEquals (s5.initialSectionNotContaining (String ("xyz ")), String ("word"));
@@ -2498,9 +2653,9 @@ public:
             expectEquals (s.joinIntoString ("-"), String ("4-3-2-1-0"));
             s.remove (2);
             expectEquals (s.joinIntoString ("--"), String ("4--3--1--0"));
-            expectEquals (s.joinIntoString (String::empty), String ("4310"));
+            expectEquals (s.joinIntoString (StringRef()), String ("4310"));
             s.clear();
-            expectEquals (s.joinIntoString ("x"), String::empty);
+            expectEquals (s.joinIntoString ("x"), String());
 
             StringArray toks;
             toks.addTokens ("x,,", ";,", "");

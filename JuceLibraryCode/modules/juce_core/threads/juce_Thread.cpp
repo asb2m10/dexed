@@ -1,36 +1,39 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
 
-Thread::Thread (const String& threadName_)
+Thread::Thread (const String& threadName_, const size_t stackSize)
     : threadName (threadName_),
       threadHandle (nullptr),
       threadId (0),
       threadPriority (5),
+      threadStackSize (stackSize),
       affinityMask (0),
       shouldExit (false)
 {
@@ -57,7 +60,7 @@ struct CurrentThreadHolder   : public ReferenceCountedObject
 {
     CurrentThreadHolder() noexcept {}
 
-    typedef ReferenceCountedObjectPtr <CurrentThreadHolder> Ptr;
+    typedef ReferenceCountedObjectPtr<CurrentThreadHolder> Ptr;
     ThreadLocalValue<Thread*> value;
 
     JUCE_DECLARE_NON_COPYABLE (CurrentThreadHolder)
@@ -86,22 +89,25 @@ void Thread::threadEntryPoint()
     const CurrentThreadHolder::Ptr currentThreadHolder (getCurrentThreadHolder());
     currentThreadHolder->value = this;
 
-    JUCE_TRY
+    if (threadName.isNotEmpty())
+        setCurrentThreadName (threadName);
+
+    if (startSuspensionEvent.wait (10000))
     {
-        if (threadName.isNotEmpty())
-            setCurrentThreadName (threadName);
+        jassert (getCurrentThreadId() == threadId);
 
-        if (startSuspensionEvent.wait (10000))
+        if (affinityMask != 0)
+            setCurrentThreadAffinityMask (affinityMask);
+
+        try
         {
-            jassert (getCurrentThreadId() == threadId);
-
-            if (affinityMask != 0)
-                setCurrentThreadAffinityMask (affinityMask);
-
             run();
         }
+        catch (...)
+        {
+            jassertfalse; // Your run() method mustn't throw any exceptions!
+        }
     }
-    JUCE_CATCH_ALL_ASSERT
 
     currentThreadHolder->value.releaseCurrentThreadStorage();
     closeThreadHandle();
@@ -110,7 +116,7 @@ void Thread::threadEntryPoint()
 // used to wrap the incoming call from the platform-specific code
 void JUCE_API juce_threadEntryPoint (void* userData)
 {
-    static_cast <Thread*> (userData)->threadEntryPoint();
+    static_cast<Thread*> (userData)->threadEntryPoint();
 }
 
 //==============================================================================
@@ -157,6 +163,14 @@ Thread* JUCE_CALLTYPE Thread::getCurrentThread()
 void Thread::signalThreadShouldExit()
 {
     shouldExit = true;
+}
+
+bool Thread::currentThreadShouldExit()
+{
+    if (Thread* currentThread = getCurrentThread())
+        return currentThread->threadShouldExit();
+
+    return false;
 }
 
 bool Thread::waitForThreadToExit (const int timeOutMilliseconds) const
@@ -266,6 +280,12 @@ void SpinLock::enter() const noexcept
 }
 
 //==============================================================================
+bool JUCE_CALLTYPE Process::isRunningUnderDebugger() noexcept
+{
+    return juce_isRunningUnderDebugger();
+}
+
+//==============================================================================
 #if JUCE_UNIT_TESTS
 
 class AtomicTests  : public UnitTest
@@ -273,7 +293,7 @@ class AtomicTests  : public UnitTest
 public:
     AtomicTests() : UnitTest ("Atomics") {}
 
-    void runTest()
+    void runTest() override
     {
         beginTest ("Misc");
 

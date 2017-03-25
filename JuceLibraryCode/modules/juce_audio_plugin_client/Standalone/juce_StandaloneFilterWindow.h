@@ -25,8 +25,6 @@
 #ifndef JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 #define JUCE_STANDALONEFILTERWINDOW_H_INCLUDED
 
-extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
-
 //==============================================================================
 /**
     An object that creates and plays a standalone instance of an AudioProcessor.
@@ -36,25 +34,48 @@ extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
     computer's audio/MIDI devices using AudioDeviceManager and AudioProcessorPlayer.
 */
 class StandalonePluginHolder
+   #if JUCE_IOS || JUCE_ANDROID
+    : private Timer
+   #endif
 {
 public:
     /** Creates an instance of the default plugin.
 
-        The settings object can be a PropertySet that the class should use to
-        store its settings - the object that is passed-in will be owned by this
-        class and deleted automatically when no longer needed. (It can also be null)
+        The settings object can be a PropertySet that the class should use to store its
+        settings - the takeOwnershipOfSettings indicates whether this object will delete
+        the settings automatically when no longer needed. The settings can also be nullptr.
+
+        A default device name can be passed in.
+
+        Preferably a complete setup options object can be used, which takes precedence over
+        the preferredDefaultDeviceName and allows you to select the input & output device names,
+        sample rate, buffer size etc.
+
+        In all instances, the settingsToUse will take precedence over the "preferred" options if not null.
     */
-    StandalonePluginHolder (PropertySet* settingsToUse, bool takeOwnershipOfSettings)
+    StandalonePluginHolder (PropertySet* settingsToUse,
+                            bool takeOwnershipOfSettings = true,
+                            const String& preferredDefaultDeviceName = String(),
+                            const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions = nullptr)
+
         : settings (settingsToUse, takeOwnershipOfSettings)
     {
         createPlugin();
-        setupAudioDevices();
+        setupAudioDevices (preferredDefaultDeviceName, preferredSetupOptions);
         reloadPluginState();
         startPlaying();
+
+       #if JUCE_IOS || JUCE_ANDROID
+        startTimer (500);
+       #endif
     }
 
     virtual ~StandalonePluginHolder()
     {
+       #if JUCE_IOS || JUCE_ANDROID
+        stopTimer();
+       #endif
+
         deletePlugin();
         shutDownAudioDevices();
     }
@@ -62,14 +83,18 @@ public:
     //==============================================================================
     virtual void createPlugin()
     {
+
+      #if JUCE_MODULE_AVAILABLE_juce_audio_plugin_client
+        processor = ::createPluginFilterOfType (AudioProcessor::wrapperType_Standalone);
+      #else
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Standalone);
         processor = createPluginFilter();
-        jassert (processor != nullptr); // Your createPluginFilter() function must return a valid object!
         AudioProcessor::setTypeOfNextNewPlugin (AudioProcessor::wrapperType_Undefined);
+      #endif
+        jassert (processor != nullptr); // Your createPluginFilter() function must return a valid object!
 
-        processor->setPlayConfigDetails (JucePlugin_MaxNumInputChannels,
-                                         JucePlugin_MaxNumOutputChannels,
-                                         44100, 512);
+        processor->disableNonMainBuses();
+        processor->setRateAndBufferSizeDetails(44100, 512);
     }
 
     virtual void deletePlugin()
@@ -95,7 +120,7 @@ public:
         if (settings != nullptr)
             f = File (settings->getValue ("lastStateFile"));
 
-        if (f == File::nonexistent)
+        if (f == File())
             f = File::getSpecialLocation (File::userDocumentsDirectory);
 
         return f;
@@ -110,6 +135,7 @@ public:
     /** Pops up a dialog letting the user save the processor's state to a file. */
     void askUserToSaveState (const String& fileSuffix = String())
     {
+       #if JUCE_MODAL_LOOPS_PERMITTED
         FileChooser fc (TRANS("Save current state"), getLastFile(), getFilePatterns (fileSuffix));
 
         if (fc.browseForFileToSave (true))
@@ -124,11 +150,15 @@ public:
                                                   TRANS("Error whilst saving"),
                                                   TRANS("Couldn't write to the specified file!"));
         }
+       #else
+        ignoreUnused (fileSuffix);
+       #endif
     }
 
     /** Pops up a dialog letting the user re-load the processor's state from a file. */
     void askUserToLoadState (const String& fileSuffix = String())
     {
+       #if JUCE_MODAL_LOOPS_PERMITTED
         FileChooser fc (TRANS("Load a saved state"), getLastFile(), getFilePatterns (fileSuffix));
 
         if (fc.browseForFileToOpen())
@@ -144,6 +174,9 @@ public:
                                                   TRANS("Error whilst loading"),
                                                   TRANS("Couldn't read from the specified file!"));
         }
+       #else
+        ignoreUnused (fileSuffix);
+       #endif
     }
 
     //==============================================================================
@@ -163,10 +196,10 @@ public:
     {
         DialogWindow::LaunchOptions o;
         o.content.setOwned (new AudioDeviceSelectorComponent (deviceManager,
-                                                              processor->getNumInputChannels(),
-                                                              processor->getNumInputChannels(),
-                                                              processor->getNumOutputChannels(),
-                                                              processor->getNumOutputChannels(),
+                                                              processor->getTotalNumInputChannels(),
+                                                              processor->getTotalNumInputChannels(),
+                                                              processor->getTotalNumOutputChannels(),
+                                                              processor->getTotalNumOutputChannels(),
                                                               true, false,
                                                               true, false));
         o.content->setSize (500, 450);
@@ -189,17 +222,20 @@ public:
         }
     }
 
-    void reloadAudioDeviceState()
+    void reloadAudioDeviceState (const String& preferredDefaultDeviceName,
+                                 const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions)
     {
         ScopedPointer<XmlElement> savedState;
 
         if (settings != nullptr)
             savedState = settings->getXmlValue ("audioSetup");
 
-        deviceManager.initialise (processor->getNumInputChannels(),
-                                  processor->getNumOutputChannels(),
+        deviceManager.initialise (processor->getTotalNumInputChannels(),
+                                  processor->getTotalNumOutputChannels(),
                                   savedState,
-                                  true);
+                                  true,
+                                  preferredDefaultDeviceName,
+                                  preferredSetupOptions);
     }
 
     //==============================================================================
@@ -231,22 +267,64 @@ public:
     AudioDeviceManager deviceManager;
     AudioProcessorPlayer player;
 
+   #if JUCE_IOS || JUCE_ANDROID
+    StringArray lastMidiDevices;
+   #endif
+
 private:
-    void setupAudioDevices()
+    void setupAudioDevices (const String& preferredDefaultDeviceName,
+                            const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions)
     {
         deviceManager.addAudioCallback (&player);
-        deviceManager.addMidiInputCallback (String::empty, &player);
+        deviceManager.addMidiInputCallback (String(), &player);
 
-        reloadAudioDeviceState();
+        reloadAudioDeviceState (preferredDefaultDeviceName, preferredSetupOptions);
     }
 
     void shutDownAudioDevices()
     {
         saveAudioDeviceState();
 
-        deviceManager.removeMidiInputCallback (String::empty, &player);
+        deviceManager.removeMidiInputCallback (String(), &player);
         deviceManager.removeAudioCallback (&player);
     }
+
+   #if JUCE_IOS || JUCE_ANDROID
+    void timerCallback() override
+    {
+        StringArray midiInputDevices = MidiInput::getDevices();
+        if (midiInputDevices != lastMidiDevices)
+        {
+            {
+                const int n = lastMidiDevices.size();
+                for (int i = 0; i < n; ++i)
+                {
+                    const String& oldDevice = lastMidiDevices[i];
+
+                    if (! midiInputDevices.contains (oldDevice))
+                    {
+                        deviceManager.setMidiInputEnabled (oldDevice, false);
+                        deviceManager.removeMidiInputCallback (oldDevice, &player);
+                    }
+                }
+            }
+
+            {
+                const int n = midiInputDevices.size();
+                for (int i = 0; i < n; ++i)
+                {
+                    const String& newDevice = midiInputDevices[i];
+
+                    if (! lastMidiDevices.contains (newDevice))
+                    {
+                        deviceManager.addMidiInputCallback (newDevice, &player);
+                        deviceManager.setMidiInputEnabled (newDevice, true);
+                    }
+                }
+            }
+        }
+    }
+   #endif
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (StandalonePluginHolder)
 };
@@ -273,7 +351,9 @@ public:
     StandaloneFilterWindow (const String& title,
                             Colour backgroundColour,
                             PropertySet* settingsToUse,
-                            bool takeOwnershipOfSettings)
+                            bool takeOwnershipOfSettings,
+                            const String& preferredDefaultDeviceName = String(),
+                            const AudioDeviceManager::AudioDeviceSetup* preferredSetupOptions = nullptr)
         : DocumentWindow (title, backgroundColour, DocumentWindow::minimiseButton | DocumentWindow::closeButton),
           optionsButton ("options")
     {
@@ -283,7 +363,8 @@ public:
         optionsButton.addListener (this);
         optionsButton.setTriggeredOnMouseDown (true);
 
-        pluginHolder = new StandalonePluginHolder (settingsToUse, takeOwnershipOfSettings);
+        pluginHolder = new StandalonePluginHolder (settingsToUse, takeOwnershipOfSettings,
+                                                   preferredDefaultDeviceName, preferredSetupOptions);
 
         createEditorComp();
 

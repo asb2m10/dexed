@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -31,13 +33,7 @@ struct RegistryKeyWrapper
     RegistryKeyWrapper (String name, const bool createForWriting, const DWORD wow64Flags)
         : key (0), wideCharValueName (nullptr)
     {
-        HKEY rootKey = 0;
-
-        if (name.startsWithIgnoreCase ("HKEY_CURRENT_USER\\"))        rootKey = HKEY_CURRENT_USER;
-        else if (name.startsWithIgnoreCase ("HKEY_LOCAL_MACHINE\\"))  rootKey = HKEY_LOCAL_MACHINE;
-        else if (name.startsWithIgnoreCase ("HKEY_CLASSES_ROOT\\"))   rootKey = HKEY_CLASSES_ROOT;
-
-        if (rootKey != 0)
+        if (HKEY rootKey = getRootKey (name))
         {
             name = name.substring (name.indexOfChar ('\\') + 1);
 
@@ -63,6 +59,21 @@ struct RegistryKeyWrapper
             RegCloseKey (key);
     }
 
+    static HKEY getRootKey (const String& name) noexcept
+    {
+        if (name.startsWithIgnoreCase ("HKEY_CURRENT_USER\\"))  return HKEY_CURRENT_USER;
+        if (name.startsWithIgnoreCase ("HKCU\\"))               return HKEY_CURRENT_USER;
+        if (name.startsWithIgnoreCase ("HKEY_LOCAL_MACHINE\\")) return HKEY_LOCAL_MACHINE;
+        if (name.startsWithIgnoreCase ("HKLM\\"))               return HKEY_LOCAL_MACHINE;
+        if (name.startsWithIgnoreCase ("HKEY_CLASSES_ROOT\\"))  return HKEY_CLASSES_ROOT;
+        if (name.startsWithIgnoreCase ("HKCR\\"))               return HKEY_CLASSES_ROOT;
+        if (name.startsWithIgnoreCase ("HKEY_USERS\\"))         return HKEY_USERS;
+        if (name.startsWithIgnoreCase ("HKU\\"))                return HKEY_USERS;
+
+        jassertfalse; // The name starts with an unknown root key (or maybe an old Win9x type)
+        return 0;
+    }
+
     static bool setValue (const String& regValuePath, const DWORD type,
                           const void* data, size_t dataSize, const DWORD wow64Flags)
     {
@@ -70,7 +81,7 @@ struct RegistryKeyWrapper
 
         return key.key != 0
                 && RegSetValueEx (key.key, key.wideCharValueName, 0, type,
-                                  reinterpret_cast <const BYTE*> (data),
+                                  reinterpret_cast<const BYTE*> (data),
                                   (DWORD) dataSize) == ERROR_SUCCESS;
     }
 
@@ -107,7 +118,7 @@ struct RegistryKeyWrapper
         MemoryBlock buffer;
         switch (getBinaryValue (regValuePath, buffer, wow64Flags))
         {
-            case REG_SZ:    return static_cast <const WCHAR*> (buffer.getData());
+            case REG_SZ:    return static_cast<const WCHAR*> (buffer.getData());
             case REG_DWORD: return String ((int) *reinterpret_cast<const DWORD*> (buffer.getData()));
             default:        break;
         }

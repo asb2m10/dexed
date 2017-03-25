@@ -34,8 +34,8 @@ HyperlinkButton::HyperlinkButton (const String& linkText,
     setTooltip (linkURL.toString (false));
 }
 
-HyperlinkButton::HyperlinkButton ()
-   : Button (String::empty),
+HyperlinkButton::HyperlinkButton()
+   : Button (String()),
      font (14.0f, Font::underlined),
      resizeFont (true),
      justification (Justification::centred)

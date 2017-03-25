@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -182,9 +188,12 @@ public:
         involve rendering as little as 1 sample at a time. In between rendering callbacks,
         the voice's methods will be called to tell it about note and controller events.
     */
-    virtual void renderNextBlock (AudioSampleBuffer& outputBuffer,
+    virtual void renderNextBlock (AudioBuffer<float>& outputBuffer,
                                   int startSample,
                                   int numSamples) = 0;
+    virtual void renderNextBlock (AudioBuffer<double>& outputBuffer,
+                                  int startSample,
+                                  int numSamples);
 
     /** Changes the voice's reference sample rate.
 
@@ -254,6 +263,8 @@ private:
     uint32 noteOnTime;
     SynthesiserSound::Ptr currentlyPlayingSound;
     bool keyIsDown, sustainPedalDown, sostenutoPedalDown;
+
+    AudioBuffer<float> tempBuffer;
 
    #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
     // Note the new parameters for this method.
@@ -504,10 +515,17 @@ public:
         both to the audio output buffer and the midi input buffer, so any midi events
         with timestamps outside the specified region will be ignored.
     */
-    void renderNextBlock (AudioSampleBuffer& outputAudio,
+    inline void renderNextBlock (AudioBuffer<float>& outputAudio,
                           const MidiBuffer& inputMidi,
                           int startSample,
-                          int numSamples);
+                          int numSamples)
+        { processNextBlock (outputAudio, inputMidi, startSample, numSamples); }
+
+    inline void renderNextBlock (AudioBuffer<double>& outputAudio,
+                          const MidiBuffer& inputMidi,
+                          int startSample,
+                          int numSamples)
+        { processNextBlock (outputAudio, inputMidi, startSample, numSamples); }
 
     /** Returns the current target sample rate at which rendering is being done.
         Subclasses may need to know this so that they can pitch things correctly.
@@ -527,8 +545,14 @@ public:
         The default setting is 32, which means that midi messages are accurate to about < 1ms
         accuracy, which is probably fine for most purposes, but you may want to increase or
         decrease this value for your synth.
+
+        If shouldBeStrict is true, the audio sub-blocks will strictly never be smaller than numSamples.
+
+        If shouldBeStrict is false (default), the first audio sub-block in the buffer is allowed
+        to be smaller, to make sure that the first MIDI event in a buffer will always be sample-accurate
+        (this can sometimes help to avoid quantisation or phasing issues).
     */
-    void setMinimumRenderingSubdivisionSize (int numSamples) noexcept;
+    void setMinimumRenderingSubdivisionSize (int numSamples, bool shouldBeStrict = false) noexcept;
 
 protected:
     //==============================================================================
@@ -545,7 +569,9 @@ protected:
         By default this just calls renderNextBlock() on each voice, but you may need
         to override it to handle custom cases.
     */
-    virtual void renderVoices (AudioSampleBuffer& outputAudio,
+    virtual void renderVoices (AudioBuffer<float>& outputAudio,
+                               int startSample, int numSamples);
+    virtual void renderVoices (AudioBuffer<double>& outputAudio,
                                int startSample, int numSamples);
 
     /** Searches through the voices to find one that's not currently playing, and
@@ -571,7 +597,6 @@ protected:
                                                 int midiNoteNumber) const;
 
     /** Starts a specified voice playing a particular sound.
-
         You'll probably never need to call this, it's used internally by noteOn(), but
         may be needed by subclasses for custom behaviours.
     */
@@ -581,18 +606,30 @@ protected:
                      int midiNoteNumber,
                      float velocity);
 
+    /** Stops a given voice.
+        You should never need to call this, it's used internally by noteOff, but is protected
+        in case it's useful for some custom subclasses. It basically just calls through to
+        SynthesiserVoice::stopNote(), and has some assertions to sanity-check a few things.
+    */
+    void stopVoice (SynthesiserVoice*, float velocity, bool allowTailOff);
+
     /** Can be overridden to do custom handling of incoming midi events. */
     virtual void handleMidiEvent (const MidiMessage&);
 
 private:
     //==============================================================================
+    template <typename floatType>
+    void processNextBlock (AudioBuffer<floatType>& outputAudio,
+                           const MidiBuffer& inputMidi,
+                           int startSample,
+                           int numSamples);
+    //==============================================================================
     double sampleRate;
     uint32 lastNoteOnCounter;
     int minimumSubBlockSize;
+    bool subBlockSubdivisionIsStrict;
     bool shouldStealNotes;
     BigInteger sustainPedalsDown;
-
-    void stopVoice (SynthesiserVoice*, float velocity, bool allowTailOff);
 
    #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
     // Note the new parameters for these methods.

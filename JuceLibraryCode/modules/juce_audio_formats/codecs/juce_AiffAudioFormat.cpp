@@ -249,7 +249,7 @@ namespace AiffFileHelpers
 
                 data += isGenre ? 118 : 50;
 
-                if (data[0] == 0)
+                if (data < dataEnd && data[0] == 0)
                 {
                     if      (data + 52  < dataEnd && isValidTag (data + 50))   data += 50;
                     else if (data + 120 < dataEnd && isValidTag (data + 118))  data += 118;
@@ -531,7 +531,7 @@ public:
                     }
                     else if (type == chunkName ("INST"))
                     {
-                        HeapBlock <InstChunk> inst;
+                        HeapBlock<InstChunk> inst;
                         inst.calloc (jmax ((size_t) length + 1, sizeof (InstChunk)), 1);
                         input->read (inst, (int) length);
                         inst->copyTo (metadataValues);
@@ -643,7 +643,7 @@ public:
 
         if (metadataValues.size() > 0)
         {
-            // The meta data should have been santised for the AIFF format.
+            // The meta data should have been sanitised for the AIFF format.
             // If it was originally sourced from a WAV file the MetaDataSource
             // key should be removed (or set to "AIFF") once this has been done
             jassert (metadataValues.getValue ("MetaDataSource", "None") != "WAV");
@@ -668,13 +668,14 @@ public:
     //==============================================================================
     bool write (const int** data, int numSamples) override
     {
+        jassert (numSamples >= 0);
         jassert (data != nullptr && *data != nullptr); // the input must contain at least one channel!
 
         if (writeFailed)
             return false;
 
-        const size_t bytes = (size_t) numSamples * numChannels * bitsPerSample / 8;
-        tempBlock.ensureSize ((size_t) bytes, false);
+        const size_t bytes = numChannels * (size_t) numSamples * bitsPerSample / 8;
+        tempBlock.ensureSize (bytes, false);
 
         switch (bitsPerSample)
         {
@@ -695,13 +696,10 @@ public:
             writeFailed = true;
             return false;
         }
-        else
-        {
-            bytesWritten += bytes;
-            lengthInSamples += (uint64) numSamples;
 
-            return true;
-        }
+        bytesWritten += bytes;
+        lengthInSamples += (uint64) numSamples;
+        return true;
     }
 
 private:
@@ -715,7 +713,7 @@ private:
         using namespace AiffFileHelpers;
 
         const bool couldSeekOk = output->setPosition (headerPosition);
-        (void) couldSeekOk;
+        ignoreUnused (couldSeekOk);
 
         // if this fails, you've given it an output stream that can't seek! It needs
         // to be able to seek back to write the header
@@ -889,17 +887,11 @@ public:
 
     void readMaxLevels (int64 startSampleInFile, int64 numSamples, Range<float>* results, int numChannelsToRead) override
     {
-        if (numSamples <= 0)
-        {
-            for (int i = 0; i < numChannelsToRead; ++i)
-                results[i] = Range<float>();
+        numSamples = jmin (numSamples, lengthInSamples - startSampleInFile);
 
-            return;
-        }
-
-        if (map == nullptr || ! mappedSection.contains (Range<int64> (startSampleInFile, startSampleInFile + numSamples)))
+        if (map == nullptr || numSamples <= 0 || ! mappedSection.contains (Range<int64> (startSampleInFile, startSampleInFile + numSamples)))
         {
-            jassertfalse; // you must make sure that the window contains all the samples you're going to attempt to read.
+            jassert (numSamples <= 0); // you must make sure that the window contains all the samples you're going to attempt to read.
 
             for (int i = 0; i < numChannelsToRead; ++i)
                 results[i] = Range<float>();
@@ -978,7 +970,7 @@ bool AiffAudioFormat::canHandleFile (const File& f)
 
 AudioFormatReader* AiffAudioFormat::createReaderFor (InputStream* sourceStream, const bool deleteStreamIfOpeningFails)
 {
-    ScopedPointer <AiffAudioFormatReader> w (new AiffAudioFormatReader (sourceStream));
+    ScopedPointer<AiffAudioFormatReader> w (new AiffAudioFormatReader (sourceStream));
 
     if (w->sampleRate > 0 && w->numChannels > 0)
         return w.release();
@@ -991,12 +983,17 @@ AudioFormatReader* AiffAudioFormat::createReaderFor (InputStream* sourceStream, 
 
 MemoryMappedAudioFormatReader* AiffAudioFormat::createMemoryMappedReader (const File& file)
 {
-    if (FileInputStream* fin = file.createInputStream())
+    return createMemoryMappedReader (file.createInputStream());
+}
+
+MemoryMappedAudioFormatReader* AiffAudioFormat::createMemoryMappedReader (FileInputStream* fin)
+{
+    if (fin != nullptr)
     {
         AiffAudioFormatReader reader (fin);
 
         if (reader.lengthInSamples > 0)
-            return new MemoryMappedAiffReader (file, reader);
+            return new MemoryMappedAiffReader (fin->getFile(), reader);
     }
 
     return nullptr;
@@ -1009,7 +1006,7 @@ AudioFormatWriter* AiffAudioFormat::createWriterFor (OutputStream* out,
                                                      const StringPairArray& metadataValues,
                                                      int /*qualityOptionIndex*/)
 {
-    if (getPossibleBitDepths().contains (bitsPerSample))
+    if (out != nullptr && getPossibleBitDepths().contains (bitsPerSample))
         return new AiffAudioFormatWriter (out, sampleRate, numberOfChannels, (unsigned int) bitsPerSample, metadataValues);
 
     return nullptr;

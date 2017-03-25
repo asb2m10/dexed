@@ -42,7 +42,7 @@ public:
     void paintButton (Graphics& g, bool /*isOver*/, bool /*isDown*/) override
     {
         getLookAndFeel().drawKeymapChangeButton (g, getWidth(), getHeight(), *this,
-                                                 keyNum >= 0 ? getName() : String::empty);
+                                                 keyNum >= 0 ? getName() : String());
     }
 
     static void menuCallback (int result, ChangeKeyButton* button)
@@ -176,13 +176,16 @@ public:
 
     static void keyChosen (int result, ChangeKeyButton* button)
     {
-        if (result != 0 && button != nullptr && button->currentKeyEntryWindow != nullptr)
+        if (button != nullptr && button->currentKeyEntryWindow != nullptr)
         {
-            button->currentKeyEntryWindow->setVisible (false);
-            button->setNewKey (button->currentKeyEntryWindow->lastPress, false);
-        }
+            if (result != 0)
+            {
+                button->currentKeyEntryWindow->setVisible (false);
+                button->setNewKey (button->currentKeyEntryWindow->lastPress, false);
+            }
 
-        button->currentKeyEntryWindow = nullptr;
+            button->currentKeyEntryWindow = nullptr;
+        }
     }
 
     void assignNewKey()
@@ -216,7 +219,7 @@ public:
         for (int i = 0; i < jmin ((int) maxNumAssignments, keyPresses.size()); ++i)
             addKeyPressButton (owner.getDescriptionForKeyPress (keyPresses.getReference (i)), i, isReadOnly);
 
-        addKeyPressButton (String::empty, -1, isReadOnly);
+        addKeyPressButton (String(), -1, isReadOnly);
     }
 
     void addKeyPressButton (const String& desc, const int index, const bool isReadOnly)
@@ -383,7 +386,7 @@ public:
                                       TRANS("Reset to defaults"),
                                       TRANS("Are you sure you want to reset all the key-mappings to their default state?"),
                                       TRANS("Reset"),
-                                      String::empty,
+                                      String(),
                                       &owner,
                                       ModalCallbackFunction::forComponent (resetToDefaultsCallback, &owner));
     }

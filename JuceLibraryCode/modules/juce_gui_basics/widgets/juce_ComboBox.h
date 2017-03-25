@@ -57,10 +57,10 @@ public:
 
         @param componentName    the name to set for the component (see Component::setName())
     */
-    explicit ComboBox (const String& componentName = String::empty);
+    explicit ComboBox (const String& componentName = String());
 
     /** Destructor. */
-    ~ComboBox();
+    virtual ~ComboBox();
 
     //==============================================================================
     /** Sets whether the text in the combo-box is editable.
@@ -269,8 +269,10 @@ public:
     /** Returns true if the popup menu is currently being shown. */
     bool isPopupActive() const noexcept                 { return menuActive; }
 
-    /** Adds the items in this ComboBox to the given menu. */
-    virtual void addItemsToMenu (PopupMenu&) const;
+    /** Returns the PopupMenu object associated with the ComboBox.
+        Can be useful for adding sub-menus to the ComboBox standard PopupMenu
+    */
+    PopupMenu* getRootMenu() { return &currentMenu; }
 
     //==============================================================================
     /**
@@ -416,28 +418,25 @@ public:
 
 private:
     //==============================================================================
-    struct ItemInfo
+    enum EditableState
     {
-        ItemInfo (const String&, int itemId, bool isEnabled, bool isHeading);
-        bool isSeparator() const noexcept;
-        bool isRealItem() const noexcept;
-
-        String name;
-        int itemId;
-        bool isEnabled : 1, isHeading : 1;
+        editableUnknown,
+        labelIsNotEditable,
+        labelIsEditable
     };
 
-    OwnedArray<ItemInfo> items;
+    PopupMenu currentMenu;
     Value currentId;
     int lastCurrentId;
-    bool isButtonDown, separatorPending, menuActive, scrollWheelEnabled;
+    bool isButtonDown, menuActive, scrollWheelEnabled;
     float mouseWheelAccumulator;
     ListenerList<Listener> listeners;
     ScopedPointer<Label> label;
     String textWhenNothingSelected, noChoicesMessage;
+    EditableState labelEditableState;
 
-    ItemInfo* getItemForId (int) const noexcept;
-    ItemInfo* getItemForIndex (int) const noexcept;
+    PopupMenu::Item* getItemForId (int) const noexcept;
+    PopupMenu::Item* getItemForIndex (int) const noexcept;
     bool selectIfEnabled (int index);
     bool nudgeSelectedItem (int delta);
     void sendChange (NotificationType);

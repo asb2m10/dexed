@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -122,45 +124,50 @@ void TimeSliceThread::run()
 
         {
             Time nextClientTime;
+            int numClients = 0;
 
             {
                 const ScopedLock sl2 (listLock);
 
-                index = clients.size() > 0 ? ((index + 1) % clients.size()) : 0;
+                numClients = clients.size();
+                index = numClients > 0 ? ((index + 1) % numClients) : 0;
 
                 if (TimeSliceClient* const firstClient = getNextClient (index))
                     nextClientTime = firstClient->nextCallTime;
             }
 
-            const Time now (Time::getCurrentTime());
-
-            if (nextClientTime > now)
+            if (numClients > 0)
             {
-                timeToWait = (int) jmin ((int64) 500, (nextClientTime - now).inMilliseconds());
-            }
-            else
-            {
-                timeToWait = index == 0 ? 1 : 0;
+                const Time now (Time::getCurrentTime());
 
-                const ScopedLock sl (callbackLock);
-
+                if (nextClientTime > now)
                 {
-                    const ScopedLock sl2 (listLock);
-                    clientBeingCalled = getNextClient (index);
+                    timeToWait = (int) jmin ((int64) 500, (nextClientTime - now).inMilliseconds());
                 }
-
-                if (clientBeingCalled != nullptr)
+                else
                 {
-                    const int msUntilNextCall = clientBeingCalled->useTimeSlice();
+                    timeToWait = index == 0 ? 1 : 0;
 
-                    const ScopedLock sl2 (listLock);
+                    const ScopedLock sl (callbackLock);
 
-                    if (msUntilNextCall >= 0)
-                        clientBeingCalled->nextCallTime = now + RelativeTime::milliseconds (msUntilNextCall);
-                    else
-                        clients.removeFirstMatchingValue (clientBeingCalled);
+                    {
+                        const ScopedLock sl2 (listLock);
+                        clientBeingCalled = getNextClient (index);
+                    }
 
-                    clientBeingCalled = nullptr;
+                    if (clientBeingCalled != nullptr)
+                    {
+                        const int msUntilNextCall = clientBeingCalled->useTimeSlice();
+
+                        const ScopedLock sl2 (listLock);
+
+                        if (msUntilNextCall >= 0)
+                            clientBeingCalled->nextCallTime = now + RelativeTime::milliseconds (msUntilNextCall);
+                        else
+                            clients.removeFirstMatchingValue (clientBeingCalled);
+
+                        clientBeingCalled = nullptr;
+                    }
                 }
             }
         }

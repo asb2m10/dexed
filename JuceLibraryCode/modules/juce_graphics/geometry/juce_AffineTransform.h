@@ -67,15 +67,13 @@ public:
     /** Compares two transforms. */
     bool operator!= (const AffineTransform& other) const noexcept;
 
-    /** A ready-to-use identity transform, which you can use to append other
-        transformations to.
-
-        e.g. @code
-        AffineTransform myTransform = AffineTransform::identity.rotated (.5f)
-                                                               .scaled (2.0f);
-        @endcode
+   #if JUCE_ALLOW_STATIC_NULL_VARIABLES
+    /** A ready-to-use identity transform.
+        Note that you should always avoid using a static variable like this, and
+        prefer AffineTransform() or {} if you need a default-constructed instance.
     */
     static const AffineTransform identity;
+   #endif
 
     //==============================================================================
     /** Transforms a 2D coordinate using this matrix. */
@@ -275,11 +273,6 @@ public:
     */
     float mat00, mat01, mat02;
     float mat10, mat11, mat12;
-
-
-private:
-    //==============================================================================
-    JUCE_LEAK_DETECTOR (AffineTransform)
 };
 
 #endif   // JUCE_AFFINETRANSFORM_H_INCLUDED

@@ -159,7 +159,7 @@ public:
 
         If allowMenusAndBars is true, things like the menu and dock (on mac) are still
         allowed to pop up when the mouse moves onto them. If this is false, it'll try
-        to hide as much on-screen paraphenalia as possible.
+        to hide as much on-screen paraphernalia as possible.
     */
     void setKioskModeComponent (Component* componentToUse,
                                 bool allowMenusAndBars = true);
@@ -394,6 +394,11 @@ public:
     /** True if the OS supports semitransparent windows */
     static bool canUseSemiTransparentWindows() noexcept;
 
+   #if JUCE_MAC
+    /** OSX-specific function to check for the "dark" title-bar and menu mode. */
+    static bool isOSXDarkModeActive();
+   #endif
+
 private:
     //==============================================================================
     static Desktop* instance;
@@ -429,6 +434,8 @@ private:
     bool kioskModeReentrant;
 
     int allowedOrientations;
+    void allowedOrientationsChanged();
+
     float masterScaleFactor;
 
     ComponentAnimator animator;

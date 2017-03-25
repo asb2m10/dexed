@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -48,9 +50,8 @@ public:
     //==============================================================================
     /** Creates an (invalid) file object.
 
-        The file is initially set to an empty path, so getFullPath() will return
-        an empty string, and comparing the file to File::nonexistent will return
-        true.
+        The file is initially set to an empty path, so getFullPathName() will return
+        an empty string.
 
         You can use its operator= method to point it at a proper file.
     */
@@ -95,8 +96,13 @@ public:
    #endif
 
     //==============================================================================
-    /** This static constant is used for referring to an 'invalid' file. */
+   #if JUCE_ALLOW_STATIC_NULL_VARIABLES
+    /** This static constant is used for referring to an 'invalid' file.
+        Bear in mind that you should avoid this kind of static variable, and always prefer
+        to use File() or {} if you need a default-constructed File object.
+    */
     static const File nonexistent;
+   #endif
 
     //==============================================================================
     /** Checks whether the file actually exists.
@@ -360,14 +366,6 @@ public:
     */
     bool isHidden() const;
 
-    /** Returns true if this file is a link or alias that can be followed using getLinkedTarget(). */
-    bool isLink() const;
-
-    /** If this file is a link or alias, this returns the file that it points to.
-        If the file isn't actually link, it'll just return itself.
-    */
-    File getLinkedTarget() const;
-
     /** Returns a unique identifier for the file, if one is available.
 
         Depending on the OS and file-system, this may be a unix inode number or
@@ -438,14 +436,18 @@ public:
 
         If it already exists or is a directory, this method will do nothing.
 
-        @returns    true if the file has been created (or if it already existed).
+        If the parent directories of the File do not exist then this method will
+        recursively create the parent directories.
+
+        @returns    a result to indicate whether the file was created successfully,
+                    or an error message if it failed.
         @see createDirectory
     */
     Result create() const;
 
     /** Creates a new directory for this filename.
 
-        This will try to create the file as a directory, and fill also create
+        This will try to create the file as a directory, and will also create
         any parent directories it needs in order to complete the operation.
 
         @returns    a result to indicate whether the directory was created successfully, or
@@ -509,6 +511,18 @@ public:
         @returns    true if the operation succeeds
     */
     bool copyFileTo (const File& targetLocation) const;
+
+    /** Replaces a file.
+
+        Replace the file in the given location, assuming the replaced files identity.
+        Depending on the file system this will preserve file attributes such as
+        creation date, short file name, etc.
+
+        If replacement succeeds the original file is deleted.
+
+        @returns    true if the operation succeeds
+    */
+    bool replaceFileIn (const File& targetLocation) const;
 
     /** Copies a directory.
 
@@ -880,7 +894,6 @@ public:
     */
     static File createTempFile (StringRef fileNameEnding);
 
-
     //==============================================================================
     /** Returns the current working directory.
         @see setAsCurrentWorkingDirectory
@@ -946,8 +959,28 @@ public:
     /** Adds a separator character to the end of a path if it doesn't already have one. */
     static String addTrailingSeparator (const String& path);
 
-   #if JUCE_MAC || JUCE_IOS || DOXYGEN
     //==============================================================================
+    /** Tries to create a symbolic link and returns a boolean to indicate success */
+    bool createSymbolicLink (const File& linkFileToCreate, bool overwriteExisting) const;
+
+    /** Returns true if this file is a link or alias that can be followed using getLinkedTarget(). */
+    bool isSymbolicLink() const;
+
+    /** If this file is a link or alias, this returns the file that it points to.
+        If the file isn't actually link, it'll just return itself.
+    */
+    File getLinkedTarget() const;
+
+   #if JUCE_WINDOWS
+    /** Windows ONLY - Creates a win32 .LNK shortcut file that links to this file. */
+    bool createShortcut (const String& description, const File& linkFileToCreate) const;
+
+    /** Windows ONLY - Returns true if this is a win32 .LNK file. */
+    bool isShortcut() const;
+   #endif
+
+    //==============================================================================
+   #if JUCE_MAC || JUCE_IOS || DOXYGEN
     /** OSX ONLY - Finds the OSType of a file from the its resources. */
     OSType getMacOSType() const;
 
@@ -960,10 +993,25 @@ public:
     void addToDock() const;
    #endif
 
-   #if JUCE_WINDOWS
-    /** Windows ONLY - Creates a win32 .LNK shortcut file that links to this file. */
-    bool createLink (const String& description, const File& linkFileToCreate) const;
-   #endif
+    //==============================================================================
+    struct NaturalFileComparator
+    {
+        NaturalFileComparator (bool shouldPutFoldersFirst) noexcept : foldersFirst (shouldPutFoldersFirst) {}
+
+        int compareElements (const File& firstFile, const File& secondFile) const
+        {
+            if (foldersFirst && (firstFile.isDirectory() != secondFile.isDirectory()))
+                return firstFile.isDirectory() ? -1 : 1;
+
+           #if NAMES_ARE_CASE_SENSITIVE
+            return firstFile.getFullPathName().compareNatural (secondFile.getFullPathName(), true);
+           #else
+            return firstFile.getFullPathName().compareNatural (secondFile.getFullPathName(), false);
+           #endif
+        }
+
+        bool foldersFirst;
+    };
 
 private:
     //==============================================================================
@@ -975,6 +1023,7 @@ private:
     Result createDirectoryInternal (const String&) const;
     bool copyInternal (const File&) const;
     bool moveInternal (const File&) const;
+    bool replaceInternal (const File&) const;
     bool setFileTimesInternal (int64 m, int64 a, int64 c) const;
     void getFileTimesInternal (int64& m, int64& a, int64& c) const;
     bool setFileReadOnlyInternal (bool) const;

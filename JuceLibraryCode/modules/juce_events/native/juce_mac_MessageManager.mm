@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -239,7 +245,7 @@ void MessageManager::runDispatchLoop()
             {
                 // An AppKit exception will kill the app, but at least this provides a chance to log it.,
                 std::runtime_error ex (std::string ("NSException: ") + [[e name] UTF8String] + ", Reason:" + [[e reason] UTF8String]);
-                JUCEApplication::sendUnhandledException (&ex, __FILE__, __LINE__);
+                JUCEApplicationBase::sendUnhandledException (&ex, __FILE__, __LINE__);
             }
             @finally
             {
@@ -297,7 +303,7 @@ bool MessageManager::runDispatchLoopUntil (int millisecondsToRunFor)
         {
             CFRunLoopRunInMode (kCFRunLoopDefaultMode, 0.001, true);
 
-            NSEvent* e = [NSApp nextEventMatchingMask: NSAnyEventMask
+            NSEvent* e = [NSApp nextEventMatchingMask: NSEventMaskAny
                                             untilDate: [NSDate dateWithTimeIntervalSinceNow: 0.001]
                                                inMode: NSDefaultRunLoopMode
                                               dequeue: YES];
@@ -330,14 +336,6 @@ void MessageManager::doPlatformSpecificInitialisation()
 {
     if (appDelegate == nil)
         appDelegate = new AppDelegate();
-
-   #if ! (defined (MAC_OS_X_VERSION_10_5) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_5)
-    // This launches a dummy thread, which forces Cocoa to initialise NSThreads correctly (needed prior to 10.5)
-    if (! [NSThread isMultiThreaded])
-        [NSThread detachNewThreadSelector: @selector (dummyMethod)
-                                 toTarget: appDelegate->delegate
-                               withObject: nil];
-   #endif
 }
 
 void MessageManager::doPlatformSpecificShutdown()
@@ -364,8 +362,8 @@ void MessageManager::broadcastMessage (const String& message)
 }
 
 // Special function used by some plugin classes to re-post carbon events
-void repostCurrentNSEvent();
-void repostCurrentNSEvent()
+void __attribute__ ((visibility("default"))) repostCurrentNSEvent();
+void __attribute__ ((visibility("default"))) repostCurrentNSEvent()
 {
     struct EventReposter  : public CallbackMessage
     {

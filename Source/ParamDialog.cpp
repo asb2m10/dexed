@@ -526,7 +526,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     sysexOut->setSelectedItemIndex(idx);
 
     engineReso->setSelectedItemIndex(reso);
-    showKeyboard->setToggleState(showKey, false);
+    showKeyboard->setToggleState(showKey, NotificationType::dontSendNotification);
 }
 
 bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey) {
@@ -562,6 +562,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     mgr.setChl(sysexChl->getValue() - 1);
 
     *reso = engineReso->getSelectedItemIndex();
+//    *showKey = showKeyboard->getToggleStateValue() == Button::ButtonState::buttonDown;
     *showKey = showKeyboard->getToggleState();
     return ret;
 }

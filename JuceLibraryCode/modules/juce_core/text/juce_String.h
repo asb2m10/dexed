@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -136,6 +138,9 @@ public:
     /** Creates a string from a UTF-8 encoded std::string. */
     String (const std::string&);
 
+    /** Creates a string from a StringRef */
+    String (StringRef);
+
     //==============================================================================
     /** Creates a string from a single character. */
     static String charToString (juce_wchar character);
@@ -144,12 +149,15 @@ public:
     ~String() noexcept;
 
     //==============================================================================
-    /** This is an empty string that can be used whenever one is needed.
-
-        It's better to use this than String() because it explains what's going on
-        and is more efficient.
+   #if JUCE_ALLOW_STATIC_NULL_VARIABLES
+    /** This is a static empty string object that can be used if you need a reference to one.
+        The value of String::empty is exactly the same as String(), and in almost all cases
+        it's better to avoid String::empty and just use String() or {} instead, so that the compiler
+        only has to reason about locally-constructed objects, rather than taking into account
+        the fact that you're referencing a global shared static memory address.
     */
     static const String empty;
+   #endif
 
     /** This is the character encoding type used internally to store the string.
 
@@ -202,10 +210,16 @@ public:
     String& operator+= (const char* textToAppend);
     /** Appends another string at the end of this one. */
     String& operator+= (const wchar_t* textToAppend);
+    /** Appends another string at the end of this one. */
+    String& operator+= (StringRef textToAppend);
     /** Appends a decimal number at the end of this string. */
     String& operator+= (int numberToAppend);
     /** Appends a decimal number at the end of this string. */
+    String& operator+= (long numberToAppend);
+    /** Appends a decimal number at the end of this string. */
     String& operator+= (int64 numberToAppend);
+    /** Appends a decimal number at the end of this string. */
+    String& operator+= (uint64 numberToAppend);
     /** Appends a character at the end of this string. */
     String& operator+= (char characterToAppend);
     /** Appends a character at the end of this string. */
@@ -354,7 +368,7 @@ public:
         @returns     0 if the two strings are identical; negative if this string comes before
                      the other one alphabetically, or positive if it comes after it.
     */
-    int compareNatural (StringRef other) const noexcept;
+    int compareNatural (StringRef other, bool isCaseSensitive = false) const noexcept;
 
     /** Tests whether the string begins with another string.
         If the parameter is an empty string, this will always return true.
@@ -932,6 +946,16 @@ public:
     */
     explicit String (uint64 largeIntegerValue);
 
+    /** Creates a string containing this signed long integer as a decimal number.
+        @see getIntValue, getFloatValue, getDoubleValue, toHexString
+    */
+    explicit String (long decimalInteger);
+
+    /** Creates a string containing this unsigned long integer as a decimal number.
+        @see getIntValue, getFloatValue, getDoubleValue, toHexString
+    */
+    explicit String (unsigned long decimalInteger);
+
     /** Creates a string representing this floating-point number.
         @param floatValue               the value to convert to a string
         @see getDoubleValue, getIntValue
@@ -1289,6 +1313,8 @@ JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, const char* string2)
 JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, const wchar_t* string2);
 /** Appends a string to the end of the first one. */
 JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, const String& string2);
+/** Appends a string to the end of the first one. */
+JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, StringRef string2);
 
 /** Appends a decimal number at the end of a string. */
 JUCE_API String& JUCE_CALLTYPE operator<< (String& string1, short number);

@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -71,11 +77,24 @@ bool SynthesiserVoice::wasStartedBefore (const SynthesiserVoice& other) const no
     return noteOnTime < other.noteOnTime;
 }
 
+void SynthesiserVoice::renderNextBlock (AudioBuffer<double>& outputBuffer,
+                                        int startSample, int numSamples)
+{
+    AudioBuffer<double> subBuffer (outputBuffer.getArrayOfWritePointers(),
+                                   outputBuffer.getNumChannels(),
+                                   startSample, numSamples);
+
+    tempBuffer.makeCopyOf (subBuffer, true);
+    renderNextBlock (tempBuffer, 0, numSamples);
+    subBuffer.makeCopyOf (tempBuffer, true);
+}
+
 //==============================================================================
 Synthesiser::Synthesiser()
     : sampleRate (0),
       lastNoteOnCounter (0),
       minimumSubBlockSize (32),
+      subBlockSubdivisionIsStrict (false),
       shouldStealNotes (true)
 {
     for (int i = 0; i < numElementsInArray (lastPitchWheelValues); ++i)
@@ -102,6 +121,7 @@ void Synthesiser::clearVoices()
 SynthesiserVoice* Synthesiser::addVoice (SynthesiserVoice* const newVoice)
 {
     const ScopedLock sl (lock);
+    newVoice->setCurrentPlaybackSampleRate (sampleRate);
     return voices.add (newVoice);
 }
 
@@ -134,10 +154,11 @@ void Synthesiser::setNoteStealingEnabled (const bool shouldSteal)
     shouldStealNotes = shouldSteal;
 }
 
-void Synthesiser::setMinimumRenderingSubdivisionSize (int numSamples) noexcept
+void Synthesiser::setMinimumRenderingSubdivisionSize (int numSamples, bool shouldBeStrict) noexcept
 {
     jassert (numSamples > 0); // it wouldn't make much sense for this to be less than 1
     minimumSubBlockSize = numSamples;
+    subBlockSubdivisionIsStrict = shouldBeStrict;
 }
 
 //==============================================================================
@@ -156,15 +177,20 @@ void Synthesiser::setCurrentPlaybackSampleRate (const double newRate)
     }
 }
 
-void Synthesiser::renderNextBlock (AudioSampleBuffer& outputBuffer, const MidiBuffer& midiData,
-                                   int startSample, int numSamples)
+template <typename floatType>
+void Synthesiser::processNextBlock (AudioBuffer<floatType>& outputAudio,
+                                    const MidiBuffer& midiData,
+                                    int startSample,
+                                    int numSamples)
 {
     // must set the sample rate before using this!
     jassert (sampleRate != 0);
+    const int targetChannels = outputAudio.getNumChannels();
 
     MidiBuffer::Iterator midiIterator (midiData);
     midiIterator.setNextSamplePosition (startSample);
 
+    bool firstEvent = true;
     int midiEventPos;
     MidiMessage m;
 
@@ -174,7 +200,9 @@ void Synthesiser::renderNextBlock (AudioSampleBuffer& outputBuffer, const MidiBu
     {
         if (! midiIterator.getNextEvent (m, midiEventPos))
         {
-            renderVoices (outputBuffer, startSample, numSamples);
+            if (targetChannels > 0)
+                renderVoices (outputAudio, startSample, numSamples);
+
             return;
         }
 
@@ -182,18 +210,24 @@ void Synthesiser::renderNextBlock (AudioSampleBuffer& outputBuffer, const MidiBu
 
         if (samplesToNextMidiMessage >= numSamples)
         {
-            renderVoices (outputBuffer, startSample, numSamples);
+            if (targetChannels > 0)
+                renderVoices (outputAudio, startSample, numSamples);
+
             handleMidiEvent (m);
             break;
         }
 
-        if (samplesToNextMidiMessage < minimumSubBlockSize)
+        if (samplesToNextMidiMessage < ((firstEvent && ! subBlockSubdivisionIsStrict) ? 1 : minimumSubBlockSize))
         {
             handleMidiEvent (m);
             continue;
         }
 
-        renderVoices (outputBuffer, startSample, samplesToNextMidiMessage);
+        firstEvent = false;
+
+        if (targetChannels > 0)
+            renderVoices (outputAudio, startSample, samplesToNextMidiMessage);
+
         handleMidiEvent (m);
         startSample += samplesToNextMidiMessage;
         numSamples  -= samplesToNextMidiMessage;
@@ -203,7 +237,23 @@ void Synthesiser::renderNextBlock (AudioSampleBuffer& outputBuffer, const MidiBu
         handleMidiEvent (m);
 }
 
-void Synthesiser::renderVoices (AudioSampleBuffer& buffer, int startSample, int numSamples)
+// explicit template instantiation
+template void Synthesiser::processNextBlock<float> (AudioBuffer<float>& outputAudio,
+                                                    const MidiBuffer& midiData,
+                                                    int startSample,
+                                                    int numSamples);
+template void Synthesiser::processNextBlock<double> (AudioBuffer<double>& outputAudio,
+                                                     const MidiBuffer& midiData,
+                                                     int startSample,
+                                                     int numSamples);
+
+void Synthesiser::renderVoices (AudioBuffer<float>& buffer, int startSample, int numSamples)
+{
+    for (int i = voices.size(); --i >= 0;)
+        voices.getUnchecked (i)->renderNextBlock (buffer, startSample, numSamples);
+}
+
+void Synthesiser::renderVoices (AudioBuffer<double>& buffer, int startSample, int numSamples)
 {
     for (int i = voices.size(); --i >= 0;)
         voices.getUnchecked (i)->renderNextBlock (buffer, startSample, numSamples);
@@ -480,13 +530,13 @@ void Synthesiser::handleSostenutoPedal (int midiChannel, bool isDown)
 
 void Synthesiser::handleSoftPedal (int midiChannel, bool /*isDown*/)
 {
-    (void) midiChannel;
+    ignoreUnused (midiChannel);
     jassert (midiChannel > 0 && midiChannel <= 16);
 }
 
 void Synthesiser::handleProgramChange (int midiChannel, int programNumber)
 {
-    (void) midiChannel; (void) programNumber;
+    ignoreUnused (midiChannel, programNumber);
     jassert (midiChannel > 0 && midiChannel <= 16);
 }
 
@@ -525,6 +575,9 @@ SynthesiserVoice* Synthesiser::findVoiceToSteal (SynthesiserSound* soundToPlay,
     // This voice-stealing algorithm applies the following heuristics:
     // - Re-use the oldest notes first
     // - Protect the lowest & topmost notes, even if sustained, but not if they've been released.
+
+    // apparently you are trying to render audio without having any voices...
+    jassert (voices.size() > 0);
 
     // These are the voices we want to protect (ie: only steal if unavoidable)
     SynthesiserVoice* low = nullptr; // Lowest sounding note, might be sustained, but NOT in release phase

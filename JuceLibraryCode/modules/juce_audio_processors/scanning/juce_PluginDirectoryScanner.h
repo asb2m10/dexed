@@ -44,12 +44,11 @@ public:
         @param formatToLookFor          this is the type of format that you want to look for
         @param directoriesToSearch      the path to search
         @param searchRecursively        true to search recursively
-        @param deadMansPedalFile        if this isn't File::nonexistent, then it will
-                                        be used as a file to store the names of any plugins
-                                        that crash during initialisation. If there are
-                                        any plugins listed in it, then these will always
-                                        be scanned after all other possible files have
-                                        been tried - in this way, even if there's a few
+        @param deadMansPedalFile        if this isn't File(), then it will be used as a file
+                                        to store the names of any plugins that crash during
+                                        initialisation. If there are any plugins listed in it,
+                                        then these will always be scanned after all other possible
+                                        files have been tried - in this way, even if there's a few
                                         dodgy plugins in your path, then a couple of rescans
                                         will still manage to find all the proper plugins.
                                         It's probably best to choose a file in the user's
@@ -57,12 +56,16 @@ public:
                                         settings file) for this. The file format it uses
                                         is just a list of filenames of the modules that
                                         failed.
+       @param allowPluginsWhichRequireAsynchronousInstantiation
+                                        If this is false then the scanner will exclude plug-ins
+                                        asynchronous creation - such as AUv3 plug-ins.
     */
     PluginDirectoryScanner (KnownPluginList& listToAddResultsTo,
                             AudioPluginFormat& formatToLookFor,
                             FileSearchPath directoriesToSearch,
                             bool searchRecursively,
-                            const File& deadMansPedalFile);
+                            const File& deadMansPedalFile,
+                            bool allowPluginsWhichRequireAsynchronousInstantiation = false);
 
     /** Destructor. */
     ~PluginDirectoryScanner();
@@ -116,6 +119,7 @@ private:
     StringArray failedFiles;
     Atomic<int> nextIndex;
     float progress;
+    bool allowAsync;
 
     void updateProgress();
     void setDeadMansPedalFile (const StringArray& newContents);

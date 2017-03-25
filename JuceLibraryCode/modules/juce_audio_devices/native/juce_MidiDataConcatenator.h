@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -51,7 +57,7 @@ public:
     void pushMidiData (const void* inputData, int numBytes, double time,
                        UserDataType* input, CallbackType& callback)
     {
-        const uint8* d = static_cast <const uint8*> (inputData);
+        const uint8* d = static_cast<const uint8*> (inputData);
 
         while (numBytes > 0)
         {
@@ -71,8 +77,7 @@ public:
                     // the normal message, handle it now..
                     if (*d >= 0xf8 && *d <= 0xfe)
                     {
-                        const MidiMessage m (*d++, time);
-                        callback.handleIncomingMidiMessage (input, m);
+                        callback.handleIncomingMidiMessage (input, MidiMessage (*d++, time));
                         --numBytes;
                     }
                     else
@@ -83,7 +88,15 @@ public:
                         data[len++] = *d++;
                         --numBytes;
 
-                        if (len >= MidiMessage::getMessageLengthFromFirstByte (data[0]))
+                        const uint8 firstByte = data[0];
+
+                        if (firstByte < 0x80 || firstByte == 0xf7)
+                        {
+                            len = 0;
+                            break;   // ignore this malformed MIDI message..
+                        }
+
+                        if (len >= MidiMessage::getMessageLengthFromFirstByte (firstByte))
                             break;
                     }
                 }

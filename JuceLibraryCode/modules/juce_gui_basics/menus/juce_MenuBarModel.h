@@ -88,6 +88,10 @@ public:
         */
         virtual void menuCommandInvoked (MenuBarModel* menuBarModel,
                                          const ApplicationCommandTarget::InvocationInfo& info) = 0;
+
+        /** Called when the menu bar is first activated or when the user finished interacting
+            with the menu bar. */
+        virtual void menuBarActivated (MenuBarModel* menuBarModel, bool isActive);
     };
 
     /** Registers a listener for callbacks when the menu items in this model change.
@@ -126,12 +130,18 @@ public:
     virtual void menuItemSelected (int menuItemID,
                                    int topLevelMenuIndex) = 0;
 
+    /** This is called when the user starts/stops navigating the maenu bar.
+
+        @param isActive              true when the user starts navigating the menu bar
+    */
+    virtual void menuBarActivated (bool isActive);
+
     //==============================================================================
    #if JUCE_MAC || DOXYGEN
     /** OSX ONLY - Sets the model that is currently being shown as the main
         menu bar at the top of the screen on the Mac.
 
-        You can pass 0 to stop the current model being displayed. Be careful
+        You can pass nullptr to stop the current model being displayed. Be careful
         not to delete a model while it is being used.
 
         An optional extra menu can be specified, containing items to add to the top of
@@ -147,7 +157,7 @@ public:
     */
     static void setMacMainMenu (MenuBarModel* newMenuBarModel,
                                 const PopupMenu* extraAppleMenuItems = nullptr,
-                                const String& recentItemsMenuName = String::empty);
+                                const String& recentItemsMenuName = String());
 
     /** OSX ONLY - Returns the menu model that is currently being shown as
         the main menu bar.
@@ -167,7 +177,8 @@ public:
     void applicationCommandListChanged() override;
     /** @internal */
     void handleAsyncUpdate() override;
-
+    /** @internal */
+    void handleMenuBarActivate (bool isActive);
 private:
     ApplicationCommandManager* manager;
     ListenerList<Listener> listeners;

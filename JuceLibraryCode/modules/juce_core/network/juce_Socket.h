@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -247,7 +249,7 @@ public:
         This is useful if you need to know to which port the OS has actually bound your
         socket when bindToPort was called with zero.
 
-        Returns -1 if the socket didn't bind to any port yet or an error occured. */
+        Returns -1 if the socket didn't bind to any port yet or an error occurred. */
     int getBoundPort() const noexcept;
 
     /** Returns the OS's socket handle that's currently open. */
@@ -306,6 +308,20 @@ public:
     int write (const String& remoteHostname, int remotePortNumber,
                const void* sourceBuffer, int numBytesToWrite);
 
+    /** Closes the underlying socket object.
+
+        Closes the underlying socket object and aborts any read or write operations.
+        Note that all other methods will return an error after this call. This
+        method is useful if another thread is blocking in a read/write call and you
+        would like to abort the read/write thread. Simply deleting the socket
+        object without calling shutdown may cause a race-condition where the read/write
+        returns just before the socket is deleted and the subsequent read/write would
+        try to read from an invalid pointer. By calling shutdown first, the socket
+        object remains valid but all current and subsequent calls to read/write will
+        return immediately.
+    */
+    void shutdown();
+
     //==============================================================================
     /** Join a multicast group
 
@@ -318,6 +334,17 @@ public:
         @returns true if it succeeds.
     */
     bool leaveMulticast (const String& multicastIPAddress);
+
+    //==============================================================================
+    /** Allow other applications to re-use the port.
+
+        Allow any other application currently running to bind to the same port.
+        Do not use this if your socket handles sensitive data as it could be
+        read by any, possibly malicious, third-party apps.
+
+        Returns true on success.
+    */
+    bool setEnablePortReuse (bool enabled);
 
 private:
     //==============================================================================

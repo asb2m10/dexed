@@ -44,8 +44,8 @@ public:
         @param componentName    the name to give the component
         @param labelText        the text to show in the label
     */
-    Label (const String& componentName = String::empty,
-           const String& labelText = String::empty);
+    Label (const String& componentName = String(),
+           const String& labelText = String());
 
     /** Destructor. */
     ~Label();
@@ -148,7 +148,7 @@ public:
 
     /** If the label is attached to the left of another component, this returns true.
 
-        Returns false if the label is above the other component. This is only relevent if
+        Returns false if the label is above the other component. This is only relevant if
         attachToComponent() has been called.
     */
     bool isAttachedOnLeft() const noexcept                                      { return leftOfOwnerComp; }

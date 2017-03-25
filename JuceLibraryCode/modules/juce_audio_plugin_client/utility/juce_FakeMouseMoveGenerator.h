@@ -25,10 +25,10 @@
 #ifndef JUCE_FAKEMOUSEMOVEGENERATOR_H_INCLUDED
 #define JUCE_FAKEMOUSEMOVEGENERATOR_H_INCLUDED
 
-#if JUCE_MAC && JUCE_SUPPORT_CARBON
+#if JUCE_MAC
 
 //==============================================================================
-// Helper class to workaround carbon windows not getting mouse-moves..
+// Helper class to workaround windows not getting mouse-moves...
 class FakeMouseMoveGenerator  : private Timer
 {
 public:
@@ -39,7 +39,7 @@ public:
 
     void timerCallback() override
     {
-        // workaround for carbon windows not getting mouse-moves..
+        // Workaround for windows not getting mouse-moves...
         const Point<float> screenPos (Desktop::getInstance().getMainMouseSource().getScreenPosition());
 
         if (screenPos != lastScreenPos)
@@ -51,7 +51,8 @@ public:
                 if (Component* const comp = Desktop::getInstance().findComponentAt (screenPos.roundToInt()))
                     if (ComponentPeer* const peer = comp->getPeer())
                         if (! peer->isFocused())
-                            peer->handleMouseEvent (0, peer->globalToLocal (screenPos), mods, Time::currentTimeMillis());
+                            peer->handleMouseEvent (0, peer->globalToLocal (screenPos), mods,
+                                                    MouseInputSource::invalidPressure, Time::currentTimeMillis());
         }
     }
 

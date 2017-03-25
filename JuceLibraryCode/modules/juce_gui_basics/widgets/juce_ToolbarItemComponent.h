@@ -104,7 +104,7 @@ public:
 
         @see contentAreaChanged
     */
-    const Rectangle<int>& getContentArea() const noexcept           { return contentArea; }
+    Rectangle<int> getContentArea() const noexcept                  { return contentArea; }
 
     //==============================================================================
     /** This method must return the size criteria for this item, based on a given toolbar
@@ -193,7 +193,7 @@ private:
     const int itemId;
     ToolbarEditingMode mode;
     Toolbar::ToolbarItemStyle toolbarStyle;
-    ScopedPointer <Component> overlayComp;
+    ScopedPointer<Component> overlayComp;
     int dragOffsetX, dragOffsetY;
     bool isActive, isBeingDragged, isBeingUsedAsAButton;
     Rectangle<int> contentArea;

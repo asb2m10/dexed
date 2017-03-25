@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -104,7 +110,7 @@ public:
     MidiMessage (const MidiMessage&, double newTimeStamp);
 
     /** Destructor. */
-    ~MidiMessage();
+    ~MidiMessage() noexcept;
 
     /** Copies this message from another one. */
     MidiMessage& operator= (const MidiMessage& other);
@@ -118,12 +124,18 @@ public:
     /** Returns a pointer to the raw midi data.
         @see getRawDataSize
     */
-    const uint8* getRawData() const noexcept            { return allocatedData != nullptr ? allocatedData.getData() : preallocatedData.asBytes; }
+    const uint8* getRawData() const noexcept            { return getData(); }
 
     /** Returns the number of bytes of data in the message.
         @see getRawData
     */
     int getRawDataSize() const noexcept                 { return size; }
+
+    //==============================================================================
+    /** Returns a human-readable description of the midi message as a string,
+        for example "Note On C#3 Velocity 120 Channel 1".
+    */
+    String getDescription() const;
 
     //==============================================================================
     /** Returns the timestamp associated with this message.
@@ -238,10 +250,27 @@ public:
 
         @param channel      the midi channel, in the range 1 to 16
         @param noteNumber   the key number, 0 to 127
+        @param velocity     in the range 0 to 1.0
+        @see isNoteOff
+    */
+    static MidiMessage noteOff (int channel, int noteNumber, float velocity) noexcept;
+
+    /** Creates a key-up message.
+
+        @param channel      the midi channel, in the range 1 to 16
+        @param noteNumber   the key number, 0 to 127
         @param velocity     in the range 0 to 127
         @see isNoteOff
     */
-    static MidiMessage noteOff (int channel, int noteNumber, uint8 velocity = 0) noexcept;
+    static MidiMessage noteOff (int channel, int noteNumber, uint8 velocity) noexcept;
+
+    /** Creates a key-up message.
+
+        @param channel      the midi channel, in the range 1 to 16
+        @param noteNumber   the key number, 0 to 127
+        @see isNoteOff
+    */
+    static MidiMessage noteOff (int channel, int noteNumber) noexcept;
 
     /** Returns true if this message is a 'key-down' or 'key-up' event.
 
@@ -828,7 +857,7 @@ public:
 
         The value passed in must be 0x80 or higher.
     */
-    static int getMessageLengthFromFirstByte (const uint8 firstByte) noexcept;
+    static int getMessageLengthFromFirstByte (uint8 firstByte) noexcept;
 
     //==============================================================================
     /** Returns the name of a midi note number.
@@ -855,7 +884,7 @@ public:
         The frequencyOfA parameter is an optional frequency for 'A', normally 440-444Hz for concert pitch.
         @see getMidiNoteName
     */
-    static double getMidiNoteInHertz (int noteNumber, const double frequencyOfA = 440.0) noexcept;
+    static double getMidiNoteInHertz (int noteNumber, double frequencyOfA = 440.0) noexcept;
 
     /** Returns true if the given midi note number is a black key. */
     static bool isMidiNoteBlack (int noteNumber) noexcept;
@@ -882,21 +911,29 @@ public:
     */
     static const char* getControllerName (int controllerNumber);
 
+    /** Converts a floating-point value between 0 and 1 to a MIDI 7-bit value between 0 and 127. */
+    static uint8 floatValueToMidiByte (float valueBetween0and1) noexcept;
+
+    /** Converts a pitchbend value in semitones to a MIDI 14-bit pitchwheel position value. */
+    static uint16 pitchbendToPitchwheelPos (float pitchbendInSemitones,
+                                            float pitchbendRangeInSemitones) noexcept;
+
 private:
     //==============================================================================
-    double timeStamp;
-    HeapBlock<uint8> allocatedData;
-    int size;
-
    #ifndef DOXYGEN
-    union
+    union PackedData
     {
-        uint8 asBytes[4];
-        uint32 asInt32;
-    } preallocatedData;
+        uint8* allocatedData;
+        uint8 asBytes[sizeof (uint8*)];
+    };
+
+    PackedData packedData;
+    double timeStamp;
+    int size;
    #endif
 
-    inline uint8* getData() noexcept   { return allocatedData != nullptr ? allocatedData.getData() : preallocatedData.asBytes; }
+    inline bool isHeapAllocated() const noexcept  { return size > (int) sizeof (packedData); }
+    inline uint8* getData() const noexcept        { return isHeapAllocated() ? packedData.allocatedData : (uint8*) packedData.asBytes; }
     uint8* allocateSpace (int);
 };
 

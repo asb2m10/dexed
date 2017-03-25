@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -222,21 +224,29 @@ public:
                      size_t numBitsToRead) const noexcept;
 
     //==============================================================================
-    /** Returns a string of characters that represent the binary contents of this block.
+    /** Returns a string of characters in a JUCE-specific text encoding that represents the
+        binary contents of this block.
 
-        Uses a 64-bit encoding system to allow binary data to be turned into a string
-        of simple non-extended characters, e.g. for storage in XML.
+        This uses a JUCE-specific (i.e. not standard!) 64-bit encoding system to convert binary
+        data into a string of ASCII characters for purposes like storage in XML.
+        Note that this proprietary format is mainly kept here for backwards-compatibility, and
+        you may prefer to use the Base64::toBase64() method if you want to use the standard
+        base-64 encoding.
 
-        @see fromBase64Encoding
+        @see fromBase64Encoding, Base64::toBase64, Base64::convertToBase64
     */
     String toBase64Encoding() const;
 
-    /** Takes a string of encoded characters and turns it into binary data.
+    /** Takes a string created by MemoryBlock::toBase64Encoding() and extracts the original data.
 
         The string passed in must have been created by to64BitEncoding(), and this
         block will be resized to recreate the original data block.
 
-        @see toBase64Encoding
+        Note that these methods use a JUCE-specific (i.e. not standard!) 64-bit encoding system.
+        You may prefer to use the Base64::convertFromBase64() method if you want to use the
+        standard base-64 encoding.
+
+        @see toBase64Encoding, Base64::convertFromBase64
     */
     bool fromBase64Encoding  (StringRef encodedString);
 

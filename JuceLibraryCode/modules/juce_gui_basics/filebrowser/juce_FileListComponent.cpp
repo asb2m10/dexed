@@ -27,7 +27,7 @@ Image juce_createIconForFile (const File& file);
 
 //==============================================================================
 FileListComponent::FileListComponent (DirectoryContentsList& listToShow)
-    : ListBox (String::empty, nullptr),
+    : ListBox (String(), nullptr),
       DirectoryContentsDisplayComponent (listToShow)
 {
     setModel (this);
@@ -153,13 +153,13 @@ public:
             file = newFile;
             fileSize = newFileSize;
             modTime = newModTime;
-            icon = Image::null;
+            icon = Image();
             isDirectory = fileInfo != nullptr && fileInfo->isDirectory;
 
             repaint();
         }
 
-        if (file != File::nonexistent && icon.isNull() && ! isDirectory)
+        if (file != File() && icon.isNull() && ! isDirectory)
         {
             updateIcon (true);
 

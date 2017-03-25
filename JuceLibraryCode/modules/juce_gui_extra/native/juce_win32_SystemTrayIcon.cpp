@@ -91,7 +91,7 @@ public:
         if (owner.isCurrentlyBlockedByAnotherModalComponent())
         {
             if (lParam == WM_LBUTTONDOWN || lParam == WM_RBUTTONDOWN
-                 || lParam == WM_LBUTTONDBLCLK || lParam == WM_LBUTTONDBLCLK)
+                 || lParam == WM_LBUTTONDBLCLK || lParam == WM_RBUTTONDBLCLK)
             {
                 if (Component* const current = Component::getCurrentlyModalComponent())
                     current->inputAttemptWhenModal();
@@ -111,8 +111,8 @@ public:
             const Time eventTime (getMouseEventTime());
 
             const MouseEvent e (Desktop::getInstance().getMainMouseSource(),
-                                Point<float>(), eventMods, &owner, &owner, eventTime,
-                                Point<float>(), eventTime, 1, false);
+                                Point<float>(), eventMods, MouseInputSource::invalidPressure,
+                                &owner, &owner, eventTime, Point<float>(), eventTime, 1, false);
 
             if (lParam == WM_LBUTTONDOWN || lParam == WM_RBUTTONDOWN)
             {
@@ -226,7 +226,7 @@ void SystemTrayIconComponent::showInfoBubble (const String& title, const String&
 
 void SystemTrayIconComponent::hideInfoBubble()
 {
-    showInfoBubble (String::empty, String::empty);
+    showInfoBubble (String(), String());
 }
 
 void* SystemTrayIconComponent::getNativeHandle() const

@@ -98,7 +98,7 @@ private:
                 [resultListener chooseFilename: juceStringToNS (files.getReference(i).getFullPathName())];
         }
        #else
-        (void) resultListener; (void) allowMultipleFiles;
+        ignoreUnused (resultListener, allowMultipleFiles);
         jassertfalse; // Can't use this without modal loops being enabled!
        #endif
     }
@@ -122,8 +122,7 @@ private:
 - (BOOL) gestureRecognizer: (UIGestureRecognizer*) gestureRecognizer
          shouldRecognizeSimultaneouslyWithGestureRecognizer: (UIGestureRecognizer*) otherGestureRecognizer
 {
-    (void) gestureRecognizer;
-    (void) otherGestureRecognizer;
+    ignoreUnused (gestureRecognizer, otherGestureRecognizer);
     return YES;
 }
 
@@ -153,8 +152,7 @@ private:
 - (BOOL) webView: (UIWebView*) webView shouldStartLoadWithRequest: (NSURLRequest*) request
                                                    navigationType: (UIWebViewNavigationType) navigationType
 {
-    (void) webView;
-    (void) navigationType;
+    ignoreUnused (webView, navigationType);
     return ownerComponent->pageAboutToLoad (nsStringToJuce (request.URL.absoluteString));
 }
 
@@ -233,8 +231,15 @@ public:
         }
         else
         {
+            NSString* urlString = juceStringToNS (url);
+
+           #if (JUCE_MAC && (defined (__MAC_OS_X_VERSION_MIN_REQUIRED) && defined (__MAC_10_9) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_9)) || (JUCE_IOS && (defined (__IPHONE_OS_VERSION_MIN_REQUIRED) && defined (__IPHONE_7_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0))
+            urlString = [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+           #else
+            urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+           #endif
             NSMutableURLRequest* r
-                = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: juceStringToNS (url)]
+                = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: urlString]
                                           cachePolicy: NSURLRequestUseProtocolCachePolicy
                                       timeoutInterval: 30.0];
 
@@ -262,6 +267,10 @@ public:
            #else
             [webView loadRequest: r];
            #endif
+
+           #if JUCE_IOS
+            [webView setScalesPageToFit:YES];
+           #endif
         }
     }
 
@@ -287,7 +296,7 @@ public:
 private:
    #if JUCE_MAC
     WebView* webView;
-    NSObject* clickListener;
+    id clickListener;
    #else
     UIWebView* webView;
     WebViewTapDetector* tapDetector;

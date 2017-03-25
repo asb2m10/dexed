@@ -679,6 +679,8 @@ void CodeEditorComponent::scrollToLineInternal (int newFirstLineOnScreen)
         updateCachedIterators (firstLineOnScreen);
         rebuildLineTokensAsync();
         pimpl->handleUpdateNowIfNeeded();
+
+        editorViewportPositionChanged();
     }
 }
 
@@ -868,7 +870,7 @@ void CodeEditorComponent::indentSelectedLines (const int spacesToAdd)
 
 void CodeEditorComponent::cut()
 {
-    insertText (String::empty);
+    insertText (String());
 }
 
 bool CodeEditorComponent::copyToClipboard()
@@ -1227,6 +1229,10 @@ void CodeEditorComponent::handleTabKey()
 void CodeEditorComponent::handleEscapeKey()
 {
     newTransaction();
+}
+
+void CodeEditorComponent::editorViewportPositionChanged()
+{
 }
 
 //==============================================================================

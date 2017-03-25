@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -110,8 +112,21 @@ public:
     /** Checks whether a character is alphabetic or numeric. */
     static bool isLetterOrDigit (juce_wchar character) noexcept;
 
+    /** Checks whether a character is a printable character, i.e. alphabetic, numeric,
+        a punctuation character or a space.
+    */
+    static bool isPrintable (char character) noexcept;
+
+    /** Checks whether a character is a printable character, i.e. alphabetic, numeric,
+        a punctuation character or a space.
+    */
+    static bool isPrintable (juce_wchar character) noexcept;
+
     /** Returns 0 to 16 for '0' to 'F", or -1 for characters that aren't a legal hex digit. */
     static int getHexDigitValue (juce_wchar digit) noexcept;
+
+    /** Converts a byte of Windows 1252 codepage to unicode. */
+    static juce_wchar getUnicodeCharFromWindows1252Codepage (uint8 windows1252Char) noexcept;
 
     //==============================================================================
     /** Parses a character string to read a floating-point number.
@@ -331,15 +346,8 @@ public:
     template <typename DestCharPointerType, typename SrcCharPointerType>
     static void copyAll (DestCharPointerType& dest, SrcCharPointerType src) noexcept
     {
-        for (;;)
-        {
-            const juce_wchar c = src.getAndAdvance();
-
-            if (c == 0)
-                break;
-
+        while (juce_wchar c = src.getAndAdvance())
             dest.write (c);
-        }
 
         dest.writeNull();
     }
@@ -388,18 +396,28 @@ public:
         dest.writeNull();
     }
 
+    /** Compares two characters. */
+    static inline int compare (juce_wchar char1, juce_wchar char2) noexcept
+    {
+        if (int diff = static_cast<int> (char1) - static_cast<int> (char2))
+            return diff < 0 ? -1 : 1;
+
+        return 0;
+    }
+
     /** Compares two null-terminated character strings. */
     template <typename CharPointerType1, typename CharPointerType2>
     static int compare (CharPointerType1 s1, CharPointerType2 s2) noexcept
     {
         for (;;)
         {
-            const int c1 = (int) s1.getAndAdvance();
-            const int c2 = (int) s2.getAndAdvance();
-            const int diff = c1 - c2;
+            const juce_wchar c1 = s1.getAndAdvance();
 
-            if (diff != 0)  return diff < 0 ? -1 : 1;
-            if (c1 == 0)    break;
+            if (int diff = compare (c1, s2.getAndAdvance()))
+                return diff;
+
+            if (c1 == 0)
+                break;
         }
 
         return 0;
@@ -411,15 +429,22 @@ public:
     {
         while (--maxChars >= 0)
         {
-            const int c1 = (int) s1.getAndAdvance();
-            const int c2 = (int) s2.getAndAdvance();
-            const int diff = c1 - c2;
+            const juce_wchar c1 = s1.getAndAdvance();
 
-            if (diff != 0)  return diff < 0 ? -1 : 1;
-            if (c1 == 0)    break;
+            if (int diff = compare (c1, s2.getAndAdvance()))
+                return diff;
+
+            if (c1 == 0)
+                break;
         }
 
         return 0;
+    }
+
+    /** Compares two characters, using a case-independant match. */
+    static inline int compareIgnoreCase (juce_wchar char1, juce_wchar char2) noexcept
+    {
+        return char1 != char2 ? compare (toUpperCase (char1), toUpperCase (char2)) : 0;
     }
 
     /** Compares two null-terminated character strings, using a case-independant match. */
@@ -428,14 +453,13 @@ public:
     {
         for (;;)
         {
-            const int c1 = (int) s1.toUpperCase();
-            const int c2 = (int) s2.toUpperCase();
-            const int diff = c1 - c2;
+            const juce_wchar c1 = s1.getAndAdvance();
 
-            if (diff != 0)  return diff < 0 ? -1 : 1;
-            if (c1 == 0)    break;
+            if (int diff = compareIgnoreCase (c1, s2.getAndAdvance()))
+                return diff;
 
-             ++s1; ++s2;
+            if (c1 == 0)
+                break;
         }
 
         return 0;
@@ -447,14 +471,13 @@ public:
     {
         while (--maxChars >= 0)
         {
-            const int c1 = (int) s1.toUpperCase();
-            const int c2 = (int) s2.toUpperCase();
-            const int diff = c1 - c2;
+            const juce_wchar c1 = s1.getAndAdvance();
 
-            if (diff != 0)  return diff < 0 ? -1 : 1;
-            if (c1 == 0)    break;
+            if (int diff = compareIgnoreCase (c1, s2.getAndAdvance()))
+                return diff;
 
-             ++s1; ++s2;
+            if (c1 == 0)
+                break;
         }
 
         return 0;

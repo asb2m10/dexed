@@ -72,7 +72,7 @@ public:
         }
     }
 
-    ImagePixelData* clone() override
+    ImagePixelData::Ptr clone() override
     {
         CoreGraphicsImage* im = new CoreGraphicsImage (pixelFormat, width, height, false);
         memcpy (im->imageData, imageData, (size_t) (lineStride * height));
@@ -172,7 +172,7 @@ CoreGraphicsContext::CoreGraphicsContext (CGContextRef c, const float h, const f
       state (new SavedState())
 {
     CGContextRetain (context);
-    CGContextSaveGState(context);
+    CGContextSaveGState (context);
     CGContextSetShouldSmoothFonts (context, true);
     CGContextSetAllowsFontSmoothing (context, true);
     CGContextSetShouldAntialias (context, true);
@@ -385,9 +385,13 @@ void CoreGraphicsContext::setOpacity (float newOpacity)
 
 void CoreGraphicsContext::setInterpolationQuality (Graphics::ResamplingQuality quality)
 {
-    CGContextSetInterpolationQuality (context, quality == Graphics::lowResamplingQuality
-                                                ? kCGInterpolationLow
-                                                : kCGInterpolationHigh);
+    switch (quality)
+    {
+        case Graphics::lowResamplingQuality:    CGContextSetInterpolationQuality (context, kCGInterpolationNone);   return;
+        case Graphics::mediumResamplingQuality: CGContextSetInterpolationQuality (context, kCGInterpolationMedium); return;
+        case Graphics::highResamplingQuality:   CGContextSetInterpolationQuality (context, kCGInterpolationHigh);   return;
+        default: return;
+    }
 }
 
 //==============================================================================
@@ -405,19 +409,7 @@ void CoreGraphicsContext::fillCGRect (const CGRect& cgRect, const bool replaceEx
 {
     if (replaceExistingContents)
     {
-      #if JUCE_IOS
         CGContextSetBlendMode (context, kCGBlendModeCopy);
-      #elif MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-        CGContextClearRect (context, cgRect);
-      #else
-       #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5
-        if (CGContextDrawLinearGradient == 0) // (just a way of checking whether we're running in 10.5 or later)
-            CGContextClearRect (context, cgRect);
-        else
-       #endif
-            CGContextSetBlendMode (context, kCGBlendModeCopy);
-      #endif
-
         fillCGRect (cgRect, false);
         CGContextSetBlendMode (context, kCGBlendModeNormal);
     }
@@ -486,7 +478,8 @@ void CoreGraphicsContext::drawImage (const Image& sourceImage, const AffineTrans
 {
     const int iw = sourceImage.getWidth();
     const int ih = sourceImage.getHeight();
-    CGImageRef image = CoreGraphicsImage::getCachedImageRef (sourceImage, rgbColourSpace);
+    CGImageRef image = CoreGraphicsImage::getCachedImageRef (sourceImage, sourceImage.getFormat() == Image::PixelFormat::SingleChannel ? greyColourSpace
+                                                                                                                                       : rgbColourSpace);
 
     CGContextSaveGState (context);
     CGContextSetAlpha (context, state->fillType.getOpacity());
@@ -500,15 +493,15 @@ void CoreGraphicsContext::drawImage (const Image& sourceImage, const AffineTrans
       #if JUCE_IOS
         CGContextDrawTiledImage (context, imageRect, image);
       #else
-       #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5
         // There's a bug in CGContextDrawTiledImage that makes it incredibly slow
         // if it's doing a transformation - it's quicker to just draw lots of images manually
         if (&CGContextDrawTiledImage != 0 && transform.isOnlyTranslation())
-            CGContextDrawTiledImage (context, imageRect, image);
-        else
-       #endif
         {
-            // Fallback to manually doing a tiled fill on 10.4
+            CGContextDrawTiledImage (context, imageRect, image);
+        }
+        else
+        {
+            // Fallback to manually doing a tiled fill
             CGRect clip = CGRectIntegral (CGContextGetClipBoundingBox (context));
 
             int x = 0, y = 0;
@@ -557,7 +550,7 @@ void CoreGraphicsContext::drawLine (const Line<float>& line)
     {
         Path p;
         p.addLineSegment (line, 1.0f);
-        fillPath (p, AffineTransform::identity);
+        fillPath (p, AffineTransform());
     }
 }
 
@@ -668,7 +661,7 @@ bool CoreGraphicsContext::drawTextLayout (const AttributedString& text, const Re
     CoreTextTypeLayout::drawToCGContext (text, area, context, (float) flipHeight);
     return true;
    #else
-    (void) text; (void) area;
+    ignoreUnused (text, area);
     return false;
    #endif
 }
@@ -719,6 +712,10 @@ static CGGradientRef createGradient (const ColourGradient& g, CGColorSpaceRef co
         *comps++ = (CGFloat) colour.getFloatBlue();
         *comps++ = (CGFloat) colour.getFloatAlpha();
         locations[i] = (CGFloat) g.getColourPosition (i);
+
+        // There's a bug (?) in the way the CG renderer works where it seems
+        // to go wrong if you have two colour stops both at position 0..
+        jassert (i == 0 || locations[i] != 0);
     }
 
     return CGGradientCreateWithColorComponents (colourSpace, components, locations, (size_t) numColours);
@@ -875,7 +872,7 @@ Image juce_loadWithCoreImage (InputStream& input)
         }
     }
 
-    return Image::null;
+    return Image();
 }
 #endif
 

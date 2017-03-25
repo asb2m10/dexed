@@ -135,13 +135,11 @@ namespace JPEGHelpers
 {
     using namespace jpeglibNamespace;
 
-   #if ! JUCE_MSVC
+   #if ! (JUCE_WINDOWS && (JUCE_MSVC || JUCE_CLANG))
     using jpeglibNamespace::boolean;
    #endif
 
-    struct JPEGDecodingFailure {};
-
-    static void fatalErrorHandler (j_common_ptr)            { throw JPEGDecodingFailure(); }
+    static void fatalErrorHandler (j_common_ptr p)          { *((bool*) (p->client_data)) = true; }
     static void silentErrorCallback1 (j_common_ptr)         {}
     static void silentErrorCallback2 (j_common_ptr, int)    {}
     static void silentErrorCallback3 (j_common_ptr, char*)  {}
@@ -188,7 +186,7 @@ namespace JPEGHelpers
 
     static void jpegWriteTerminate (j_compress_ptr cinfo)
     {
-        JuceJpegDest* const dest = static_cast <JuceJpegDest*> (cinfo->dest);
+        JuceJpegDest* const dest = static_cast<JuceJpegDest*> (cinfo->dest);
 
         const size_t numToWrite = jpegBufferSize - dest->free_in_buffer;
         dest->output->write (dest->buffer, numToWrite);
@@ -196,11 +194,11 @@ namespace JPEGHelpers
 
     static boolean jpegWriteFlush (j_compress_ptr cinfo)
     {
-        JuceJpegDest* const dest = static_cast <JuceJpegDest*> (cinfo->dest);
+        JuceJpegDest* const dest = static_cast<JuceJpegDest*> (cinfo->dest);
 
         const int numToWrite = jpegBufferSize;
 
-        dest->next_output_byte = reinterpret_cast <JOCTET*> (dest->buffer);
+        dest->next_output_byte = reinterpret_cast<JOCTET*> (dest->buffer);
         dest->free_in_buffer = jpegBufferSize;
 
         return (boolean) dest->output->write (dest->buffer, (size_t) numToWrite);
@@ -264,76 +262,84 @@ Image JPEGImageFormat::decodeImage (InputStream& in)
         jpegDecompStruct.src = (jpeg_source_mgr*)(jpegDecompStruct.mem->alloc_small)
             ((j_common_ptr)(&jpegDecompStruct), JPOOL_PERMANENT, sizeof (jpeg_source_mgr));
 
+        bool hasFailed = false;
+        jpegDecompStruct.client_data = &hasFailed;
+
         jpegDecompStruct.src->init_source       = dummyCallback1;
         jpegDecompStruct.src->fill_input_buffer = jpegFill;
         jpegDecompStruct.src->skip_input_data   = jpegSkip;
         jpegDecompStruct.src->resync_to_restart = jpeg_resync_to_restart;
         jpegDecompStruct.src->term_source       = dummyCallback1;
 
-        jpegDecompStruct.src->next_input_byte   = static_cast <const unsigned char*> (mb.getData());
+        jpegDecompStruct.src->next_input_byte   = static_cast<const unsigned char*> (mb.getData());
         jpegDecompStruct.src->bytes_in_buffer   = mb.getDataSize();
 
-        try
-        {
-            jpeg_read_header (&jpegDecompStruct, TRUE);
+        jpeg_read_header (&jpegDecompStruct, TRUE);
 
+        if (! hasFailed)
+        {
             jpeg_calc_output_dimensions (&jpegDecompStruct);
 
-            const int width  = (int) jpegDecompStruct.output_width;
-            const int height = (int) jpegDecompStruct.output_height;
-
-            jpegDecompStruct.out_color_space = JCS_RGB;
-
-            JSAMPARRAY buffer
-                = (*jpegDecompStruct.mem->alloc_sarray) ((j_common_ptr) &jpegDecompStruct,
-                                                         JPOOL_IMAGE,
-                                                         (JDIMENSION) width * 3, 1);
-
-            if (jpeg_start_decompress (&jpegDecompStruct))
+            if (! hasFailed)
             {
-                image = Image (Image::RGB, width, height, false);
-                image.getProperties()->set ("originalImageHadAlpha", false);
-                const bool hasAlphaChan = image.hasAlphaChannel(); // (the native image creator may not give back what we expect)
+                const int width  = (int) jpegDecompStruct.output_width;
+                const int height = (int) jpegDecompStruct.output_height;
 
-                const Image::BitmapData destData (image, Image::BitmapData::writeOnly);
+                jpegDecompStruct.out_color_space = JCS_RGB;
 
-                for (int y = 0; y < height; ++y)
+                JSAMPARRAY buffer
+                    = (*jpegDecompStruct.mem->alloc_sarray) ((j_common_ptr) &jpegDecompStruct,
+                                                             JPOOL_IMAGE,
+                                                             (JDIMENSION) width * 3, 1);
+
+                if (jpeg_start_decompress (&jpegDecompStruct) && ! hasFailed)
                 {
-                    jpeg_read_scanlines (&jpegDecompStruct, buffer, 1);
+                    image = Image (Image::RGB, width, height, false);
+                    image.getProperties()->set ("originalImageHadAlpha", false);
+                    const bool hasAlphaChan = image.hasAlphaChannel(); // (the native image creator may not give back what we expect)
 
-                    const uint8* src = *buffer;
-                    uint8* dest = destData.getLinePointer (y);
+                    const Image::BitmapData destData (image, Image::BitmapData::writeOnly);
 
-                    if (hasAlphaChan)
+                    for (int y = 0; y < height; ++y)
                     {
-                        for (int i = width; --i >= 0;)
+                        jpeg_read_scanlines (&jpegDecompStruct, buffer, 1);
+
+                        if (hasFailed)
+                            break;
+
+                        const uint8* src = *buffer;
+                        uint8* dest = destData.getLinePointer (y);
+
+                        if (hasAlphaChan)
                         {
-                            ((PixelARGB*) dest)->setARGB (0xff, src[0], src[1], src[2]);
-                            ((PixelARGB*) dest)->premultiply();
-                            dest += destData.pixelStride;
-                            src += 3;
+                            for (int i = width; --i >= 0;)
+                            {
+                                ((PixelARGB*) dest)->setARGB (0xff, src[0], src[1], src[2]);
+                                ((PixelARGB*) dest)->premultiply();
+                                dest += destData.pixelStride;
+                                src += 3;
+                            }
+                        }
+                        else
+                        {
+                            for (int i = width; --i >= 0;)
+                            {
+                                ((PixelRGB*) dest)->setARGB (0xff, src[0], src[1], src[2]);
+                                dest += destData.pixelStride;
+                                src += 3;
+                            }
                         }
                     }
-                    else
-                    {
-                        for (int i = width; --i >= 0;)
-                        {
-                            ((PixelRGB*) dest)->setARGB (0xff, src[0], src[1], src[2]);
-                            dest += destData.pixelStride;
-                            src += 3;
-                        }
-                    }
+
+                    if (! hasFailed)
+                        jpeg_finish_decompress (&jpegDecompStruct);
+
+                    in.setPosition (((char*) jpegDecompStruct.src->next_input_byte) - (char*) mb.getData());
                 }
-
-                jpeg_finish_decompress (&jpegDecompStruct);
-
-                in.setPosition (((char*) jpegDecompStruct.src->next_input_byte) - (char*) mb.getData());
             }
-
-            jpeg_destroy_decompress (&jpegDecompStruct);
         }
-        catch (...)
-        {}
+
+        jpeg_destroy_decompress (&jpegDecompStruct);
     }
 
     return image;
@@ -357,7 +363,7 @@ bool JPEGImageFormat::writeImageToStream (const Image& image, OutputStream& out)
     jpegCompStruct.dest = &dest;
 
     dest.output = &out;
-    HeapBlock <char> tempBuffer (jpegBufferSize);
+    HeapBlock<char> tempBuffer (jpegBufferSize);
     dest.buffer = tempBuffer;
     dest.next_output_byte = (JOCTET*) dest.buffer;
     dest.free_in_buffer = jpegBufferSize;

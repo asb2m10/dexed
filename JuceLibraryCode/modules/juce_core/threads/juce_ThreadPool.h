@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -152,10 +154,14 @@ public:
     //==============================================================================
     /** Creates a thread pool.
         Once you've created a pool, you can give it some jobs by calling addJob().
+
         @param numberOfThreads  the number of threads to run. These will be started
                                 immediately, and will run until the pool is deleted.
+        @param threadStackSize  the size of the stack of each thread. If this value
+                                is zero then the default stack size of the OS will
+                                be used.
     */
-    ThreadPool (int numberOfThreads);
+    ThreadPool (int numberOfThreads, size_t threadStackSize = 0);
 
     /** Creates a thread pool with one thread per CPU core.
         Once you've created a pool, you can give it some jobs by calling addJob().
@@ -237,8 +243,8 @@ public:
                                     methods called to try to interrupt them
         @param timeOutMilliseconds  the length of time this method should wait for all the jobs to finish
                                     before giving up and returning false
-        @param selectedJobsToRemove if this is non-zero, the JobSelector object is asked to decide which
-                                    jobs should be removed. If it is zero, all jobs are removed
+        @param selectedJobsToRemove if this is not a nullptr, the JobSelector object is asked to decide
+                                    which jobs should be removed. If it is a nullptr, all jobs are removed
         @returns    true if all jobs are successfully stopped and removed; false if the timeout period
                     expires while waiting for one or more jobs to stop
     */
@@ -246,9 +252,11 @@ public:
                         int timeOutMilliseconds,
                         JobSelector* selectedJobsToRemove = nullptr);
 
-    /** Returns the number of jobs currently running or queued.
-    */
+    /** Returns the number of jobs currently running or queued. */
     int getNumJobs() const;
+
+    /** Returns the number of threads assigned to this thread pool. */
+    int getNumThreads() const;
 
     /** Returns one of the jobs in the queue.
 
@@ -307,7 +315,7 @@ private:
     bool runNextJob (ThreadPoolThread&);
     ThreadPoolJob* pickNextJobToRun();
     void addToDeleteList (OwnedArray<ThreadPoolJob>&, ThreadPoolJob*) const;
-    void createThreads (int numThreads);
+    void createThreads (int numThreads, size_t threadStackSize = 0);
     void stopThreads();
 
     // Note that this method has changed, and no longer has a parameter to indicate

@@ -1,27 +1,29 @@
 /*
   ==============================================================================
 
-   This file is part of the juce_core module of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   This file is part of the JUCE library.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission to use, copy, modify, and/or distribute this software for any purpose with
-   or without fee is hereby granted, provided that the above copyright notice and this
-   permission notice appear in all copies.
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN
-   NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
-   DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER
-   IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-   CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   ------------------------------------------------------------------------------
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   NOTE! This permissive ISC license applies ONLY to files within the juce_core module!
-   All other JUCE modules are covered by a dual GPL/commercial license, so if you are
-   using any other modules, be sure to check that you also comply with their license.
+   -----------------------------------------------------------------------------
 
-   For more details, visit www.juce.com
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -88,56 +90,57 @@ typedef unsigned int                uint32;
   typedef unsigned int              pointer_sized_uint;
 #endif
 
-#if JUCE_MSVC
+#if JUCE_WINDOWS && ! JUCE_MINGW
   typedef pointer_sized_int ssize_t;
 #endif
 
 //==============================================================================
-// Some indispensible min/max functions
+// Some indispensable min/max functions
 
 /** Returns the larger of two values. */
 template <typename Type>
-inline Type jmax (const Type a, const Type b)                                               { return (a < b) ? b : a; }
+Type jmax (const Type a, const Type b)                                               { return (a < b) ? b : a; }
 
 /** Returns the larger of three values. */
 template <typename Type>
-inline Type jmax (const Type a, const Type b, const Type c)                                 { return (a < b) ? ((b < c) ? c : b) : ((a < c) ? c : a); }
+Type jmax (const Type a, const Type b, const Type c)                                 { return (a < b) ? ((b < c) ? c : b) : ((a < c) ? c : a); }
 
 /** Returns the larger of four values. */
 template <typename Type>
-inline Type jmax (const Type a, const Type b, const Type c, const Type d)                   { return jmax (a, jmax (b, c, d)); }
+Type jmax (const Type a, const Type b, const Type c, const Type d)                   { return jmax (a, jmax (b, c, d)); }
 
 /** Returns the smaller of two values. */
 template <typename Type>
-inline Type jmin (const Type a, const Type b)                                               { return (b < a) ? b : a; }
+Type jmin (const Type a, const Type b)                                               { return (b < a) ? b : a; }
 
 /** Returns the smaller of three values. */
 template <typename Type>
-inline Type jmin (const Type a, const Type b, const Type c)                                 { return (b < a) ? ((c < b) ? c : b) : ((c < a) ? c : a); }
+Type jmin (const Type a, const Type b, const Type c)                                 { return (b < a) ? ((c < b) ? c : b) : ((c < a) ? c : a); }
 
 /** Returns the smaller of four values. */
 template <typename Type>
-inline Type jmin (const Type a, const Type b, const Type c, const Type d)                   { return jmin (a, jmin (b, c, d)); }
+Type jmin (const Type a, const Type b, const Type c, const Type d)                   { return jmin (a, jmin (b, c, d)); }
 
 /** Remaps a normalised value (between 0 and 1) to a target range.
-    This effectively returns (targetRangeMin + value0To1 * (targetRangeMax - targetRangeMin))
+    This effectively returns (targetRangeMin + value0To1 * (targetRangeMax - targetRangeMin)).
 */
-template <class Type>
-static Type jmap (Type value0To1, Type targetRangeMin, Type targetRangeMax)
+template <typename Type>
+Type jmap (Type value0To1, Type targetRangeMin, Type targetRangeMax)
 {
     return targetRangeMin + value0To1 * (targetRangeMax - targetRangeMin);
 }
 
 /** Remaps a value from a source range to a target range. */
-template <class Type>
-static Type jmap (Type sourceValue, Type sourceRangeMin, Type sourceRangeMax, Type targetRangeMin, Type targetRangeMax)
+template <typename Type>
+Type jmap (Type sourceValue, Type sourceRangeMin, Type sourceRangeMax, Type targetRangeMin, Type targetRangeMax)
 {
+    jassert (sourceRangeMax != sourceRangeMin); // mapping from a range of zero will produce NaN!
     return targetRangeMin + ((targetRangeMax - targetRangeMin) * (sourceValue - sourceRangeMin)) / (sourceRangeMax - sourceRangeMin);
 }
 
 /** Scans an array of values, returning the minimum value that it contains. */
 template <typename Type>
-const Type findMinimum (const Type* data, int numValues)
+Type findMinimum (const Type* data, int numValues)
 {
     if (numValues <= 0)
         return Type();
@@ -155,7 +158,7 @@ const Type findMinimum (const Type* data, int numValues)
 
 /** Scans an array of values, returning the maximum value that it contains. */
 template <typename Type>
-const Type findMaximum (const Type* values, int numValues)
+Type findMaximum (const Type* values, int numValues)
 {
     if (numValues <= 0)
         return Type();
@@ -214,12 +217,12 @@ void findMinAndMax (const Type* values, int numValues, Type& lowest, Type& highe
     @param valueToConstrain     the value to try to return
     @returns    the closest value to valueToConstrain which lies between lowerLimit
                 and upperLimit (inclusive)
-    @see jlimit0To, jmin, jmax
+    @see jmin, jmax, jmap
 */
 template <typename Type>
-inline Type jlimit (const Type lowerLimit,
-                    const Type upperLimit,
-                    const Type valueToConstrain) noexcept
+Type jlimit (const Type lowerLimit,
+             const Type upperLimit,
+             const Type valueToConstrain) noexcept
 {
     jassert (lowerLimit <= upperLimit); // if these are in the wrong order, results are unpredictable..
 
@@ -234,7 +237,7 @@ inline Type jlimit (const Type lowerLimit,
     @endcode
 */
 template <typename Type>
-inline bool isPositiveAndBelow (Type valueToTest, Type upperLimit) noexcept
+bool isPositiveAndBelow (Type valueToTest, Type upperLimit) noexcept
 {
     jassert (Type() <= upperLimit); // makes no sense to call this if the upper limit is itself below zero..
     return Type() <= valueToTest && valueToTest < upperLimit;
@@ -244,7 +247,7 @@ template <>
 inline bool isPositiveAndBelow (const int valueToTest, const int upperLimit) noexcept
 {
     jassert (upperLimit >= 0); // makes no sense to call this if the upper limit is itself below zero..
-    return static_cast <unsigned int> (valueToTest) < static_cast <unsigned int> (upperLimit);
+    return static_cast<unsigned int> (valueToTest) < static_cast<unsigned int> (upperLimit);
 }
 
 /** Returns true if a value is at least zero, and also less than or equal to a specified upper limit.
@@ -253,7 +256,7 @@ inline bool isPositiveAndBelow (const int valueToTest, const int upperLimit) noe
     @endcode
 */
 template <typename Type>
-inline bool isPositiveAndNotGreaterThan (Type valueToTest, Type upperLimit) noexcept
+bool isPositiveAndNotGreaterThan (Type valueToTest, Type upperLimit) noexcept
 {
     jassert (Type() <= upperLimit); // makes no sense to call this if the upper limit is itself below zero..
     return Type() <= valueToTest && valueToTest <= upperLimit;
@@ -263,13 +266,13 @@ template <>
 inline bool isPositiveAndNotGreaterThan (const int valueToTest, const int upperLimit) noexcept
 {
     jassert (upperLimit >= 0); // makes no sense to call this if the upper limit is itself below zero..
-    return static_cast <unsigned int> (valueToTest) <= static_cast <unsigned int> (upperLimit);
+    return static_cast<unsigned int> (valueToTest) <= static_cast<unsigned int> (upperLimit);
 }
 
 //==============================================================================
 /** Handy function to swap two values. */
 template <typename Type>
-inline void swapVariables (Type& variable1, Type& variable2)
+void swapVariables (Type& variable1, Type& variable2)
 {
     std::swap (variable1, variable2);
 }
@@ -296,9 +299,9 @@ void ignoreUnused (const Type1&, const Type2&, const Type3&, const Type4&) noexc
     @endcode
 */
 template <typename Type, int N>
-inline int numElementsInArray (Type (&array)[N])
+int numElementsInArray (Type (&array)[N])
 {
-    (void) array; // (required to avoid a spurious warning in MS compilers)
+    ignoreUnused (array);
     (void) sizeof (0[array]); // This line should cause an error if you pass an object with a user-defined subscript operator
     return N;
 }
@@ -309,7 +312,7 @@ inline int numElementsInArray (Type (&array)[N])
 /** Using juce_hypot is easier than dealing with the different types of hypot function
     that are provided by the various platforms and compilers. */
 template <typename Type>
-inline Type juce_hypot (Type a, Type b) noexcept
+Type juce_hypot (Type a, Type b) noexcept
 {
    #if JUCE_MSVC
     return static_cast<Type> (_hypot (a, b));
@@ -323,9 +326,9 @@ template <>
 inline float juce_hypot (float a, float b) noexcept
 {
    #if JUCE_MSVC
-    return (_hypotf (a, b));
+    return _hypotf (a, b);
    #else
-    return (hypotf (a, b));
+    return hypotf (a, b);
    #endif
 }
 #endif
@@ -337,9 +340,9 @@ inline int64 abs64 (const int64 n) noexcept
 }
 
 #if JUCE_MSVC && ! defined (DOXYGEN)  // The MSVC libraries omit these functions for some reason...
- template<typename Type> Type asinh (Type x) noexcept  { return std::log (x + std::sqrt (x * x + (Type) 1)); }
- template<typename Type> Type acosh (Type x) noexcept  { return std::log (x + std::sqrt (x * x - (Type) 1)); }
- template<typename Type> Type atanh (Type x) noexcept  { return (std::log (x + (Type) 1) - std::log (((Type) 1) - x)) / (Type) 2; }
+ template<typename Type> Type asinh (Type x)  { return std::log (x + std::sqrt (x * x + (Type) 1)); }
+ template<typename Type> Type acosh (Type x)  { return std::log (x + std::sqrt (x * x - (Type) 1)); }
+ template<typename Type> Type atanh (Type x)  { return (std::log (x + (Type) 1) - std::log (((Type) 1) - x)) / (Type) 2; }
 #endif
 
 //==============================================================================
@@ -355,12 +358,16 @@ const float   float_Pi   = 3.14159265358979323846f;
 
 
 /** Converts an angle in degrees to radians. */
-template <typename FloatType>
-inline FloatType degreesToRadians (FloatType degrees) noexcept  { return degrees * static_cast<FloatType> (double_Pi / 180.0); }
+inline float degreesToRadians (float degrees) noexcept     { return degrees * (float_Pi / 180.0f); }
+
+/** Converts an angle in degrees to radians. */
+inline double degreesToRadians (double degrees) noexcept   { return degrees * (double_Pi / 180.0); }
 
 /** Converts an angle in radians to degrees. */
-template <typename FloatType>
-inline FloatType radiansToDegrees (FloatType radians) noexcept  { return radians * static_cast<FloatType> (180.0 / double_Pi); }
+inline float radiansToDegrees (float radians) noexcept     { return radians * (180.0f / float_Pi); }
+
+/** Converts an angle in radians to degrees. */
+inline double radiansToDegrees (double radians) noexcept   { return radians * (180.0 / double_Pi); }
 
 
 //==============================================================================
@@ -368,7 +375,7 @@ inline FloatType radiansToDegrees (FloatType radians) noexcept  { return radians
     platform-independent function for it.
 */
 template <typename NumericType>
-inline bool juce_isfinite (NumericType) noexcept
+bool juce_isfinite (NumericType) noexcept
 {
     return true; // Integer types are always finite
 }
@@ -376,7 +383,7 @@ inline bool juce_isfinite (NumericType) noexcept
 template <>
 inline bool juce_isfinite (float value) noexcept
 {
-   #if JUCE_WINDOWS
+   #if JUCE_WINDOWS && ! JUCE_MINGW
     return _finite (value) != 0;
    #else
     return std::isfinite (value);
@@ -386,7 +393,7 @@ inline bool juce_isfinite (float value) noexcept
 template <>
 inline bool juce_isfinite (double value) noexcept
 {
-   #if JUCE_WINDOWS
+   #if JUCE_WINDOWS && ! JUCE_MINGW
     return _finite (value) != 0;
    #else
     return std::isfinite (value);
@@ -412,7 +419,7 @@ inline bool juce_isfinite (double value) noexcept
     even numbers will be rounded up or down differently.
 */
 template <typename FloatType>
-inline int roundToInt (const FloatType value) noexcept
+int roundToInt (const FloatType value) noexcept
 {
   #ifdef __INTEL_COMPILER
    #pragma float_control (precise, on, push)
@@ -445,7 +452,7 @@ inline int roundToInt (int value) noexcept
     This is a slightly slower and slightly more accurate version of roundDoubleToInt(). It works
     fine for values above zero, but negative numbers are rounded the wrong way.
 */
-inline int roundToIntAccurate (const double value) noexcept
+inline int roundToIntAccurate (double value) noexcept
 {
    #ifdef __INTEL_COMPILER
     #pragma float_control (pop)
@@ -465,7 +472,7 @@ inline int roundToIntAccurate (const double value) noexcept
     even numbers will be rounded up or down differently. For a more accurate conversion,
     see roundDoubleToIntAccurate().
 */
-inline int roundDoubleToInt (const double value) noexcept
+inline int roundDoubleToInt (double value) noexcept
 {
     return roundToInt (value);
 }
@@ -480,7 +487,7 @@ inline int roundDoubleToInt (const double value) noexcept
     rounding values whose floating point component is exactly 0.5, odd numbers and
     even numbers will be rounded up or down differently.
 */
-inline int roundFloatToInt (const float value) noexcept
+inline int roundFloatToInt (float value) noexcept
 {
     return roundToInt (value);
 }
@@ -504,6 +511,12 @@ inline int nextPowerOfTwo (int n) noexcept
     n |= (n >> 16);
     return n + 1;
 }
+
+/** Returns the index of the highest set bit in a (non-zero) number.
+    So for n=3 this would return 1, for n=7 it returns 2, etc.
+    An input value of 0 is illegal!
+*/
+int findHighestSetBit (uint32 n) noexcept;
 
 /** Returns the number of bits in a 32-bit integer. */
 inline int countNumberOfBits (uint32 n) noexcept
@@ -539,6 +552,25 @@ NumericType square (NumericType n) noexcept
 {
     return n * n;
 }
+
+//==============================================================================
+/** Writes a number of bits into a memory buffer at a given bit index.
+    The buffer is treated as a sequence of 8-bit bytes, and the value is encoded in little-endian order,
+    so for example if startBit = 10, and numBits = 11 then the lower 6 bits of the value would be written
+    into bits 2-8 of targetBuffer[1], and the upper 5 bits of value into bits 0-5 of targetBuffer[2].
+
+    @see readLittleEndianBitsInBuffer
+*/
+void writeLittleEndianBitsInBuffer (void* targetBuffer, uint32 startBit, uint32 numBits, uint32 value) noexcept;
+
+/** Reads a number of bits from a buffer at a given bit index.
+    The buffer is treated as a sequence of 8-bit bytes, and the value is encoded in little-endian order,
+    so for example if startBit = 10, and numBits = 11 then the lower 6 bits of the result would be read
+    from bits 2-8 of sourceBuffer[1], and the upper 5 bits of the result from bits 0-5 of sourceBuffer[2].
+
+    @see writeLittleEndianBitsInBuffer
+*/
+uint32 readLittleEndianBitsInBuffer (const void* sourceBuffer, uint32 startBit, uint32 numBits) noexcept;
 
 
 //==============================================================================

@@ -38,8 +38,10 @@ protected:
     //==============================================================================
     /** Creates a text property component.
 
-        The maxNumChars is used to set the length of string allowable, and isMultiLine
-        sets whether the text editor allows carriage returns.
+        @param propertyName  The name of the property
+        @param maxNumChars   If not zero, then this specifies the maximum allowable length of
+                             the string. If zero, then the string will have no length limit.
+        @param isMultiLine   isMultiLine sets whether the text editor allows carriage returns.
 
         @see TextEditor
     */
@@ -50,8 +52,11 @@ protected:
 public:
     /** Creates a text property component.
 
-        The maxNumChars is used to set the length of string allowable, and isMultiLine
-        sets whether the text editor allows carriage returns.
+        @param valueToControl The Value that is controlled by the TextPropertyCOmponent
+        @param propertyName   The name of the property
+        @param maxNumChars    If not zero, then this specifies the maximum allowable length of
+                              the string. If zero, then the string will have no length limit.
+        @param isMultiLine    isMultiLine sets whether the text editor allows carriage returns.
 
         @see TextEditor
     */
@@ -74,6 +79,9 @@ public:
     /** Returns the text that should be shown in the text editor. */
     virtual String getText() const;
 
+    /** Returns the text that should be shown in the text editor as a Value object. */
+    Value& getValue() const;
+
     //==============================================================================
     /** A set of colour IDs to use to change the colour of various aspects of the component.
 
@@ -89,21 +97,52 @@ public:
         outlineColourId             = 0x100e403,    /**< The colour to use to draw an outline around the text area. */
     };
 
+    void colourChanged() override;
+
+    //==============================================================================
+    class JUCE_API Listener
+    {
+    public:
+        /** Destructor. */
+        virtual ~Listener() {}
+
+        /** Called when text has finished being entered (i.e. not per keypress) has changed. */
+        virtual void textPropertyComponentChanged (TextPropertyComponent*) = 0;
+    };
+
+    /** Registers a listener to receive events when this button's state changes.
+        If the listener is already registered, this will not register it again.
+        @see removeListener
+    */
+    void addListener (Listener* newListener);
+
+    /** Removes a previously-registered button listener
+        @see addListener
+    */
+    void removeListener (Listener* listener);
+
     //==============================================================================
     /** @internal */
-    void refresh();
+    void refresh() override;
+    /** @internal */
+    virtual void textWasEdited();
 
 private:
-    ScopedPointer<Label> textEditor;
-
     class LabelComp;
     friend class LabelComp;
 
-    void textWasEdited();
+    ScopedPointer<LabelComp> textEditor;
+    ListenerList<Listener> listenerList;
+
+    void callListeners();
     void createEditor (int maxNumChars, bool isMultiLine);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextPropertyComponent)
 };
 
+#ifndef DOXYGEN
+ /** This typedef is just for compatibility with old code and VC6 - newer code should use TextPropertyComponent::Listener instead. */
+ typedef TextPropertyComponent::Listener TextPropertyComponentListener;
+#endif
 
 #endif   // JUCE_TEXTPROPERTYCOMPONENT_H_INCLUDED

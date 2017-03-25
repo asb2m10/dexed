@@ -146,10 +146,13 @@ public:
     */
     inline bool isNull() const noexcept                     { return image == nullptr; }
 
+   #if JUCE_ALLOW_STATIC_NULL_VARIABLES
     /** A null Image object that can be used when you need to return an invalid image.
-        This object is the equivalient to an Image created with the default constructor.
+        This object is the equivalient to an Image created with the default constructor, and
+        you should always prefer to use Image() or {} when you need an empty image object.
     */
     static const Image null;
+   #endif
 
     //==============================================================================
     /** Returns the image's width (in pixels). */
@@ -435,10 +438,12 @@ public:
     ImagePixelData (Image::PixelFormat, int width, int height);
     ~ImagePixelData();
 
+    typedef ReferenceCountedObjectPtr<ImagePixelData> Ptr;
+
     /** Creates a context that will draw into this image. */
     virtual LowLevelGraphicsContext* createLowLevelContext() = 0;
     /** Creates a copy of this image. */
-    virtual ImagePixelData* clone() = 0;
+    virtual Ptr clone() = 0;
     /** Creates an instance of the type of this image. */
     virtual ImageType* createType() const = 0;
     /** Initialises a BitmapData object. */
@@ -457,8 +462,6 @@ public:
         @see Image::getProperties().
     */
     NamedValueSet userData;
-
-    typedef ReferenceCountedObjectPtr<ImagePixelData> Ptr;
 
     //==============================================================================
     struct Listener

@@ -2,22 +2,28 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
@@ -211,7 +217,7 @@ public:
     /** Returns the current device properties that are in use.
         @see setAudioDeviceSetup
     */
-    void getAudioDeviceSetup (AudioDeviceSetup& result);
+    void getAudioDeviceSetup (AudioDeviceSetup& result) const;
 
     /** Changes the current device or its settings.
 
@@ -404,26 +410,28 @@ public:
     */
     void playTestSound();
 
-    /** Turns on level-measuring.
-
-        When enabled, the device manager will measure the peak input level
-        across all channels, and you can get this level by calling getCurrentInputLevel().
-
-        This is mainly intended for audio setup UI panels to use to create a mic
-        level display, so that the user can check that they've selected the right
-        device.
-
-        A simple filter is used to make the level decay smoothly, but this is
-        only intended for giving rough feedback, and not for any kind of accurate
-        measurement.
+    //==============================================================================
+    /** Turns on level-measuring for input channels.
+        @see getCurrentInputLevel()
     */
-    void enableInputLevelMeasurement (bool enableMeasurement);
+    void enableInputLevelMeasurement (bool enableMeasurement) noexcept;
+
+    /** Turns on level-measuring for output channels.
+        @see getCurrentOutputLevel()
+    */
+    void enableOutputLevelMeasurement (bool enableMeasurement) noexcept;
 
     /** Returns the current input level.
         To use this, you must first enable it by calling enableInputLevelMeasurement().
-        See enableInputLevelMeasurement() for more info.
+        @see enableInputLevelMeasurement()
     */
-    double getCurrentInputLevel() const;
+    double getCurrentInputLevel() const noexcept;
+
+    /** Returns the current output level.
+        To use this, you must first enable it by calling enableOutputLevelMeasurement().
+        @see enableOutputLevelMeasurement()
+    */
+    double getCurrentOutputLevel() const noexcept;
 
     /** Returns the a lock that can be used to synchronise access to the audio callback.
         Obviously while this is locked, you're blocking the audio thread from running, so
@@ -450,10 +458,6 @@ private:
     BigInteger inputChannels, outputChannels;
     ScopedPointer<XmlElement> lastExplicitSettings;
     mutable bool listNeedsScanning;
-    Atomic<int> inputLevelMeasurementEnabledCount;
-    double inputLevel;
-    ScopedPointer<AudioSampleBuffer> testSound;
-    int testSoundPosition;
     AudioSampleBuffer tempBuffer;
 
     struct MidiCallbackInfo
@@ -470,7 +474,23 @@ private:
     ScopedPointer<MidiOutput> defaultMidiOutput;
     CriticalSection audioCallbackLock, midiCallbackLock;
 
+    ScopedPointer<AudioSampleBuffer> testSound;
+    int testSoundPosition;
+
     double cpuUsageMs, timeToCpuScale;
+
+    struct LevelMeter
+    {
+        LevelMeter() noexcept;
+        void updateLevel (const float* const*, int numChannels, int numSamples) noexcept;
+        void setEnabled (bool) noexcept;
+        double getCurrentLevel() const noexcept;
+
+        Atomic<int> enabled;
+        double level;
+    };
+
+    LevelMeter inputLevelMeter, outputLevelMeter;
 
     //==============================================================================
     class CallbackHandler;

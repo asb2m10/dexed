@@ -2,27 +2,33 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2016 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   Permission is granted to use this software under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license/
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   Permission to use, copy, modify, and/or distribute this software for any
+   purpose with or without fee is hereby granted, provided that the above
+   copyright notice and this permission notice appear in all copies.
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
+   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
+   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
+   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
+   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
+   OF THIS SOFTWARE.
 
-   ------------------------------------------------------------------------------
+   -----------------------------------------------------------------------------
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   To release a closed-source product which uses other parts of JUCE not
+   licensed under the ISC terms, commercial licenses are available: visit
+   www.juce.com for more information.
 
   ==============================================================================
 */
 
-#if defined (JUCE_AUDIO_DEVICES_H_INCLUDED) && ! JUCE_AMALGAMATED_INCLUDE
+#ifdef JUCE_AUDIO_DEVICES_H_INCLUDED
  /* When you add this cpp file to your project, you mustn't include it in a file where you've
     already included any other headers - just put it inside a file on its own, possibly with your config
     flags preceding it, but don't include anything else. That also includes avoiding any automatic prefix
@@ -31,11 +37,12 @@
  #error "Incorrect use of JUCE cpp file"
 #endif
 
-// Your project must contain an AppConfig.h file with your project-specific settings in it,
-// and your header search path must make it accessible to the module's files.
-#include "AppConfig.h"
+#define JUCE_CORE_INCLUDE_OBJC_HELPERS 1
+#define JUCE_CORE_INCLUDE_COM_SMART_PTR 1
+#define JUCE_CORE_INCLUDE_JNI_HELPERS 1
+#define JUCE_CORE_INCLUDE_NATIVE_HEADERS 1
+#define JUCE_EVENTS_INCLUDE_WIN32_MESSAGE_WINDOW 1
 
-#include "../juce_core/native/juce_BasicNativeHeaders.h"
 #include "juce_audio_devices.h"
 
 //==============================================================================
@@ -44,7 +51,6 @@
  #define Component CarbonDummyCompName
  #import <CoreAudio/AudioHardware.h>
  #import <CoreMIDI/MIDIServices.h>
- #import <DiscRecording/DiscRecording.h>
  #import <AudioToolbox/AudioServices.h>
  #undef Point
  #undef Component
@@ -54,10 +60,14 @@
  #import <AVFoundation/AVFoundation.h>
  #import <CoreMIDI/MIDIServices.h>
 
+ #if TARGET_OS_SIMULATOR
+  #import <CoreMIDI/MIDINetworkSession.h>
+ #endif
+
 //==============================================================================
 #elif JUCE_WINDOWS
  #if JUCE_WASAPI
-  #include <MMReg.h>
+  #include <mmreg.h>
  #endif
 
  #if JUCE_ASIO
@@ -81,15 +91,6 @@
         needed - so to simplify things, you could just copy these into your JUCE directory).
   */
   #include <iasiodrv.h>
- #endif
-
- #if JUCE_USE_CDBURNER
-  /* You'll need the Platform SDK for these headers - if you don't have it and don't
-     need to use CD-burning, then you might just want to set the JUCE_USE_CDBURNER flag
-     to 0, to avoid these includes.
-  */
-  #include <imapi.h>
-  #include <imapierror.h>
  #endif
 
 //==============================================================================
@@ -138,24 +139,14 @@ namespace juce
 #include "audio_io/juce_AudioIODeviceType.cpp"
 #include "midi_io/juce_MidiMessageCollector.cpp"
 #include "midi_io/juce_MidiOutput.cpp"
-#include "audio_cd/juce_AudioCDReader.cpp"
 #include "sources/juce_AudioSourcePlayer.cpp"
 #include "sources/juce_AudioTransportSource.cpp"
 #include "native/juce_MidiDataConcatenator.h"
 
 //==============================================================================
 #if JUCE_MAC
- #include "../juce_core/native/juce_osx_ObjCHelpers.h"
  #include "native/juce_mac_CoreAudio.cpp"
  #include "native/juce_mac_CoreMidi.cpp"
-
- #if JUCE_USE_CDREADER
-  #include "native/juce_mac_AudioCDReader.mm"
- #endif
-
- #if JUCE_USE_CDBURNER
-  #include "native/juce_mac_AudioCDBurner.mm"
- #endif
 
 //==============================================================================
 #elif JUCE_IOS
@@ -164,8 +155,6 @@ namespace juce
 
 //==============================================================================
 #elif JUCE_WINDOWS
- #include "../juce_core/native/juce_win32_ComSmartPtr.h"
- #include "../juce_events/native/juce_win32_HiddenMessageWindow.h"
 
  #if JUCE_WASAPI
   #include "native/juce_win32_WASAPI.cpp"
@@ -181,14 +170,6 @@ namespace juce
   #include "native/juce_win32_ASIO.cpp"
  #endif
 
- #if JUCE_USE_CDREADER
-  #include "native/juce_win32_AudioCDReader.cpp"
- #endif
-
- #if JUCE_USE_CDBURNER
-  #include "native/juce_win32_AudioCDBurner.cpp"
- #endif
-
 //==============================================================================
 #elif JUCE_LINUX
  #if JUCE_ALSA
@@ -201,13 +182,8 @@ namespace juce
   #include "native/juce_linux_JackAudio.cpp"
  #endif
 
- #if JUCE_USE_CDREADER
-  #include "native/juce_linux_AudioCDReader.cpp"
- #endif
-
 //==============================================================================
 #elif JUCE_ANDROID
- #include "../juce_core/native/juce_android_JNIHelpers.h"
  #include "native/juce_android_Audio.cpp"
  #include "native/juce_android_Midi.cpp"
 
