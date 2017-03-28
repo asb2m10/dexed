@@ -105,6 +105,23 @@ Dexed::~Dexed()
 {
   TRACE("Hi");
 
+  if(outbuf_!=NULL)
+    delete [] outbuf_;
+
+  currentNote = -1;
+
+  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note)
+  {
+    if ( voices[note].dx7_note != NULL )
+    {
+      delete voices[note].dx7_note;
+      voices[note].dx7_note = NULL;
+    } 
+    voices[note].keydown = false;
+    voices[note].sustained = false;
+    voices[note].live = false;
+  }
+
   TRACE("Bye");
 }
 
