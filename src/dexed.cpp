@@ -52,7 +52,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   engineOpl=new EngineOpl;
   engineMsfa=new FmCore;
 
-  for(i=0; i<MAX_ACTIVE_NOTES; ++i) {
+  for(i=0; i<MAX_ACTIVE_NOTES; i++) {
     voices[i].dx7_note = new Dx7Note;
     voices[i].keydown = false;
     voices[i].sustained = false;
@@ -104,20 +104,6 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 Dexed::~Dexed()
 {
   TRACE("Hi");
-
-  delete [] outbuf_;
-
-  currentNote = -1;
-
-  for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-    if ( voices[note].dx7_note != NULL ) {
-      delete voices[note].dx7_note;
-      voices[note].dx7_note = NULL;
-    } 
-    voices[note].keydown = false;
-    voices[note].sustained = false;
-    voices[note].live = false;
-  }
 
   TRACE("Bye");
 }
@@ -580,10 +566,7 @@ bool Dexed::ProcessMidiMessage(const uint8_t *buf, uint32_t buf_size) {
                     break;
                 case 123:
                     TRACE("MIDI all-notes-off: %d %d",ctrl,value);
-                    for(uint8_t note=0; note<max_notes; note++)
-                    {
-                      voices[note].dx7_note->keyup();
-                    }
+                    notes_off();
                     return(true);
                     break;
             }
@@ -831,12 +814,23 @@ void Dexed::setMonoMode(bool mode) {
 }
 
 void Dexed::panic(void) {
+  for(uint8_t i=0;i<MAX_ACTIVE_NOTES;i++)
+  {
+    if(voices[i].live == true) {
+      voices[i].keydown = false;
+      voices[i].live = false;
+      voices[i].sustained = false;
+      if ( voices[i].dx7_note != NULL ) {
+        voices[i].dx7_note->oscSync();
+      }
+    }
+  }
+}
+
+void Dexed::notes_off(void) {
   for(uint8_t i=0;i<MAX_ACTIVE_NOTES;i++) {
-    voices[i].keydown = false;
-    voices[i].live = false;
-    voices[i].sustained = false;
-    if ( voices[i].dx7_note != NULL ) {
-      voices[i].dx7_note->oscSync();
+    if(voices[i].live==true&&voices[i].keydown==true) {
+      voices[i].keydown=false;
     }
   }
 }
