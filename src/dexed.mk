@@ -5,7 +5,7 @@
 ######################################
 
 DEXED_DEPENDENCIES = lvtk
-DEXED_VERSION = #da0fabe3de43de10c1e36899e751791888a7f4e3
+DEXED_VERSION = 97bac5932d788f62f0501bc4ba1b8b085c8b9b83
 DEXED_BUNDLES = dexed.lv2
 DEXED_SITE = $(call github,dcoredump,dexed,$(DEXED_VERSION))
 DEXED_TARGET_MAKE = $(TARGET_MAKE_ENV) $(TARGET_CONFIGURE_OPTS) $(MAKE) MOD=1
