@@ -1,4 +1,5 @@
 /*
+ * Copyright 2017 Pascal Gauthier.
  * Copyright 2012 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +23,10 @@
 //using namespace std;
 
 uint32_t Env::sr_multiplier = (1<<24);
+
+const int levellut[] = {
+    0, 5, 9, 13, 17, 20, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 42, 43, 45, 46
+};
 
 void Env::init_sr(double sampleRate) {
     sr_multiplier = (44100.0 / sampleRate) * (1<<24);
@@ -66,23 +71,10 @@ int32_t Env::getsample() {
 
 void Env::keydown(bool d) {
   if (down_ != d) {
-    down_ = d;
-    advance(d ? 0 : 3);
+     down_ = d;
+     advance(d ? 0 : 3);
   }
 }
-
-void Env::setparam(int param, int value) {
-  if (param < 4) {
-    rates_[param] = value;
-  } else if (param < 8) {
-    levels_[param - 4] = value;
-  }
-  // Unknown parameter, ignore for now
-}
-
-const int levellut[] = {
-  0, 5, 9, 13, 17, 20, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 42, 43, 45, 46
-};
 
 int Env::scaleoutlevel(int outlevel) {
   return outlevel >= 20 ? 28 + outlevel : levellut[outlevel];
@@ -107,6 +99,24 @@ void Env::advance(int newix) {
 
     // meh, this should be fixed elsewhere
     inc_ = ((int64_t)inc_ * (int64_t)sr_multiplier) >> 24;
+  }
+}
+
+void Env::update(const int r[4], const int l[4], int32_t ol, int rate_scaling) {
+  for (int i = 0; i < 4; i++) {
+      rates_[i] = r[i];
+      levels_[i] = l[i];
+  }
+  outlevel_ = ol;
+  rate_scaling_ = rate_scaling;
+  if ( down_ ) {
+    // for now we simply reset ourselve at level 3
+    int newlevel = levels_[2];
+    int actuallevel = scaleoutlevel(newlevel) >> 1;
+    actuallevel = (actuallevel << 6) - 4256;
+    actuallevel = actuallevel < 16 ? 16 : actuallevel;
+    targetlevel_ = actuallevel << 16;
+    advance(2);
   }
 }
 

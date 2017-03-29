@@ -35,33 +35,44 @@ class FmCore;
 
 struct FmMod {
     uint8_t range;
-    uint8_t target;
+    bool pitch;
+    bool amp;
+    bool eg;
     
     FmMod() {
         range = 0;
-        target= 0;
+        pitch = false;
+        amp = false;
+        eg = false;
     }
 
-public:
     void setRange(uint8_t r) {
-        //range = r < 0 && r > 127 ? 0 : r;
-        range = r < 0 && r > 100 ? 0 : r;
+        range = r < 0 && r > 127 ? 0 : r;
     }
 
     void setTarget(uint8_t assign) {
-          target=assign < 0 && assign > 7 ? 0 : assign;
+        assign=assign < 0 && assign > 7 ? 0 : assign;
+        if(assign&1) // AMP
+		pitch=true;
+	if(assign&2) // PITCH
+		amp=true;
+	if(assign&4) // EG
+		eg=true;
     }
 };
 
 class Controllers {
     void applyMod(int cc, FmMod &mod) {
-        uint8_t total = (int)(cc * mod.range * 0.01);
-        if(mod.target&1) // AMP
+        float range = 0.01 * mod.range;
+        uint8_t total = cc * range;
+        if(mod.amp)
           amp_mod = max(amp_mod, total);
-        else if(mod.target&2) // PITCH
+        
+        if(mod.pitch)
           pitch_mod = max(pitch_mod, total);
-        else if(mod.target&4) // EG
-          eg_mod = max(eg_mod, total);
+        
+        if(mod.eg)
+	  eg_mod = max(eg_mod, total);
     }
     
 public:
@@ -99,9 +110,8 @@ public:
         applyMod(foot_cc, foot);
         applyMod(aftertouch_cc, at);
         
-/*        if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
+        if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
             eg_mod = 127;
- */
         
         TRACE("amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }

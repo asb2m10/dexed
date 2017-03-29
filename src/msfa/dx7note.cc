@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Pascal Gauthier.
+ * Copyright 2016-2017 Pascal Gauthier.
  * Copyright 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,8 @@
 #include "exp2.h"
 #include "controllers.h"
 #include "dx7note.h"
+
+const int FEEDBACK_BITDEPTH = 8;
 
 int32_t midinote_to_logfreq(int midinote) {
     const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
@@ -137,7 +139,7 @@ Dx7Note::Dx7Note() {
 }
 
 //void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int fb_depth) {
-void Dx7Note::init(const uint8_t patch[167], int midinote, int velocity, int fb_depth) {
+void Dx7Note::init(const uint8_t patch[167], int midinote, int velocity) {
     int rates[4];
     int levels[4];
     for (int op = 0; op < 6; op++) {
@@ -173,7 +175,7 @@ void Dx7Note::init(const uint8_t patch[167], int midinote, int velocity, int fb_
     pitchenv_.set(rates, levels);
     algorithm_ = patch[134];
     int feedback = patch[135];
-    fb_shift_ = feedback != 0 ? fb_depth - feedback : 16;
+    fb_shift_ = feedback != 0 ? FEEDBACK_BITDEPTH - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
@@ -211,8 +213,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     uint32_t amd_mod = max(amod_1, amod_2);
     
     // ==== EG AMP MOD ====
-    //uint32_t amod_3 = (ctrls->eg_mod+1) << 17;
-    uint32_t amod_3 = ((ctrls->eg_mod)+1) << 17;
+    uint32_t amod_3 = (ctrls->eg_mod+1) << 17;
     amd_mod = max((1<<24) - amod_3, amd_mod);
     
     // ==== OP RENDER ====
@@ -247,7 +248,9 @@ void Dx7Note::keyup() {
     pitchenv_.keydown(false);
 }
 
-void Dx7Note::update(const uint8_t patch[156], int midinote, int fb_depth) {
+void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
+    int rates[4];
+    int levels[4];
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];
@@ -256,10 +259,26 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int fb_depth) {
         int detune = patch[off + 20];
         basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
+        
+        for (int i = 0; i < 4; i++) {
+            rates[i] = patch[off + i];
+           levels[i] = patch[off + 4 + i];
+        }
+        int outlevel = patch[off + 16];
+        outlevel = Env::scaleoutlevel(outlevel);
+        int level_scaling = ScaleLevel(midinote, patch[off + 8], patch[off + 9],
+                                       patch[off + 10], patch[off + 11], patch[off + 12]);
+        outlevel += level_scaling;
+        outlevel = min(127, outlevel);
+        outlevel = outlevel << 5;
+        outlevel += ScaleVelocity(velocity, patch[off + 15]);
+        outlevel = max(0, outlevel);
+        int rate_scaling = ScaleRate(midinote, patch[off + 13]);
+        env_[op].update(rates, levels, outlevel, rate_scaling);
     }
     algorithm_ = patch[134];
     int feedback = patch[135];
-    fb_shift_ = feedback != 0 ? 11 - feedback : 16;
+    fb_shift_ = feedback != 0 ? FEEDBACK_BITDEPTH - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;

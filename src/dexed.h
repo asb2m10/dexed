@@ -38,6 +38,7 @@
 
 struct ProcessorVoice {
     uint8_t midi_note;
+    uint8_t velocity;
     bool keydown;
     bool sustained;
     bool live;
@@ -106,7 +107,6 @@ class Dexed : public lvtk::Synth<DexedVoice, Dexed>
     bool monoMode;
     bool refreshVoice;
     uint8_t engineType;
-    uint8_t feedback_bitdepth;
     PluginFx fx;
     Lfo lfo;
     FmCore* engineMsfa;

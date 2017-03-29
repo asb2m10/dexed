@@ -360,7 +360,10 @@ void Dexed::set_params(void)
   onParam(172,*p(p_number_of_voices));
 
   if(_param_change_counter>PARAM_CHANGE_LEVEL)
+  {
     panic();
+    controllers.refresh();
+  }
 
   //TRACE("Bye");
 }
@@ -427,7 +430,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
   if(refreshVoice) {
     for(i=0;i < max_notes;i++) {
       if ( voices[i].live )
-        voices[i].dx7_note->update(data, voices[i].midi_note, feedback_bitdepth);
+        voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity);
     }
     lfo.reset(data+137);
     refreshVoice = false;
@@ -632,9 +635,10 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
         if (!voices[note].keydown) {
             currentNote = (note + 1) % max_notes;
             voices[note].midi_note = pitch;
+            voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo, feedback_bitdepth);
+            voices[note].dx7_note->init(data, pitch, velo);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;
@@ -802,21 +806,19 @@ void Dexed::setEngineType(uint8_t tp) {
         case DEXED_ENGINE_MARKI:
             TRACE("DEXED_ENGINE_MARKI:%d",DEXED_ENGINE_MARKI);
             controllers.core = engineMkI;
-            feedback_bitdepth = 11;
             break;
         case DEXED_ENGINE_OPL:
             TRACE("DEXED_ENGINE_OPL:%d",DEXED_ENGINE_OPL);
             controllers.core = engineOpl;
-            feedback_bitdepth = 11;
             break;
         default:
             TRACE("DEXED_ENGINE_MODERN:%d",DEXED_ENGINE_MODERN);
             controllers.core = engineMsfa;
-            feedback_bitdepth = 8;
             break;
     }
     engineType = tp;
     panic();
+    controllers.refresh();
 }
 
 bool Dexed::isMonoMode(void) {
