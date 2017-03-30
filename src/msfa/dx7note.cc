@@ -138,7 +138,6 @@ Dx7Note::Dx7Note() {
     }
 }
 
-//void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int fb_depth) {
 void Dx7Note::init(const uint8_t patch[167], int midinote, int velocity) {
     int rates[4];
     int levels[4];
@@ -191,8 +190,9 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     pmod_2 = abs(pmod_2);
     int32_t pitch_mod = max(pmod_1, pmod_2);
     pitch_mod = pitchenv_.getsample() + (pitch_mod * (senslfo < 0 ? -1 : 1));
-    
-    uint32_t pitchbend = ctrls->values_[kControllerPitch];
+     
+    // ---- PITCH BEND ----
+    int pitchbend = ctrls->values_[kControllerPitch];
     int32_t pb = (pitchbend - 0x2000);
     if (pb != 0) {
         if (ctrls->values_[kControllerPitchStep] == 0) {

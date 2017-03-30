@@ -36,6 +36,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 {
   uint8_t i;
 
+  TRACE("--------------------------------------------------------------------------------");
   TRACE("Hi");
 
   Exp2::init();
@@ -123,6 +124,7 @@ Dexed::~Dexed()
   }
 
   TRACE("Bye");
+  TRACE("--------------------------------------------------------------------------------");
 }
 
 void Dexed::activate(void)
@@ -511,7 +513,7 @@ void Dexed::GetSamples(uint32_t n_samples, float* buffer)
             // this voice is a carrier!
             op_carrier_num++;
 
-            TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
+            //TRACE("Voice[%2d] OP [%d] amp=%ld,amp_step=%d,pitch_step=%d",i,op,voiceStatus.amp[op],voiceStatus.ampStep[op],voiceStatus.pitchStep);
        
             if(voiceStatus.amp[op]<=1069 && voiceStatus.ampStep[op]==4) // this voice produces no audio output
               op_amp++;
