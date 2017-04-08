@@ -1,17 +1,17 @@
 /*
   ==============================================================================
 
-  This is an automatically generated GUI class created by the Introjucer!
+  This is an automatically generated GUI class created by the Projucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Introjucer version: 3.2.0
+  Created with Projucer version: 4.3.1
 
   ------------------------------------------------------------------------------
 
-  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
   Copyright (c) 2015 - ROLI Ltd.
 
   ==============================================================================
@@ -183,7 +183,7 @@ GlobalEditor::GlobalEditor ()
     transpose->addListener (this);
 
     addAndMakeVisible (oscSync = new ToggleButton ("oscSync"));
-    oscSync->setButtonText (String::empty);
+    oscSync->setButtonText (String());
     oscSync->addListener (this);
 
     addAndMakeVisible (pitchModSens = new Slider ("pitchModSens"));
@@ -193,7 +193,7 @@ GlobalEditor::GlobalEditor ()
     pitchModSens->addListener (this);
 
     addAndMakeVisible (lfoSync = new ToggleButton ("lfoSync"));
-    lfoSync->setButtonText (String::empty);
+    lfoSync->setButtonText (String());
     lfoSync->addListener (this);
 
     addAndMakeVisible (pitchEnvDisplay = new PitchEnvDisplay());
@@ -243,7 +243,7 @@ GlobalEditor::GlobalEditor ()
     storeButton->addListener (this);
 
     addAndMakeVisible (monoMode = new ToggleButton ("monoMode"));
-    monoMode->setButtonText (String::empty);
+    monoMode->setButtonText (String());
     monoMode->addListener (this);
 
     addAndMakeVisible (lfoType = new ComboBoxImage());
@@ -253,7 +253,7 @@ GlobalEditor::GlobalEditor ()
     programSelector->setName ("programSelector");
 
     addAndMakeVisible (aboutButton = new ImageButton ("aboutButton"));
-    aboutButton->setButtonText (String::empty);
+    aboutButton->setButtonText (String());
     aboutButton->addListener (this);
 
     aboutButton->setImages (false, true, false,
@@ -602,7 +602,7 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 
     algoDisplay->opStatus = processor->controllers.opSwitch;
-    
+
     editor = edit;
 
     midiMonitor = new MidiMonitor(&(processor->sysexComm));
@@ -652,9 +652,9 @@ void GlobalEditor::mouseDown(const MouseEvent &e) {
 
 //==============================================================================
 #if 0
-/*  -- Introjucer information section --
+/*  -- Projucer information section --
 
-    This is where the Introjucer stores the metadata that describe this GUI layout, so
+    This is where the Projucer stores the metadata that describe this GUI layout, so
     make changes in here at your peril!
 
 BEGIN_JUCER_METADATA
@@ -667,70 +667,82 @@ BEGIN_JUCER_METADATA
   <SLIDER name="lfoSpeed" id="b10eaf327ab3bff5" memberName="lfoSpeed" virtualName=""
           explicitFocusOrder="0" pos="564 50 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="lfoAmDepth" id="3e95a6206fa4a891" memberName="lfoAmDepth"
           virtualName="" explicitFocusOrder="0" pos="686 50 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="lfoPitchDepth" id="6ead769ca786c813" memberName="lfoPitchDepth"
           virtualName="" explicitFocusOrder="0" pos="646 50 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="lfoDelay" id="1fce68dc81619ef5" memberName="lfoDelay" virtualName=""
           explicitFocusOrder="0" pos="603 50 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="cutoff" id="40531f16bb0bd225" memberName="cutoff" virtualName=""
           explicitFocusOrder="0" pos="234 9 34 34" min="0" max="1" int="0"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="reso" id="c8c13464e81a8d83" memberName="reso" virtualName=""
           explicitFocusOrder="0" pos="278 9 34 34" min="0" max="1" int="0"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
           virtualName="" explicitFocusOrder="0" pos="767 96 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchRate3" id="187c25b24413fccf" memberName="pitchRate3"
           virtualName="" explicitFocusOrder="0" pos="795 96 35 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchRate4" id="1aeb2a8fbbcbeaab" memberName="pitchRate4"
           virtualName="" explicitFocusOrder="0" pos="823 96 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchRate1" id="419d613b3fb9604e" memberName="pitchRate1"
           virtualName="" explicitFocusOrder="0" pos="739 96 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchLevel2" id="3a355ad2221887d9" memberName="pitchLevel2"
           virtualName="" explicitFocusOrder="0" pos="767 57 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchLevel3" id="5c5d782e8a7f3ad7" memberName="pitchLevel3"
           virtualName="" explicitFocusOrder="0" pos="795 56 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchLevel4" id="eb900b141fbad8ff" memberName="pitchLevel4"
           virtualName="" explicitFocusOrder="0" pos="823 56 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchLevel1" id="344cbe26ec9fa128" memberName="pitchLevel1"
           virtualName="" explicitFocusOrder="0" pos="739 57 34 34" min="0"
           max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
           virtualName="" explicitFocusOrder="0" pos="202 60 34 34" min="0"
           max="48" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <TOGGLEBUTTON name="oscSync" id="8f3fe641537cd00" memberName="oscSync" virtualName=""
                 explicitFocusOrder="0" pos="650 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <SLIDER name="pitchModSens" id="904f73df85a9f886" memberName="pitchModSens"
           virtualName="" explicitFocusOrder="0" pos="666 5 34 34" min="0"
           max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
                 explicitFocusOrder="0" pos="565 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
@@ -743,18 +755,18 @@ BEGIN_JUCER_METADATA
   <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
           explicitFocusOrder="0" pos="501 81 34 34" min="0" max="7" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="algo" id="8a226ddf9bbff752" memberName="algo" virtualName=""
           explicitFocusOrder="0" pos="501 22 34 34" min="1" max="32" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <GENERICCOMPONENT name="lcdDisplay" id="30c7bb8f114cbbe3" memberName="lcdDisplay"
                     virtualName="" explicitFocusOrder="0" pos="6 87 140 13" class="LcdDisplay"
                     params=""/>
   <SLIDER name="output" id="7697fdd54fd1593e" memberName="output" virtualName=""
           explicitFocusOrder="0" pos="157 60 34 34" min="0" max="1" int="0"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
                     explicitFocusOrder="0" pos="6 103 140 8" class="VuMeter" params=""/>
   <TEXTBUTTON name="initButton" id="92b278163c42e21d" memberName="initButton"
@@ -787,7 +799,7 @@ BEGIN_JUCER_METADATA
   <SLIDER name="tune" id="d22c34aa3363a28a" memberName="tune" virtualName=""
           explicitFocusOrder="0" pos="190 9 34 34" min="0" max="1" int="0"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

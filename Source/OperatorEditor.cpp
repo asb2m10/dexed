@@ -1,17 +1,17 @@
 /*
   ==============================================================================
 
-  This is an automatically generated GUI class created by the Introjucer!
+  This is an automatically generated GUI class created by the Projucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Introjucer version: 3.2.0
+  Created with Projucer version: 4.3.1
 
   ------------------------------------------------------------------------------
 
-  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
   Copyright (c) 2015 - ROLI Ltd.
 
   ==============================================================================
@@ -179,7 +179,7 @@ OperatorEditor::OperatorEditor ()
     vu->setName ("vu");
 
     addAndMakeVisible (opMode = new ToggleButton ("opMode"));
-    opMode->setButtonText (String::empty);
+    opMode->setButtonText (String());
     opMode->addListener (this);
 
     addAndMakeVisible (kbdLeftCurve = new ComboBoxImage());
@@ -263,12 +263,12 @@ void OperatorEditor::paint (Graphics& g)
     //[/UserPrePaint]
 
     //[UserPaint] Add your own custom painting code here..
-    
+
     if ( opSwitch->getToggleState() )
         g.setColour(Colours::white);
     else
         g.setColour(DXLookNFeel::roundBackground);
-    
+
     g.setFont(Font (30.00f, Font::plain));
     g.drawText(opNum, 250, 14, 30, 30, Justification::centred, true);
 
@@ -550,9 +550,9 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
 
 //==============================================================================
 #if 0
-/*  -- Introjucer information section --
+/*  -- Projucer information section --
 
-    This is where the Introjucer stores the metadata that describe this GUI layout, so
+    This is where the Projucer stores the metadata that describe this GUI layout, so
     make changes in here at your peril!
 
 BEGIN_JUCER_METADATA
@@ -565,47 +565,47 @@ BEGIN_JUCER_METADATA
   <SLIDER name="egl1" id="dc070cc41347df47" memberName="s_egl1" virtualName=""
           explicitFocusOrder="0" pos="5 128 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="egl2" id="66f5195e9c374029" memberName="s_egl2" virtualName=""
           explicitFocusOrder="0" pos="33 129 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="egl3" id="9d57bd53203dcdb4" memberName="s_egl3" virtualName=""
           explicitFocusOrder="0" pos="61 128 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="egl4" id="4f7c3ece3ea2cf9c" memberName="s_egl4" virtualName=""
           explicitFocusOrder="0" pos="89 128 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="egr1" id="2ca8137d80da46fb" memberName="s_egv1" virtualName=""
           explicitFocusOrder="0" pos="5 169 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="egr3" id="4ad6d0c532d15973" memberName="s_egv2" virtualName=""
           explicitFocusOrder="0" pos="33 169 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="egr3" id="8a2027f9ede16b4f" memberName="s_egv3" virtualName=""
           explicitFocusOrder="0" pos="61 169 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="egr4" id="8c04f1c943d837e8" memberName="s_egv4" virtualName=""
           explicitFocusOrder="0" pos="89 169 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="opLevel" id="f8521c8214fb8993" memberName="opLevel" virtualName=""
           explicitFocusOrder="0" pos="245 76 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="opFine" id="e445aa61bd6cddcb" memberName="opFine" virtualName=""
           explicitFocusOrder="0" pos="78 24 34 34" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="opCoarse" id="4eec63d30d7488d2" memberName="opCoarse" virtualName=""
           explicitFocusOrder="0" pos="43 24 34 34" min="0" max="31" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <LABEL name="khz" id="eb961eed8902a6fc" memberName="khzDisplay" virtualName=""
          explicitFocusOrder="0" pos="15 10 95 10" bkgCol="6a000000" textCol="ffffffff"
          outlineCol="0" edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz"
@@ -615,34 +615,40 @@ BEGIN_JUCER_METADATA
   <SLIDER name="detune" id="f093ec8defca2fc2" memberName="detune" virtualName=""
           explicitFocusOrder="0" pos="6 24 34 34" min="-7" max="7" int="1"
           style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <GENERICCOMPONENT name="envDisplay" id="b18856de924c6340" memberName="envDisplay"
                     virtualName="" explicitFocusOrder="0" pos="16 83 94 30" class="EnvDisplay"
                     params=""/>
   <SLIDER name="sclLeftLevel" id="bd6f338ae68e454f" memberName="sclLeftLevel"
           virtualName="" explicitFocusOrder="0" pos="131 115 34 34" tooltip="Keyboard Scale Level Left Depth "
           min="0" max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="sclRightLevel" id="b9e23ed5187fc7e5" memberName="sclRightLevel"
           virtualName="" explicitFocusOrder="0" pos="241 115 34 34" tooltip="Keyboard Scale Level Right Depth "
           min="0" max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="sclLvlBrkPt" id="c563ac3116923bbc" memberName="sclLvlBrkPt"
           virtualName="" explicitFocusOrder="0" pos="178 130 54 24" tooltip="Scale Level Breakpoint"
           min="0" max="99" int="1" style="LinearHorizontal" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="sclRateScaling" id="f0d17c8e09aa4c49" memberName="sclRateScaling"
           virtualName="" explicitFocusOrder="0" pos="186 179 34 34" tooltip="Keyboard Rate Scaling"
           min="0" max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="keyVelSens" id="21795d045d07602b" memberName="keyVelSens"
           virtualName="" explicitFocusOrder="0" pos="204 76 34 34" min="0"
           max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="ampModSens" id="634ceaa7b0f81a6c" memberName="ampModSens"
           virtualName="" explicitFocusOrder="0" pos="140 76 34 34" min="0"
           max="3" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <GENERICCOMPONENT name="vu" id="6f952594ea99dc1e" memberName="vu" virtualName=""
                     explicitFocusOrder="0" pos="132 52 140 8" class="VuMeter" params=""/>
   <TOGGLEBUTTON name="opMode" id="15db8e5c9dd13966" memberName="opMode" virtualName=""
