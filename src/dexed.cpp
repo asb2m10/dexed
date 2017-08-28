@@ -801,7 +801,7 @@ uint8_t Dexed::getEngineType() {
 void Dexed::setEngineType(uint8_t tp) {
     TRACE("settings engine %d", tp);
 
-    if(engineType==tp)
+    if(engineType==tp && controllers.core!=NULL)
       return;
 
     switch (tp)  {
