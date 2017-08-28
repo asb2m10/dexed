@@ -816,6 +816,7 @@ void Dexed::setEngineType(uint8_t tp) {
         default:
             TRACE("DEXED_ENGINE_MODERN:%d",DEXED_ENGINE_MODERN);
             controllers.core = engineMsfa;
+	    tp=DEXED_ENGINE_MODERN;
             break;
     }
     engineType = tp;
