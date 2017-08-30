@@ -49,12 +49,28 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   Env::init_sr(rate);
   fx.init(rate);
 
-  engineMkI=new EngineMkI;
-  engineOpl=new EngineOpl;
-  engineMsfa=new FmCore;
+  if((engineMkI=new EngineMkI)==NULL)
+  {
+    TRACE("Cannot not create engine EngineMkI");
+    exit(400);
+  }
+  if((engineOpl=new EngineOpl)==NULL)
+  {
+    TRACE("Cannot not create engine EngineOpl");
+    exit(401);
+  }
+  if((engineMsfa=new FmCore)==NULL)
+  {
+    TRACE("Cannot create engine FmCore");
+    exit(402);
+  }
 
   for(i=0; i<MAX_ACTIVE_NOTES; i++) {
-    voices[i].dx7_note = new Dx7Note;
+    if((voices[i].dx7_note = new Dx7Note)==NULL)
+    {
+      TRACE("Cannot create engine FmCore");
+      exit(403);
+    } 
     voices[i].keydown = false;
     voices[i].sustained = false;
     voices[i].live = false;
@@ -80,7 +96,11 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   bufsize_=256;
 
-  outbuf_=new float[bufsize_];
+  if((outbuf_=new float[bufsize_])==NULL)
+  {
+    TRACE("Cannot create outbuf_ buffer");
+    exit(404);
+  } 
 
   lfo.reset(data+137);
 
