@@ -68,7 +68,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   for(i=0; i<MAX_ACTIVE_NOTES; i++) {
     if((voices[i].dx7_note = new Dx7Note)==NULL)
     {
-      TRACE("Cannot create engine FmCore");
+      TRACE("Cannot create DX7Note [%d]",i);
       exit(403);
     } 
     voices[i].keydown = false;
