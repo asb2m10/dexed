@@ -797,22 +797,12 @@ void Dexed::onParam(uint8_t param_num,float param_val)
         controllers.masterTune=(tune<<11)*(1.0/12);
         break;
       case 166:
-        controllers.opSwitch|=data[param_num]<<5;
-        break;
       case 167:
-        controllers.opSwitch|=data[param_num]<<4;
-        break;
       case 168:
-        controllers.opSwitch|=data[param_num]<<3;
-        break;
       case 169:
-        controllers.opSwitch|=data[param_num]<<2;
-        break;
       case 170:
-        controllers.opSwitch|=data[param_num]<<1;
-        break;
       case 171:
-        controllers.opSwitch|=data[param_num];
+        controllers.opSwitch=(data[166]<<5)|(data[167]<<4)|(data[168]<<3)|(data[169]<<2)|(data[170]<<1)|data[171];
         break;
       case 172:
         max_notes=data[param_num];
