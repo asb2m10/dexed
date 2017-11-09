@@ -92,8 +92,8 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   controllers.breath_cc = 0;
   controllers.aftertouch_cc = 0;
   controllers.masterTune=0;
-  //controllers.opSwitch=0x3f; // enable all operators
-  controllers.opSwitch=0x00;
+  controllers.opSwitch=0x3f; // enable all operators
+  //controllers.opSwitch=0x00;
 
   bufsize_=256;
 
