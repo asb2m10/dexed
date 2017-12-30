@@ -18,6 +18,7 @@
  *
  */
 
+#include <stdarg.h>
 #include <bitset>
 
 #include "PluginProcessor.h"
@@ -645,4 +646,3 @@ void dexed_trace(const char *source, const char *fmt, ...) {
     dest << source << " " << output;
     Logger::writeToLog(dest);
 }
-
