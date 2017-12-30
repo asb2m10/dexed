@@ -2,25 +2,30 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
+
+namespace juce
+{
 
 namespace WindowsMediaCodec
 {
@@ -43,7 +48,7 @@ public:
 
     JUCE_COMRESULT Read (void* dest, ULONG numBytes, ULONG* bytesRead)
     {
-        const int numRead = source.read (dest, numBytes);
+        auto numRead = source.read (dest, numBytes);
 
         if (bytesRead != nullptr)
             *bytesRead = numRead;
@@ -53,7 +58,7 @@ public:
 
     JUCE_COMRESULT Seek (LARGE_INTEGER position, DWORD origin, ULARGE_INTEGER* resultPosition)
     {
-        int64 newPos = (int64) position.QuadPart;
+        auto newPos = (int64) position.QuadPart;
 
         if (origin == STREAM_SEEK_CUR)
         {
@@ -61,7 +66,8 @@ public:
         }
         else if (origin == STREAM_SEEK_END)
         {
-            const int64 len = source.getTotalLength();
+            auto len = source.getTotalLength();
+
             if (len < 0)
                 return E_NOTIMPL;
 
@@ -84,8 +90,8 @@ public:
         {
             char buffer [1024];
 
-            const int numToCopy = (int) jmin ((int64) sizeof (buffer), (int64) numBytes);
-            const int numRead = source.read (buffer, numToCopy);
+            auto numToCopy = (int) jmin ((int64) sizeof (buffer), (int64) numBytes);
+            auto numRead = source.read (buffer, numToCopy);
 
             if (numRead <= 0)
                 break;
@@ -220,15 +226,15 @@ public:
                 }
             }
 
-            const int offsetInBuffer = (int) (startSampleInFile - bufferedRange.getStart());
-            const int16* const rawData = static_cast<const int16*> (addBytesToPointer (buffer.getData(), offsetInBuffer * stride));
-            const int numToDo = jmin (numSamples, (int) (bufferedRange.getLength() - offsetInBuffer));
+            auto offsetInBuffer = (int) (startSampleInFile - bufferedRange.getStart());
+            auto* rawData = static_cast<const int16*> (addBytesToPointer (buffer.getData(), offsetInBuffer * stride));
+            auto numToDo = jmin (numSamples, (int) (bufferedRange.getLength() - offsetInBuffer));
 
             for (int i = 0; i < numDestChannels; ++i)
             {
                 jassert (destSamples[i] != nullptr);
 
-                const int srcChan = jmin (i, (int) numChannels - 1);
+                auto srcChan = jmin (i, (int) numChannels - 1);
                 const int16* src = rawData + srcChan;
                 int* const dst = destSamples[i] + startOffsetInDestBuffer;
 
@@ -296,7 +302,7 @@ private:
 
                         if (mediaType->majortype == WMMEDIATYPE_Audio)
                         {
-                            const WAVEFORMATEX* const inputFormat = reinterpret_cast<WAVEFORMATEX*> (mediaType->pbFormat);
+                            auto* inputFormat = reinterpret_cast<WAVEFORMATEX*> (mediaType->pbFormat);
 
                             sampleRate = inputFormat->nSamplesPerSec;
                             numChannels = inputFormat->nChannels;
@@ -323,8 +329,8 @@ WindowsMediaAudioFormat::WindowsMediaAudioFormat()
 
 WindowsMediaAudioFormat::~WindowsMediaAudioFormat() {}
 
-Array<int> WindowsMediaAudioFormat::getPossibleSampleRates()    { return Array<int>(); }
-Array<int> WindowsMediaAudioFormat::getPossibleBitDepths()      { return Array<int>(); }
+Array<int> WindowsMediaAudioFormat::getPossibleSampleRates()    { return {}; }
+Array<int> WindowsMediaAudioFormat::getPossibleBitDepths()      { return {}; }
 
 bool WindowsMediaAudioFormat::canDoStereo()     { return true; }
 bool WindowsMediaAudioFormat::canDoMono()       { return true; }
@@ -351,3 +357,5 @@ AudioFormatWriter* WindowsMediaAudioFormat::createWriterFor (OutputStream* /*str
     jassertfalse; // not yet implemented!
     return nullptr;
 }
+
+} // namespace juce

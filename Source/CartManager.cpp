@@ -68,7 +68,7 @@ public :
                 src.copyFileTo(target);
             }
         }
-        fileList.refresh();
+        refresh();
     }
 };
 

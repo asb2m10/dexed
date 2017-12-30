@@ -2,44 +2,46 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-#ifndef JUCE_AUDIOPROCESSOR_H_INCLUDED
-#define JUCE_AUDIOPROCESSOR_H_INCLUDED
+namespace juce
+{
 
 struct PluginBusUtilities;
 
 //==============================================================================
 /**
-    Base class for audio processing filters or plugins.
+    Base class for audio processing classes or plugins.
 
-    This is intended to act as a base class of audio filter that is general enough to
-    be wrapped as a VST, AU, RTAS, etc, or used internally.
+    This is intended to act as a base class of audio processor that is general enough
+    to be wrapped as a VST, AU, RTAS, etc, or used internally.
 
     It is also used by the plugin hosting code as the wrapper around an instance
     of a loaded plugin.
 
-    Derive your filter class from this base class, and if you're building a plugin,
-    you should implement a global function called createPluginFilter() which creates
-    and returns a new instance of your subclass.
+    You should derive your own class from this base class, and if you're building a
+    plugin, you should implement a global function called createPluginFilter() which
+    creates and returns a new instance of your subclass.
 */
 class JUCE_API  AudioProcessor
 {
@@ -95,8 +97,17 @@ public:
     /** Returns the name of this processor. */
     virtual const String getName() const = 0;
 
+    /** Returns a list of alternative names to use for this processor.
+
+        Some hosts truncate the name of your AudioProcessor when there isn't enough
+        space in the GUI to show the full name. Overriding this method, allows the host
+        to choose an alternative name (such as an abbreviation) to better fit the
+        available space.
+    */
+    virtual StringArray getAlternateDisplayNames() const;
+
     //==============================================================================
-    /** Called before playback starts, to let the filter prepare itself.
+    /** Called before playback starts, to let the processor prepare itself.
 
         The sample rate is the target sample rate, and will remain constant until
         playback stops.
@@ -117,7 +128,7 @@ public:
     virtual void prepareToPlay (double sampleRate,
                                 int maximumExpectedSamplesPerBlock) = 0;
 
-    /** Called after playback has stopped, to let the filter free up any resources it
+    /** Called after playback has stopped, to let the object free up any resources it
         no longer needs.
     */
     virtual void releaseResources() = 0;
@@ -126,16 +137,16 @@ public:
 
         When this method is called, the buffer contains a number of channels which is
         at least as great as the maximum number of input and output channels that
-        this filter is using. It will be filled with the filter's input data and
-        should be replaced with the filter's output.
+        this processor is using. It will be filled with the processor's input data and
+        should be replaced with the processor's output.
 
-        So for example if your filter has a total of 2 input channels and 4 output
+        So for example if your processor has a total of 2 input channels and 4 output
         channels, then the buffer will contain 4 channels, the first two being filled
-        with the input data. Your filter should read these, do its processing, and
+        with the input data. Your processor should read these, do its processing, and
         replace the contents of all 4 channels with its output.
 
-        Or if your filter has a total of 5 inputs and 2 outputs, the buffer will have 5
-        channels, all filled with data, and your filter should overwrite the first 2 of
+        Or if your processor has a total of 5 inputs and 2 outputs, the buffer will have 5
+        channels, all filled with data, and your processor should overwrite the first 2 of
         these with its output. But be VERY careful not to write anything to the last 3
         channels, as these might be mapped to memory that the host assumes is read-only!
 
@@ -151,7 +162,7 @@ public:
         let this pass through without being overwritten or cleared.
 
         Also note that the buffer may have more channels than are strictly necessary,
-        but you should only read/write from the ones that your filter is supposed to
+        but you should only read/write from the ones that your processor is supposed to
         be using.
 
         The number of samples in these buffers is NOT guaranteed to be the same for every
@@ -162,12 +173,12 @@ public:
         Also note that some hosts will occasionally decide to pass a buffer containing
         zero samples, so make sure that your algorithm can deal with that!
 
-        If the filter is receiving a midi input, then the midiMessages array will be filled
-        with the midi messages for this block. Each message's timestamp will indicate the
+        If the processor is receiving a MIDI input, then the midiMessages array will be filled
+        with the MIDI messages for this block. Each message's timestamp will indicate the
         message's time, as a number of samples from the start of the block.
 
-        Any messages left in the midi buffer when this method has finished are assumed to
-        be the filter's midi output. This means that your filter should be careful to
+        Any messages left in the MIDI buffer when this method has finished are assumed to
+        be the processor's MIDI output. This means that your processor should be careful to
         clear any incoming messages from the array if it doesn't want them to be passed-on.
 
         Be very careful about what you do in this callback - it's going to be called by
@@ -180,7 +191,6 @@ public:
 
         @see AudiobusLayout::getBusBuffer
     */
-
     virtual void processBlock (AudioBuffer<float>& buffer,
                                MidiBuffer& midiMessages) = 0;
 
@@ -188,16 +198,16 @@ public:
 
         When this method is called, the buffer contains a number of channels which is
         at least as great as the maximum number of input and output channels that
-        this filter is using. It will be filled with the filter's input data and
-        should be replaced with the filter's output.
+        this processor is using. It will be filled with the processor's input data and
+        should be replaced with the processor's output.
 
-        So for example if your filter has a combined total of 2 input channels and
+        So for example if your processor has a combined total of 2 input channels and
         4 output channels, then the buffer will contain 4 channels, the first two
-        being filled with the input data. Your filter should read these, do its
+        being filled with the input data. Your processor should read these, do its
         processing, and replace the contents of all 4 channels with its output.
 
-        Or if your filter has 5 inputs and 2 outputs, the buffer will have 5 channels,
-        all filled with data, and your filter should overwrite the first 2 of these
+        Or if your processor has 5 inputs and 2 outputs, the buffer will have 5 channels,
+        all filled with data, and your processor should overwrite the first 2 of these
         with its output. But be VERY careful not to write anything to the last 3
         channels, as these might be mapped to memory that the host assumes is read-only!
 
@@ -213,7 +223,7 @@ public:
         let this pass through without being overwritten or cleared.
 
         Also note that the buffer may have more channels than are strictly necessary,
-        but you should only read/write from the ones that your filter is supposed to
+        but you should only read/write from the ones that your processor is supposed to
         be using.
 
         If your plugin uses buses, then you should use AudiobusLayout::getBusBuffer()
@@ -228,12 +238,12 @@ public:
         Also note that some hosts will occasionally decide to pass a buffer containing
         zero samples, so make sure that your algorithm can deal with that!
 
-        If the filter is receiving a midi input, then the midiMessages array will be filled
-        with the midi messages for this block. Each message's timestamp will indicate the
+        If the processor is receiving a MIDI input, then the midiMessages array will be filled
+        with the MIDI messages for this block. Each message's timestamp will indicate the
         message's time, as a number of samples from the start of the block.
 
-        Any messages left in the midi buffer when this method has finished are assumed to
-        be the filter's midi output. This means that your filter should be careful to
+        Any messages left in the MIDI buffer when this method has finished are assumed to
+        be the processor's MIDI output. This means that your processor should be careful to
         clear any incoming messages from the array if it doesn't want them to be passed-on.
 
         Be very careful about what you do in this callback - it's going to be called by
@@ -289,12 +299,12 @@ public:
         /** Get the number of channels of a particular bus */
         int getNumChannels (bool isInput, int busIndex) const noexcept
         {
-            const Array<AudioChannelSet>& bus = (isInput ? inputBuses : outputBuses);
+            auto& bus = (isInput ? inputBuses : outputBuses);
             return isPositiveAndBelow (busIndex, bus.size()) ? bus.getReference (busIndex).size() : 0;
         }
 
         /** Get the channel set of a particular bus */
-        AudioChannelSet& getChannelSet (bool isInput, int busIndex)
+        AudioChannelSet& getChannelSet (bool isInput, int busIndex) noexcept
         {
             return (isInput ? inputBuses : outputBuses).getReference (busIndex);
         }
@@ -352,7 +362,6 @@ public:
         //==============================================================================
         /** The bus's current layout. This will be AudioChannelSet::disabled() if the current
             layout is dfisabled.
-
             @see AudioChannelSet
         */
         const AudioChannelSet& getCurrentLayout() const noexcept        { return layout; }
@@ -360,7 +369,6 @@ public:
         /** Return the bus's last active channel layout.
             If the bus is currently enabled then the result will be identical to getCurrentLayout
             otherwise it will return the last enabled layout.
-
             @see AudioChannelSet
         */
         const AudioChannelSet& getLastEnabledLayout() const noexcept    { return lastLayout; }
@@ -372,9 +380,7 @@ public:
         bool setCurrentLayout (const AudioChannelSet& layout);
 
         /** Sets the bus's current layout without changing the enabled state.
-
             If the AudioProcessor does not support this layout then this will return false.
-
             @see AudioChannelSet
          */
         bool setCurrentLayoutWithoutEnabling (const AudioChannelSet& layout);
@@ -474,13 +480,11 @@ public:
     int getBusCount (bool isInput) const noexcept                   { return (isInput ? inputBuses : outputBuses).size(); }
 
     /** Returns the audio bus with a given index and direction.
-
         If busIdx is invalid then this method will return a nullptr.
     */
     Bus* getBus (bool isInput, int busIdx) noexcept                 { return (isInput ? inputBuses : outputBuses)[busIdx]; }
 
     /** Returns the audio bus with a given index and direction.
-
         If busIdx is invalid then this method will return a nullptr.
     */
     const Bus* getBus (bool isInput, int busIdx) const noexcept     { return const_cast<AudioProcessor*> (this)->getBus (isInput, busIdx); }
@@ -789,34 +793,34 @@ public:
 
     //==============================================================================
 
-    /** This returns the number of samples delay that the filter imposes on the audio
+    /** This returns the number of samples delay that the processor imposes on the audio
         passing through it.
 
-        The host will call this to find the latency - the filter itself should set this value
+        The host will call this to find the latency - the processor itself should set this value
         by calling setLatencySamples() as soon as it can during its initialisation.
     */
     int getLatencySamples() const noexcept                      { return latencySamples; }
 
-    /** The filter should call this to set the number of samples delay that it introduces.
+    /** Your processor subclass should call this to set the number of samples delay that it introduces.
 
-        The filter should call this as soon as it can during initialisation, and can call it
+        The processor should call this as soon as it can during initialisation, and can call it
         later if the value changes.
     */
     void setLatencySamples (int newLatency);
 
-    /** Returns the length of the filter's tail, in seconds. */
+    /** Returns the length of the processor's tail, in seconds. */
     virtual double getTailLengthSeconds() const = 0;
 
-    /** Returns true if the processor wants midi messages. */
+    /** Returns true if the processor wants MIDI messages. */
     virtual bool acceptsMidi() const = 0;
 
-    /** Returns true if the processor produces midi messages. */
+    /** Returns true if the processor produces MIDI messages. */
     virtual bool producesMidi() const = 0;
 
     /** Returns true if the processor supports MPE. */
     virtual bool supportsMPE() const                            { return false; }
 
-    /** Returns true if this is a midi effect plug-in and does no audio processing. */
+    /** Returns true if this is a MIDI effect plug-in and does no audio processing. */
     virtual bool isMidiEffect() const                           { return false; }
 
     //==============================================================================
@@ -852,7 +856,7 @@ public:
         @endcode
 
         If the host tries to make an audio callback while processing is suspended, the
-        filter will return an empty buffer, but won't block the audio thread like it would
+        processor will return an empty buffer, but won't block the audio thread like it would
         do if you use the getCallbackLock() critical section to synchronise access.
 
         Any code that calls processBlock() should call isSuspended() before doing so, and
@@ -894,36 +898,37 @@ public:
     virtual void setNonRealtime (bool isNonRealtime) noexcept;
 
     //==============================================================================
-    /** Creates the filter's UI.
+    /** Creates the processor's GUI.
 
-        This can return nullptr if you want a UI-less filter, in which case the host may create
-        a generic UI that lets the user twiddle the parameters directly.
+        This can return nullptr if you want a GUI-less processor, in which case the host
+        may create a generic UI that lets the user twiddle the parameters directly.
 
         If you do want to pass back a component, the component should be created and set to
         the correct size before returning it. If you implement this method, you must
         also implement the hasEditor() method and make it return true.
 
-        Remember not to do anything silly like allowing your filter to keep a pointer to
+        Remember not to do anything silly like allowing your processor to keep a pointer to
         the component that gets created - it could be deleted later without any warning, which
         would make your pointer into a dangler. Use the getActiveEditor() method instead.
 
         The correct way to handle the connection between an editor component and its
-        filter is to use something like a ChangeBroadcaster so that the editor can
+        processor is to use something like a ChangeBroadcaster so that the editor can
         register itself as a listener, and be told when a change occurs. This lets them
         safely unregister themselves when they are deleted.
 
         Here are a few things to bear in mind when writing an editor:
 
         - Initially there won't be an editor, until the user opens one, or they might
-          not open one at all. Your filter mustn't rely on it being there.
+          not open one at all. Your processor mustn't rely on it being there.
         - An editor object may be deleted and a replacement one created again at any time.
-        - It's safe to assume that an editor will be deleted before its filter.
+        - It's safe to assume that an editor will be deleted before its processor.
 
         @see hasEditor
     */
     virtual AudioProcessorEditor* createEditor() = 0;
 
-    /** Your filter must override this and return true if it can create an editor component.
+    /** Your processor subclass must override this and return true if it can create an
+        editor component.
         @see createEditor
     */
     virtual bool hasEditor() const = 0;
@@ -966,7 +971,7 @@ public:
      */
     virtual String getParameterID (int index);
 
-    /** Called by the host to find out the value of one of the filter's parameters.
+    /** Called by the host to find out the value of one of the processor's parameters.
 
         The host will expect the value returned to be between 0 and 1.0.
 
@@ -1010,13 +1015,22 @@ public:
     virtual String getParameterText (int parameterIndex, int maximumStringLength);
 
     /** Returns the number of discrete steps that this parameter can represent.
+
         The default return value if you don't implement this method is
         AudioProcessor::getDefaultNumParameterSteps().
+
         If your parameter is boolean, then you may want to make this return 2.
+
+        If you want the host to display stepped automation values, rather than a
+        continuous interpolation between successive values, you should ensure that
+        isParameterDiscrete returns true.
+
         The value that is returned may or may not be used, depending on the host.
 
         NOTE! This method will eventually be deprecated! It's recommended that you use
         AudioProcessorParameter::getNumSteps() instead.
+
+        @see isParameterDiscrete
     */
     virtual int getParameterNumSteps (int parameterIndex);
 
@@ -1024,9 +1038,25 @@ public:
 
         NOTE! This method will eventually be deprecated! It's recommended that you use
         AudioProcessorParameter::getNumSteps() instead.
+
         @see getParameterNumSteps
     */
     static int getDefaultNumParameterSteps() noexcept;
+
+    /** Returns true if the parameter should take discrete, rather than continuous
+        values.
+
+        If the parameter is boolean, this should return true (with getParameterNumSteps
+        returning 2).
+
+        The value that is returned may or may not be used, depending on the host.
+
+        NOTE! This method will eventually be deprecated! It's recommended that you use
+        AudioProcessorParameter::isDiscrete() instead.
+
+        @see getParameterNumSteps
+    */
+    virtual bool isParameterDiscrete (int parameterIndex) const;
 
     /** Returns the default value for the parameter.
         By default, this just returns 0.
@@ -1053,10 +1083,10 @@ public:
     */
     virtual bool isParameterOrientationInverted (int index) const;
 
-    /** The host will call this method to change the value of one of the filter's parameters.
+    /** The host will call this method to change the value of one of the processor's parameters.
 
         The host may call this at any time, including during the audio processing
-        callback, so the filter has to process this very fast and avoid blocking.
+        callback, so the processor has to process this very fast and avoid blocking.
 
         If you want to set the value of a parameter internally, e.g. from your
         editor component, then don't call this directly - instead, use the
@@ -1071,7 +1101,7 @@ public:
     */
     virtual void setParameter (int parameterIndex, float newValue);
 
-    /** Your filter can call this when it needs to change one of its parameters.
+    /** Your processor can call this when it needs to change one of its parameters.
 
         This could happen when the editor or some other internal operation changes
         a parameter. This method will call the setParameter() method to change the
@@ -1108,8 +1138,8 @@ public:
         By default, this returns the "generic" category.
 
         NOTE! This method will eventually be deprecated! It's recommended that you use
-        AudioProcessorParameter::isMetaParameter() instead.
-     */
+        AudioProcessorParameter::getCategory() instead.
+    */
     virtual AudioProcessorParameter::Category getParameterCategory (int parameterIndex) const;
 
     /** Sends a signal to the host to tell it that the user is about to start changing this
@@ -1137,7 +1167,7 @@ public:
     */
     void endParameterChangeGesture (int parameterIndex);
 
-    /** The filter can call this when something (apart from a parameter value) has changed.
+    /** The processor can call this when something (apart from a parameter value) has changed.
 
         It sends a hint to the host that something like the program, number of parameters,
         etc, has changed, and that it should update itself.
@@ -1155,7 +1185,7 @@ public:
     const OwnedArray<AudioProcessorParameter>& getParameters() const noexcept;
 
     //==============================================================================
-    /** Returns the number of preset programs the filter supports.
+    /** Returns the number of preset programs the processor supports.
 
         The value returned must be valid as soon as this object is created, and
         must not change over its lifetime.
@@ -1177,13 +1207,13 @@ public:
     virtual void changeProgramName (int index, const String& newName) = 0;
 
     //==============================================================================
-    /** The host will call this method when it wants to save the filter's internal state.
+    /** The host will call this method when it wants to save the processor's internal state.
 
-        This must copy any info about the filter's state into the block of memory provided,
+        This must copy any info about the processor's state into the block of memory provided,
         so that the host can store this and later restore it using setStateInformation().
 
         Note that there's also a getCurrentProgramStateInformation() method, which only
-        stores the current program, not the state of the entire filter.
+        stores the current program, not the state of the entire processor.
 
         See also the helper function copyXmlToBinary() for storing settings as XML.
 
@@ -1191,7 +1221,7 @@ public:
     */
     virtual void getStateInformation (juce::MemoryBlock& destData) = 0;
 
-    /** The host will call this method if it wants to save the state of just the filter's
+    /** The host will call this method if it wants to save the state of just the processor's
         current program.
 
         Unlike getStateInformation, this should only return the current program's state.
@@ -1204,11 +1234,11 @@ public:
     */
     virtual void getCurrentProgramStateInformation (juce::MemoryBlock& destData);
 
-    /** This must restore the filter's state from a block of data previously created
+    /** This must restore the processor's state from a block of data previously created
         using getStateInformation().
 
         Note that there's also a setCurrentProgramStateInformation() method, which tries
-        to restore just the current program, not the state of the entire filter.
+        to restore just the current program, not the state of the entire processor.
 
         See also the helper function getXmlFromBinary() for loading settings as XML.
 
@@ -1216,7 +1246,7 @@ public:
     */
     virtual void setStateInformation (const void* data, int sizeInBytes) = 0;
 
-    /** The host will call this method if it wants to restore the state of just the filter's
+    /** The host will call this method if it wants to restore the state of just the processor's
         current program.
 
         Not all hosts support this, and if you don't implement it, the base class
@@ -1265,6 +1295,20 @@ public:
     void setRateAndBufferSizeDetails (double sampleRate, int blockSize) noexcept;
 
     //==============================================================================
+    /** AAX plug-ins need to report a unique "plug-in id" for every audio layout
+        configuration that your AudioProcessor supports on the main bus. Override this
+        function if you want your AudioProcessor to use a custom "plug-in id" (for example
+        to stay backward compatible with older versions of JUCE).
+
+        The default implementation will compute a unique integer from the input and output
+        layout and add this value to the 4 character code 'jcaa' (for native AAX) or 'jyaa'
+        (for AudioSuite plug-ins).
+    */
+    virtual int32 getAAXPluginIDForMainBusConfig (const AudioChannelSet& mainInputLayout,
+                                                  const AudioChannelSet& mainOutputLayout,
+                                                  bool idForAudioSuite) const;
+
+    //==============================================================================
     /** Not for public use - this is called before deleting an editor component. */
     void editorBeingDeleted (AudioProcessorEditor*) noexcept;
 
@@ -1286,6 +1330,32 @@ public:
     */
     WrapperType wrapperType;
 
+    /** A struct containing information about the DAW track inside which your
+        AudioProcessor is loaded. */
+    struct TrackProperties
+    {
+        String name;    // The name of the track - this will be empty if the track name is not known
+        Colour colour;  // The colour of the track - this will be transparentBlack if the colour is not known
+
+        // other properties may be added in the future
+    };
+
+    /** Informs the AudioProcessor that track properties such as the track's name or
+        colour has been changed.
+
+        If you are hosting this AudioProcessor then use this method to inform the
+        AudioProcessor about which track the AudioProcessor is loaded on. This method
+        may only be called on the message thread.
+
+        If you are implemeting an AudioProcessor then you can override this callback
+        to do something useful with the track properties such as changing the colour
+        of your AudioProcessor's editor. It's entirely up to the host when and how
+        often this callback will be called.
+
+        The default implementation of this callback will do nothing.
+    */
+    virtual void updateTrackProperties (const TrackProperties& properties);
+
     //==============================================================================
    #ifndef DOXYGEN
     /** Deprecated: use getTotalNumInputChannels instead. */
@@ -1296,8 +1366,8 @@ public:
         These functions are deprecated: use the methods provided in the AudioChannelSet
         class.
      */
-    JUCE_DEPRECATED_WITH_BODY (const String getInputSpeakerArrangement()  const noexcept, { return cachedInputSpeakerArrString; });
-    JUCE_DEPRECATED_WITH_BODY (const String getOutputSpeakerArrangement() const noexcept, { return cachedOutputSpeakerArrString; });
+    JUCE_DEPRECATED_WITH_BODY (const String getInputSpeakerArrangement()  const noexcept, { return cachedInputSpeakerArrString; })
+    JUCE_DEPRECATED_WITH_BODY (const String getOutputSpeakerArrangement() const noexcept, { return cachedOutputSpeakerArrString; })
 
     /** Returns the name of one of the processor's input channels.
 
@@ -1319,7 +1389,7 @@ public:
     //==============================================================================
     /** Helper function that just converts an xml element into a binary blob.
 
-        Use this in your filter's getStateInformation() method if you want to
+        Use this in your processor's getStateInformation() method if you want to
         store its state as xml.
 
         Then use getXmlFromBinary() to reverse this operation and retrieve the XML
@@ -1545,10 +1615,9 @@ private:
     void processBypassed (AudioBuffer<floatType>&, MidiBuffer&);
 
     // This method is no longer used - you can delete it from your AudioProcessor classes.
-    JUCE_DEPRECATED_WITH_BODY (virtual bool silenceInProducesSilenceOut() const, { return false; });
+    JUCE_DEPRECATED_WITH_BODY (virtual bool silenceInProducesSilenceOut() const, { return false; })
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioProcessor)
 };
 
-
-#endif   // JUCE_AUDIOPROCESSOR_H_INCLUDED
+} // namespace juce

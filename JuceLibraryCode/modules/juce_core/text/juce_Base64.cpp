@@ -2,53 +2,48 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2016 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of the ISC license
-   http://www.isc.org/downloads/software-support-policy/isc-license/
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Permission to use, copy, modify, and/or distribute this software for any
-   purpose with or without fee is hereby granted, provided that the above
-   copyright notice and this permission notice appear in all copies.
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
-   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
-   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-   OF THIS SOFTWARE.
-
-   -----------------------------------------------------------------------------
-
-   To release a closed-source product which uses other parts of JUCE not
-   licensed under the ISC terms, commercial licenses are available: visit
-   www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
+namespace juce
+{
+
 bool Base64::convertToBase64 (OutputStream& base64Result, const void* sourceData, size_t sourceDataSize)
 {
     static const char lookup[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-    const uint8* source = static_cast<const uint8*> (sourceData);
+    auto* source = static_cast<const uint8*> (sourceData);
 
     while (sourceDataSize > 0)
     {
         char frame[4];
-        const uint8 byte0 = *source++;
+        auto byte0 = *source++;
         frame[0] = lookup [(byte0 & 0xfcu) >> 2];
         uint32 bits = (byte0 & 0x03u) << 4;
 
         if (sourceDataSize > 1)
         {
-            const uint8 byte1 = *source++;
+            auto byte1 = *source++;
             frame[1] = lookup[bits | ((byte1 & 0xf0u) >> 4)];
             bits = (byte1 & 0x0fu) << 2;
 
             if (sourceDataSize > 2)
             {
-                const uint8 byte2 = *source++;
+                auto byte2 = *source++;
                 frame[2] = lookup[bits | ((byte2 & 0xc0u) >> 6)];
                 frame[3] = lookup[byte2 & 0x3fu];
                 sourceDataSize -= 3;
@@ -77,13 +72,13 @@ bool Base64::convertToBase64 (OutputStream& base64Result, const void* sourceData
 
 bool Base64::convertFromBase64 (OutputStream& binaryOutput, StringRef base64TextInput)
 {
-    for (String::CharPointerType s = base64TextInput.text; ! s.isEmpty();)
+    for (auto s = base64TextInput.text; ! s.isEmpty();)
     {
         uint8 data[4];
 
         for (int i = 0; i < 4; ++i)
         {
-            uint32 c = (uint32) s.getAndAdvance();
+            auto c = (uint32) s.getAndAdvance();
 
             if (c >= 'A' && c <= 'Z')         c -= 'A';
             else if (c >= 'a' && c <= 'z')    c -= 'a' - 26;
@@ -132,7 +127,7 @@ String Base64::toBase64 (const String& text)
 class Base64Tests  : public UnitTest
 {
 public:
-    Base64Tests() : UnitTest ("Base64 class") {}
+    Base64Tests() : UnitTest ("Base64 class", "Text") {}
 
     static MemoryBlock createRandomData (Random& r)
     {
@@ -148,15 +143,15 @@ public:
     {
         beginTest ("Base64");
 
-        Random r = getRandom();
+        auto r = getRandom();
 
         for (int i = 1000; --i >= 0;)
         {
-            const MemoryBlock original (createRandomData (r));
-            String asBase64 (Base64::toBase64 (original.getData(), original.getSize()));
+            auto original = createRandomData (r);
+            auto asBase64 = Base64::toBase64 (original.getData(), original.getSize());
             MemoryOutputStream out;
             expect (Base64::convertFromBase64 (out, asBase64));
-            MemoryBlock result = out.getMemoryBlock();
+            auto result = out.getMemoryBlock();
             expect (result == original);
         }
     }
@@ -165,3 +160,5 @@ public:
 static Base64Tests base64Tests;
 
 #endif
+
+} // namespace juce

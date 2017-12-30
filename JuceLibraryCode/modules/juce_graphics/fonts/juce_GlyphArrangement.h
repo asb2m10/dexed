@@ -2,29 +2,30 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-#ifndef JUCE_GLYPHARRANGEMENT_H_INCLUDED
-#define JUCE_GLYPHARRANGEMENT_H_INCLUDED
-
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -36,21 +37,21 @@
 
     @see GlyphArrangement, Font
 */
-class JUCE_API  PositionedGlyph
+class JUCE_API  PositionedGlyph  final
 {
 public:
     //==============================================================================
     PositionedGlyph() noexcept;
+
     PositionedGlyph (const Font& font, juce_wchar character, int glyphNumber,
                      float anchorX, float baselineY, float width, bool isWhitespace);
 
-    PositionedGlyph (const PositionedGlyph&);
-    PositionedGlyph& operator= (const PositionedGlyph&);
+    PositionedGlyph (const PositionedGlyph&) = default;
+    PositionedGlyph& operator= (const PositionedGlyph&) = default;
 
-   #if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS
+    // VS2013 can't default move constructors and assignmants
     PositionedGlyph (PositionedGlyph&&) noexcept;
     PositionedGlyph& operator= (PositionedGlyph&&) noexcept;
-   #endif
 
     ~PositionedGlyph();
 
@@ -70,7 +71,7 @@ public:
     /** Returns the y position of the bottom of the glyph. */
     float getBottom() const                     { return y + font.getDescent(); }
     /** Returns the bounds of the glyph. */
-    Rectangle<float> getBounds() const          { return Rectangle<float> (x, getTop(), w, font.getHeight()); }
+    Rectangle<float> getBounds() const          { return { x, getTop(), w, font.getHeight() }; }
 
     //==============================================================================
     /** Shifts the glyph's position by a relative amount. */
@@ -85,7 +86,7 @@ public:
     /** Draws the glyph into a graphics context, with an extra transform applied to it.
         (Note that this may change the context's currently selected font).
     */
-    void draw (Graphics& g, const AffineTransform& transform) const;
+    void draw (Graphics& g, AffineTransform transform) const;
 
     /** Returns the path for this glyph.
         @param path     the glyph's outline will be appended to this path
@@ -118,20 +119,19 @@ private:
 
     @see Font, PositionedGlyph
 */
-class JUCE_API  GlyphArrangement
+class JUCE_API  GlyphArrangement  final
 {
 public:
     //==============================================================================
     /** Creates an empty arrangement. */
     GlyphArrangement();
 
-    /** Takes a copy of another arrangement. */
-    GlyphArrangement (const GlyphArrangement&);
+    GlyphArrangement (const GlyphArrangement&) = default;
+    GlyphArrangement& operator= (const GlyphArrangement&) = default;
 
-    /** Copies another arrangement onto this one.
-        To add another arrangement without clearing this one, use addGlyphArrangement().
-    */
-    GlyphArrangement& operator= (const GlyphArrangement&);
+    // VS2013 can't default move constructors and assignmants
+    GlyphArrangement (GlyphArrangement&&);
+    GlyphArrangement& operator= (GlyphArrangement&&);
 
     /** Destructor. */
     ~GlyphArrangement();
@@ -230,7 +230,7 @@ public:
     //==============================================================================
     /** Draws this glyph arrangement to a graphics context.
 
-        This uses cached bitmaps so is much faster than the draw (Graphics&, const AffineTransform&)
+        This uses cached bitmaps so is much faster than the draw (Graphics&, AffineTransform)
         method, which renders the glyphs as filled vectors.
     */
     void draw (const Graphics&) const;
@@ -240,7 +240,7 @@ public:
         This renders the paths as filled vectors, so is far slower than the draw (Graphics&)
         method for non-transformed arrangements.
     */
-    void draw (const Graphics&, const AffineTransform&) const;
+    void draw (const Graphics&, AffineTransform) const;
 
     /** Converts the set of glyphs into a path.
         @param path     the glyphs' outlines will be appended to this path
@@ -317,10 +317,9 @@ private:
     void splitLines (const String&, Font, int start, float x, float y, float w, float h, int maxLines,
                      float lineWidth, Justification, float minimumHorizontalScale);
     void addLinesWithLineBreaks (const String&, const Font&, float x, float y, float width, float height, Justification);
-    void drawGlyphUnderline (const Graphics&, const PositionedGlyph&, int, const AffineTransform&) const;
+    void drawGlyphUnderline (const Graphics&, const PositionedGlyph&, int, AffineTransform) const;
 
     JUCE_LEAK_DETECTOR (GlyphArrangement)
 };
 
-
-#endif   // JUCE_GLYPHARRANGEMENT_H_INCLUDED
+} // namespace juce

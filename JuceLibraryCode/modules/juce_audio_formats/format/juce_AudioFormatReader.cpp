@@ -2,34 +2,33 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-AudioFormatReader::AudioFormatReader (InputStream* const in, const String& name)
-    : sampleRate (0),
-      bitsPerSample (0),
-      lengthInSamples (0),
-      numChannels (0),
-      usesFloatingPointData (false),
-      input (in),
-      formatName (name)
+namespace juce
+{
+
+AudioFormatReader::AudioFormatReader (InputStream* in, const String& name)
+    : input (in), formatName (name)
 {
 }
 
@@ -163,7 +162,7 @@ void AudioFormatReader::read (AudioSampleBuffer* buffer,
         }
         else
         {
-            HeapBlock<int*> chans ((size_t) numTargetChannels + 1);
+            HeapBlock<int*> chans (numTargetChannels + 1);
             readChannels (*this, chans, buffer, startSample, numSamples, readerStartSample, numTargetChannels);
         }
 
@@ -260,8 +259,8 @@ int64 AudioFormatReader::searchForLevel (int64 startSample,
     HeapBlock<int> tempSpace (bufferSize * 2 + 64);
 
     int* tempBuffer[3];
-    tempBuffer[0] = tempSpace.getData();
-    tempBuffer[1] = tempSpace.getData() + bufferSize;
+    tempBuffer[0] = tempSpace.get();
+    tempBuffer[1] = tempSpace.get() + bufferSize;
     tempBuffer[2] = 0;
 
     int consecutive = 0;
@@ -269,14 +268,14 @@ int64 AudioFormatReader::searchForLevel (int64 startSample,
 
     jassert (magnitudeRangeMaximum > magnitudeRangeMinimum);
 
-    const double doubleMin = jlimit (0.0, (double) std::numeric_limits<int>::max(), magnitudeRangeMinimum * std::numeric_limits<int>::max());
-    const double doubleMax = jlimit (doubleMin, (double) std::numeric_limits<int>::max(), magnitudeRangeMaximum * std::numeric_limits<int>::max());
-    const int intMagnitudeRangeMinimum = roundToInt (doubleMin);
-    const int intMagnitudeRangeMaximum = roundToInt (doubleMax);
+    auto doubleMin = jlimit (0.0, (double) std::numeric_limits<int>::max(), magnitudeRangeMinimum * std::numeric_limits<int>::max());
+    auto doubleMax = jlimit (doubleMin, (double) std::numeric_limits<int>::max(), magnitudeRangeMaximum * std::numeric_limits<int>::max());
+    auto intMagnitudeRangeMinimum = roundToInt (doubleMin);
+    auto intMagnitudeRangeMaximum = roundToInt (doubleMax);
 
     while (numSamplesToSearch != 0)
     {
-        const int numThisTime = (int) jmin (abs64 (numSamplesToSearch), (int64) bufferSize);
+        auto numThisTime = (int) jmin (abs64 (numSamplesToSearch), (int64) bufferSize);
         int64 bufferStart = startSample;
 
         if (numSamplesToSearch < 0)
@@ -286,15 +285,15 @@ int64 AudioFormatReader::searchForLevel (int64 startSample,
             break;
 
         read (tempBuffer, 2, bufferStart, numThisTime, false);
+        auto num = numThisTime;
 
-        int num = numThisTime;
         while (--num >= 0)
         {
             if (numSamplesToSearch < 0)
                 --startSample;
 
             bool matches = false;
-            const int index = (int) (startSample - bufferStart);
+            auto index = (int) (startSample - bufferStart);
 
             if (usesFloatingPointData)
             {
@@ -315,7 +314,7 @@ int64 AudioFormatReader::searchForLevel (int64 startSample,
             }
             else
             {
-                const int sample1 = abs (tempBuffer[0] [index]);
+                const int sample1 = std::abs (tempBuffer[0] [index]);
 
                 if (sample1 >= intMagnitudeRangeMinimum
                      && sample1 <= intMagnitudeRangeMaximum)
@@ -324,7 +323,7 @@ int64 AudioFormatReader::searchForLevel (int64 startSample,
                 }
                 else if (numChannels > 1)
                 {
-                    const int sample2 = abs (tempBuffer[1][index]);
+                    const int sample2 = std::abs (tempBuffer[1][index]);
 
                     matches = (sample2 >= intMagnitudeRangeMinimum
                                  && sample2 <= intMagnitudeRangeMaximum);
@@ -361,6 +360,11 @@ int64 AudioFormatReader::searchForLevel (int64 startSample,
     }
 
     return -1;
+}
+
+AudioChannelSet AudioFormatReader::getChannelLayout()
+{
+    return AudioChannelSet::canonicalChannelSet (static_cast<int> (numChannels));
 }
 
 //==============================================================================
@@ -412,3 +416,5 @@ void MemoryMappedAudioFormatReader::touchSample (int64 sample) const noexcept
     else
         jassertfalse; // you must make sure that the window contains all the samples you're going to attempt to read.
 }
+
+} // namespace juce

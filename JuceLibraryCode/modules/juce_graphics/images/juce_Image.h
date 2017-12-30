@@ -2,28 +2,30 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-#ifndef JUCE_IMAGE_H_INCLUDED
-#define JUCE_IMAGE_H_INCLUDED
+namespace juce
+{
 
 class ImageType;
 class ImagePixelData;
@@ -51,7 +53,7 @@ class ImagePixelData;
 
     @see Graphics, ImageFileFormat, ImageCache, ImageConvolutionKernel
 */
-class JUCE_API  Image
+class JUCE_API  Image  final
 {
 public:
     //==============================================================================
@@ -74,7 +76,9 @@ public:
         The image's internal type will be of the NativeImageType class - to specify a
         different type, use the other constructor, which takes an ImageType to use.
 
-        @param format           the number of colour channels in the image
+        @param format           the preferred pixel format. Note that this is only a *hint* which
+                                is passed to the ImageType class - different ImageTypes may not support
+                                all formats, so may substitute e.g. ARGB for RGB.
         @param imageWidth       the desired width of the image, in pixels - this value must be
                                 greater than zero (otherwise a width of 1 will be used)
         @param imageHeight      the desired width of the image, in pixels - this value must be
@@ -87,7 +91,9 @@ public:
 
     /** Creates an image with a specified size and format.
 
-        @param format           the number of colour channels in the image
+        @param format           the preferred pixel format. Note that this is only a *hint* which
+                                is passed to the ImageType class - different ImageTypes may not support
+                                all formats, so may substitute e.g. ARGB for RGB.
         @param imageWidth       the desired width of the image, in pixels - this value must be
                                 greater than zero (otherwise a width of 1 will be used)
         @param imageHeight      the desired width of the image, in pixels - this value must be
@@ -116,10 +122,11 @@ public:
     */
     Image& operator= (const Image&);
 
-   #if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS
+    /** Move constructor */
     Image (Image&&) noexcept;
+
+    /** Move assignment operator */
     Image& operator= (Image&&) noexcept;
-   #endif
 
     /** Destructor. */
     ~Image();
@@ -306,7 +313,7 @@ public:
         The actual format of the pixel data depends on the image's format - see Image::getFormat(),
         and the PixelRGB, PixelARGB and PixelAlpha classes for more info.
     */
-    class JUCE_API  BitmapData
+    class JUCE_API  BitmapData  final
     {
     public:
         enum ReadWriteMode
@@ -494,7 +501,7 @@ public:
     virtual ~ImageType();
 
     /** Creates a new image of this type, and the specified parameters. */
-    virtual ImagePixelData::Ptr create (Image::PixelFormat format, int width, int height, bool shouldClearImage) const = 0;
+    virtual ImagePixelData::Ptr create (Image::PixelFormat, int width, int height, bool shouldClearImage) const = 0;
 
     /** Must return a unique number to identify this type. */
     virtual int getTypeID() const = 0;
@@ -537,5 +544,4 @@ public:
     int getTypeID() const override;
 };
 
-
-#endif   // JUCE_IMAGE_H_INCLUDED
+} // namespace juce

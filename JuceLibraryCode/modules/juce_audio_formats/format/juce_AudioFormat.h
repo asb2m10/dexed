@@ -2,29 +2,30 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2015 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of either:
-   a) the GPL v2 (or any later version)
-   b) the Affero GPL v3
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Details of these licenses can be found at: www.gnu.org/licenses
+   By using JUCE, you agree to the terms of both the JUCE 5 End-User License
+   Agreement and JUCE 5 Privacy Policy (both updated and effective as of the
+   27th April 2017).
 
-   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+   End User License Agreement: www.juce.com/juce-5-licence
+   Privacy Policy: www.juce.com/juce-5-privacy-policy
 
-   ------------------------------------------------------------------------------
+   Or: You may also use this code under the terms of the GPL v3 (see
+   www.gnu.org/licenses).
 
-   To release a closed-source product which uses JUCE, commercial licenses are
-   available: visit www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-#ifndef JUCE_AUDIOFORMAT_H_INCLUDED
-#define JUCE_AUDIOFORMAT_H_INCLUDED
-
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -46,18 +47,15 @@ public:
     */
     const String& getFormatName() const;
 
+    //==============================================================================
     /** Returns all the file extensions that might apply to a file of this format.
-
         The first item will be the one that's preferred when creating a new file.
-
         So for a wav file this might just return ".wav"; for an AIFF file it might
         return two items, ".aif" and ".aiff"
     */
-    const StringArray& getFileExtensions() const;
+    virtual StringArray getFileExtensions() const;
 
-    //==============================================================================
     /** Returns true if this the given file can be read by this format.
-
         Subclasses shouldn't do too much work here, just check the extension or
         file type. The base class implementation just checks the file's extension
         against one of the ones that was registered in the constructor.
@@ -78,6 +76,9 @@ public:
 
     /** Returns true if the format uses compressed data. */
     virtual bool isCompressed();
+
+    /** Returns true if the channel layout is supported by this format. */
+    virtual bool isChannelLayoutSupported (const AudioChannelSet& channelSet);
 
     /** Returns a list of different qualities that can be used when writing.
 
@@ -153,6 +154,44 @@ public:
                                                 const StringPairArray& metadataValues,
                                                 int qualityOptionIndex) = 0;
 
+    /** Tries to create an object that can write to a stream with this audio format.
+
+        The writer object that is returned can be used to write to the stream, and
+        should then be deleted by the caller.
+
+        If the stream can't be created for some reason (e.g. the parameters passed in
+        here aren't suitable), this will return nullptr.
+
+        @param streamToWriteTo      the stream that the data will go to - this will be
+                                    deleted by the AudioFormatWriter object when it's no longer
+                                    needed. If no AudioFormatWriter can be created by this method,
+                                    the stream will NOT be deleted, so that the caller can re-use it
+                                    to try to open a different format, etc
+        @param sampleRateToUse      the sample rate for the file, which must be one of the ones
+                                    returned by getPossibleSampleRates()
+        @param channelLayout        the channel layout for the file. Use isChannelLayoutSupported
+                                    to check if the writer supports this layout.
+        @param bitsPerSample        the bits per sample to use - this must be one of the values
+                                    returned by getPossibleBitDepths()
+        @param metadataValues       a set of metadata values that the writer should try to write
+                                    to the stream. Exactly what these are depends on the format,
+                                    and the subclass doesn't actually have to do anything with
+                                    them if it doesn't want to. Have a look at the specific format
+                                    implementation classes to see possible values that can be
+                                    used
+        @param qualityOptionIndex   the index of one of compression qualities returned by the
+                                    getQualityOptions() method. If there aren't any quality options
+                                    for this format, just pass 0 in this parameter, as it'll be
+                                    ignored
+        @see AudioFormatWriter
+    */
+    virtual AudioFormatWriter* createWriterFor (OutputStream* streamToWriteTo,
+                                                double sampleRateToUse,
+                                                const AudioChannelSet& channelLayout,
+                                                int bitsPerSample,
+                                                const StringPairArray& metadataValues,
+                                                int qualityOptionIndex);
+
 protected:
     /** Creates an AudioFormat object.
 
@@ -175,5 +214,4 @@ private:
     StringArray fileExtensions;
 };
 
-
-#endif   // JUCE_AUDIOFORMAT_H_INCLUDED
+} // namespace juce

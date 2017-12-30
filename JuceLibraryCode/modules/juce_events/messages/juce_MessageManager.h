@@ -2,40 +2,36 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2016 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of the ISC license
-   http://www.isc.org/downloads/software-support-policy/isc-license/
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Permission to use, copy, modify, and/or distribute this software for any
-   purpose with or without fee is hereby granted, provided that the above
-   copyright notice and this permission notice appear in all copies.
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
-   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
-   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-   OF THIS SOFTWARE.
-
-   -----------------------------------------------------------------------------
-
-   To release a closed-source product which uses other parts of JUCE not
-   licensed under the ISC terms, commercial licenses are available: visit
-   www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-#ifndef JUCE_MESSAGEMANAGER_H_INCLUDED
-#define JUCE_MESSAGEMANAGER_H_INCLUDED
+namespace juce
+{
 
 class MessageManagerLock;
 class ThreadPoolJob;
 class ActionListener;
 class ActionBroadcaster;
 
+//==============================================================================
+#if JUCE_MODULE_AVAILABLE_juce_opengl
+class OpenGLContext;
+#endif
 
 //==============================================================================
 /** See MessageManager::callFunctionOnMessageThread() for use of this function type. */
@@ -48,7 +44,7 @@ typedef void* (MessageCallbackFunction) (void* userData);
 
     @see Message, CallbackMessage, MessageManagerLock, JUCEApplication, JUCEApplicationBase
 */
-class JUCE_API  MessageManager
+class JUCE_API  MessageManager  final
 {
 public:
     //==============================================================================
@@ -96,12 +92,12 @@ public:
    #endif
 
     //==============================================================================
-   #if JUCE_COMPILER_SUPPORTS_LAMBDAS
-    /** Asynchronously invokes a function or C++11 lambda on the message thread.
-        Internally this uses the CallbackMessage class to invoke the callback.
-    */
-    static void callAsync (std::function<void(void)>);
-   #endif
+    /** Asynchronously invokes a function or C++11 lambda on the message thread. */
+    template <typename FunctionType>
+    static void callAsync (FunctionType functionToCall)
+    {
+        new AsyncCallInvoker<FunctionType> (functionToCall);
+    }
 
     /** Calls a function using the message-thread.
 
@@ -190,6 +186,120 @@ public:
     };
 
     //==============================================================================
+    /** A lock you can use to lock the message manager. You can use this class with
+        the RAII-based ScopedLock classes.
+    */
+    class Lock
+    {
+    public:
+        /**
+            Creates a new critical section to exclusively access methods which can
+            only be called when the message manager is locked.
+
+            Unlike CrititcalSection, multiple instances of this lock class provide
+            exclusive access to a single resource - the MessageManager.
+        */
+        Lock();
+
+        /** Destructor. */
+        ~Lock();
+
+        /** Acquires the message manager lock.
+
+            If the caller thread already has exclusive access to the MessageManager, this method
+            will return immediately.
+            If another thread is currently using the MessageManager, this will wait until that
+            thread releases the lock to the MessageManager.
+
+            This call will only exit if the lock was accquired by this thread. Calling abort while
+            a thread is waiting for enter to finish, will have no effect.
+
+            @see exit, abort
+         */
+         void enter() const noexcept;
+
+         /** Attempts to lock the meesage manager and exits if abort is called.
+
+            This method behaves identically to enter, except that it will abort waiting for
+            the lock if the abort method is called.
+
+            Unlike other JUCE critical sections, this method **will** block waiting for the lock.
+
+            To ensure predictable behaviour, you should re-check your abort condition if tryEnter
+            returns false.
+
+            This method can be used if you want to do some work while waiting for the
+            MessageManagerLock:
+
+            void doWorkWhileWaitingForMessageManagerLock()
+            {
+                MessageManager::Lock::ScopedTryLockType mmLock (messageManagerLock);
+
+                while (! mmLock.isLocked())
+                {
+                     while (workQueue.size() > 0)
+                     {
+                          auto work = workQueue.pop();
+                          doSomeWork (work);
+                     }
+
+                     // this will block until we either have the lock or there is work
+                     mmLock.retryLock();
+                }
+
+                // we have the mmlock
+                // do some message manager stuff like resizing and painting components
+            }
+
+            // called from another thread
+            void addWorkToDo (Work work)
+            {
+                 queue.push (work);
+                 messageManagerLock.abort();
+            }
+
+            @returns false if waiting for a lock was aborted, true if the lock was accquired.
+            @see enter, abort, ScopedTryLock
+        */
+        bool tryEnter() const noexcept;
+
+        /** Releases the message manager lock.
+            @see enter, ScopedLock
+        */
+        void exit() const noexcept;
+
+        /** Unblocks a thread which is waiting in tryEnter
+            Call this method if you want to unblock a thread which is waiting for the
+            MessageManager lock in tryEnter.
+            This method does not have any effetc on a thread waiting for a lock in enter.
+            @see tryEnter
+        */
+        void abort() const noexcept;
+
+        //==============================================================================
+        /** Provides the type of scoped lock to use with a CriticalSection. */
+        typedef GenericScopedLock<Lock>       ScopedLockType;
+
+        /** Provides the type of scoped unlocker to use with a CriticalSection. */
+        typedef GenericScopedUnlock<Lock>     ScopedUnlockType;
+
+        /** Provides the type of scoped try-locker to use with a CriticalSection. */
+        typedef GenericScopedTryLock<Lock>    ScopedTryLockType;
+
+    private:
+        struct BlockingMessage;
+        friend class ReferenceCountedObjectPtr<BlockingMessage>;
+
+        bool tryAcquire (bool) const noexcept;
+        void messageCallback() const;
+
+        //==============================================================================
+        mutable ReferenceCountedObjectPtr<BlockingMessage> blockingMessage;
+        WaitableEvent lockedEvent;
+        mutable Atomic<int> abortWait, lockGained;
+    };
+
+    //==============================================================================
    #ifndef DOXYGEN
     // Internal methods - do not use!
     void deliverBroadcastMessage (const String&);
@@ -208,16 +318,25 @@ private:
     friend class MessageManagerLock;
 
     ScopedPointer<ActionBroadcaster> broadcaster;
-    bool quitMessagePosted, quitMessageReceived;
+    bool quitMessagePosted = false, quitMessageReceived = false;
     Thread::ThreadID messageThreadId;
-    Thread::ThreadID volatile threadWithLock;
-    CriticalSection lockingLock;
+    Atomic<Thread::ThreadID> threadWithLock;
 
     static bool postMessageToSystemQueue (MessageBase*);
     static void* exitModalLoopCallback (void*);
     static void doPlatformSpecificInitialisation();
     static void doPlatformSpecificShutdown();
     static bool dispatchNextMessageOnSystemQueue (bool returnIfNoPendingMessages);
+
+    template <typename FunctionType>
+    struct AsyncCallInvoker  : public MessageBase
+    {
+        AsyncCallInvoker (FunctionType f) : callback (f)  { post(); }
+        void messageCallback() override                   { callback(); }
+        FunctionType callback;
+
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AsyncCallInvoker)
+    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MessageManager)
 };
@@ -258,7 +377,7 @@ private:
 
     @see MessageManager, MessageManager::currentThreadHasLockedMessageManager
 */
-class JUCE_API MessageManagerLock
+class JUCE_API MessageManagerLock      : private Thread::Listener
 {
 public:
     //==============================================================================
@@ -313,7 +432,6 @@ public:
     */
     MessageManagerLock (ThreadPoolJob* jobToCheckForExitSignal);
 
-
     //==============================================================================
     /** Releases the current thread's lock on the message manager.
 
@@ -329,15 +447,15 @@ public:
     bool lockWasGained() const noexcept                     { return locked; }
 
 private:
-    class BlockingMessage;
-    friend class ReferenceCountedObjectPtr<BlockingMessage>;
-    ReferenceCountedObjectPtr<BlockingMessage> blockingMessage;
+    //==============================================================================
+    MessageManager::Lock mmLock;
     bool locked;
 
+    //==============================================================================
     bool attemptLock (Thread*, ThreadPoolJob*);
+    void exitSignalSent() override;
 
     JUCE_DECLARE_NON_COPYABLE (MessageManagerLock)
 };
 
-
-#endif   // JUCE_MESSAGEMANAGER_H_INCLUDED
+} // namespace juce

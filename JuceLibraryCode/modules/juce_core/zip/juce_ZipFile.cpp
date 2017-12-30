@@ -2,43 +2,37 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2016 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of the ISC license
-   http://www.isc.org/downloads/software-support-policy/isc-license/
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Permission to use, copy, modify, and/or distribute this software for any
-   purpose with or without fee is hereby granted, provided that the above
-   copyright notice and this permission notice appear in all copies.
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
-   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
-   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-   OF THIS SOFTWARE.
-
-   -----------------------------------------------------------------------------
-
-   To release a closed-source product which uses other parts of JUCE not
-   licensed under the ISC terms, commercial licenses are available: visit
-   www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-class ZipFile::ZipEntryHolder
+namespace juce
 {
-public:
-    ZipEntryHolder (const char* const buffer, const int fileNameLen)
+
+struct ZipFile::ZipEntryHolder
+{
+    ZipEntryHolder (const char* buffer, int fileNameLen)
     {
         isCompressed            = ByteOrder::littleEndianShort (buffer + 10) != 0;
-        entry.fileTime          = parseFileTime ((uint32) ByteOrder::littleEndianShort (buffer + 12),
-                                                 (uint32) ByteOrder::littleEndianShort (buffer + 14));
-        compressedSize          = (int64) (uint32) ByteOrder::littleEndianInt (buffer + 20);
-        entry.uncompressedSize  = (int64) (uint32) ByteOrder::littleEndianInt (buffer + 24);
-        streamOffset            = (int64) (uint32) ByteOrder::littleEndianInt (buffer + 42);
+        entry.fileTime          = parseFileTime (ByteOrder::littleEndianShort (buffer + 12),
+                                                 ByteOrder::littleEndianShort (buffer + 14));
+        compressedSize          = (int64) ByteOrder::littleEndianInt (buffer + 20);
+        entry.uncompressedSize  = (int64) ByteOrder::littleEndianInt (buffer + 24);
+        streamOffset            = (int64) ByteOrder::littleEndianInt (buffer + 42);
         entry.filename          = String::fromUTF8 (buffer + 46, fileNameLen);
     }
 
@@ -50,72 +44,81 @@ public:
         }
     };
 
+    static Time parseFileTime (uint32 time, uint32 date) noexcept
+    {
+        int year      = 1980 + (date >> 9);
+        int month     = ((date >> 5) & 15) - 1;
+        int day       = date & 31;
+        int hours     = time >> 11;
+        int minutes   = (time >> 5) & 63;
+        int seconds   = (int) ((time & 31) << 1);
+
+        return { year, month, day, hours, minutes, seconds };
+    }
+
     ZipEntry entry;
     int64 streamOffset, compressedSize;
     bool isCompressed;
-
-private:
-    static Time parseFileTime (uint32 time, uint32 date) noexcept
-    {
-        const int year      = 1980 + (date >> 9);
-        const int month     = ((date >> 5) & 15) - 1;
-        const int day       = date & 31;
-        const int hours     = time >> 11;
-        const int minutes   = (time >> 5) & 63;
-        const int seconds   = (int) ((time & 31) << 1);
-
-        return Time (year, month, day, hours, minutes, seconds);
-    }
 };
 
 //==============================================================================
-namespace
+static int64 findCentralDirectoryFileHeader (InputStream& input, int& numEntries)
 {
-    int findEndOfZipEntryTable (InputStream& input, int& numEntries)
+    BufferedInputStream in (input, 8192);
+
+    in.setPosition (in.getTotalLength());
+    auto pos = in.getPosition();
+    auto lowestPos = jmax ((int64) 0, pos - 1024);
+    char buffer[32] = {};
+
+    while (pos > lowestPos)
     {
-        BufferedInputStream in (input, 8192);
+        in.setPosition (pos - 22);
+        pos = in.getPosition();
+        memcpy (buffer + 22, buffer, 4);
 
-        in.setPosition (in.getTotalLength());
-        int64 pos = in.getPosition();
-        const int64 lowestPos = jmax ((int64) 0, pos - 1024);
+        if (in.read (buffer, 22) != 22)
+            return 0;
 
-        char buffer [32] = { 0 };
-
-        while (pos > lowestPos)
+        for (int i = 0; i < 22; ++i)
         {
-            in.setPosition (pos - 22);
-            pos = in.getPosition();
-            memcpy (buffer + 22, buffer, 4);
-
-            if (in.read (buffer, 22) != 22)
-                return 0;
-
-            for (int i = 0; i < 22; ++i)
+            if (ByteOrder::littleEndianInt (buffer + i) == 0x06054b50)
             {
-                if (ByteOrder::littleEndianInt (buffer + i) == 0x06054b50)
-                {
-                    in.setPosition (pos + i);
-                    in.read (buffer, 22);
-                    numEntries = ByteOrder::littleEndianShort (buffer + 10);
+                in.setPosition (pos + i);
+                in.read (buffer, 22);
+                numEntries = ByteOrder::littleEndianShort (buffer + 10);
+                auto offset = (int64) ByteOrder::littleEndianInt (buffer + 16);
 
-                    return (int) ByteOrder::littleEndianInt (buffer + 16);
+                if (offset >= 4)
+                {
+                    in.setPosition (offset);
+
+                    // This is a workaround for some zip files which seem to contain the
+                    // wrong offset for the central directory - instead of including the
+                    // header, they point to the byte immediately after it.
+                    if (in.readInt() != 0x02014b50)
+                    {
+                        in.setPosition (offset - 4);
+
+                        if (in.readInt() == 0x02014b50)
+                            offset -= 4;
+                    }
                 }
+
+                return offset;
             }
         }
-
-        return 0;
     }
+
+    return 0;
 }
 
 //==============================================================================
-class ZipFile::ZipInputStream  : public InputStream
+struct ZipFile::ZipInputStream  : public InputStream
 {
-public:
-    ZipInputStream (ZipFile& zf, ZipFile::ZipEntryHolder& zei)
+    ZipInputStream (ZipFile& zf, const ZipFile::ZipEntryHolder& zei)
         : file (zf),
           zipEntryHolder (zei),
-          pos (0),
-          headerSize (0),
           inputStream (zf.inputStream)
     {
         if (zf.inputSource != nullptr)
@@ -129,7 +132,7 @@ public:
            #endif
         }
 
-        char buffer [30];
+        char buffer[30];
 
         if (inputStream != nullptr
              && inputStream->setPosition (zei.streamOffset)
@@ -201,8 +204,8 @@ public:
 private:
     ZipFile& file;
     ZipEntryHolder zipEntryHolder;
-    int64 pos;
-    int headerSize;
+    int64 pos = 0;
+    int headerSize = 0;
     InputStream* inputStream;
     ScopedPointer<InputStream> streamToDelete;
 
@@ -211,7 +214,7 @@ private:
 
 
 //==============================================================================
-ZipFile::ZipFile (InputStream* const stream, const bool deleteStreamWhenDestroyed)
+ZipFile::ZipFile (InputStream* stream, bool deleteStreamWhenDestroyed)
    : inputStream (stream)
 {
     if (deleteStreamWhenDestroyed)
@@ -220,22 +223,17 @@ ZipFile::ZipFile (InputStream* const stream, const bool deleteStreamWhenDestroye
     init();
 }
 
-ZipFile::ZipFile (InputStream& stream)
-   : inputStream (&stream)
+ZipFile::ZipFile (InputStream& stream)  : inputStream (&stream)
 {
     init();
 }
 
-ZipFile::ZipFile (const File& file)
-    : inputStream (nullptr),
-      inputSource (new FileInputSource (file))
+ZipFile::ZipFile (const File& file)  : inputSource (new FileInputSource (file))
 {
     init();
 }
 
-ZipFile::ZipFile (InputSource* const source)
-    : inputStream (nullptr),
-      inputSource (source)
+ZipFile::ZipFile (InputSource* source)  : inputSource (source)
 {
     init();
 }
@@ -265,31 +263,36 @@ int ZipFile::getNumEntries() const noexcept
 
 const ZipFile::ZipEntry* ZipFile::getEntry (const int index) const noexcept
 {
-    if (ZipEntryHolder* const zei = entries [index])
+    if (auto* zei = entries[index])
         return &(zei->entry);
 
     return nullptr;
 }
 
-int ZipFile::getIndexOfFileName (const String& fileName) const noexcept
+int ZipFile::getIndexOfFileName (const String& fileName, bool ignoreCase) const noexcept
 {
     for (int i = 0; i < entries.size(); ++i)
-        if (entries.getUnchecked (i)->entry.filename == fileName)
+    {
+        auto& entryFilename = entries.getUnchecked (i)->entry.filename;
+
+        if (ignoreCase ? entryFilename.equalsIgnoreCase (fileName)
+                       : entryFilename == fileName)
             return i;
+    }
 
     return -1;
 }
 
-const ZipFile::ZipEntry* ZipFile::getEntry (const String& fileName) const noexcept
+const ZipFile::ZipEntry* ZipFile::getEntry (const String& fileName, bool ignoreCase) const noexcept
 {
-    return getEntry (getIndexOfFileName (fileName));
+    return getEntry (getIndexOfFileName (fileName, ignoreCase));
 }
 
 InputStream* ZipFile::createStreamForEntry (const int index)
 {
     InputStream* stream = nullptr;
 
-    if (ZipEntryHolder* const zei = entries[index])
+    if (auto* zei = entries[index])
     {
         stream = new ZipInputStream (*this, *zei);
 
@@ -337,27 +340,26 @@ void ZipFile::init()
     if (in != nullptr)
     {
         int numEntries = 0;
-        int pos = findEndOfZipEntryTable (*in, numEntries);
+        auto centralDirectoryPos = findCentralDirectoryFileHeader (*in, numEntries);
 
-        if (pos >= 0 && pos < in->getTotalLength())
+        if (centralDirectoryPos >= 0 && centralDirectoryPos < in->getTotalLength())
         {
-            const int size = (int) (in->getTotalLength() - pos);
+            auto size = (size_t) (in->getTotalLength() - centralDirectoryPos);
 
-            in->setPosition (pos);
+            in->setPosition (centralDirectoryPos);
             MemoryBlock headerData;
 
-            if (in->readIntoMemoryBlock (headerData, size) == (size_t) size)
+            if (in->readIntoMemoryBlock (headerData, (ssize_t) size) == size)
             {
-                pos = 0;
+                size_t pos = 0;
 
                 for (int i = 0; i < numEntries; ++i)
                 {
                     if (pos + 46 > size)
                         break;
 
-                    const char* const buffer = static_cast<const char*> (headerData.getData()) + pos;
-
-                    const int fileNameLen = ByteOrder::littleEndianShort (buffer + 28);
+                    auto* buffer = static_cast<const char*> (headerData.getData()) + pos;
+                    auto fileNameLen = ByteOrder::littleEndianShort (buffer + 28);
 
                     if (pos + 46 + fileNameLen > size)
                         break;
@@ -378,7 +380,8 @@ Result ZipFile::uncompressTo (const File& targetDirectory,
 {
     for (int i = 0; i < entries.size(); ++i)
     {
-        Result result (uncompressEntry (i, targetDirectory, shouldOverwriteFiles));
+        auto result = uncompressEntry (i, targetDirectory, shouldOverwriteFiles);
+
         if (result.failed())
             return result;
     }
@@ -386,19 +389,20 @@ Result ZipFile::uncompressTo (const File& targetDirectory,
     return Result::ok();
 }
 
-Result ZipFile::uncompressEntry (const int index,
-                                 const File& targetDirectory,
-                                 bool shouldOverwriteFiles)
+Result ZipFile::uncompressEntry (int index, const File& targetDirectory, bool shouldOverwriteFiles)
 {
-    const ZipEntryHolder* zei = entries.getUnchecked (index);
+    auto* zei = entries.getUnchecked (index);
 
    #if JUCE_WINDOWS
-    const String entryPath (zei->entry.filename);
+    auto entryPath = zei->entry.filename;
    #else
-    const String entryPath (zei->entry.filename.replaceCharacter ('\\', '/'));
+    auto entryPath = zei->entry.filename.replaceCharacter ('\\', '/');
    #endif
 
-    const File targetFile (targetDirectory.getChildFile (entryPath));
+    if (entryPath.isEmpty())
+        return Result::ok();
+
+    auto targetFile = targetDirectory.getChildFile (entryPath);
 
     if (entryPath.endsWithChar ('/') || entryPath.endsWithChar ('\\'))
         return targetFile.createDirectory(); // (entry is a directory, not a file)
@@ -438,13 +442,10 @@ Result ZipFile::uncompressEntry (const int index,
 
 
 //==============================================================================
-class ZipFile::Builder::Item
+struct ZipFile::Builder::Item
 {
-public:
     Item (const File& f, InputStream* s, int compression, const String& storedPath, Time time)
-        : file (f), stream (s), storedPathname (storedPath), fileTime (time),
-          compressedSize (0), uncompressedSize (0), headerStart (0),
-          compressionLevel (compression), checksum (0)
+        : file (f), stream (s), storedPathname (storedPath), fileTime (time), compressionLevel (compression)
     {
     }
 
@@ -496,9 +497,9 @@ private:
     ScopedPointer<InputStream> stream;
     String storedPathname;
     Time fileTime;
-    int64 compressedSize, uncompressedSize, headerStart;
-    int compressionLevel;
-    unsigned long checksum;
+    int64 compressedSize = 0, uncompressedSize = 0, headerStart = 0;
+    int compressionLevel = 0;
+    unsigned long checksum = 0;
 
     static void writeTimeAndDate (OutputStream& target, Time t)
     {
@@ -523,7 +524,7 @@ private:
 
         while (! stream->isExhausted())
         {
-            const int bytesRead = stream->read (buffer, bufferSize);
+            auto bytesRead = stream->read (buffer, bufferSize);
 
             if (bytesRead < 0)
                 return false;
@@ -557,7 +558,7 @@ private:
 ZipFile::Builder::Builder() {}
 ZipFile::Builder::~Builder() {}
 
-void ZipFile::Builder::addFile (const File& file, const int compression, const String& path)
+void ZipFile::Builder::addFile (const File& file, int compression, const String& path)
 {
     items.add (new Item (file, nullptr, compression,
                          path.isEmpty() ? file.getFileName() : path,
@@ -568,12 +569,12 @@ void ZipFile::Builder::addEntry (InputStream* stream, int compression, const Str
 {
     jassert (stream != nullptr); // must not be null!
     jassert (path.isNotEmpty());
-    items.add (new Item (File(), stream, compression, path, time));
+    items.add (new Item ({}, stream, compression, path, time));
 }
 
 bool ZipFile::Builder::writeToStream (OutputStream& target, double* const progress) const
 {
-    const int64 fileStart = target.getPosition();
+    auto fileStart = target.getPosition();
 
     for (int i = 0; i < items.size(); ++i)
     {
@@ -584,13 +585,13 @@ bool ZipFile::Builder::writeToStream (OutputStream& target, double* const progre
             return false;
     }
 
-    const int64 directoryStart = target.getPosition();
+    auto directoryStart = target.getPosition();
 
-    for (int i = 0; i < items.size(); ++i)
-        if (! items.getUnchecked (i)->writeDirectoryEntry (target))
+    for (auto* item : items)
+        if (! item->writeDirectoryEntry (target))
             return false;
 
-    const int64 directoryEnd = target.getPosition();
+    auto directoryEnd = target.getPosition();
 
     target.writeInt (0x06054b50);
     target.writeShort (0);
@@ -606,3 +607,5 @@ bool ZipFile::Builder::writeToStream (OutputStream& target, double* const progre
 
     return true;
 }
+
+} // namespace juce

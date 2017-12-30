@@ -2,31 +2,26 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2016 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of the ISC license
-   http://www.isc.org/downloads/software-support-policy/isc-license/
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Permission to use, copy, modify, and/or distribute this software for any
-   purpose with or without fee is hereby granted, provided that the above
-   copyright notice and this permission notice appear in all copies.
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
-   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
-   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-   OF THIS SOFTWARE.
-
-   -----------------------------------------------------------------------------
-
-   To release a closed-source product which uses other parts of JUCE not
-   licensed under the ISC terms, commercial licenses are available: visit
-   www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
+
+namespace juce
+{
 
 class Expression::Term  : public SingleThreadedReferenceCountedObject
 {
@@ -55,7 +50,7 @@ public:
     virtual String getName() const
     {
         jassertfalse; // You shouldn't call this for an expression that's not actually a function!
-        return String();
+        return {};
     }
 
     virtual void renameSymbol (const Symbol& oldSymbol, const String& newName, const Scope& scope, int recursionDepth)
@@ -250,10 +245,12 @@ struct Expression::Helpers
         {
             checkRecursionDepth (recursionDepth);
             double result = 0;
-            const int numParams = parameters.size();
+            auto numParams = parameters.size();
+
             if (numParams > 0)
             {
-                HeapBlock<double> params ((size_t) numParams);
+                HeapBlock<double> params (numParams);
+
                 for (int i = 0; i < numParams; ++i)
                     params[i] = parameters.getReference(i).term->resolve (scope, recursionDepth + 1)->toDouble();
 
@@ -629,10 +626,10 @@ struct Expression::Helpers
     class SymbolCheckVisitor  : public Term::SymbolVisitor
     {
     public:
-        SymbolCheckVisitor (const Symbol& symbol_) : wasFound (false), symbol (symbol_) {}
+        SymbolCheckVisitor (const Symbol& s) : symbol (s) {}
         void useSymbol (const Symbol& s)    { wasFound = wasFound || s == symbol; }
 
-        bool wasFound;
+        bool wasFound = false;
 
     private:
         const Symbol& symbol;
@@ -728,7 +725,7 @@ struct Expression::Helpers
         bool readIdentifier (String& identifier) noexcept
         {
             text = text.findEndOfWhitespace();
-            String::CharPointerType t (text);
+            auto t = text;
             int numChars = 0;
 
             if (t.isLetter() || *t == '_')
@@ -756,9 +753,9 @@ struct Expression::Helpers
         Term* readNumber() noexcept
         {
             text = text.findEndOfWhitespace();
-            String::CharPointerType t (text);
+            auto t = text;
+            bool isResolutionTarget = (*t == '@');
 
-            const bool isResolutionTarget = (*t == '@');
             if (isResolutionTarget)
             {
                 ++t;
@@ -958,7 +955,6 @@ Expression& Expression::operator= (const Expression& other)
     return *this;
 }
 
-#if JUCE_COMPILER_SUPPORTS_MOVE_SEMANTICS
 Expression::Expression (Expression&& other) noexcept
     : term (static_cast<ReferenceCountedObjectPtr<Term>&&> (other.term))
 {
@@ -969,11 +965,10 @@ Expression& Expression::operator= (Expression&& other) noexcept
     term = static_cast<ReferenceCountedObjectPtr<Term>&&> (other.term);
     return *this;
 }
-#endif
 
 Expression::Expression (const String& stringToParse, String& parseError)
 {
-    String::CharPointerType text (stringToParse.getCharPointer());
+    auto text = stringToParse.getCharPointer();
     Helpers::Parser parser (text);
     term = parser.readUpToComma();
     parseError = parser.error;
@@ -1175,5 +1170,7 @@ void Expression::Scope::visitRelativeScope (const String& scopeName, Visitor&) c
 
 String Expression::Scope::getScopeUID() const
 {
-    return String();
+    return {};
 }
+
+} // namespace juce

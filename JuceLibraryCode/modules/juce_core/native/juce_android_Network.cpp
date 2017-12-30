@@ -2,33 +2,27 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2016 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of the ISC license
-   http://www.isc.org/downloads/software-support-policy/isc-license/
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Permission to use, copy, modify, and/or distribute this software for any
-   purpose with or without fee is hereby granted, provided that the above
-   copyright notice and this permission notice appear in all copies.
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
-   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
-   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-   OF THIS SOFTWARE.
-
-   -----------------------------------------------------------------------------
-
-   To release a closed-source product which uses other parts of JUCE not
-   licensed under the ISC terms, commercial licenses are available: visit
-   www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-//==============================================================================
+namespace juce
+{
+
 #define JNI_CLASS_MEMBERS(METHOD, STATICMETHOD, FIELD, STATICFIELD) \
  METHOD (constructor, "<init>", "()V") \
  METHOD (toString, "toString", "()Ljava/lang/String;") \
@@ -38,6 +32,7 @@ DECLARE_JNI_CLASS (StringBuffer, "java/lang/StringBuffer");
 
 //==============================================================================
 #define JNI_CLASS_MEMBERS(METHOD, STATICMETHOD, FIELD, STATICFIELD) \
+ METHOD (connect, "connect", "()Z") \
  METHOD (release, "release", "()V") \
  METHOD (read, "read", "([BI)I") \
  METHOD (getPosition, "getPosition", "()J") \
@@ -50,35 +45,28 @@ DECLARE_JNI_CLASS (HTTPStream, JUCE_ANDROID_ACTIVITY_CLASSPATH "$HTTPStream");
 
 
 //==============================================================================
-void MACAddress::findAllAddresses (Array<MACAddress>& result)
+void MACAddress::findAllAddresses (Array<MACAddress>& /*result*/)
 {
     // TODO
 }
 
 
-JUCE_API bool JUCE_CALLTYPE Process::openEmailWithAttachments (const String& targetEmailAddress,
-                                                               const String& emailSubject,
-                                                               const String& bodyText,
-                                                               const StringArray& filesToAttach)
+JUCE_API bool JUCE_CALLTYPE Process::openEmailWithAttachments (const String& /*targetEmailAddress*/,
+                                                               const String& /*emailSubject*/,
+                                                               const String& /*bodyText*/,
+                                                               const StringArray& /*filesToAttach*/)
 {
     // TODO
     return false;
 }
 
-/* Pimpl (String address, bool isPost, const MemoryBlock& postData,
- URL::OpenStreamProgressCallback* progressCallback, void* progressCallbackContext,
- const String& headers, int timeOutMs, StringPairArray* responseHeaders,
- const int numRedirectsToFollow, const String& httpRequest)
- : statusCode (0)
-
-*/
 //==============================================================================
 class WebInputStream::Pimpl
 {
 public:
-    Pimpl (WebInputStream& pimplOwner, const URL& urlToCopy, bool shouldBePost)
-        : statusCode (0), owner (pimplOwner), url (urlToCopy), isPost (shouldBePost),
-          numRedirectsToFollow (5), timeOutMs (0), httpRequest (isPost ? "POST" : "GET")
+    Pimpl (WebInputStream&, const URL& urlToCopy, bool shouldBePost)
+        : url (urlToCopy), isPost (shouldBePost),
+          httpRequest (isPost ? "POST" : "GET")
     {}
 
     ~Pimpl()
@@ -88,14 +76,18 @@ public:
 
     void cancel()
     {
+        const ScopedLock lock (createStreamLock);
+
         if (stream != 0)
         {
             stream.callVoidMethod (HTTPStream.release);
             stream.clear();
         }
+
+        hasBeenCancelled = true;
     }
 
-    bool connect (WebInputStream::Listener* listener)
+    bool connect (WebInputStream::Listener* /*listener*/)
     {
         String address = url.toString (! isPost);
 
@@ -112,8 +104,8 @@ public:
 
         if (postData.getSize() > 0)
         {
-            postDataArray = env->NewByteArray (postData.getSize());
-            env->SetByteArrayRegion (postDataArray, 0, postData.getSize(), (const jbyte*) postData.getData());
+            postDataArray = env->NewByteArray (static_cast<jsize> (postData.getSize()));
+            env->SetByteArrayRegion (postDataArray, 0, static_cast<jsize> (postData.getSize()), (const jbyte*) postData.getData());
         }
 
         LocalRef<jobject> responseHeaderBuffer (env->NewObject (StringBuffer, StringBuffer.constructor));
@@ -125,17 +117,25 @@ public:
         jintArray statusCodeArray = env->NewIntArray (1);
         jassert (statusCodeArray != 0);
 
-        stream = GlobalRef (env->CallStaticObjectMethod (JuceAppActivity,
-                                                         JuceAppActivity.createHTTPStream,
-                                                         javaString (address).get(),
-                                                         (jboolean) isPost,
-                                                         postDataArray,
-                                                         javaString (headers).get(),
-                                                         (jint) timeOutMs,
-                                                         statusCodeArray,
-                                                         responseHeaderBuffer.get(),
-                                                         (jint) numRedirectsToFollow,
-                                                         javaString (httpRequest).get()));
+        {
+            const ScopedLock lock (createStreamLock);
+
+            if (! hasBeenCancelled)
+                stream = GlobalRef (env->CallStaticObjectMethod (JuceAppActivity,
+                                                                 JuceAppActivity.createHTTPStream,
+                                                                 javaString (address).get(),
+                                                                 (jboolean) isPost,
+                                                                 postDataArray,
+                                                                 javaString (headers).get(),
+                                                                 (jint) timeOutMs,
+                                                                 statusCodeArray,
+                                                                 responseHeaderBuffer.get(),
+                                                                 (jint) numRedirectsToFollow,
+                                                                 javaString (httpRequest).get()));
+        }
+
+        if (stream != 0 && ! stream.callBooleanMethod (HTTPStream.connect))
+            stream.clear();
 
         jint* const statusCodeElements = env->GetIntArrayElements (statusCodeArray, 0);
         statusCode = statusCodeElements[0];
@@ -203,6 +203,8 @@ public:
     {
         jassert (buffer != nullptr && bytesToRead >= 0);
 
+        const ScopedLock lock (createStreamLock);
+
         if (stream == nullptr)
             return 0;
 
@@ -220,21 +222,83 @@ public:
     }
 
     //==============================================================================
-    int statusCode;
+    int statusCode = 0;
 
 private:
-    WebInputStream& owner;
     const URL url;
     bool isPost;
-    int numRedirectsToFollow, timeOutMs;
+    int numRedirectsToFollow = 5, timeOutMs = 0;
     String httpRequest, headers;
     StringPairArray responseHeaders;
+    CriticalSection createStreamLock;
+    bool hasBeenCancelled = false;
 
     GlobalRef stream;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Pimpl)
 };
 
-URL::DownloadTask* URL::downloadToFile (const File& targetLocation, String extraHeaders, DownloadTask::Listener* listener)
+URL::DownloadTask* URL::downloadToFile (const File& targetLocation, String extraHeaders, DownloadTask::Listener* listener, bool shouldUsePost)
 {
-    return URL::DownloadTask::createFallbackDownloader (*this, targetLocation, extraHeaders, listener);
+    return URL::DownloadTask::createFallbackDownloader (*this, targetLocation, extraHeaders, listener, shouldUsePost);
 }
+
+//==============================================================================
+static void addAddress (const sockaddr_in* addr_in, Array<IPAddress>& result)
+{
+    in_addr_t addr = addr_in->sin_addr.s_addr;
+
+    if (addr != INADDR_NONE)
+        result.addIfNotAlreadyThere (IPAddress (ntohl (addr)));
+}
+
+static void findIPAddresses (int sock, Array<IPAddress>& result)
+{
+    ifconf cfg;
+    HeapBlock<char> buffer;
+    int bufferSize = 1024;
+
+    do
+    {
+        bufferSize *= 2;
+        buffer.calloc (bufferSize);
+
+        cfg.ifc_len = bufferSize;
+        cfg.ifc_buf = buffer;
+
+        if (ioctl (sock, SIOCGIFCONF, &cfg) < 0 && errno != EINVAL)
+            return;
+
+    } while (bufferSize < cfg.ifc_len + 2 * (int) (IFNAMSIZ + sizeof (struct sockaddr_in6)));
+
+   #if JUCE_MAC || JUCE_IOS
+    while (cfg.ifc_len >= (int) (IFNAMSIZ + sizeof (struct sockaddr_in)))
+    {
+        if (cfg.ifc_req->ifr_addr.sa_family == AF_INET) // Skip non-internet addresses
+            addAddress ((const sockaddr_in*) &cfg.ifc_req->ifr_addr, result);
+
+        cfg.ifc_len -= IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
+        cfg.ifc_buf += IFNAMSIZ + cfg.ifc_req->ifr_addr.sa_len;
+    }
+   #else
+    for (size_t i = 0; i < (size_t) cfg.ifc_len / (size_t) sizeof (struct ifreq); ++i)
+    {
+        const ifreq& item = cfg.ifc_req[i];
+
+        if (item.ifr_addr.sa_family == AF_INET)
+            addAddress ((const sockaddr_in*) &item.ifr_addr, result);
+    }
+   #endif
+}
+
+void IPAddress::findAllAddresses (Array<IPAddress>& result, bool /*includeIPv6*/)
+{
+    const int sock = socket (AF_INET, SOCK_DGRAM, 0); // a dummy socket to execute the IO control
+
+    if (sock >= 0)
+    {
+        findIPAddresses (sock, result);
+        ::close (sock);
+    }
+}
+
+} // namespace juce

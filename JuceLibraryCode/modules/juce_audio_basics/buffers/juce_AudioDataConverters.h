@@ -2,35 +2,26 @@
   ==============================================================================
 
    This file is part of the JUCE library.
-   Copyright (c) 2016 - ROLI Ltd.
+   Copyright (c) 2017 - ROLI Ltd.
 
-   Permission is granted to use this software under the terms of the ISC license
-   http://www.isc.org/downloads/software-support-policy/isc-license/
+   JUCE is an open source library subject to commercial or open-source
+   licensing.
 
-   Permission to use, copy, modify, and/or distribute this software for any
-   purpose with or without fee is hereby granted, provided that the above
-   copyright notice and this permission notice appear in all copies.
+   The code included in this file is provided under the terms of the ISC license
+   http://www.isc.org/downloads/software-support-policy/isc-license. Permission
+   To use, copy, modify, and/or distribute this software for any purpose with or
+   without fee is hereby granted provided that the above copyright notice and
+   this permission notice appear in all copies.
 
-   THE SOFTWARE IS PROVIDED "AS IS" AND ISC DISCLAIMS ALL WARRANTIES WITH REGARD
-   TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND
-   FITNESS. IN NO EVENT SHALL ISC BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT,
-   OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
-   USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-   OF THIS SOFTWARE.
-
-   -----------------------------------------------------------------------------
-
-   To release a closed-source product which uses other parts of JUCE not
-   licensed under the ISC terms, commercial licenses are available: visit
-   www.juce.com for more information.
+   JUCE IS PROVIDED "AS IS" WITHOUT ANY WARRANTY, AND ALL WARRANTIES, WHETHER
+   EXPRESSED OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR PURPOSE, ARE
+   DISCLAIMED.
 
   ==============================================================================
 */
 
-#ifndef JUCE_AUDIODATACONVERTERS_H_INCLUDED
-#define JUCE_AUDIODATACONVERTERS_H_INCLUDED
-
+namespace juce
+{
 
 //==============================================================================
 /**
@@ -113,7 +104,7 @@ public:
         inline float getAsFloatBE() const noexcept              { return getAsFloatLE(); }
         inline void setAsFloatLE (float newValue) noexcept      { *data = (int8) jlimit ((int) -maxValue, (int) maxValue, roundToInt (newValue * (1.0 + maxValue))); }
         inline void setAsFloatBE (float newValue) noexcept      { setAsFloatLE (newValue); }
-        inline int32 getAsInt32LE() const noexcept              { return (int) (*data << 24); }
+        inline int32 getAsInt32LE() const noexcept              { return (int) (*((uint8*) data) << 24); }
         inline int32 getAsInt32BE() const noexcept              { return getAsInt32LE(); }
         inline void setAsInt32LE (int newValue) noexcept        { *data = (int8) (newValue >> 24); }
         inline void setAsInt32BE (int newValue) noexcept        { setAsInt32LE (newValue); }
@@ -138,7 +129,7 @@ public:
         inline float getAsFloatBE() const noexcept              { return getAsFloatLE(); }
         inline void setAsFloatLE (float newValue) noexcept      { *data = (uint8) jlimit (0, 255, 128 + roundToInt (newValue * (1.0 + maxValue))); }
         inline void setAsFloatBE (float newValue) noexcept      { setAsFloatLE (newValue); }
-        inline int32 getAsInt32LE() const noexcept              { return (int) ((*data - 128) << 24); }
+        inline int32 getAsInt32LE() const noexcept              { return (int) (((uint8) (*data - 128)) << 24); }
         inline int32 getAsInt32BE() const noexcept              { return getAsInt32LE(); }
         inline void setAsInt32LE (int newValue) noexcept        { *data = (uint8) (128 + (newValue >> 24)); }
         inline void setAsInt32BE (int newValue) noexcept        { setAsInt32LE (newValue); }
@@ -159,13 +150,13 @@ public:
 
         inline void advance() noexcept                          { ++data; }
         inline void skip (int numSamples) noexcept              { data += numSamples; }
-        inline float getAsFloatLE() const noexcept              { return (float) ((1.0 / (1.0 + maxValue)) * (int16) ByteOrder::swapIfBigEndian (*data)); }
+        inline float getAsFloatLE() const noexcept              { return (float) ((1.0 / (1.0 + maxValue)) * (int16) ByteOrder::swapIfBigEndian    (*data)); }
         inline float getAsFloatBE() const noexcept              { return (float) ((1.0 / (1.0 + maxValue)) * (int16) ByteOrder::swapIfLittleEndian (*data)); }
-        inline void setAsFloatLE (float newValue) noexcept      { *data = ByteOrder::swapIfBigEndian ((uint16) jlimit ((int) -maxValue, (int) maxValue, roundToInt (newValue * (1.0 + maxValue)))); }
+        inline void setAsFloatLE (float newValue) noexcept      { *data = ByteOrder::swapIfBigEndian    ((uint16) jlimit ((int) -maxValue, (int) maxValue, roundToInt (newValue * (1.0 + maxValue)))); }
         inline void setAsFloatBE (float newValue) noexcept      { *data = ByteOrder::swapIfLittleEndian ((uint16) jlimit ((int) -maxValue, (int) maxValue, roundToInt (newValue * (1.0 + maxValue)))); }
-        inline int32 getAsInt32LE() const noexcept              { return (int32) (ByteOrder::swapIfBigEndian ((uint16) *data) << 16); }
+        inline int32 getAsInt32LE() const noexcept              { return (int32) (ByteOrder::swapIfBigEndian    ((uint16) *data) << 16); }
         inline int32 getAsInt32BE() const noexcept              { return (int32) (ByteOrder::swapIfLittleEndian ((uint16) *data) << 16); }
-        inline void setAsInt32LE (int32 newValue) noexcept      { *data = ByteOrder::swapIfBigEndian ((uint16) (newValue >> 16)); }
+        inline void setAsInt32LE (int32 newValue) noexcept      { *data = ByteOrder::swapIfBigEndian    ((uint16) (newValue >> 16)); }
         inline void setAsInt32BE (int32 newValue) noexcept      { *data = ByteOrder::swapIfLittleEndian ((uint16) (newValue >> 16)); }
         inline void clear() noexcept                            { *data = 0; }
         inline void clearMultiple (int num) noexcept            { zeromem (data, (size_t) (num * bytesPerSample)) ;}
@@ -185,13 +176,13 @@ public:
         inline void advance() noexcept                          { data += 3; }
         inline void skip (int numSamples) noexcept              { data += 3 * numSamples; }
         inline float getAsFloatLE() const noexcept              { return (float) (ByteOrder::littleEndian24Bit (data) * (1.0 / (1.0 + maxValue))); }
-        inline float getAsFloatBE() const noexcept              { return (float) (ByteOrder::bigEndian24Bit (data) * (1.0 / (1.0 + maxValue))); }
+        inline float getAsFloatBE() const noexcept              { return (float) (ByteOrder::bigEndian24Bit    (data) * (1.0 / (1.0 + maxValue))); }
         inline void setAsFloatLE (float newValue) noexcept      { ByteOrder::littleEndian24BitToChars (jlimit ((int) -maxValue, (int) maxValue, roundToInt (newValue * (1.0 + maxValue))), data); }
-        inline void setAsFloatBE (float newValue) noexcept      { ByteOrder::bigEndian24BitToChars (jlimit ((int) -maxValue, (int) maxValue, roundToInt (newValue * (1.0 + maxValue))), data); }
-        inline int32 getAsInt32LE() const noexcept              { return (int32) ByteOrder::littleEndian24Bit (data) << 8; }
-        inline int32 getAsInt32BE() const noexcept              { return (int32) ByteOrder::bigEndian24Bit (data) << 8; }
+        inline void setAsFloatBE (float newValue) noexcept      { ByteOrder::bigEndian24BitToChars (jlimit    ((int) -maxValue, (int) maxValue, roundToInt (newValue * (1.0 + maxValue))), data); }
+        inline int32 getAsInt32LE() const noexcept              { return (int32) (((unsigned int) ByteOrder::littleEndian24Bit (data)) << 8); }
+        inline int32 getAsInt32BE() const noexcept              { return (int32) (((unsigned int) ByteOrder::bigEndian24Bit    (data)) << 8); }
         inline void setAsInt32LE (int32 newValue) noexcept      { ByteOrder::littleEndian24BitToChars (newValue >> 8, data); }
-        inline void setAsInt32BE (int32 newValue) noexcept      { ByteOrder::bigEndian24BitToChars (newValue >> 8, data); }
+        inline void setAsInt32BE (int32 newValue) noexcept      { ByteOrder::bigEndian24BitToChars    (newValue >> 8, data); }
         inline void clear() noexcept                            { data[0] = 0; data[1] = 0; data[2] = 0; }
         inline void clearMultiple (int num) noexcept            { zeromem (data, (size_t) (num * bytesPerSample)) ;}
         template <class SourceType> inline void copyFromLE (SourceType& source) noexcept    { setAsInt32LE (source.getAsInt32()); }
@@ -209,10 +200,10 @@ public:
 
         inline void advance() noexcept                          { ++data; }
         inline void skip (int numSamples) noexcept              { data += numSamples; }
-        inline float getAsFloatLE() const noexcept              { return (float) ((1.0 / (1.0 + maxValue)) * (int32) ByteOrder::swapIfBigEndian (*data)); }
+        inline float getAsFloatLE() const noexcept              { return (float) ((1.0 / (1.0 + maxValue)) * (int32) ByteOrder::swapIfBigEndian    (*data)); }
         inline float getAsFloatBE() const noexcept              { return (float) ((1.0 / (1.0 + maxValue)) * (int32) ByteOrder::swapIfLittleEndian (*data)); }
-        inline void setAsFloatLE (float newValue) noexcept      { *data = ByteOrder::swapIfBigEndian    ((uint32) (maxValue * jlimit (-1.0, 1.0, (double) newValue))); }
-        inline void setAsFloatBE (float newValue) noexcept      { *data = ByteOrder::swapIfLittleEndian ((uint32) (maxValue * jlimit (-1.0, 1.0, (double) newValue))); }
+        inline void setAsFloatLE (float newValue) noexcept      { *data = ByteOrder::swapIfBigEndian    ((uint32) (int32) (maxValue * jlimit (-1.0, 1.0, (double) newValue))); }
+        inline void setAsFloatBE (float newValue) noexcept      { *data = ByteOrder::swapIfLittleEndian ((uint32) (int32) (maxValue * jlimit (-1.0, 1.0, (double) newValue))); }
         inline int32 getAsInt32LE() const noexcept              { return (int32) ByteOrder::swapIfBigEndian    (*data); }
         inline int32 getAsInt32BE() const noexcept              { return (int32) ByteOrder::swapIfLittleEndian (*data); }
         inline void setAsInt32LE (int32 newValue) noexcept      { *data = ByteOrder::swapIfBigEndian    ((uint32) newValue); }
@@ -371,7 +362,7 @@ public:
         {
             // If you're using interleaved data, call the other constructor! If you're using non-interleaved data,
             // you should pass NonInterleaved as the template parameter for the interleaving type!
-            static_jassert (InterleavingType::isInterleavedType == 0);
+            static_assert (InterleavingType::isInterleavedType == 0, "Incorrect constructor for interleaved data");
         }
 
         /** Creates a pointer from some raw data in the appropriate format with the specified number of interleaved channels.
@@ -411,7 +402,8 @@ public:
         */
         inline void setAsFloat (float newValue) noexcept
         {
-            static_jassert (Constness::isConst == 0); // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+            // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+            static_assert (Constness::isConst == 0, "Attempt to write to a const pointer");
             Endianness::setAsFloat (data, newValue);
         }
 
@@ -428,7 +420,8 @@ public:
         */
         inline void setAsInt32 (int32 newValue) noexcept
         {
-            static_jassert (Constness::isConst == 0); // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+             // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+            static_assert (Constness::isConst == 0, "Attempt to write to a const pointer");
             Endianness::setAsInt32 (data, newValue);
         }
 
@@ -446,7 +439,8 @@ public:
         */
         void convertSamples (Pointer source, int numSamples) const noexcept
         {
-            static_jassert (Constness::isConst == 0); // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+            // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+            static_assert (Constness::isConst == 0, "Attempt to write to a const pointer");
 
             for (Pointer dest (*this); --numSamples >= 0;)
             {
@@ -462,7 +456,8 @@ public:
         template <class OtherPointerType>
         void convertSamples (OtherPointerType source, int numSamples) const noexcept
         {
-            static_jassert (Constness::isConst == 0); // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+            // trying to write to a const pointer! For a writeable one, use AudioData::NonConst instead!
+            static_assert (Constness::isConst == 0, "Attempt to write to a const pointer");
 
             Pointer dest (*this);
 
@@ -714,5 +709,4 @@ private:
     JUCE_DECLARE_NON_COPYABLE (AudioDataConverters)
 };
 
-
-#endif   // JUCE_AUDIODATACONVERTERS_H_INCLUDED
+} // namespace juce

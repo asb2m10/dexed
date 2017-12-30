@@ -4,22 +4,27 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Dexed (AU).xcscheme</key>
+		<key>Dexed - AU.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
-		<key>Dexed (All).xcscheme</key>
+		<key>Dexed - All.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>Dexed (Shared Code).xcscheme</key>
+		<key>Dexed - Shared Code.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>4</integer>
+		</dict>
+		<key>Dexed - Standalone Plugin.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>3</integer>
 		</dict>
-		<key>Dexed (VST).xcscheme</key>
+		<key>Dexed - VST.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
@@ -43,6 +48,11 @@
 			<true/>
 		</dict>
 		<key>B85A7FAE3F78012F8709A078</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BD35E770F72A5AB3F4E97848</key>
 		<dict>
 			<key>primary</key>
 			<true/>
