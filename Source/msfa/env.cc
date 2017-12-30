@@ -33,7 +33,7 @@ void Env::init_sr(double sampleRate) {
     sr_multiplier = (44100.0 / sampleRate) * (1<<24);
 }
 
-void Env::init(const int r[4], const int l[4], int32_t ol, int rate_scaling) {
+void Env::init(const int r[4], const int l[4], int ol, int rate_scaling) {
     for (int i = 0; i < 4; i++) {
         rates_[i] = r[i];
         levels_[i] = l[i];
@@ -103,7 +103,7 @@ void Env::advance(int newix) {
     }
 }
 
-void Env::update(const int r[4], const int l[4], int32_t ol, int rate_scaling) {
+void Env::update(const int r[4], const int l[4], int ol, int rate_scaling) {
     for (int i = 0; i < 4; i++) {
         rates_[i] = r[i];
         levels_[i] = l[i];

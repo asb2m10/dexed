@@ -292,7 +292,7 @@ void EngineMkI::compute_fb3(int32_t *output, FmOpParams *parms, int32_t gain01, 
     fb_buf[1] = y;
 }
 
-void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int feedback_shift) {
+void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int32_t feedback_shift) {
     const int kLevelThresh = ENV_MAX-100;
     FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
