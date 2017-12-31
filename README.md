@@ -19,6 +19,7 @@ Changelog
 ---------
 #### Version 0.9.4
 * Migrated to JUCE 5.2.0
+* Fix implementation for Midi CC 120 and 123 (All Sound Off / All Notes Off)
 
 #### Version 0.9.3
 * Preliminary live operator level update

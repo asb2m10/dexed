@@ -305,8 +305,14 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                         }
                     }
                     break;
-                case 123:
+                case 120:
                     panic();
+                    break;
+                case 123:
+                    for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
+                        if (voices[note].keydown)
+                            keyup(voices[note].midi_note);
+                    }
                     break;
             }
         }
