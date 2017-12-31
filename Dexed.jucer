@@ -142,7 +142,7 @@
                        osxSDK="default" osxCompatibility="10.10 SDK" osxArchitecture="64BitIntel"
                        enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Dexed"
-                       osxSDK="10.9 SDK" osxCompatibility="10.7 SDK" osxArchitecture="64BitUniversal"
+                       osxSDK="10.10 SDK" osxCompatibility="10.7 SDK" osxArchitecture="64BitUniversal"
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
@@ -163,13 +163,14 @@
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"
             IPPLibrary="Parallel_Static">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+        <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
                        linkTimeOptimisation="0" isDebug="1" optimisation="1" targetName="Dexed"
-                       useRuntimeLibDLL="0"/>
-        <CONFIGURATION name="Release" winWarningLevel="4" generateManifest="1" winArchitecture="x64"
+                       useRuntimeLibDLL=""/>
+        <CONFIGURATION name="Release" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
-                       linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="Dexed"/>
+                       linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="Dexed"
+                       useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.0/modules"/>

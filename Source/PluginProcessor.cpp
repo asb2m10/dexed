@@ -34,6 +34,17 @@
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
+#if JUCE_MSVC
+    #pragma comment (lib, "kernel32.lib")
+    #pragma comment (lib, "user32.lib")
+    #pragma comment (lib, "wininet.lib")
+    #pragma comment (lib, "advapi32.lib")
+    #pragma comment (lib, "ws2_32.lib")
+    #pragma comment (lib, "version.lib")
+    #pragma comment (lib, "shlwapi.lib")
+    #pragma comment (lib, "winmm.lib")
+#endif
+
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
 #ifdef DEBUG
@@ -330,10 +341,8 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             
     }
 
-    switch (cmd) {
-        case 0xe0 :
-            controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-        break;
+    if ( cmd & 0xe0 ) {
+       controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
     }
 }
 

@@ -344,7 +344,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10; }; name = Debug; };
 		C26C61A1BF294BFF1DB1DDDF = {isa = XCBuildConfiguration; buildSettings = {
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				SDKROOT = macosx10.9; }; name = Release; };
+				SDKROOT = macosx10.10; }; name = Release; };
 		3CBEEA75D64AE87CB4FC1534 = {isa = XCBuildConfiguration; buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++1z";
@@ -419,7 +419,7 @@
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-bundle -lDexed";
 				PRODUCT_BUNDLE_IDENTIFIER = com.digitalsuburban.Dexed;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = vst; }; name = Release; };
@@ -499,7 +499,7 @@
 				OTHER_LDFLAGS = "-bundle -lDexed";
 				OTHER_REZFLAGS = "-d ppc_$ppc -d i386_$i386 -d ppc64_$ppc64 -d x86_64_$x86_64 -I /System/Library/Frameworks/CoreServices.framework/Frameworks/CarbonCore.framework/Versions/A/Headers -I \"$(DEVELOPER_DIR)/Extras/CoreAudio/AudioUnits/AUPublic/AUBase\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.digitalsuburban.Dexed;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 				USE_HEADERMAP = NO;
 				WRAPPER_EXTENSION = component; }; name = Release; };
@@ -566,7 +566,7 @@
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				OTHER_LDFLAGS = "-lDexed";
 				PRODUCT_BUNDLE_IDENTIFIER = com.digitalsuburban.Dexed;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 				USE_HEADERMAP = NO; }; name = Release; };
 		924F53B03D39684973CDDB35 = {isa = XCBuildConfiguration; buildSettings = {
@@ -630,7 +630,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.digitalsuburban.Dexed;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx10.10;
 				SDKROOT_ppc = macosx10.5;
 				USE_HEADERMAP = NO; }; name = Release; };
 		164731727DFE228515FE9A35 = {isa = XCBuildConfiguration; buildSettings = {
