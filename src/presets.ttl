@@ -34,7 +34,7 @@
                 pset:value 99.0
         ] , [
                 lv2:symbol "mod_wheel_assign" ;
-                pset:value 0.0
+                pset:value 7.0
         ] , [
                 lv2:symbol "foot_ctrl_range" ;
                 pset:value 99.0

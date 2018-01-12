@@ -48,6 +48,7 @@ struct FmMod {
 
     void setRange(uint8_t r) {
         range = r < 0 && r > 127 ? 0 : r;
+	TRACE("range=%d",range);
     }
 
     void setTarget(uint8_t assign) {
@@ -64,8 +65,9 @@ struct FmMod {
 class Controllers {
     void applyMod(int cc, FmMod &mod) {
         float range = 0.01 * mod.range;
-        uint8_t total = cc * range;
-        TRACE("amp[%d]|pitch[%d]|eg[%d] %d",mod.amp,mod.pitch,mod.eg,total);
+        uint8_t total = (float)cc * range;
+        TRACE("amp[%d]|pitch[%d]|eg[%d]",mod.amp,mod.pitch,mod.eg);
+        TRACE("range=%f mod.range=%d total=%d cc=%d",range,mod.range,total,cc);
         if(mod.amp)
           amp_mod = max(amp_mod, total);
         

@@ -784,6 +784,7 @@ void Dexed::onParam(uint8_t param_num,float param_val)
         controllers.values_[kControllerPitchStep]=data[param_num];
         break;
       case 157:
+	TRACE("wheel.setRange(%d)",data[param_num]);
         controllers.wheel.setRange(data[param_num]);
         break;
       case 158:

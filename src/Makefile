@@ -1,8 +1,8 @@
 BUNDLE=dexed.lv2
 TARGET=dexed.so
 
-DEBUG=1
-FILETRACE=1
+#DEBUG=1
+#FILETRACE=1
 
 INSTALL_DIR=/zynthian/zynthian-plugins/lv2
 INSTALL_MYPLUGINS_DIR=/zynthian/zynthian-my-plugins/lv2
