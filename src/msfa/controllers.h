@@ -65,6 +65,7 @@ class Controllers {
     void applyMod(int cc, FmMod &mod) {
         float range = 0.01 * mod.range;
         uint8_t total = cc * range;
+        TRACE("amp[%d]|pitch[%d]|eg[%d] %d",mod.amp,mod.pitch,mod.eg,total);
         if(mod.amp)
           amp_mod = max(amp_mod, total);
         

@@ -1,8 +1,8 @@
 BUNDLE=dexed.lv2
 TARGET=dexed.so
 
-#DEBUG=1
-#FILETRACE=1
+DEBUG=1
+FILETRACE=1
 
 INSTALL_DIR=/zynthian/zynthian-plugins/lv2
 INSTALL_MYPLUGINS_DIR=/zynthian/zynthian-my-plugins/lv2
@@ -88,7 +88,7 @@ $(BUNDLE): manifest.ttl Dexed.ttl modgui.ttl presets.ttl dexed.so
 dexed.so: $(OBJ) dexed.o
 	$(CXX) dexed.o $(OBJ) $(LDFLAGS) -o dexed.so
 
-dexed.o: Makefile dexed.cpp dexed.h dexed_ttl.h
+dexed.o: Makefile dexed.cpp dexed.h dexed_ttl.h msfa/controllers.h
 	$(CXX) $(CXXFLAGS) -Wall -c dexed.cpp
 
 trace.o: Makefile trace.c trace.h
