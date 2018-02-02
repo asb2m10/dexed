@@ -206,8 +206,8 @@
   <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_USE_FLAC="disabled" JUCE_USE_OGGVORBIS="disabled"
                JUCE_USE_MP3AUDIOFORMAT="disabled" JUCE_USE_LAME_AUDIO_FORMAT="disabled"
                JUCE_USE_WINDOWS_MEDIA_FORMAT="disabled" JUCE_WEB_BROWSER="disabled"
-               JUCE_ASIO="disabled" JUCE_WASAPI="disabled" JUCE_WASAPI_EXCLUSIVE="disabled"
-               JUCE_DIRECTSOUND="disabled" JUCE_ALSA="disabled" JUCE_JACK="disabled"
+               JUCE_ASIO="disabled" JUCE_WASAPI="enabled" JUCE_WASAPI_EXCLUSIVE="disabled"
+               JUCE_DIRECTSOUND="disabled" JUCE_ALSA="enabled" JUCE_JACK="disabled"
                JUCE_USE_ANDROID_OPENSLES="disabled" JUCE_PLUGINHOST_VST="enabled"
                JUCE_PLUGINHOST_VST3="disabled" JUCE_PLUGINHOST_AU="enabled"
                JUCE_USE_CDREADER="disabled" JUCE_USE_CDBURNER="disabled" JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES="enabled"/>

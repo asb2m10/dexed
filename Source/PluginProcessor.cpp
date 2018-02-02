@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2017 Pascal Gauthier.
+ * Copyright (c) 2013-2018 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +67,6 @@ DexedAudioProcessor::DexedAudioProcessor() {
     monoMode = 0;
     
     resolvAppDir();
-
-    TRACE("controler %s", controllers.opSwitch);
     
     initCtrl();
     sendSysexChange = true;
@@ -82,7 +80,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     controllers.values_[kControllerPitchRange] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     controllers.masterTune = 0;
-
+    
     loadPreference();
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
@@ -276,6 +274,11 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 }
 
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
+    if ( msg->isSysEx() ) {
+        handleIncomingMidiMessage(NULL, *msg);
+        return;
+    }
+    
     const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];
 
@@ -478,7 +481,6 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
                 TRACE("wrong single voice datasize %d", sz);
                 return;
             }
-            
             updateProgramFromSysex(buf+6);
         }
         

@@ -1,17 +1,17 @@
 /*
   ==============================================================================
 
-  This is an automatically generated GUI class created by the Introjucer!
+  This is an automatically generated GUI class created by the Projucer!
 
   Be careful when adding custom code to these files, as only the code within
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Introjucer version: 3.2.0
+  Created with Projucer version: 5.2.0
 
   ------------------------------------------------------------------------------
 
-  The Introjucer is part of the JUCE library - "Jules' Utility Class Extensions"
+  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
   Copyright (c) 2015 - ROLI Ltd.
 
   ==============================================================================
@@ -48,14 +48,14 @@ ParamDialog::ParamDialog ()
     addAndMakeVisible (sysexIn = new ComboBox ("sysexIn"));
     sysexIn->setEditableText (false);
     sysexIn->setJustificationType (Justification::centredLeft);
-    sysexIn->setTextWhenNothingSelected (String::empty);
+    sysexIn->setTextWhenNothingSelected (String());
     sysexIn->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexIn->addListener (this);
 
     addAndMakeVisible (sysexOut = new ComboBox ("sysexOut"));
     sysexOut->setEditableText (false);
     sysexOut->setJustificationType (Justification::centredLeft);
-    sysexOut->setTextWhenNothingSelected (String::empty);
+    sysexOut->setTextWhenNothingSelected (String());
     sysexOut->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexOut->addListener (this);
 
@@ -68,7 +68,7 @@ ParamDialog::ParamDialog ()
     addAndMakeVisible (engineReso = new ComboBox ("new combo box"));
     engineReso->setEditableText (false);
     engineReso->setJustificationType (Justification::centredLeft);
-    engineReso->setTextWhenNothingSelected (String::empty);
+    engineReso->setTextWhenNothingSelected (String());
     engineReso->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     engineReso->addItem (TRANS("Modern (24-bit)"), 1);
     engineReso->addItem (TRANS("Mark I"), 2);
@@ -76,7 +76,7 @@ ParamDialog::ParamDialog ()
     engineReso->addListener (this);
 
     addAndMakeVisible (showKeyboard = new ToggleButton ("showKeyboard"));
-    showKeyboard->setButtonText (String::empty);
+    showKeyboard->setButtonText (String());
 
     addAndMakeVisible (whlRange = new Slider ("whlRange"));
     whlRange->setRange (0, 99, 1);
@@ -103,51 +103,51 @@ ParamDialog::ParamDialog ()
     atRange->addListener (this);
 
     addAndMakeVisible (whlEg = new ToggleButton ("whlEg"));
-    whlEg->setButtonText (String::empty);
+    whlEg->setButtonText (String());
     whlEg->addListener (this);
 
     addAndMakeVisible (ftEg = new ToggleButton ("ftEg"));
-    ftEg->setButtonText (String::empty);
+    ftEg->setButtonText (String());
     ftEg->addListener (this);
 
     addAndMakeVisible (brEg = new ToggleButton ("brEg"));
-    brEg->setButtonText (String::empty);
+    brEg->setButtonText (String());
     brEg->addListener (this);
 
     addAndMakeVisible (atEg = new ToggleButton ("atEg"));
-    atEg->setButtonText (String::empty);
+    atEg->setButtonText (String());
     atEg->addListener (this);
 
     addAndMakeVisible (whlAmp = new ToggleButton ("whlAmp"));
-    whlAmp->setButtonText (String::empty);
+    whlAmp->setButtonText (String());
     whlAmp->addListener (this);
 
     addAndMakeVisible (ftAmp = new ToggleButton ("ftAmp"));
-    ftAmp->setButtonText (String::empty);
+    ftAmp->setButtonText (String());
     ftAmp->addListener (this);
 
     addAndMakeVisible (brAmp = new ToggleButton ("brAmp"));
-    brAmp->setButtonText (String::empty);
+    brAmp->setButtonText (String());
     brAmp->addListener (this);
 
     addAndMakeVisible (atAmp = new ToggleButton ("atAmp"));
-    atAmp->setButtonText (String::empty);
+    atAmp->setButtonText (String());
     atAmp->addListener (this);
 
     addAndMakeVisible (whlPitch = new ToggleButton ("whlPitch"));
-    whlPitch->setButtonText (String::empty);
+    whlPitch->setButtonText (String());
     whlPitch->addListener (this);
 
     addAndMakeVisible (ftPitch = new ToggleButton ("ftPitch"));
-    ftPitch->setButtonText (String::empty);
+    ftPitch->setButtonText (String());
     ftPitch->addListener (this);
 
     addAndMakeVisible (brPitch = new ToggleButton ("brPitch"));
-    brPitch->setButtonText (String::empty);
+    brPitch->setButtonText (String());
     brPitch->addListener (this);
 
     addAndMakeVisible (atPitch = new ToggleButton ("atPitch"));
-    atPitch->setButtonText (String::empty);
+    atPitch->setButtonText (String());
     atPitch->addListener (this);
 
 
@@ -169,6 +169,11 @@ ParamDialog::ParamDialog ()
     output.add("None");
     output.addArray(MidiOutput::getDevices());
     sysexOut->addItemList(output, 2);
+
+    if ( JUCEApplication::isStandaloneApp() ) {
+        sysexIn->setVisible(false);
+        sysexOut->setVisible(false);
+    }
 
     //[/Constructor]
 }
@@ -215,100 +220,191 @@ void ParamDialog::paint (Graphics& g)
 
     g.fillAll (Colour (0xff3c322f));
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Pitch Bend Range"),
-                20, 16, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 20, y = 16, width = 276, height = 23;
+        String text (TRANS("Pitch Bend Range"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Pitch Bend Step"),
-                20, 56, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 20, y = 56, width = 276, height = 23;
+        String text (TRANS("Pitch Bend Step"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("DX7 In"),
-                20, 224, 131, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 20, y = 304, width = 245, height = 23;
+        String text (TRANS("DX7 Channel"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("DX7 Out"),
-                20, 264, 131, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 20, y = 156, width = 276, height = 23;
+        String text (TRANS("Engine Resolution"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("DX7 Channel"),
-                20, 304, 245, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 22, y = 138, width = 306, height = 1;
+        Colour fillColour = Colours::black;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.fillRect (x, y, width, height);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Engine Resolution"),
-                20, 156, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 22, y = 195, width = 306, height = 1;
+        Colour fillColour = Colours::black;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.fillRect (x, y, width, height);
+    }
 
-    g.setColour (Colours::black);
-    g.fillRect (22, 138, 306, 1);
+    {
+        int x = 20, y = 96, width = 276, height = 23;
+        String text (TRANS("Show Keyboard"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::black);
-    g.fillRect (22, 195, 306, 1);
+    {
+        int x = 352, y = 11, width = 1, height = 325;
+        Colour fillColour = Colours::black;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.fillRect (x, y, width, height);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Show Keyboard"),
-                20, 96, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 368, y = 16, width = 276, height = 23;
+        String text (TRANS("Wheel"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::black);
-    g.fillRect (352, 11, 1, 325);
+    {
+        int x = 368, y = 96, width = 276, height = 23;
+        String text (TRANS("Foot"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Wheel"),
-                368, 16, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 368, y = 56, width = 276, height = 23;
+        String text (TRANS("Breath"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Foot"),
-                368, 96, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 368, y = 136, width = 276, height = 23;
+        String text (TRANS("After Touch"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("Breath"),
-                368, 56, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 533, y = 163, width = 48, height = 23;
+        String text (TRANS("PITCH"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("After Touch"),
-                368, 136, 276, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 589, y = 163, width = 48, height = 23;
+        String text (TRANS("AMP"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("PITCH"),
-                533, 163, 48, 23,
-                Justification::centredLeft, true);
-
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("AMP"),
-                589, 163, 48, 23,
-                Justification::centredLeft, true);
-
-    g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("EG BIAS"),
-                645, 163, 48, 23,
-                Justification::centredLeft, true);
+    {
+        int x = 645, y = 163, width = 48, height = 23;
+        String text (TRANS("EG BIAS"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
 
     //[UserPaint] Add your own custom painting code here..
+    if ( ! JUCEApplication::isStandaloneApp() ) {
+        g.setColour (Colours::white);
+        g.setFont (Font (15.00f, Font::plain));
+        g.drawText (TRANS("DX7 In"),
+                    20, 224, 131, 23,
+                    Justification::centredLeft, true);
+
+        g.setColour (Colours::white);
+        g.setFont (Font (15.00f, Font::plain));
+        g.drawText (TRANS("DX7 Out"),
+                    20, 264, 131, 23,
+                    Justification::centredLeft, true);
+    }
     //[/UserPaint]
 }
 
@@ -572,9 +668,9 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
 //==============================================================================
 #if 0
-/*  -- Introjucer information section --
+/*  -- Projucer information section --
 
-    This is where the Introjucer stores the metadata that describe this GUI layout, so
+    This is where the Projucer stores the metadata that describe this GUI layout, so
     make changes in here at your peril!
 
 BEGIN_JUCER_METADATA
@@ -585,45 +681,55 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="710" initialHeight="350">
   <BACKGROUND backgroundColour="ff3c322f">
     <TEXT pos="20 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="20 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="20 224 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 In"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-    <TEXT pos="20 264 131 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Out"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="20 304 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="20 156 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <RECT pos="22 138 306 1" fill="solid: ff000000" hasStroke="0"/>
     <RECT pos="22 195 306 1" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="20 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <RECT pos="352 11 1 325" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="368 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Wheel"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="368 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Foot"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="368 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Breath"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="368 136 276 23" fill="solid: ffffffff" hasStroke="0" text="After Touch"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="533 163 48 23" fill="solid: ffffffff" hasStroke="0" text="PITCH"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="589 163 48 23" fill="solid: ffffffff" hasStroke="0" text="AMP"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
     <TEXT pos="645 163 48 23" fill="solid: ffffffff" hasStroke="0" text="EG BIAS"
-          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
+          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
+          justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
           virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0"
           max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <SLIDER name="pitchStep" id="b86af4b792e768ca" memberName="pitchStep"
           virtualName="" explicitFocusOrder="0" pos="264 56 72 24" min="0"
           max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          needsCallback="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
             explicitFocusOrder="0" pos="104 224 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
@@ -633,7 +739,7 @@ BEGIN_JUCER_METADATA
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
           explicitFocusOrder="0" pos="264 304 72 24" min="1" max="16" int="1"
           style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <COMBOBOX name="new combo box" id="4087ff978c3d9e8d" memberName="engineReso"
             virtualName="" explicitFocusOrder="0" pos="160 156 168 24" editable="0"
             layout="33" items="Modern (24-bit)&#10;Mark I&#10;OPL Series"
@@ -644,19 +750,19 @@ BEGIN_JUCER_METADATA
   <SLIDER name="whlRange" id="3d6522f5f581e580" memberName="whlRange" virtualName=""
           explicitFocusOrder="0" pos="448 16 72 24" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="ftRange" id="cf553f74c3fb0d12" memberName="ftRange" virtualName=""
           explicitFocusOrder="0" pos="448 56 72 24" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="brRange" id="c4aa6814f75016a7" memberName="brRange" virtualName=""
           explicitFocusOrder="0" pos="448 96 72 24" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <SLIDER name="atRange" id="d0aa1ebb24284577" memberName="atRange" virtualName=""
           explicitFocusOrder="0" pos="448 136 72 24" min="0" max="99" int="1"
           style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1"/>
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
   <TOGGLEBUTTON name="whlEg" id="d8242ae592c912a" memberName="whlEg" virtualName=""
                 explicitFocusOrder="0" pos="640 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
