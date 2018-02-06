@@ -45,7 +45,6 @@ class ProgramListBox : public Component, public DragAndDropTarget {
     Cartridge cartContent;
 
     int dragCandidate;
-    int pgmCandidate;
 public:
     StringArray programNames;    
     
