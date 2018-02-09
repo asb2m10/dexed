@@ -186,7 +186,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
     int32_t pmod_1 = (((int64_t) pmd) * (int64_t) senslfo) >> 39;
     pmod_1 = abs(pmod_1);
-    int32_t pmod_2 = ((int64_t)ctrls->pitch_mod * (int64_t)senslfo) >> 14;
+    int32_t pmod_2 = (int32_t)((int64_t)ctrls->pitch_mod * (int64_t)senslfo) >> 14;
     pmod_2 = abs(pmod_2);
     int32_t pitch_mod = max(pmod_1, pmod_2);
     pitch_mod = pitchenv_.getsample() + (pitch_mod * (senslfo < 0 ? -1 : 1));
@@ -207,9 +207,9 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     pitch_mod += ctrls->masterTune;
     
     // ==== AMP MOD ====
-    uint32_t amod_1 = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
-    amod_1 = ((int64_t) amod_1 * (int64_t) lfo_val) >> 24;
-    uint32_t amod_2 = ((int64_t) ctrls->amp_mod * (int64_t) lfo_val) >> 7; // Q?? :|
+    uint32_t amod_1 = (uint32_t)((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
+    amod_1 = (uint32_t)((int64_t) amod_1 * (int64_t) lfo_val) >> 24;
+    uint32_t amod_2 = (uint32_t)((int64_t) ctrls->amp_mod * (int64_t) lfo_val) >> 7; // Q?? :|
     uint32_t amd_mod = max(amod_1, amod_2);
     
     // ==== EG AMP MOD ====
@@ -227,11 +227,11 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             
             int32_t level = env_[op].getsample();
             if (ampmodsens_[op] != 0) {
-                uint32_t sensamp = ((uint64_t) amd_mod) * ((uint64_t) ampmodsens_[op]) >> 24;
+                uint32_t sensamp = (uint32_t)(((uint64_t) amd_mod) * ((uint64_t) ampmodsens_[op]) >> 24);
                 
                 // TODO: mehhh.. this needs some real tuning.
                 uint32_t pt = exp(((float)sensamp)/262144 * 0.07 + 12.2);
-                uint32_t ldiff = ((uint64_t)level) * (((uint64_t)pt<<4)) >> 28;
+                uint32_t ldiff = (uint32_t)(((uint64_t)level) * (((uint64_t)pt<<4)) >> 28);
                 level -= ldiff;
             }
             params_[op].level_in = level;
