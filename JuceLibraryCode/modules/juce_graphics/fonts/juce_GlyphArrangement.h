@@ -146,7 +146,10 @@ public:
                         careful not to pass an out-of-range index here, as it
                         doesn't do any bounds-checking.
     */
-    PositionedGlyph& getGlyph (int index) const noexcept;
+    PositionedGlyph& getGlyph (int index) noexcept;
+
+    const PositionedGlyph* begin() const                        { return glyphs.begin(); }
+    const PositionedGlyph* end() const                          { return glyphs.end(); }
 
     //==============================================================================
     /** Clears all text from the arrangement and resets it. */

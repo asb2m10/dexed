@@ -46,6 +46,7 @@
  #pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
  #pragma clang diagnostic ignored "-Wdeprecated-declarations"
  #pragma clang diagnostic ignored "-Wextra-semi"
+ #pragma clang diagnostic ignored "-Wmissing-braces"
  #if __has_warning("-Wcomma")
   #pragma clang diagnostic ignored "-Wcomma"
  #endif
@@ -88,14 +89,23 @@
  #include <pluginterfaces/vst/ivstchannelcontextinfo.h>
  #include <public.sdk/source/common/memorystream.h>
  #include <public.sdk/source/vst/vsteditcontroller.h>
+ #include <public.sdk/source/vst/vstpresetfile.h>
 #else
+ // needed for VST_VSERION
+ #include <pluginterfaces/vst/vsttypes.h>
+
  #include <base/source/baseiids.cpp>
  #include <base/source/fbuffer.cpp>
  #include <base/source/fdebug.cpp>
  #include <base/source/fobject.cpp>
  #include <base/source/fstreamer.cpp>
  #include <base/source/fstring.cpp>
+#if VST_VERSION >= 0x030608
+ #include <base/thread/source/flock.cpp>
+ #include <pluginterfaces/base/coreiids.cpp>
+#else
  #include <base/source/flock.cpp>
+#endif
  #include <base/source/updatehandler.cpp>
  #include <pluginterfaces/base/conststringtable.cpp>
  #include <pluginterfaces/base/funknown.cpp>
@@ -113,6 +123,7 @@
  #include <public.sdk/source/vst/vstcomponent.cpp>
  #include <public.sdk/source/vst/vstcomponentbase.cpp>
  #include <public.sdk/source/vst/vstparameters.cpp>
+ #include <public.sdk/source/vst/vstpresetfile.cpp>
  #include <public.sdk/source/vst/hosting/hostclasses.cpp>
 
 //==============================================================================
@@ -122,7 +133,9 @@ namespace Steinberg
     DEF_CLASS_IID (IPluginBase)
     DEF_CLASS_IID (IPlugView)
     DEF_CLASS_IID (IPlugFrame)
+   #if VST_VERSION < 0x030608
     DEF_CLASS_IID (IBStream)
+   #endif
     DEF_CLASS_IID (IPluginFactory)
     DEF_CLASS_IID (IPluginFactory2)
     DEF_CLASS_IID (IPluginFactory3)
