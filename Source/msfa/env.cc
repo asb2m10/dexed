@@ -29,6 +29,45 @@ const int levellut[] = {
     0, 5, 9, 13, 17, 20, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 42, 43, 45, 46
 };
 
+const int envmask[4][8] = {
+    { 0, 1, 0, 1, 0, 1, 0, 1 },
+    { 0, 1, 0, 1, 0, 1, 1, 1 },
+    { 0, 1, 1, 1, 0, 1, 1, 1 },
+    { 0, 1, 1, 1, 1, 1, 1, 1 }
+};
+
+bool Env::envenable(int i, int qr)
+{
+    // test this for every sample in the buffer and return immediately if ever true
+    bool rv = false;
+    for (int j = 0; j < N; j++, i++) {
+        int tmpi = i;
+        int shift = (qr >> 2) - 11;
+        if (shift < 0) {
+            int sm = (1 << -shift) - 1;
+            if ((tmpi & sm) != sm) {
+                rv |= false;
+                continue;
+            }
+            tmpi >>= -shift;
+        }
+        rv |= envmask[qr & 3][tmpi & 7] != 0;
+        if (rv) return true;
+    }
+    return rv;
+
+    /*
+     // single sample implementation
+     int shift = (qr >> 2) - 11;
+     if (shift < 0) {
+        int sm = (1 << -shift) - 1;
+        if ((i & sm) != sm) return false;
+        i >>= -shift;
+     }
+     return envmask[qr & 3][tmpi & 7] != 0;
+     */
+}
+
 void Env::init_sr(double sampleRate) {
     sr_multiplier = (44100.0 / sampleRate) * (1<<24);
 }
@@ -42,11 +81,12 @@ void Env::init(const int r[4], const int l[4], int ol, int rate_scaling) {
     rate_scaling_ = rate_scaling;
     level_ = 0;
     down_ = true;
+    i_ = 0;
     advance(0);
 }
 
 int32_t Env::getsample() {
-    if (ix_ < 3 || ((ix_ < 4) && !down_)) {
+    if (envenable(i_, qr_) && (ix_ < 3 || ((ix_ < 4) && !down_))) {
         if (rising_) {
             const int jumptarget = 1716;
             if (level_ < (jumptarget << 16)) {
@@ -66,6 +106,7 @@ int32_t Env::getsample() {
             }
         }
     }
+    i_ += N;
     // TODO: this would be a good place to set level to 0 when under threshold
     return level_;
 }
@@ -91,13 +132,14 @@ void Env::advance(int newix) {
         // level here is same as Java impl
         targetlevel_ = actuallevel << 16;
         rising_ = (targetlevel_ > level_);
-        
+
         // rate
         int qrate = (rates_[ix_] * 41) >> 6;
         qrate += rate_scaling_;
         qrate = min(qrate, 63);
         inc_ = (4 + (qrate & 3)) << (2 + LG_N + (qrate >> 2));
-        
+        qr_ = qrate;
+
         // meh, this should be fixed elsewhere
         inc_ = (int)(((int64_t)inc_ * (int64_t)sr_multiplier) >> 24);
     }
@@ -108,6 +150,7 @@ void Env::update(const int r[4], const int l[4], int ol, int rate_scaling) {
         rates_[i] = r[i];
         levels_[i] = l[i];
     }
+    i_ = 0;
     outlevel_ = ol;
     rate_scaling_ = rate_scaling;
     if ( down_ ) {
@@ -138,5 +181,6 @@ void Env::transfer(Env &src) {
     ix_ = src.ix_;
     inc_ = src.inc_;
     down_ = src.down_;
+    i_ = src.i_;
 }
 
