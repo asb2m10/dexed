@@ -99,7 +99,7 @@ void Env::advance(int newix) {
         inc_ = (4 + (qrate & 3)) << (2 + LG_N + (qrate >> 2));
         
         // meh, this should be fixed elsewhere
-        inc_ = ((int64_t)inc_ * (int64_t)sr_multiplier) >> 24;
+        inc_ = (int)(((int64_t)inc_ * (int64_t)sr_multiplier) >> 24);
     }
 }
 
