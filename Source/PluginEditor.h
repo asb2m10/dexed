@@ -36,7 +36,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBoxL
     OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;
-            
+    ScopedPointer<DXLookNFeel> lookAndFeel;
+
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;

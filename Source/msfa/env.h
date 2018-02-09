@@ -50,6 +50,8 @@ class Env {
   void transfer(Env &src);
     
  private:
+
+  static bool envenable(int i, int qr);
   // PG: This code is normalized to 44100, need to put a multiplier
   // if we are not using 44100.
   static uint32_t sr_multiplier;
@@ -64,6 +66,8 @@ class Env {
   int32_t level_;
   int targetlevel_;
   bool rising_;
+  unsigned i_;
+  int qr_;
   int ix_;
   int inc_;
 
