@@ -44,14 +44,20 @@ int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
     int32_t logfreq;
     if (mode == 0) {
         logfreq = midinote_to_logfreq(midinote);
+        
+        // could use more precision, closer enough for now. those numbers comes from my DX7
+        double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
+        logfreq += detuneRatio * logfreq * (detune - 7);
+        
         logfreq += coarsemul[coarse & 31];
         if (fine) {
             // (1 << 24) / log(2)
             logfreq += (int32_t)floor(24204406.323123 * log(1 + 0.01 * fine) + 0.5);
         }
-        // This was measured at 7.213Hz per count at 9600Hz, but the exact
-        // value is somewhat dependent on midinote. Close enough for now.
-        logfreq += 12606 * (detune - 7);
+        
+        // // This was measured at 7.213Hz per count at 9600Hz, but the exact
+        // // value is somewhat dependent on midinote. Close enough for now.
+        // //logfreq += 12606 * (detune -7);
     } else {
         // ((1 << 24) * log(10) / log(2) * .01) << 3
         logfreq = (4458616 * ((coarse & 3) * 100 + fine)) >> 3;
