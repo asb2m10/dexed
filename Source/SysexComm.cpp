@@ -48,6 +48,9 @@ String SysexComm::getInput() {
 }
 
 bool SysexComm::setInput(String target) {
+    if ( JUCEApplication::isStandaloneApp() )
+        return true;
+    
     if ( input != NULL ) {
         input->stop();
         delete input;

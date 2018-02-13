@@ -15,6 +15,7 @@
               enableIAA="0" cppLanguageStandard="latest" companyCopyright="Digital Suburban">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
+      <FILE id="SpSpb4" name="dexedIcon.png" compile="0" resource="1" file="Resources/ui/dexedIcon.png"/>
       <FILE id="CD5ehh" name="Switch_32x32.png" compile="0" resource="1"
             file="Resources/ui/Switch_32x32.png"/>
       <FILE id="SXelfa" name="Switch_48x26.png" compile="0" resource="1"
@@ -114,7 +115,8 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="~/src/vstsdk2.4">
+    <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="~/src/vstsdk2.4" smallIcon="SpSpb4"
+                bigIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
                        targetName="Dexed"/>
@@ -136,7 +138,8 @@
         <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.0/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="">
+    <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="" smallIcon="SpSpb4"
+               bigIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
                        osxSDK="default" osxCompatibility="10.10 SDK" osxArchitecture="64BitIntel"
@@ -161,7 +164,7 @@
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"
-            IPPLibrary="Parallel_Static">
+            IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"

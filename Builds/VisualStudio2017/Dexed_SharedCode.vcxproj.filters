@@ -4208,6 +4208,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resources\ui\dexedIcon.png">
+      <Filter>Dexed\Resources</Filter>
+    </None>
     <None Include="..\..\Resources\ui\Switch_32x32.png">
       <Filter>Dexed\Resources</Filter>
     </None>
@@ -4264,6 +4267,9 @@
     </None>
     <None Include="..\..\JuceLibraryCode\modules\juce_graphics\image_formats\pnglib\libpng_readme.txt">
       <Filter>Juce Modules\juce_graphics\image_formats\pnglib</Filter>
+    </None>
+    <None Include=".\icon.ico">
+      <Filter>Juce Library Code</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

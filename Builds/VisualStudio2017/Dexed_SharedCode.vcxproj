@@ -2475,6 +2475,7 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Resources\ui\dexedIcon.png"/>
     <None Include="..\..\Resources\ui\Switch_32x32.png"/>
     <None Include="..\..\Resources\ui\Switch_48x26.png"/>
     <None Include="..\..\Resources\ui\ButtonUnlabeled_50x30.png"/>
@@ -2494,6 +2495,7 @@
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_formats\codecs\oggvorbis\Ogg Vorbis Licence.txt"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_graphics\image_formats\jpglib\changes to libjpeg for JUCE.txt"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_graphics\image_formats\pnglib\libpng_readme.txt"/>
+    <None Include=".\icon.ico"/>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include=".\resources.rc"/>

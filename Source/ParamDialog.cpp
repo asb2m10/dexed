@@ -172,9 +172,7 @@ ParamDialog::ParamDialog ()
 
     if ( JUCEApplication::isStandaloneApp() ) {
         sysexIn->setVisible(false);
-        sysexOut->setVisible(false);
     }
-
     //[/Constructor]
 }
 
@@ -399,12 +397,12 @@ void ParamDialog::paint (Graphics& g)
                     20, 224, 131, 23,
                     Justification::centredLeft, true);
 
-        g.setColour (Colours::white);
-        g.setFont (Font (15.00f, Font::plain));
-        g.drawText (TRANS("DX7 Out"),
-                    20, 264, 131, 23,
-                    Justification::centredLeft, true);
     }
+    g.setColour (Colours::white);
+    g.setFont (Font (15.00f, Font::plain));
+    g.drawText (TRANS("DX7 Out"),
+                20, 264, 131, 23,
+                Justification::centredLeft, true);
     //[/UserPaint]
 }
 
@@ -653,12 +651,13 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
     c.refresh();
 
-    ret &= mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
+    if ( ! JUCEApplication::isStandaloneApp() ) {
+        ret &= mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
+    }
     ret &= mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
     mgr.setChl(sysexChl->getValue() - 1);
 
     *reso = engineReso->getSelectedItemIndex();
-//    *showKey = showKeyboard->getToggleStateValue() == Button::ButtonState::buttonDown;
     *showKey = showKeyboard->getToggleState();
     return ret;
 }
