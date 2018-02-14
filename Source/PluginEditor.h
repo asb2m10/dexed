@@ -31,12 +31,13 @@
 //==============================================================================
 /**
 */
-class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBoxListener, public Timer {
+class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer {
     MidiKeyboardComponent midiKeyboard;
     OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;
-            
+    ScopedPointer<DXLookNFeel> lookAndFeel;
+
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;

@@ -31,9 +31,6 @@ class DXLookNFeel : public LookAndFeel_V3 {
     HashMap<String, int> colourMap;
 
 public:
-    Typeface::Ptr defaultFont;
-    Typeface::Ptr defaultFontBold;
-
     Image imageKnob, imageSwitch, imageButton, imageSlider, imageScaling, imageLight, imageLFO;
     Image imageSwitchOperator;
     Image imageOperator, imageGlobal;

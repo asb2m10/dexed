@@ -73,9 +73,6 @@ DXLookNFeel::DXLookNFeel() {
     imageOperator =  ImageCache::getFromMemory(BinaryData::OperatorEditor_287x218_png, BinaryData::OperatorEditor_287x218_pngSize);
     imageGlobal = ImageCache::getFromMemory (BinaryData::GlobalEditor_864x144_png, BinaryData::GlobalEditor_864x144_pngSize);
 
-    defaultFont = Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
-    defaultFontBold =  Typeface::createSystemTypefaceFor(BinaryData::NotoSansBold_ttf, BinaryData::NotoSansBold_ttfSize);
-
     File dexedTheme = DexedAudioProcessor::dexedAppDir.getChildFile("DexedTheme.xml");
 
     if ( ! dexedTheme.existsAsFile() )
@@ -158,7 +155,7 @@ DXLookNFeel::DXLookNFeel() {
 }
 
 Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {
-    return defaultFont;
+    return Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
 }
 
 void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
@@ -224,7 +221,7 @@ void DXLookNFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int width, i
 }
 
 Font DXLookNFeel::getTextButtonFont(TextButton& button, int buttonHeight) {
-    return Font(defaultFontBold);
+    return Font(Typeface::createSystemTypefaceFor(BinaryData::NotoSansBold_ttf, BinaryData::NotoSansBold_ttfSize));
 }
 
 void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {

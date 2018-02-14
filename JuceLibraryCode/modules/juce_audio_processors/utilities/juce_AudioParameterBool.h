@@ -52,10 +52,16 @@ public:
     /** Changes the parameter's current value to a new boolean. */
     AudioParameterBool& operator= (bool newValue);
 
+protected:
+    /** Override this method if you are interested in receiving callbacks
+        when the parameter value changes.
+    */
+    virtual void valueChanged (bool newValue);
 
 private:
     //==============================================================================
-    float value, defaultValue;
+    float value;
+    const float defaultValue;
 
     float getValue() const override;
     void setValue (float newValue) override;
