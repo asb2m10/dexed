@@ -113,6 +113,8 @@ public:
                       float x, float y, float w, float h,
                       bool ticked, bool isEnabled, bool isMouseOverButton, bool isButtonDown) override;
 
+    void changeToggleButtonWidthToFitText (ToggleButton&) override;
+
     //==============================================================================
     AlertWindow* createAlertWindow (const String& title, const String& message,
                                     const String& button1,
@@ -184,6 +186,8 @@ public:
     void positionComboBoxText (ComboBox&, Label&) override;
 
     //==============================================================================
+    int getSliderThumbRadius (Slider&) override;
+
     void drawLinearSlider (Graphics&, int x, int y, int width, int height,
                            float sliderPos, float minSliderPos, float maxSliderPos,
                            const Slider::SliderStyle, Slider&) override;

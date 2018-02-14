@@ -5,7 +5,7 @@
               buildVST="1" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
               pluginManufacturer="Digital Suburban" pluginManufacturerCode="DGSB"
               pluginCode="Dexd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
-              pluginWantsMidiIn="1" pluginProducesMidiOut="0" pluginSilenceInIsSilenceOut="0"
+              pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
               aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="AAX_ePlugInCategory_Dynamics"
               jucerVersion="5.2.0" companyName="Digital Suburban" buildVST3="0"
@@ -149,18 +149,18 @@
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.0/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="../../../../Cycling/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="../../../../Cycling/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"

@@ -136,14 +136,18 @@ public:
 private:
     //==============================================================================
     class Pimpl;
-    Pimpl* browser;
-    bool blankPageShown, unloadPageWhenBrowserIsHidden;
+    ScopedPointer<Pimpl> browser;
+    bool blankPageShown = false, unloadPageWhenBrowserIsHidden;
     String lastURL;
     StringArray lastHeaders;
     MemoryBlock lastPostData;
 
     void reloadLastURL();
     void checkWindowAssociation();
+
+  #if JUCE_ANDROID
+    friend bool juce_webViewPageLoadStarted (WebBrowserComponent*, const String&);
+  #endif
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WebBrowserComponent)
 };

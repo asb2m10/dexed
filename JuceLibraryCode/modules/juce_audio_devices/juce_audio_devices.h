@@ -31,7 +31,7 @@
 
   ID:               juce_audio_devices
   vendor:           juce
-  version:          5.2.0
+  version:          5.2.1
   name:             JUCE audio and MIDI I/O device classes
   description:      Classes to play and record from audio and MIDI I/O devices
   website:          http://www.juce.com/juce
@@ -138,6 +138,13 @@
  #define JUCE_USE_WINRT_MIDI 0
 #endif
 
+/** Config: JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
+    Turning this on gives your app exclusive access to the system's audio
+    on platforms which support it (currently iOS only).
+*/
+#ifndef JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
+ #define JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS 0
+#endif
 
 //==============================================================================
 #include "midi_io/juce_MidiInput.h"

@@ -22,6 +22,8 @@
 
 // DX7 envelope generation
 
+#define ACCURATE_ENVELOPE
+
 class Env {
  public:
 
@@ -50,10 +52,11 @@ class Env {
   void transfer(Env &src);
     
  private:
+
   // PG: This code is normalized to 44100, need to put a multiplier
   // if we are not using 44100.
   static uint32_t sr_multiplier;
-    
+
   int rates_[4];
   int levels_[4];
   int outlevel_;
@@ -66,6 +69,9 @@ class Env {
   bool rising_;
   int ix_;
   int inc_;
+#ifdef ACCURATE_ENVELOPE
+  int staticcount_;
+#endif
 
   bool down_;
 

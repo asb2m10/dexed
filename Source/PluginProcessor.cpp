@@ -94,6 +94,11 @@ DexedAudioProcessor::DexedAudioProcessor() {
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
+    Logger *tmp = Logger::getCurrentLogger();
+	if ( tmp != NULL ) {
+		Logger::setCurrentLogger(NULL);
+		delete tmp;
+	}
     TRACE("Bye");
 }
 
