@@ -19,10 +19,12 @@ Changelog
 ---------
 #### Version 0.9.4
 * Standalone application version of Dexed
-* More accurate detune 
+* More accurate detune
+* More accurate EG envelopes. thanks @jeremybernstein
 * Fix implementation for Midi CC 120 and 123 (All Sound Off / All Notes Off)
 * Pitchbend now listen to any channels
-* Migrated to JUCE 5.2.0
+* Windows/MacOSX installers
+* Migrated to JUCE 5.2.1
 
 #### Version 0.9.3
 * Preliminary live operator level update

@@ -29,6 +29,7 @@
    under the GPL v3 license.
 
    End User License Agreement: www.juce.com/juce-5-licence
+
   ==============================================================================
 */
 
@@ -41,7 +42,6 @@
 #ifndef JUCE_REPORT_APP_USAGE
  #define JUCE_REPORT_APP_USAGE 0
 #endif
-
 
 // END SECTION A
 
@@ -95,7 +95,11 @@
 #endif
 
 #ifndef    JUCE_USE_WINRT_MIDI
- //#define JUCE_USE_WINRT_MIDI 1
+ //#define JUCE_USE_WINRT_MIDI 0
+#endif
+
+#ifndef    JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
+ //#define JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS 0
 #endif
 
 //==============================================================================
@@ -125,15 +129,19 @@
 // juce_audio_plugin_client flags:
 
 #ifndef    JUCE_FORCE_USE_LEGACY_PARAM_IDS
- //#define JUCE_FORCE_USE_LEGACY_PARAM_IDS 1
+ //#define JUCE_FORCE_USE_LEGACY_PARAM_IDS 0
 #endif
 
 #ifndef    JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE
- //#define JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE 1
+ //#define JUCE_FORCE_LEGACY_PARAMETER_AUTOMATION_TYPE 0
 #endif
 
 #ifndef    JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS
  //#define JUCE_USE_STUDIO_ONE_COMPATIBLE_PARAMETERS 1
+#endif
+
+#ifndef    JUCE_STANDALONE_FILTER_WINDOW_USE_KIOSK_MODE
+ //#define JUCE_STANDALONE_FILTER_WINDOW_USE_KIOSK_MODE 0
 #endif
 
 //==============================================================================
@@ -166,11 +174,11 @@
 // juce_core flags:
 
 #ifndef    JUCE_FORCE_DEBUG
- //#define JUCE_FORCE_DEBUG 1
+ //#define JUCE_FORCE_DEBUG 0
 #endif
 
 #ifndef    JUCE_LOG_ASSERTIONS
- //#define JUCE_LOG_ASSERTIONS 1
+ //#define JUCE_LOG_ASSERTIONS 0
 #endif
 
 #ifndef    JUCE_CHECK_MEMORY_LEAKS
@@ -186,7 +194,7 @@
 #endif
 
 #ifndef    JUCE_USE_CURL
- //#define JUCE_USE_CURL 1
+ //#define JUCE_USE_CURL 0
 #endif
 
 #ifndef    JUCE_CATCH_UNHANDLED_EXCEPTIONS
@@ -201,7 +209,7 @@
 // juce_events flags:
 
 #ifndef    JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK
- //#define JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK 1
+ //#define JUCE_EXECUTE_APP_SUSPEND_ON_IOS_BACKGROUND_TASK 0
 #endif
 
 //==============================================================================
@@ -219,7 +227,15 @@
 // juce_gui_basics flags:
 
 #ifndef    JUCE_ENABLE_REPAINT_DEBUGGING
- //#define JUCE_ENABLE_REPAINT_DEBUGGING 1
+ //#define JUCE_ENABLE_REPAINT_DEBUGGING 0
+#endif
+
+#ifndef    JUCE_USE_XRANDR
+ //#define JUCE_USE_XRANDR 1
+#endif
+
+#ifndef    JUCE_USE_XINERAMA
+ //#define JUCE_USE_XINERAMA 1
 #endif
 
 #ifndef    JUCE_USE_XSHM
@@ -227,7 +243,7 @@
 #endif
 
 #ifndef    JUCE_USE_XRENDER
- //#define JUCE_USE_XRENDER 1
+ //#define JUCE_USE_XRENDER 0
 #endif
 
 #ifndef    JUCE_USE_XCURSOR
@@ -242,7 +258,7 @@
 #endif
 
 #ifndef    JUCE_ENABLE_LIVE_CONSTANT_EDITOR
- //#define JUCE_ENABLE_LIVE_CONSTANT_EDITOR 1
+ //#define JUCE_ENABLE_LIVE_CONSTANT_EDITOR 0
 #endif
 //==============================================================================
 #ifndef    JUCE_STANDALONE_APPLICATION
