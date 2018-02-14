@@ -58,6 +58,7 @@ public:
     void sliderValueChanged (Slider* moved);
     void buttonClicked (Button* buttonThatWasClicked);
     void mouseEnter(const MouseEvent &event);
+    void mouseDown(const MouseEvent &event);
     virtual void updateDisplayName();
     
     /**

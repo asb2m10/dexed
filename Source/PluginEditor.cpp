@@ -341,3 +341,33 @@ void DexedAudioProcessorEditor::storeProgram() {
         delete externalFile;
     cartManager.resetActiveSysex();
 }
+
+class MidiCCListener: public AlertWindow, Value::Listener {
+    DexedAudioProcessorEditor *editor;
+    Ctrl *target;
+public :
+    MidiCCListener(DexedAudioProcessorEditor *editor, Ctrl *target) : AlertWindow("","Waiting for midi CC (controller change) message ...", AlertWindow::InfoIcon, editor) {
+        this->editor = editor;
+        this->target = target;
+        addButton("Cancel", -1);
+        editor->processor->lastCCUsed.addListener(this);
+    }
+    
+    ~MidiCCListener() {
+        editor->processor->lastCCUsed.removeListener(this);
+    }
+    
+    void valueChanged(Value &value) {
+        int cc = value.getValue();
+        editor->processor->mappedMidiCC.remove(cc);
+        editor->processor->mappedMidiCC.set(cc, target);
+        editor->processor->savePreference();
+        exitModalState(0);
+    }
+};
+
+void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
+    MidiCCListener ccListener(this, ctrl);
+    ccListener.runModalLoop();
+}
+

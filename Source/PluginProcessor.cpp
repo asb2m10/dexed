@@ -333,7 +333,14 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                             keyup(voices[note].midi_note);
                     }
                     break;
-            }
+                default:
+                    if ( mappedMidiCC.contains(ctrl) ) {
+                        Ctrl *linkedCtrl = mappedMidiCC[ctrl];
+                        linkedCtrl->publishValue((float) value / 127);
+                    }
+                    // this is used to notify the dialog that a CC value was received.
+                    lastCCUsed.setValue(ctrl);
+                }
         }
         return;
 

@@ -259,6 +259,33 @@ void Ctrl::mouseEnter(const juce::MouseEvent &event) {
     updateDisplayName();
 }
 
+void Ctrl::mouseDown(const juce::MouseEvent &event) {
+    if ( event.mods.isRightButtonDown() || event.mods.isAnyModifierKeyDown()) {
+        PopupMenu popup;
+        
+        if ( parent->mappedMidiCC.containsValue(this) ) {
+            popup.addItem(1, "Remove midi CC mapping for this controller");
+            popup.addSeparator();
+        }
+        popup.addItem(2, "Map controller to midi CC");
+        
+        switch(popup.show()) {
+            case 1:
+                parent->mappedMidiCC.removeValue(this);
+                parent->savePreference();
+                break;
+            case 2:
+                AudioProcessorEditor *editor = parent->getActiveEditor();
+                if ( editor == NULL ) {
+                    return;
+                }
+                DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
+                dexedEditor->discoverMidiCC(this);
+                break;
+        }
+    }
+}
+
 void Ctrl::updateDisplayName() {
 }
 

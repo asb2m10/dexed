@@ -56,6 +56,7 @@ public:
     void storeProgram();
     void cartShow();
     void parmShow();
+    void discoverMidiCC(Ctrl *ctrl);
 };
 
 

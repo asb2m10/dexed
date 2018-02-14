@@ -19,6 +19,7 @@ Changelog
 ---------
 #### Version 0.9.4
 * Standalone application version of Dexed
+* Midi Learn support for midi CC messages
 * More accurate detune
 * More accurate EG envelopes. thanks @jeremybernstein
 * Fix implementation for Midi CC 120 and 123 (All Sound Off / All Notes Off)
@@ -86,7 +87,6 @@ TODO - Dexed
 
 TODO - msfa
 -----------
-* Better implementation of detune
 * Portamento implementation
 * Better Amplitude Modulation
 * Accurate live operator level envelope updates
