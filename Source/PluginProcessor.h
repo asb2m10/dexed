@@ -137,6 +137,8 @@ public :
     int getEngineType();
     void setEngineType(int rs);
     
+    HashMap<int, Ctrl*> mappedMidiCC;
+    
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];
@@ -232,6 +234,8 @@ public :
     
     static File dexedAppDir;
     static File dexedCartDir;
+    
+    Value lastCCUsed;
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

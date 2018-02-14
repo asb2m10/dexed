@@ -335,6 +335,16 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     blobSet.set("program", var((void *) &data, 161));
     
     blobSet.copyToXmlAttributes(*dexedBlob);
+    
+    XmlElement *midiCC = dexedState.createNewChildElement("midiCC");
+    HashMap<int, Ctrl *>::Iterator i(mappedMidiCC);
+    while(i.next()) {
+        XmlElement *ccMapping = midiCC->createNewChildElement("mapping");
+        ccMapping->setAttribute("cc", i.getKey());
+        Ctrl *ctrl = i.getValue();
+        ccMapping->setAttribute("target", ctrl->label);
+    }
+    
     copyXmlToBinary(dexedState, destData);
 }
 
@@ -399,7 +409,26 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     loadCartridge(cart);
     memcpy(data, program.getBinaryData()->getData(), 161);
     
-    lastStateSave = (long) time(NULL);
+    mappedMidiCC.clear();
+    XmlElement *midiCC = root->getChildByName("midiCC");
+    if ( midiCC != nullptr ) {
+        XmlElement *ccMapping = midiCC->getFirstChildElement();
+        while (ccMapping != nullptr) {
+            int cc = ccMapping->getIntAttribute("cc", -1);
+            String target = ccMapping->getStringAttribute("target", "");
+            if ( target.isNotEmpty() && cc != -1 ) {
+                for(int i=0;i<ctrl.size();i++) {
+                    if ( ctrl[i]->label == target) {
+                        mappedMidiCC.set(cc, ctrl[i]);
+                        break;
+                    }
+                }
+            }
+            ccMapping->getNextElement();
+        }
+    }
+    
+    lastStateSave = (long) time(NULL);    
     TRACE("setting VST STATE");
     updateUI();
 }
