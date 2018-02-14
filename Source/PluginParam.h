@@ -25,7 +25,7 @@
 
 class DexedAudioProcessor;
 
-class Ctrl : public SliderListener, public ButtonListener, public ComboBoxListener, public MouseListener {
+class Ctrl : public Slider::Listener, public Button::Listener, public ComboBox::Listener, public MouseListener {
 protected:
     /**
      * Binded components of the UI

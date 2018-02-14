@@ -36,7 +36,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
     cartManager(this)
 {
-    LookAndFeel::setDefaultLookAndFeel(DXLookNFeel::getLookAndFeel());
+    lookAndFeel = DXLookNFeel::getLookAndFeel();
+    LookAndFeel::setDefaultLookAndFeel(lookAndFeel);
 
     setSize(866, ownerFilter->showKeyboard ? 674 : 581);
 
@@ -95,6 +96,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
     stopTimer();
     processor->unbindUI();
+    setLookAndFeel(nullptr);
 }
 
 //==============================================================================

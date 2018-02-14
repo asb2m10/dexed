@@ -26,7 +26,7 @@
 #include "ProgramListBox.h"
 #include "PluginData.h"
 
-class CartManager  : public Component, public ButtonListener, public DragAndDropContainer, public FileBrowserListener
+class CartManager  : public Component, public Button::Listener, public DragAndDropContainer, public FileBrowserListener
     , public ProgramListBoxListener, public KeyListener {
     ScopedPointer<TextButton> newButton;
     ScopedPointer<TextButton> loadButton;

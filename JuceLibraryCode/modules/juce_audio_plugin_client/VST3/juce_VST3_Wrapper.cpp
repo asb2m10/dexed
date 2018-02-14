@@ -106,7 +106,7 @@ private:
     ScopedPointer<AudioProcessor> audioProcessor;
     ScopedJuceInitialiser_GUI libraryInitialiser;
 
-    JuceAudioProcessor() JUCE_DELETED_FUNCTION;
+    JuceAudioProcessor() = delete;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JuceAudioProcessor)
 };
 
@@ -241,7 +241,12 @@ public:
             if (v != valueNormalized)
             {
                 valueNormalized = v;
-                owner.setParameter (paramIndex, static_cast<float> (v));
+
+                // Only update the AudioProcessor here if we're not playing,
+                // otherwise we get parallel streams of parameter value updates
+                // during playback
+                if (owner.vst3IsPlaying.get() == 0)
+                    owner.setParameter (paramIndex, static_cast<float> (v));
 
                 changed();
                 return true;
@@ -467,7 +472,7 @@ public:
                 if (MessageManager::getInstance()->isThisTheMessageThread())
                     instance->updateTrackProperties (trackProperties);
                 else
-                    MessageManager::callAsync ([trackProperties, instance] ()
+                    MessageManager::callAsync ([trackProperties, instance]
                                                { instance->updateTrackProperties (trackProperties); });
             }
         }
@@ -636,7 +641,6 @@ private:
    #endif
     Vst::ParamID bypassParamID;
 
-
     //==============================================================================
     void setupParameters()
     {
@@ -697,8 +701,8 @@ private:
                 parameterToMidiController[p].ctrlNumber = i;
 
                 parameters.addParameter (new Vst::Parameter (toString ("MIDI CC " + String (c) + "|" + String (i)),
-                                          static_cast<Vst::ParamID> (p) + parameterToMidiControllerOffset, 0, 0, 0,
-                                          Vst::ParameterInfo::kCanAutomate, Vst::kRootUnitId));
+                                         static_cast<Vst::ParamID> (p) + parameterToMidiControllerOffset, 0, 0, 0,
+                                         0, Vst::kRootUnitId));
             }
         }
     }
@@ -1160,7 +1164,6 @@ public:
         TEST_FOR_AND_RETURN_IF_VALID (targetIID, Vst::IAudioProcessor)
         TEST_FOR_AND_RETURN_IF_VALID (targetIID, Vst::IUnitInfo)
         TEST_FOR_AND_RETURN_IF_VALID (targetIID, Vst::IConnectionPoint)
-        TEST_FOR_AND_RETURN_IF_VALID (targetIID, Vst::ChannelContext::IInfoListener)
         TEST_FOR_COMMON_BASE_AND_RETURN_IF_VALID (targetIID, FUnknown, Vst::IComponent)
 
         if (doUIDsMatch (targetIID, JuceAudioProcessor::iid))
@@ -1950,7 +1953,7 @@ public:
     {
         auto tailLengthSeconds = getPluginInstance().getTailLengthSeconds();
 
-        if (tailLengthSeconds <= 0.0 || processSetup.sampleRate > 0.0)
+        if (tailLengthSeconds <= 0.0 || processSetup.sampleRate <= 0.0)
             return Vst::kNoTail;
 
         return (Steinberg::uint32) roundToIntAccurate (tailLengthSeconds * processSetup.sampleRate);
@@ -2032,9 +2035,15 @@ public:
             return kResultFalse;
 
         if (data.processContext != nullptr)
+        {
             processContext = *data.processContext;
+            pluginInstance->vst3IsPlaying = processContext.state & Vst::ProcessContext::kPlaying;
+        }
         else
+        {
             zerostruct (processContext);
+            pluginInstance->vst3IsPlaying = 0;
+        }
 
         midiBuffer.clear();
 
@@ -2530,15 +2539,6 @@ struct JucePluginFactory  : public IPluginFactory3
         return true;
     }
 
-    bool isClassRegistered (const FUID& cid) const
-    {
-        for (int i = 0; i < classes.size(); ++i)
-            if (classes.getUnchecked (i)->infoW.cid == cid)
-                return true;
-
-        return false;
-    }
-
     //==============================================================================
     JUCE_DECLARE_VST3_COM_REF_METHODS
 
@@ -2597,7 +2597,15 @@ struct JucePluginFactory  : public IPluginFactory3
     {
         *obj = nullptr;
 
-        FUID sourceFuid = sourceIid;
+        TUID tuid;
+        memcpy (tuid, sourceIid, sizeof (TUID));
+
+       #if VST_VERSION >= 0x030608
+        auto sourceFuid = FUID::fromTUID (tuid);
+       #else
+        FUID sourceFuid;
+        sourceFuid = tuid;
+       #endif
 
         if (cid == nullptr || sourceIid == nullptr || ! sourceFuid.isValid())
         {
@@ -2712,6 +2720,8 @@ private:
   #define JucePlugin_Vst3Category Vst::PlugType::kFx
  #endif
 #endif
+
+using namespace juce;
 
 //==============================================================================
 // The VST3 plugin entry point.

@@ -141,7 +141,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		00FDFD1ABE59B4CEF74BF5A3 /* env.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = env.cc; path = ../../Source/msfa/env.cc; sourceTree = SOURCE_ROOT; };
+		00FDFD1ABE59B4CEF74BF5A3 /* env.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = env.cc; path = ../../Source/msfa/env.cc; sourceTree = SOURCE_ROOT; usesTabs = 0; };
 		018D0FB9E97B68D2EB3E3F72 /* PluginEditor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PluginEditor.cpp; path = ../../Source/PluginEditor.cpp; sourceTree = SOURCE_ROOT; };
 		03813BF0D93D100F6F0393C9 /* AlgoDisplay.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AlgoDisplay.cpp; path = ../../Source/AlgoDisplay.cpp; sourceTree = SOURCE_ROOT; };
 		049B1A9387F5CEE37D6D6209 /* include_juce_audio_plugin_client_utils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = include_juce_audio_plugin_client_utils.cpp; path = ../../JuceLibraryCode/include_juce_audio_plugin_client_utils.cpp; sourceTree = SOURCE_ROOT; };
@@ -189,7 +189,7 @@
 		5E966C95FACF7B8D5A907FE3 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		61F792AFE04C15F413A4F766 /* EngineOpl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = EngineOpl.cpp; path = ../../Source/EngineOpl.cpp; sourceTree = SOURCE_ROOT; };
 		624B39364165E2F23A3D4540 /* GlobalEditor_864x144.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = GlobalEditor_864x144.png; path = ../../Resources/ui/GlobalEditor_864x144.png; sourceTree = SOURCE_ROOT; };
-		64CF42AFC2E05AEF9D350CD2 /* env.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = env.h; path = ../../Source/msfa/env.h; sourceTree = SOURCE_ROOT; };
+		64CF42AFC2E05AEF9D350CD2 /* env.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = env.h; path = ../../Source/msfa/env.h; sourceTree = SOURCE_ROOT; usesTabs = 0; };
 		65BE679590BFE2466E16EA67 /* SysexComm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SysexComm.cpp; path = ../../Source/SysexComm.cpp; sourceTree = SOURCE_ROOT; };
 		66E042C6FFE93F0E19B32F09 /* Scaling_36_26.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Scaling_36_26.png; path = ../../Resources/ui/Scaling_36_26.png; sourceTree = SOURCE_ROOT; };
 		68D35AFE11BAA35EAE497D47 /* synth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = synth.h; path = ../../Source/msfa/synth.h; sourceTree = SOURCE_ROOT; };
