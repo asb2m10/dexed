@@ -63,11 +63,17 @@ public:
     /** Provides access to the list of choices that this parameter is working with. */
     const StringArray choices;
 
+protected:
+    /** Override this method if you are interested in receiving callbacks
+        when the parameter value changes.
+    */
+    virtual void valueChanged (int newValue);
 
 private:
     //==============================================================================
-    float value, defaultValue;
+    float value;
     const int maxIndex;
+    const float defaultValue;
 
     float getValue() const override;
     void setValue (float newValue) override;

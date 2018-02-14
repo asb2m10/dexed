@@ -43,6 +43,11 @@ bool AudioDeviceManager::AudioDeviceSetup::operator== (const AudioDeviceManager:
             && useDefaultOutputChannels == other.useDefaultOutputChannels;
 }
 
+bool AudioDeviceManager::AudioDeviceSetup::operator!= (const AudioDeviceManager::AudioDeviceSetup& other) const
+{
+    return ! operator== (other);
+}
+
 //==============================================================================
 class AudioDeviceManager::CallbackHandler  : public AudioIODeviceCallback,
                                              public MidiInputCallback,
@@ -89,20 +94,14 @@ private:
 
 //==============================================================================
 AudioDeviceManager::AudioDeviceManager()
-    : numInputChansNeeded (0),
-      numOutputChansNeeded (2),
-      listNeedsScanning (true),
-      testSoundPosition (0),
-      cpuUsageMs (0),
-      timeToCpuScale (0)
 {
-    callbackHandler = new CallbackHandler (*this);
+    callbackHandler.reset (new CallbackHandler (*this));
 }
 
 AudioDeviceManager::~AudioDeviceManager()
 {
-    currentAudioDevice = nullptr;
-    defaultMidiOutput = nullptr;
+    currentAudioDevice.reset();
+    defaultMidiOutput.reset();
 }
 
 //==============================================================================
@@ -113,12 +112,12 @@ void AudioDeviceManager::createDeviceTypesIfNeeded()
         OwnedArray<AudioIODeviceType> types;
         createAudioDeviceTypes (types);
 
-        for (int i = 0; i < types.size(); ++i)
-            addAudioDeviceType (types.getUnchecked(i));
+        for (auto* t : types)
+            addAudioDeviceType (t);
 
         types.clear (false);
 
-        if (AudioIODeviceType* first = availableDeviceTypes.getFirst())
+        if (auto* first = availableDeviceTypes.getFirst())
             currentDeviceType = first->getTypeName();
     }
 }
@@ -171,7 +170,7 @@ void AudioDeviceManager::addAudioDeviceType (AudioIODeviceType* newDeviceType)
         availableDeviceTypes.add (newDeviceType);
         lastDeviceTypeConfigs.add (new AudioDeviceSetup());
 
-        newDeviceType->addListener (callbackHandler);
+        newDeviceType->addListener (callbackHandler.get());
     }
 }
 
@@ -254,7 +253,7 @@ String AudioDeviceManager::initialiseFromXML (const XmlElement& xml,
                                               const String& preferredDefaultDeviceName,
                                               const AudioDeviceSetup* preferredSetupOptions)
 {
-    lastExplicitSettings = new XmlElement (xml);
+    lastExplicitSettings.reset (new XmlElement (xml));
 
     String error;
     AudioDeviceSetup setup;
@@ -299,10 +298,8 @@ String AudioDeviceManager::initialiseFromXML (const XmlElement& xml,
     forEachXmlChildElementWithTagName (xml, c, "MIDIINPUT")
         midiInsFromXml.add (c->getStringAttribute ("name"));
 
-    const StringArray allMidiIns (MidiInput::getDevices());
-
-    for (int i = allMidiIns.size(); --i >= 0;)
-        setMidiInputEnabled (allMidiIns[i], midiInsFromXml.contains (allMidiIns[i]));
+    for (auto& m : MidiInput::getDevices())
+        setMidiInputEnabled (m, midiInsFromXml.contains (m));
 
     if (error.isNotEmpty() && selectDefaultDeviceOnFailure)
         error = initialise (numInputChansNeeded, numOutputChansNeeded,
@@ -316,15 +313,15 @@ String AudioDeviceManager::initialiseFromXML (const XmlElement& xml,
 String AudioDeviceManager::initialiseWithDefaultDevices (int numInputChannelsNeeded,
                                                          int numOutputChannelsNeeded)
 {
-    lastExplicitSettings = nullptr;
+    lastExplicitSettings.reset();
 
     return initialise (numInputChannelsNeeded, numOutputChannelsNeeded,
-                       nullptr, false, String(), nullptr);
+                       nullptr, false, {}, nullptr);
 }
 
 void AudioDeviceManager::insertDefaultDeviceNames (AudioDeviceSetup& setup) const
 {
-    if (AudioIODeviceType* type = getCurrentDeviceTypeObject())
+    if (auto* type = getCurrentDeviceTypeObject())
     {
         if (setup.outputDeviceName.isEmpty())
             setup.outputDeviceName = type->getDeviceNames (false) [type->getDefaultDeviceIndex (false)];
@@ -336,7 +333,7 @@ void AudioDeviceManager::insertDefaultDeviceNames (AudioDeviceSetup& setup) cons
 
 XmlElement* AudioDeviceManager::createStateXml() const
 {
-    return lastExplicitSettings.createCopy();
+    return createCopyIfNotNull (lastExplicitSettings.get());
 }
 
 //==============================================================================
@@ -389,7 +386,7 @@ void AudioDeviceManager::getAudioDeviceSetup (AudioDeviceSetup& setup) const
 
 void AudioDeviceManager::deleteCurrentDevice()
 {
-    currentAudioDevice = nullptr;
+    currentAudioDevice.reset();
     currentSetup.inputDeviceName.clear();
     currentSetup.outputDeviceName.clear();
 }
@@ -473,7 +470,7 @@ String AudioDeviceManager::setAudioDeviceSetup (const AudioDeviceSetup& newSetup
         if (newInputDeviceName.isNotEmpty() && ! deviceListContains (type, true, newInputDeviceName))
             return "No such device: " + newInputDeviceName;
 
-        currentAudioDevice = type->createDevice (newOutputDeviceName, newInputDeviceName);
+        currentAudioDevice.reset (type->createDevice (newOutputDeviceName, newInputDeviceName));
 
         if (currentAudioDevice == nullptr)
             error = "Can't open the audio device!\n\n"
@@ -521,7 +518,7 @@ String AudioDeviceManager::setAudioDeviceSetup (const AudioDeviceSetup& newSetup
     {
         currentDeviceType = currentAudioDevice->getTypeName();
 
-        currentAudioDevice->start (callbackHandler);
+        currentAudioDevice->start (callbackHandler.get());
 
         currentSetup.sampleRate     = currentAudioDevice->getCurrentSampleRate();
         currentSetup.bufferSize     = currentAudioDevice->getCurrentBufferSizeSamples();
@@ -588,13 +585,13 @@ void AudioDeviceManager::stopDevice()
     if (currentAudioDevice != nullptr)
         currentAudioDevice->stop();
 
-    testSound = nullptr;
+    testSound.reset();
 }
 
 void AudioDeviceManager::closeAudioDevice()
 {
     stopDevice();
-    currentAudioDevice = nullptr;
+    currentAudioDevice.reset();
 }
 
 void AudioDeviceManager::restartLastAudioDevice()
@@ -618,7 +615,7 @@ void AudioDeviceManager::restartLastAudioDevice()
 
 void AudioDeviceManager::updateXml()
 {
-    lastExplicitSettings = new XmlElement ("DEVICESETUP");
+    lastExplicitSettings.reset (new XmlElement ("DEVICESETUP"));
 
     lastExplicitSettings->setAttribute ("deviceType", currentDeviceType);
     lastExplicitSettings->setAttribute ("audioOutputDeviceName", currentSetup.outputDeviceName);
@@ -668,7 +665,7 @@ void AudioDeviceManager::addAudioCallback (AudioIODeviceCallback* newCallback)
     }
 
     if (currentAudioDevice != nullptr && newCallback != nullptr)
-        newCallback->audioDeviceAboutToStart (currentAudioDevice);
+        newCallback->audioDeviceAboutToStart (currentAudioDevice.get());
 
     const ScopedLock sl (audioCallbackLock);
     callbacks.add (newCallback);
@@ -705,14 +702,14 @@ void AudioDeviceManager::audioDeviceIOCallbackInt (const float** inputChannelDat
 
     if (callbacks.size() > 0)
     {
-        const double callbackStartTime = Time::getMillisecondCounterHiRes();
+        auto callbackStartTime = Time::getMillisecondCounterHiRes();
 
         tempBuffer.setSize (jmax (1, numOutputChannels), jmax (1, numSamples), false, false, true);
 
         callbacks.getUnchecked(0)->audioDeviceIOCallback (inputChannelData, numInputChannels,
                                                           outputChannelData, numOutputChannels, numSamples);
 
-        float** const tempChans = tempBuffer.getArrayOfWritePointers();
+        auto** tempChans = tempBuffer.getArrayOfWritePointers();
 
         for (int i = callbacks.size(); --i > 0;)
         {
@@ -721,14 +718,14 @@ void AudioDeviceManager::audioDeviceIOCallbackInt (const float** inputChannelDat
 
             for (int chan = 0; chan < numOutputChannels; ++chan)
             {
-                if (const float* const src = tempChans [chan])
-                    if (float* const dst = outputChannelData [chan])
+                if (auto* src = tempChans [chan])
+                    if (auto* dst = outputChannelData [chan])
                         for (int j = 0; j < numSamples; ++j)
                             dst[j] += src[j];
             }
         }
 
-        const double msTaken = Time::getMillisecondCounterHiRes() - callbackStartTime;
+        auto msTaken = Time::getMillisecondCounterHiRes() - callbackStartTime;
         const double filterAmount = 0.2;
         cpuUsageMs += filterAmount * (msTaken - cpuUsageMs);
 
@@ -743,16 +740,17 @@ void AudioDeviceManager::audioDeviceIOCallbackInt (const float** inputChannelDat
 
     if (testSound != nullptr)
     {
-        const int numSamps = jmin (numSamples, testSound->getNumSamples() - testSoundPosition);
-        const float* const src = testSound->getReadPointer (0, testSoundPosition);
+        auto numSamps = jmin (numSamples, testSound->getNumSamples() - testSoundPosition);
+        auto* src = testSound->getReadPointer (0, testSoundPosition);
 
         for (int i = 0; i < numOutputChannels; ++i)
             for (int j = 0; j < numSamps; ++j)
                 outputChannelData [i][j] += src[j];
 
         testSoundPosition += numSamps;
+
         if (testSoundPosition >= testSound->getNumSamples())
-            testSound = nullptr;
+            testSound.reset();
     }
 }
 
@@ -761,8 +759,8 @@ void AudioDeviceManager::audioDeviceAboutToStartInt (AudioIODevice* const device
     cpuUsageMs = 0;
     xruns = 0;
 
-    const double sampleRate = device->getCurrentSampleRate();
-    const int blockSize = device->getCurrentBufferSizeSamples();
+    auto sampleRate = device->getCurrentSampleRate();
+    auto blockSize = device->getCurrentBufferSizeSamples();
 
     if (sampleRate > 0.0 && blockSize > 0)
     {
@@ -772,6 +770,7 @@ void AudioDeviceManager::audioDeviceAboutToStartInt (AudioIODevice* const device
 
     {
         const ScopedLock sl (audioCallbackLock);
+
         for (int i = callbacks.size(); --i >= 0;)
             callbacks.getUnchecked(i)->audioDeviceAboutToStart (device);
     }
@@ -787,6 +786,7 @@ void AudioDeviceManager::audioDeviceStoppedInt()
     sendChangeMessage();
 
     const ScopedLock sl (audioCallbackLock);
+
     for (int i = callbacks.size(); --i >= 0;)
         callbacks.getUnchecked(i)->audioDeviceStopped();
 }
@@ -794,6 +794,7 @@ void AudioDeviceManager::audioDeviceStoppedInt()
 void AudioDeviceManager::audioDeviceErrorInt (const String& message)
 {
     const ScopedLock sl (audioCallbackLock);
+
     for (int i = callbacks.size(); --i >= 0;)
         callbacks.getUnchecked(i)->audioDeviceError (message);
 }
@@ -810,11 +811,11 @@ void AudioDeviceManager::setMidiInputEnabled (const String& name, const bool ena
     {
         if (enabled)
         {
-            const int index = MidiInput::getDevices().indexOf (name);
+            auto index = MidiInput::getDevices().indexOf (name);
 
             if (index >= 0)
             {
-                if (MidiInput* const midiIn = MidiInput::openDevice (index, callbackHandler))
+                if (auto* midiIn = MidiInput::openDevice (index, callbackHandler.get()))
                 {
                     enabledMidiInputs.add (midiIn);
                     midiIn->start();
@@ -835,8 +836,8 @@ void AudioDeviceManager::setMidiInputEnabled (const String& name, const bool ena
 
 bool AudioDeviceManager::isMidiInputEnabled (const String& name) const
 {
-    for (int i = enabledMidiInputs.size(); --i >= 0;)
-        if (enabledMidiInputs[i]->getName() == name)
+    for (auto* mi : enabledMidiInputs)
+        if (mi->getName() == name)
             return true;
 
     return false;
@@ -861,7 +862,7 @@ void AudioDeviceManager::removeMidiInputCallback (const String& name, MidiInputC
 {
     for (int i = midiCallbacks.size(); --i >= 0;)
     {
-        const MidiCallbackInfo& mc = midiCallbacks.getReference(i);
+        auto& mc = midiCallbacks.getReference(i);
 
         if (mc.callback == callbackToRemove && mc.deviceName == name)
         {
@@ -877,13 +878,9 @@ void AudioDeviceManager::handleIncomingMidiMessageInt (MidiInput* source, const 
     {
         const ScopedLock sl (midiCallbackLock);
 
-        for (int i = 0; i < midiCallbacks.size(); ++i)
-        {
-            const MidiCallbackInfo& mc = midiCallbacks.getReference(i);
-
+        for (auto& mc : midiCallbacks)
             if (mc.deviceName.isEmpty() || mc.deviceName == source->getName())
                 mc.callback->handleIncomingMidiMessage (source, message);
-        }
     }
 }
 
@@ -903,15 +900,15 @@ void AudioDeviceManager::setDefaultMidiOutput (const String& deviceName)
             for (int i = oldCallbacks.size(); --i >= 0;)
                 oldCallbacks.getUnchecked(i)->audioDeviceStopped();
 
-        defaultMidiOutput = nullptr;
+        defaultMidiOutput.reset();
         defaultMidiOutputName = deviceName;
 
         if (deviceName.isNotEmpty())
-            defaultMidiOutput = MidiOutput::openDevice (MidiOutput::getDevices().indexOf (deviceName));
+            defaultMidiOutput.reset (MidiOutput::openDevice (MidiOutput::getDevices().indexOf (deviceName)));
 
         if (currentAudioDevice != nullptr)
-            for (int i = oldCallbacks.size(); --i >= 0;)
-                oldCallbacks.getUnchecked(i)->audioDeviceAboutToStart (currentAudioDevice);
+            for (auto* c : oldCallbacks)
+                c->audioDeviceAboutToStart (currentAudioDevice.get());
 
         {
             const ScopedLock sl (audioCallbackLock);
@@ -928,6 +925,8 @@ AudioDeviceManager::LevelMeter::LevelMeter() noexcept : level() {}
 
 void AudioDeviceManager::LevelMeter::updateLevel (const float* const* channelData, int numChannels, int numSamples) noexcept
 {
+    auto localLevel = level.get();
+
     if (enabled.get() != 0 && numChannels > 0)
     {
         for (int j = 0; j < numSamples; ++j)
@@ -939,20 +938,22 @@ void AudioDeviceManager::LevelMeter::updateLevel (const float* const* channelDat
 
             s /= (float) numChannels;
 
-            const double decayFactor = 0.99992;
+            const float decayFactor = 0.99992f;
 
-            if (s > level)
-                level = s;
-            else if (level > 0.001f)
-                level *= decayFactor;
+            if (s > localLevel)
+                localLevel = s;
+            else if (localLevel > 0.001f)
+                localLevel *= decayFactor;
             else
-                level = 0;
+                localLevel = 0;
         }
     }
     else
     {
-        level = 0;
+        localLevel = 0;
     }
+
+    level = localLevel;
 }
 
 void AudioDeviceManager::LevelMeter::setEnabled (bool shouldBeEnabled) noexcept
@@ -964,17 +965,17 @@ void AudioDeviceManager::LevelMeter::setEnabled (bool shouldBeEnabled) noexcept
 double AudioDeviceManager::LevelMeter::getCurrentLevel() const noexcept
 {
     jassert (enabled.get() != 0); // you need to call setEnabled (true) before using this!
-    return level;
+    return level.get();
 }
 
 void AudioDeviceManager::playTestSound()
 {
     { // cunningly nested to swap, unlock and delete in that order.
-        ScopedPointer<AudioSampleBuffer> oldSound;
+        ScopedPointer<AudioBuffer<float>> oldSound;
 
         {
             const ScopedLock sl (audioCallbackLock);
-            oldSound = testSound;
+            std::swap (oldSound, testSound);
         }
     }
 
@@ -982,15 +983,15 @@ void AudioDeviceManager::playTestSound()
 
     if (currentAudioDevice != nullptr)
     {
-        const double sampleRate = currentAudioDevice->getCurrentSampleRate();
-        const int soundLength = (int) sampleRate;
+        auto sampleRate = currentAudioDevice->getCurrentSampleRate();
+        auto soundLength = (int) sampleRate;
 
-        const double frequency = 440.0;
-        const float amplitude = 0.5f;
+        double frequency = 440.0;
+        float amplitude = 0.5f;
 
-        const double phasePerSample = double_Pi * 2.0 / (sampleRate / frequency);
+        auto phasePerSample = MathConstants<double>::twoPi / (sampleRate / frequency);
 
-        AudioSampleBuffer* const newSound = new AudioSampleBuffer (1, soundLength);
+        auto* newSound = new AudioBuffer<float> (1, soundLength);
 
         for (int i = 0; i < soundLength; ++i)
             newSound->setSample (0, i, amplitude * (float) std::sin (i * phasePerSample));
@@ -999,7 +1000,7 @@ void AudioDeviceManager::playTestSound()
         newSound->applyGainRamp (0, soundLength - soundLength / 4, soundLength / 4, 1.0f, 0.0f);
 
         const ScopedLock sl (audioCallbackLock);
-        testSound = newSound;
+        testSound.reset (newSound);
     }
 }
 

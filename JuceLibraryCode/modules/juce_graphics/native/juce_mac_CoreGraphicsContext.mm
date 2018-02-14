@@ -36,7 +36,7 @@ public:
         pixelStride = format == Image::RGB ? 3 : ((format == Image::ARGB) ? 4 : 1);
         lineStride = (pixelStride * jmax (1, width) + 3) & ~3;
 
-        imageData.allocate ((size_t) (lineStride * jmax (1, height)), clearImage);
+        imageData.allocate ((size_t) lineStride * (size_t) jmax (1, height), clearImage);
 
         CGColorSpaceRef colourSpace = (format == Image::SingleChannel) ? CGColorSpaceCreateDeviceGray()
                                                                        : CGColorSpaceCreateDeviceRGB();
@@ -112,13 +112,13 @@ public:
 
         if (mustOutliveSource)
         {
-            CFDataRef data = CFDataCreate (0, (const UInt8*) srcData.data, (CFIndex) (srcData.lineStride * srcData.height));
+            CFDataRef data = CFDataCreate (0, (const UInt8*) srcData.data, (CFIndex) ((size_t) srcData.lineStride * (size_t) srcData.height));
             provider = CGDataProviderCreateWithCFData (data);
             CFRelease (data);
         }
         else
         {
-            provider = CGDataProviderCreateWithData (0, srcData.data, (size_t) (srcData.lineStride * srcData.height), 0);
+            provider = CGDataProviderCreateWithData (0, srcData.data, (size_t) srcData.lineStride * (size_t) srcData.height, 0);
         }
 
         CGImageRef imageRef = CGImageCreate ((size_t) srcData.width,
@@ -274,7 +274,12 @@ void CoreGraphicsContext::excludeClipRectangle (const Rectangle<int>& r)
 void CoreGraphicsContext::clipToPath (const Path& path, const AffineTransform& transform)
 {
     createPath (path, transform);
-    CGContextClip (context);
+
+    if (path.isUsingNonZeroWinding())
+        CGContextClip (context);
+    else
+        CGContextEOClip (context);
+
     lastClipRectIsValid = false;
 }
 
@@ -341,9 +346,9 @@ void CoreGraphicsContext::restoreState()
 {
     CGContextRestoreGState (context);
 
-    if (SavedState* const top = stateStack.getLast())
+    if (auto* top = stateStack.getLast())
     {
-        state = top;
+        state.reset (top);
         stateStack.removeLast (1, false);
         lastClipRectIsValid = false;
     }
