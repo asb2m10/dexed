@@ -133,6 +133,7 @@ void Env::advance(int newix) {
             // and cleanup, but it's pretty close for now.
             int staticrate = rates_[ix_];
             staticrate += rate_scaling_; // needs to be checked, as well, but seems correct
+            staticrate = max(staticrate, 99);
             staticcount_ = staticrate < 77 ? statics[staticrate] : 20 * (99 - staticrate);
             staticcount_ = (int)(((int64_t)staticcount_ * (int64_t)sr_multiplier) >> 24);
         }
