@@ -9,7 +9,7 @@
 namespace BinaryData
 {
     extern const char*   dexedIcon_png;
-    const int            dexedIcon_pngSize = 12400;
+    const int            dexedIcon_pngSize = 14239;
 
     extern const char*   Switch_32x32_png;
     const int            Switch_32x32_pngSize = 841;

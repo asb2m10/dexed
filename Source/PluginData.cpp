@@ -424,7 +424,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
                     }
                 }
             }
-            ccMapping->getNextElement();
+            ccMapping = ccMapping->getNextElement();
         }
     }
     
