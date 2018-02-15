@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2016 Pascal Gauthier.
+ * Copyright (c) 2013-2018 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ Image findImage(String path) {
 
 DXLookNFeel::DXLookNFeel() {
     Colour ctrlBackground;
-
+    
     DexedAudioProcessor::dexedAppDir.setAsCurrentWorkingDirectory();
     ctrlBackground = Colour(20,18,18);
 
@@ -236,17 +236,8 @@ void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
     LookAndFeel_V3::positionComboBoxText(box, label);
 }
 
-CriticalSection DXLookNFeel::lock;
-DXLookNFeel * DXLookNFeel::ins = NULL;
 Colour DXLookNFeel::fillColour = Colour(77,159,151);
 Colour DXLookNFeel::lightBackground = Colour(78,72,63);
 Colour DXLookNFeel::background = Colour(60,50,47);
 Colour DXLookNFeel::roundBackground = Colour(58,52,48);
 
-DXLookNFeel *DXLookNFeel::getLookAndFeel() {
-    const ScopedLock locker(lock);
-    if ( ins != NULL )
-        return ins;
-    ins = new DXLookNFeel();
-    return ins;
-}

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2015 Pascal Gauthier.
+ * Copyright (c) 2013-2018 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
 #include "SysexComm.h"
 #include "Dexed.h"
 #include "math.h"
-#include "DXLookNFeel.h"
 #include <fstream>
 
 #include "msfa/fm_op_kernel.h"
@@ -36,14 +35,12 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
     cartManager(this)
 {
-    lookAndFeel = DXLookNFeel::getLookAndFeel();
-    LookAndFeel::setDefaultLookAndFeel(lookAndFeel);
-
     setSize(866, ownerFilter->showKeyboard ? 674 : 581);
 
     processor = ownerFilter;
     
-    background = DXLookNFeel::getLookAndFeel()->background;
+    lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
+    background = lookAndFeel->background;
 
     // OPERATORS
     addAndMakeVisible(&(operators[0]));
@@ -163,7 +160,7 @@ void DexedAudioProcessorEditor::parmShow() {
     ParamDialog param;
     param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
     param.setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
-    
+
     window.addCustomComponent(&param);
     window.addButton("OK", 0);
     window.addButton("Cancel" ,1);
