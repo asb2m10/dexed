@@ -334,6 +334,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     }
                     break;
                 default:
+                    TRACE("handle CC %d %d", ctrl, value);
                     if ( mappedMidiCC.contains(ctrl) ) {
                         Ctrl *linkedCtrl = mappedMidiCC[ctrl];
                         linkedCtrl->publishValue((float) value / 127);
