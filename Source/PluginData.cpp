@@ -419,6 +419,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
             if ( target.isNotEmpty() && cc != -1 ) {
                 for(int i=0;i<ctrl.size();i++) {
                     if ( ctrl[i]->label == target) {
+                        TRACE("mapping CC=%d to %s", cc, target.toRawUTF8());
                         mappedMidiCC.set(cc, ctrl[i]);
                         break;
                     }

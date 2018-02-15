@@ -76,7 +76,7 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     DexedAudioProcessorEditor *editor;
     DexedAudioProcessor *processor;
-
+    
     Image background;
     Image imageLight;
     //[/UserVariables]

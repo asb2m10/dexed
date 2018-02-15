@@ -30,9 +30,10 @@
 
 class OperatorSwitch : public ToggleButton {
     Image image;
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public :
     OperatorSwitch() : ToggleButton("opSwitch") {
-        image = DXLookNFeel::getLookAndFeel()->imageSwitchOperator;
+        image = lookAndFeel->imageSwitchOperator;
         setSize(32, 32);
     }
 
@@ -197,8 +198,10 @@ OperatorEditor::OperatorEditor ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    light = DXLookNFeel::getLookAndFeel()->imageLight;
-    Image tmp = DXLookNFeel::getLookAndFeel()->imageScaling;
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
+    
+    light = lookAndFeel->imageLight;
+    Image tmp = lookAndFeel->imageScaling;
 
     kbdLeftCurve->addItem("-LN", 1);
     kbdLeftCurve->addItem("-EX", 2);
@@ -214,7 +217,7 @@ OperatorEditor::OperatorEditor ()
     int posRight[] = {3,2,1,0};
     kbdRightCurve->setImage(tmp, posRight);
 
-    background = DXLookNFeel::getLookAndFeel()->imageOperator;
+    background = lookAndFeel->imageOperator;
 
     //[/Constructor]
 }

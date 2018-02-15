@@ -1,6 +1,6 @@
 ﻿/**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014-2018 Pascal Gauthier.
  *
  * DX7 Envelope Tables from legasynth-0.4.1 / DX7 Patch Editor
  * Copyright (C) 2002 Juan Linietsky <coding@reduz.com.ar>
@@ -346,7 +346,7 @@ void LcdDisplay::paint(Graphics &g) {
     g.setColour (Colours::white);    
     g.drawText (paramMsg,
                 0, 0, 140, 14,
-                Justification::centred, true);
+                Justification::centred, false);
 }
 
 void ComboBoxImage::paint(Graphics &g) {

@@ -30,7 +30,7 @@
 /**
  * Ugly but usefull midi monitor to know if you are really sending/receiving something from the DX7
  * If the midi is not configured this component wont show up
- */
+ *
 class MidiMonitor : public Component {
     SysexComm *midi;
     Image light;
@@ -58,7 +58,7 @@ public:
             midi->outActivity = false;
         }
     }
-};
+};*/
 
 class AboutBox : public DialogWindow {
 public:
@@ -274,18 +274,19 @@ GlobalEditor::GlobalEditor ()
 
 
     //[Constructor] You can add your own custom stuff here..
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
     lfoType->addItem("TRIANGLE", 1);
     lfoType->addItem("SAW DOWN", 2);
     lfoType->addItem("SAW UP", 3);
     lfoType->addItem("SQUARE", 4);
     lfoType->addItem("SINE", 5);
     lfoType->addItem("S&HOLD", 6);
-    lfoType->setImage(DXLookNFeel::getLookAndFeel()->imageLFO);
+    lfoType->setImage(lookAndFeel->imageLFO);
 
     programs = programSelector;
 
-    background = DXLookNFeel::getLookAndFeel()->imageGlobal;
-    imageLight = DXLookNFeel::getLookAndFeel()->imageLight;
+    background = lookAndFeel->imageGlobal;
+    imageLight = lookAndFeel->imageLight;
     //[/Constructor]
 }
 
@@ -605,7 +606,7 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
 
     editor = edit;
 
-    midiMonitor = new MidiMonitor(&(processor->sysexComm));
+    //midiMonitor = new MidiMonitor(&(processor->sysexComm));
     //addAndMakeVisible(midiMonitor);
     //midiMonitor->setBounds(155, 21, 80, 45);
 
@@ -632,7 +633,7 @@ void GlobalEditor::updatePitchPos(int pos) {
 void GlobalEditor::updateVu(float f) {
     vuOutput->v = f;
     vuOutput->repaint();
-    midiMonitor->repaint();
+    //midiMonitor->repaint();
 }
 
 void GlobalEditor::setMonoState(bool state)  {

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2016 Pascal Gauthier.
+ * Copyright (c) 2013-2018 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,11 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class DXLookNFeel : public LookAndFeel_V3 {
-    static CriticalSection lock;
-    static DXLookNFeel *ins;
-    DXLookNFeel();
-
     HashMap<String, int> colourMap;
 
 public:
+    DXLookNFeel();
+    
     Image imageKnob, imageSwitch, imageButton, imageSlider, imageScaling, imageLight, imageLFO;
     Image imageSwitchOperator;
     Image imageOperator, imageGlobal;
@@ -50,7 +48,6 @@ public:
     virtual Typeface::Ptr getTypefaceForFont(const Font &) override;
     virtual void positionComboBoxText (ComboBox& box, Label& label) override;
 
-    static DXLookNFeel *getLookAndFeel();
     static Colour fillColour;
     static Colour lightBackground;
     static Colour background;
