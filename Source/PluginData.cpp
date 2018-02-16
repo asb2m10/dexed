@@ -187,8 +187,12 @@ void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
 }
 
 void DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
+    if (sysexChecksum(rawdata, 155) != rawdata[155]) { // rawdata[155] is a checksum in a sysex dump
+        TRACE("bad checksum when updating program from sysex");
+        return;
+    }
     memcpy(data, rawdata, 155);
-    unpackOpSwitch(rawdata[155]);
+    unpackOpSwitch(0x7F);
     lfo.reset(data + 137);
     triggerAsyncUpdate();
 }
