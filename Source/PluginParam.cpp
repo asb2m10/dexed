@@ -26,6 +26,20 @@
 #include "PluginEditor.h"
 #include "Dexed.h"
 
+// Async updater
+class CtrlUpdate : public CallbackMessage {
+    Ctrl *ctrl;
+    float value;
+public:
+    CtrlUpdate(Ctrl *ctrl, float value) {
+        this->ctrl = ctrl;
+        this->value = value;
+    }
+    void messageCallback() {
+        ctrl->publishValue(value);
+    }
+};
+
 // ************************************************************************
 // Custom displays
 
@@ -235,6 +249,11 @@ void Ctrl::unbind() {
         comboBox->removeMouseListener(this);
         comboBox = NULL;
     }
+}
+
+void Ctrl::publishValueAsync(float value) {
+    CtrlUpdate *update = new CtrlUpdate(this, value);
+    update->post();
 }
 
 void Ctrl::publishValue(float value) {
