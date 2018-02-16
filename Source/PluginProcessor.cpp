@@ -337,7 +337,10 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     TRACE("handle CC %d %d", ctrl, value);
                     if ( mappedMidiCC.contains(ctrl) ) {
                         Ctrl *linkedCtrl = mappedMidiCC[ctrl];
-                        linkedCtrl->publishValue((float) value / 127);
+                        
+                        // We are not publishing this in the DSP thread, moving that in the
+                        // event thread
+                        linkedCtrl->publishValueAsync((float) value / 127);
                     }
                     // this is used to notify the dialog that a CC value was received.
                     lastCCUsed.setValue(ctrl);
@@ -613,19 +616,11 @@ bool DexedAudioProcessor::isOutputChannelStereoPair (int index) const {
 }
 
 bool DexedAudioProcessor::acceptsMidi() const {
-#if JucePlugin_WantsMidiInput
     return true;
-#else
-    return false;
-#endif
 }
 
 bool DexedAudioProcessor::producesMidi() const {
-#if JucePlugin_ProducesMidiOutput
     return true;
-#else
-    return false;
-#endif
 }
 
 bool DexedAudioProcessor::silenceInProducesSilenceOut() const {

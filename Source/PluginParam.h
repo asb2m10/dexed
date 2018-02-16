@@ -46,6 +46,9 @@ public:
     // use this to signal a parameter change to the host
     void publishValue(float value);
     
+    // use this to publish a new value to be computed on the event thread
+    void publishValueAsync(float value);
+    
     /**
      * Host value is related 0.0 to 1.0 values
      */
@@ -104,7 +107,6 @@ public:
     
     void updateDisplayName();
 };
-
 
 struct OperatorCtrl {
     ScopedPointer<CtrlDX> egRate[4];
