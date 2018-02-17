@@ -48,9 +48,13 @@
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
 #ifdef DEBUG
-    Logger *tmp = Logger::getCurrentLogger();
-    if ( tmp == NULL ) {
-        Logger::setCurrentLogger(FileLogger::createDateStampedLogger("Dexed", "DebugSession-", "log", "DexedAudioProcessor Created"));
+    
+    // avoid creating the log file if it is in standalone mode
+    if ( !JUCEApplication::isStandaloneApp() ) {
+        Logger *tmp = Logger::getCurrentLogger();
+        if ( tmp == NULL ) {
+            Logger::setCurrentLogger(FileLogger::createDateStampedLogger("Dexed", "DebugSession-", "log", "DexedAudioProcessor Created"));
+        }
     }
     TRACE("Hi");
 #endif
