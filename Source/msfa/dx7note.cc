@@ -170,6 +170,7 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
         int fine = patch[off + 19];
         int detune = patch[off + 20];
         int32_t freq = osc_freq(midinote, mode, coarse, fine, detune);
+        opMode[op] = mode;
         basepitch_[op] = freq;
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
     }
@@ -209,8 +210,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             pb = (pb * (8191 / stp)) << 11;
         }
     }
-    pitch_mod += pb;
-    pitch_mod += ctrls->masterTune;
+    int32_t pitch_base = pb + ctrls->masterTune;
+    pitch_mod += pitch_base;
     
     // ==== AMP MOD ====
     uint32_t amod_1 = (uint32_t)(((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8); // Q24 :D
@@ -229,7 +230,11 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             params_[op].level_in = 0;
         } else {
             //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
-            params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
+            
+            if ( opMode[op] )
+                params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_base);
+            else
+                params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
             
             int32_t level = env_[op].getsample();
             if (ampmodsens_[op] != 0) {
@@ -264,6 +269,7 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
         int detune = patch[off + 20];
         basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
+        opMode[op] = mode;
         
         for (int i = 0; i < 4; i++) {
             rates[i] = patch[off + i];
