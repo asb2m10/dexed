@@ -214,6 +214,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     pitch_mod += pitch_base;
     
     // ==== AMP MOD ====
+    lfo_val = (1<<24) - lfo_val;
     uint32_t amod_1 = (uint32_t)(((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8); // Q24 :D
     amod_1 = (uint32_t)(((int64_t) amod_1 * (int64_t) lfo_val) >> 24);
     uint32_t amod_2 = (uint32_t)(((int64_t) ctrls->amp_mod * (int64_t) lfo_val) >> 7); // Q?? :|
