@@ -43,6 +43,23 @@
     #pragma comment (lib, "version.lib")
     #pragma comment (lib, "shlwapi.lib")
     #pragma comment (lib, "winmm.lib")
+	#pragma comment (lib, "DbgHelp.lib")
+	#pragma comment (lib, "Imm32.lib")
+
+	#ifdef _NATIVE_WCHAR_T_DEFINED
+		#ifdef _DEBUG
+			#pragma comment (lib, "comsuppwd.lib")
+		#else
+			#pragma comment (lib, "comsuppw.lib")
+		#endif
+	#else
+		#ifdef _DEBUG
+			#pragma comment (lib, "comsuppd.lib")
+		#else
+			#pragma comment (lib, "comsupp.lib")
+		#endif
+	#endif
+
 #endif
 
 //==============================================================================
