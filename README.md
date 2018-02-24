@@ -5,7 +5,7 @@ Please see [Dexed User Website](http://asb2m10.github.io/dexed) for user and dow
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
 Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android) 
-for the synth engine and [JUCE](http://wwww.juce.com) as a plugin wrapper.
+for the synth engine and [JUCE](http://wwww.juce.com) as an application/plugin wrapper.
 
 The goal of this project is to be a tool/companion for the original DX7. Sound engine 
 with 'float' value parameters, different waveform à la TX81z would be great but anything that 
@@ -19,13 +19,13 @@ Changelog
 ---------
 #### Version 0.9.4
 * Standalone application version of Dexed
-* Midi Learn support for midi CC messages
-* More accurate detune
+* Midi learn support for midi CC messages
+* More accurate detune for operators
 * More accurate EG envelopes. thanks @jeremybernstein
-* Fix implementation for Midi CC 120 and 123 (All Sound Off / All Notes Off)
 * Pitchbend now listen to any channels
-* Windows/MacOSX installers
-* Migrated to JUCE 5.2.1
+* Fixed 'clicking' in mono mode
+* Fixed implementation for Midi CC 0x78 and 0x7B (All Sound Off / All Notes Off)
+* Windows/macOS installers
 
 #### Version 0.9.3
 * Preliminary live operator level update
@@ -80,9 +80,8 @@ Credits & thanks
 
 TODO - Dexed 
 ------------
+* Scalable UI upgrade, better UI redraw
 * Various code cleanup
-* Zomby UI changes: this occurs in Live
-* More smoothness in mono mode
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
 
 TODO - msfa
