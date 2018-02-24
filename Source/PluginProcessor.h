@@ -191,7 +191,7 @@ public :
     bool hasEditor() const;
     void updateUI();
     bool peekVoiceStatus();
-    void updateProgramFromSysex(const uint8 *rawdata);
+    int updateProgramFromSysex(const uint8 *rawdata);
     void setupStartupCart();
     
     //==============================================================================

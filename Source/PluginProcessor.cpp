@@ -518,7 +518,8 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
                 TRACE("wrong single voice datasize %d", sz);
                 return;
             }
-            updateProgramFromSysex(buf+6);
+            if ( updateProgramFromSysex(buf+6) )
+                TRACE("bad checksum when updating program from sysex message");
         }
         
         // 32 voice dump
