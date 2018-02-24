@@ -464,7 +464,7 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
             }
         }
         
-        if ( highNote != -1 ) {
+        if ( highNote != -1 && voices[note].live ) {
             voices[note].live = false;
             voices[target].live = true;
             voices[target].dx7_note->transferState(*voices[note].dx7_note);
