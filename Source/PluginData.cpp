@@ -186,15 +186,14 @@ void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
     controllers.opSwitch[0] = (packOpValue & 1) + 48;
 }
 
-void DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
-    if (sysexChecksum(rawdata, 155) != rawdata[155]) { // rawdata[155] is a checksum in a sysex dump
-        TRACE("bad checksum when updating program from sysex");
-        return;
-    }
+int DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
     memcpy(data, rawdata, 155);
     unpackOpSwitch(0x7F);
     lfo.reset(data + 137);
     triggerAsyncUpdate();
+    if (sysexChecksum(rawdata, 155) != rawdata[155]) // rawdata[155] is a checksum in a sysex dump
+        return 1; // just return 1 if the checksum doesn't match, might be normal if it is loaded from a cartridge
+    return 0;
 }
 
 void DexedAudioProcessor::setupStartupCart() {
