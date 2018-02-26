@@ -696,7 +696,7 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     
     index = index > 31 ? 31 : index;
     currentCart.unpackProgram(data, index);
-    strcpy(controllers.opSwitch, "111111");
+    unpackOpSwitch(0x3F);
     lfo.reset(data + 137);
     currentProgram = index;
     triggerAsyncUpdate();

@@ -264,7 +264,6 @@ void DexedAudioProcessorEditor::storeProgram() {
         destSysex.getProgramNames(programs);
         dialog.addComboBox("Dest", programs, "Program Destination");
 
-
         if ( externalFile == NULL ) {
             StringArray saveAction;
             saveAction.add("Store program to DAW plugin song state");
