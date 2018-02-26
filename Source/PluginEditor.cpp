@@ -343,10 +343,11 @@ class MidiCCListener: public AlertWindow, Value::Listener {
     DexedAudioProcessorEditor *editor;
     Ctrl *target;
 public :
-    MidiCCListener(DexedAudioProcessorEditor *editor, Ctrl *target) : AlertWindow("","Waiting for midi CC (controller change) message ...", AlertWindow::InfoIcon, editor) {
+    MidiCCListener(DexedAudioProcessorEditor *editor, Ctrl *target) : AlertWindow("","", AlertWindow::InfoIcon, editor) {
         this->editor = editor;
         this->target = target;
-        addButton("Cancel", -1);
+        setMessage("Mapping: " + String(target->label) + ", waiting for midi controller change (CC) message...");
+        addButton("CANCEL", -1);
         editor->processor->lastCCUsed.addListener(this);
     }
     
