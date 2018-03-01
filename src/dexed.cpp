@@ -133,29 +133,31 @@ Dexed::~Dexed()
 {
   TRACE("Hi");
 
-  if(outbuf_!=NULL)
+  TRACE("0");
+  if(outbuf_)
     delete [] outbuf_;
 
   currentNote = -1;
 
+  TRACE("1");
   for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note)
   {
-    if ( voices[note].dx7_note != NULL )
+    if(voices[note].dx7_note)
     {
       delete voices[note].dx7_note;
-      voices[note].dx7_note = NULL;
     } 
-    voices[note].keydown = false;
-    voices[note].sustained = false;
-    voices[note].live = false;
   }
 
+  TRACE("2");
   if(engineMsfa)
-    delete(engineMkI);
+    delete(engineMsfa);
+  TRACE("3");
   if(engineOpl)
-    delete(engineMkI);
+    delete(engineOpl);
+  TRACE("4");
   if(engineMkI)
     delete(engineMkI);
+  TRACE("5");
 
   TRACE("Bye");
   TRACE("--------------------------------------------------------------------------------");
@@ -784,29 +786,44 @@ void Dexed::onParam(uint8_t param_num,float param_val)
         controllers.values_[kControllerPitchStep]=data[param_num];
         break;
       case 157:
-	TRACE("wheel.setRange(%d)",data[param_num]);
         controllers.wheel.setRange(data[param_num]);
+        controllers.wheel.setTarget(data[param_num+1]);
+        controllers.refresh();
         break;
       case 158:
+        controllers.wheel.setRange(data[param_num-1]);
         controllers.wheel.setTarget(data[param_num]);
+        controllers.refresh();
         break;
       case 159:
         controllers.foot.setRange(data[param_num]);
+        controllers.foot.setTarget(data[param_num+1]);
+        controllers.refresh();
         break;
       case 160:
+        controllers.foot.setRange(data[param_num-1]);
         controllers.foot.setTarget(data[param_num]);
+        controllers.refresh();
         break;
       case 161:
         controllers.breath.setRange(data[param_num]);
+        controllers.breath.setTarget(data[param_num+1]);
+        controllers.refresh();
         break;
       case 162:
+        controllers.breath.setRange(data[param_num-1]);
         controllers.breath.setTarget(data[param_num]);
+        controllers.refresh();
         break;
       case 163:
         controllers.at.setRange(data[param_num]);
+        controllers.at.setTarget(data[param_num+1]);
+        controllers.refresh();
         break;
       case 164:
+        controllers.at.setRange(data[param_num-1]);
         controllers.at.setTarget(data[param_num]);
+        controllers.refresh();
         break;
       case 165:
         tune=param_val*0x4000;

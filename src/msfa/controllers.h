@@ -52,13 +52,13 @@ struct FmMod {
     }
 
     void setTarget(uint8_t assign) {
+	TRACE("Target: %d", assign);
         assign=assign < 0 && assign > 7 ? 0 : assign;
-        if(assign&1) // AMP
-		pitch=true;
-	if(assign&2) // PITCH
-		amp=true;
-	if(assign&4) // EG
-		eg=true;
+        pitch=assign&1; // AMP
+	amp=assign&2; // PITCH
+	eg=assign&4; // EG
+
+	TRACE("pitch[%d] amp[%d] eg[%d]", pitch,amp,eg);
     }
 };
 
@@ -115,8 +115,6 @@ public:
         
         if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
             eg_mod = 127;
-        
-        TRACE("amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
     
     FmCore *core;
