@@ -1,4 +1,5 @@
 /*
+ * Copyright 2017 Pascal Gauthier. 
  * Copyright 2012 Google Inc.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +22,8 @@
 
 // DX7 envelope generation
 
+#define ACCURATE_ENVELOPE
+
 class Env {
  public:
 
@@ -33,7 +36,6 @@ class Env {
 
   void update(const int rates[4], const int levels[4], int outlevel,
       int rate_scaling);
-
   // Result is in Q24/doubling log format. Also, result is subsampled
   // for every N samples.
   // A couple more things need to happen for this to be used as a gain
@@ -50,10 +52,11 @@ class Env {
   void transfer(Env &src);
     
  private:
+
   // PG: This code is normalized to 44100, need to put a multiplier
   // if we are not using 44100.
   static uint32_t sr_multiplier;
-    
+
   int rates_[4];
   int levels_[4];
   int outlevel_;
@@ -66,6 +69,9 @@ class Env {
   bool rising_;
   int ix_;
   int inc_;
+#ifdef ACCURATE_ENVELOPE
+  int staticcount_;
+#endif
 
   bool down_;
 

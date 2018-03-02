@@ -35,12 +35,14 @@
 #endif
 
 #ifdef _WIN32
+#if _MSC_VER < 1800
     double log2(double n)  {  
         return log(n) / log(2.0);  
     }
     double round(double n) {
         return n < 0.0 ? ceil(n - 0.5) : floor(n + 0.5);
     }
+#endif
     __declspec(align(16)) const int zeros[N] = {0};
 #else
     const int32_t __attribute__ ((aligned(16))) zeros[N] = {0};
@@ -76,7 +78,6 @@ static inline uint16_t sinLog(uint16_t phi) {
 }
 
 EngineMkI::EngineMkI() {
-    TRACE("Hi");
     float bitReso = SINLOG_TABLESIZE;
     
     for(int i=0;i<SINLOG_TABLESIZE;i++) {
@@ -118,16 +119,12 @@ EngineMkI::EngineMkI() {
     TRACE("SINEXTTABLE: %s", buffer);
     TRACE("****************************************");
 #endif
-
-    TRACE("Bye");
 }
 
 inline int32_t mkiSin(int32_t phase, uint16_t env) {
     uint16_t expVal = sinLog(phase >> (22 - SINLOG_BITDEPTH)) + (env);
-#ifdef MKIDEBUG
-    int16_t expValShow = expVal;
-#endif
- 
+    //int16_t expValShow = expVal;
+    
     const bool isSigned = expVal & NEGATIVE_BIT;
     expVal &= ~NEGATIVE_BIT;
     
@@ -295,7 +292,7 @@ void EngineMkI::compute_fb3(int32_t *output, FmOpParams *parms, int32_t gain01, 
     fb_buf[1] = y;
 }
 
-void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int feedback_shift) {
+void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int32_t feedback_shift) {
     const int kLevelThresh = ENV_MAX-100;
     FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
@@ -330,14 +327,14 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
                     switch ( algorithm ) {
                         // three operator feedback, process exception for ALGO 4
                         case 3 :
-                            compute_fb3(outptr, params, gain1, gain2, fb_buf, min((feedback_shift+2),16));
+                            compute_fb3(outptr, params, gain1, gain2, fb_buf, min((feedback_shift+2), 16));
                             params[1].phase += params[1].freq << LG_N; // hack, we already processed op-5 - op-4
                             params[2].phase += params[2].freq << LG_N; // yuk yuk
                             op += 2; // ignore the 2 other operators
                             break;
                         // two operator feedback, process exception for ALGO 6
                         case 5 :
-                            compute_fb2(outptr, params, gain1, gain2, fb_buf, min((feedback_shift+2),16));
+                            compute_fb2(outptr, params, gain1, gain2, fb_buf, min((feedback_shift+2), 16));
                             params[1].phase += params[1].freq << LG_N;  // yuk, hack, we already processed op-5
                             op++; // ignore next operator;
                             break;

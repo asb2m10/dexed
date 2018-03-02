@@ -44,14 +44,20 @@ int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
     int32_t logfreq;
     if (mode == 0) {
         logfreq = midinote_to_logfreq(midinote);
+        
+        // could use more precision, closer enough for now. those numbers comes from my DX7
+        double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
+        logfreq += detuneRatio * logfreq * (detune - 7);
+        
         logfreq += coarsemul[coarse & 31];
         if (fine) {
             // (1 << 24) / log(2)
             logfreq += (int32_t)floor(24204406.323123 * log(1 + 0.01 * fine) + 0.5);
         }
-        // This was measured at 7.213Hz per count at 9600Hz, but the exact
-        // value is somewhat dependent on midinote. Close enough for now.
-        logfreq += 12606 * (detune - 7);
+        
+        // // This was measured at 7.213Hz per count at 9600Hz, but the exact
+        // // value is somewhat dependent on midinote. Close enough for now.
+        // //logfreq += 12606 * (detune -7);
     } else {
         // ((1 << 24) * log(10) / log(2) * .01) << 3
         logfreq = (4458616 * ((coarse & 3) * 100 + fine)) >> 3;
@@ -138,7 +144,7 @@ Dx7Note::Dx7Note() {
     }
 }
 
-void Dx7Note::init(const uint8_t patch[167], int midinote, int velocity) {
+void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
     int rates[4];
     int levels[4];
     for (int op = 0; op < 6; op++) {
@@ -164,6 +170,7 @@ void Dx7Note::init(const uint8_t patch[167], int midinote, int velocity) {
         int fine = patch[off + 19];
         int detune = patch[off + 20];
         int32_t freq = osc_freq(midinote, mode, coarse, fine, detune);
+        opMode[op] = mode;
         basepitch_[op] = freq;
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
     }
@@ -186,30 +193,31 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     int32_t senslfo = pitchmodsens_ * (lfo_val - (1 << 23));
     int32_t pmod_1 = (((int64_t) pmd) * (int64_t) senslfo) >> 39;
     pmod_1 = abs(pmod_1);
-    int32_t pmod_2 = ((int64_t)ctrls->pitch_mod * (int64_t)senslfo) >> 14;
+    int32_t pmod_2 = (int32_t)(((int64_t)ctrls->pitch_mod * (int64_t)senslfo) >> 14);
     pmod_2 = abs(pmod_2);
     int32_t pitch_mod = max(pmod_1, pmod_2);
     pitch_mod = pitchenv_.getsample() + (pitch_mod * (senslfo < 0 ? -1 : 1));
-     
+    
     // ---- PITCH BEND ----
     int pitchbend = ctrls->values_[kControllerPitch];
     int32_t pb = (pitchbend - 0x2000);
     if (pb != 0) {
         if (ctrls->values_[kControllerPitchStep] == 0) {
-            pb = ((float) (pb << 11)) * ((float)ctrls->values_[kControllerPitchRange]) / 12.0;
+            pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRange]) / 12.0;
         } else {
             int stp = 12 / ctrls->values_[kControllerPitchStep];
             pb = pb * stp / 8191;
             pb = (pb * (8191 / stp)) << 11;
         }
     }
-    pitch_mod += pb;
-    pitch_mod += ctrls->masterTune;
-
+    int32_t pitch_base = pb + ctrls->masterTune;
+    pitch_mod += pitch_base;
+    
     // ==== AMP MOD ====
-    uint32_t amod_1 = ((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8; // Q24 :D
-    amod_1 = ((int64_t) amod_1 * (int64_t) lfo_val) >> 24;
-    uint32_t amod_2 = ((int64_t) ctrls->amp_mod * (int64_t) lfo_val) >> 7; // Q?? :|
+    lfo_val = (1<<24) - lfo_val;
+    uint32_t amod_1 = (uint32_t)(((int64_t) ampmoddepth_ * (int64_t) lfo_delay) >> 8); // Q24 :D
+    amod_1 = (uint32_t)(((int64_t) amod_1 * (int64_t) lfo_val) >> 24);
+    uint32_t amod_2 = (uint32_t)(((int64_t) ctrls->amp_mod * (int64_t) lfo_val) >> 7); // Q?? :|
     uint32_t amd_mod = max(amod_1, amod_2);
     
     // ==== EG AMP MOD ====
@@ -218,21 +226,25 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     
     // ==== OP RENDER ====
     for (int op = 0; op < 6; op++) {
-        //if ( ctrls->opSwitch[op] == '0' )  {
-        if (!(ctrls->opSwitch & (1<<op)))  {
+       // if ( ctrls->opSwitch[op] == '0' )  {
+	if (!(ctrls->opSwitch & (1<<op)))  { 
             env_[op].getsample(); // advance the envelop even if it is not playing
             params_[op].level_in = 0;
         } else {
             //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
-            params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
+            
+            if ( opMode[op] )
+                params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_base);
+            else
+                params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
             
             int32_t level = env_[op].getsample();
             if (ampmodsens_[op] != 0) {
-                uint32_t sensamp = ((uint64_t) amd_mod) * ((uint64_t) ampmodsens_[op]) >> 24;
+                uint32_t sensamp = (uint32_t)(((uint64_t) amd_mod) * ((uint64_t) ampmodsens_[op]) >> 24);
                 
                 // TODO: mehhh.. this needs some real tuning.
                 uint32_t pt = exp(((float)sensamp)/262144 * 0.07 + 12.2);
-                uint32_t ldiff = ((uint64_t)level) * (((uint64_t)pt<<4)) >> 28;
+                uint32_t ldiff = (uint32_t)(((uint64_t)level) * (((uint64_t)pt<<4)) >> 28);
                 level -= ldiff;
             }
             params_[op].level_in = level;
@@ -259,10 +271,11 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
         int detune = patch[off + 20];
         basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
+        opMode[op] = mode;
         
         for (int i = 0; i < 4; i++) {
             rates[i] = patch[off + i];
-           levels[i] = patch[off + 4 + i];
+            levels[i] = patch[off + 4 + i];
         }
         int outlevel = patch[off + 16];
         outlevel = Env::scaleoutlevel(outlevel);
@@ -316,4 +329,3 @@ void Dx7Note::oscSync() {
         params_[i].phase = 0;
     }
 }
-

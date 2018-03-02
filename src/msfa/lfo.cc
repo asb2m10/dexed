@@ -95,4 +95,3 @@ void Lfo::keydown() {
     }
     delaystate_ = 0;
 }
-

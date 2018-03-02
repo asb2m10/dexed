@@ -23,6 +23,7 @@
 #include "fm_op_kernel.h"
 #include "fm_core.h"
 
+
 //using namespace std;
 
 const FmAlgorithm FmCore::algorithms[32] = {

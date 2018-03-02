@@ -169,7 +169,7 @@ void EngineOpl::compute_fb(int32_t *output, int32_t phase0, int32_t freq,
 
 
 void EngineOpl::render(int32_t *output, FmOpParams *params, int algorithm,
-                        int32_t *fb_buf, int feedback_shift) {
+                        int32_t *fb_buf, int32_t feedback_shift) {
     const int kLevelThresh = 507;  // really ????
     const FmAlgorithm alg = algorithms[algorithm];
     bool has_contents[3] = { true, false, false };
