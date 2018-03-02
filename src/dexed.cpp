@@ -133,13 +133,11 @@ Dexed::~Dexed()
 {
   TRACE("Hi");
 
-  TRACE("0");
   if(outbuf_)
     delete [] outbuf_;
 
   currentNote = -1;
 
-  TRACE("1");
   for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note)
   {
     if(voices[note].dx7_note)
@@ -148,16 +146,12 @@ Dexed::~Dexed()
     } 
   }
 
-  TRACE("2");
   if(engineMsfa)
     delete(engineMsfa);
-  TRACE("3");
   if(engineOpl)
     delete(engineOpl);
-  TRACE("4");
   if(engineMkI)
     delete(engineMkI);
-  TRACE("5");
 
   TRACE("Bye");
   TRACE("--------------------------------------------------------------------------------");
@@ -664,7 +658,7 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
         return;
     }
 
-    pitch += data[144] - 24;
+    pitch += data[144] - 12;
     
     uint8_t note = currentNote;
     uint8_t keydown_counter=0;
@@ -716,7 +710,7 @@ void Dexed::keyup(uint8_t pitch) {
 TRACE("Hi");
 TRACE("pitch=%d\n",pitch);
 
-    pitch += data[144] - 24;
+    pitch += data[144] - 12;
 
     uint8_t note;
     for (note=0; note<max_notes; ++note) {
@@ -742,7 +736,7 @@ TRACE("pitch=%d\n",pitch);
             }
         }
         
-        if ( highNote != -1 ) {
+        if ( highNote != -1 && voices[note].live ) {
             voices[note].live = false;
             voices[target].live = true;
             voices[target].dx7_note->transferState(*voices[note].dx7_note);

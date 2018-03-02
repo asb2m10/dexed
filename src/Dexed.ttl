@@ -488,7 +488,7 @@ The original engine comes from MSFA (music synthesizer for android) which is bas
         lv2:index 28 ;
         lv2:symbol "transpose" ;
         lv2:name "MIDDLE C" ;
-        lv2:default 24 ;
+        lv2:default 12 ;
         lv2:minimum 0 ;
         lv2:maximum 48 ;
 	lv2:portProperty lv2:integer ;
