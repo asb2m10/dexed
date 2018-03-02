@@ -11,6 +11,7 @@ OutputBaseFilename=DexedInstaller
 LicenseFile=..\..\..\LICENSE
 SetupLogging=yes
 ArchitecturesInstallIn64BitMode=x64
+AppPublisher=Digital Suburban
 
 [Types]
 Name: "full"; Description: "Full installation"
