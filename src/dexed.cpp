@@ -658,7 +658,7 @@ TRACE("pitch=%d, velo=%d\n",pitch,velo);
         return;
     }
 
-    pitch += data[144] - 12;
+    pitch += data[144] - 24;
     
     uint8_t note = currentNote;
     uint8_t keydown_counter=0;
@@ -710,7 +710,7 @@ void Dexed::keyup(uint8_t pitch) {
 TRACE("Hi");
 TRACE("pitch=%d\n",pitch);
 
-    pitch += data[144] - 12;
+    pitch += data[144] - 24;
 
     uint8_t note;
     for (note=0; note<max_notes; ++note) {
