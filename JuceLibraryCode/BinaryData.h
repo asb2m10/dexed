@@ -51,7 +51,7 @@ namespace BinaryData
     const int            about_pngSize = 24863;
 
     extern const char*   GlobalEditor_864x144_png;
-    const int            GlobalEditor_864x144_pngSize = 17334;
+    const int            GlobalEditor_864x144_pngSize = 16209;
 
     extern const char*   OperatorEditor_287x218_png;
     const int            OperatorEditor_287x218_pngSize = 10927;
