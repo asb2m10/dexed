@@ -282,7 +282,6 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
     if ( event.mods.isRightButtonDown() || event.mods.isAnyModifierKeyDown()) {
         PopupMenu popup;
 
-
         if ( parent->mappedMidiCC.containsValue(this) ) {
             popup.addItem(3, "Re-Map controller to midi CC for: " + String(label));
             popup.addSeparator();
@@ -293,8 +292,6 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
         }
         popup.addItem(2, "Clear midi CC mapping");
 
-
-        
         switch(popup.show()) {
             case 1:
                 parent->mappedMidiCC.removeValue(this);
