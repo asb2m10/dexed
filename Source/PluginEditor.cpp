@@ -353,7 +353,6 @@ public :
     
     ~MidiCCListener() {
         editor->processor->lastCCUsed.removeListener(this);
-
     }
     
     void valueChanged(Value &value) {
