@@ -220,10 +220,6 @@ void DXLookNFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int width, i
     g.drawImage(imageSlider, p, 0, 26, 26, 0, 0, 26, 26);
 }
 
-Font DXLookNFeel::getTextButtonFont(TextButton& button, int buttonHeight) {
-    return Font(Typeface::createSystemTypefaceFor(BinaryData::NotoSansBold_ttf, BinaryData::NotoSansBold_ttfSize));
-}
-
 void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
     ComboBox *src = &box;
 

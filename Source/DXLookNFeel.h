@@ -44,7 +44,7 @@ public:
                                 const Slider::SliderStyle, Slider&) override;
     virtual void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown) override;
-    virtual Font getTextButtonFont(TextButton&, int buttonHeight) override;
+    //virtual Font getTextButtonFont(TextButton&, int buttonHeight) override;
     virtual Typeface::Ptr getTypefaceForFont(const Font &) override;
     virtual void positionComboBoxText (ComboBox& box, Label& label) override;
 
