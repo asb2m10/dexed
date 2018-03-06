@@ -49,33 +49,26 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   Env::init_sr(rate);
   fx.init(rate);
 
-  if(!(engineMkI=new EngineMkI))
+  if(!(engineMkI=new (std::nothrow) EngineMkI))
   {
     TRACE("Cannot not create engine EngineMkI");
-    exit(400);
   }
-  if(!(engineOpl=new EngineOpl))
+  if(!(engineOpl=new (std::nothrow) EngineOpl))
   {
-    if(engineMkI)
-	delete(engineMkI);
+    delete(engineMkI);
     TRACE("Cannot not create engine EngineOpl");
-    exit(401);
   }
-  if(!(engineMsfa=new FmCore))
+  if(!(engineMsfa=new (std::nothrow) FmCore))
   {
-    if(engineMkI)
-	delete(engineMkI);
-    if(engineOpl)
-	delete(engineOpl);
+    delete(engineMkI);
+    delete(engineOpl);
     TRACE("Cannot create engine FmCore");
-    exit(402);
   }
 
   for(i=0; i<MAX_ACTIVE_NOTES; i++) {
-    if(!(voices[i].dx7_note = new Dx7Note))
+    if(!(voices[i].dx7_note = new (std::nothrow) Dx7Note))
     {
       TRACE("Cannot create DX7Note [%d]",i);
-      exit(403);
     } 
     voices[i].keydown = false;
     voices[i].sustained = false;
@@ -103,14 +96,10 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   bufsize_=256;
 
-  if(!(outbuf_=new float[bufsize_]))
-  {
+  if(!(outbuf_=new (std::nothrow) float[bufsize_]))
     TRACE("Cannot create outbuf_ buffer");
-    exit(404);
-  } 
 
   lfo.reset(data+137);
-
 
   setMonoMode(false);
 
@@ -133,25 +122,16 @@ Dexed::~Dexed()
 {
   TRACE("Hi");
 
-  if(outbuf_)
-    delete [] outbuf_;
+  delete [] outbuf_;
 
   currentNote = -1;
 
   for (uint8_t note = 0; note < MAX_ACTIVE_NOTES; ++note)
-  {
-    if(voices[note].dx7_note)
-    {
       delete voices[note].dx7_note;
-    } 
-  }
 
-  if(engineMsfa)
-    delete(engineMsfa);
-  if(engineOpl)
-    delete(engineOpl);
-  if(engineMkI)
-    delete(engineMkI);
+  delete(engineMsfa);
+  delete(engineOpl);
+  delete(engineMkI);
 
   TRACE("Bye");
   TRACE("--------------------------------------------------------------------------------");
