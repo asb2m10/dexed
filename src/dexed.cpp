@@ -50,9 +50,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
   fx.init(rate);
 
   if(!(engineMkI=new (std::nothrow) EngineMkI))
-  {
     TRACE("Cannot not create engine EngineMkI");
-  }
   if(!(engineOpl=new (std::nothrow) EngineOpl))
   {
     delete(engineMkI);
@@ -67,9 +65,7 @@ Dexed::Dexed(double rate) : lvtk::Synth<DexedVoice, Dexed>(p_n_ports, p_midi_in)
 
   for(i=0; i<MAX_ACTIVE_NOTES; i++) {
     if(!(voices[i].dx7_note = new (std::nothrow) Dx7Note))
-    {
       TRACE("Cannot create DX7Note [%d]",i);
-    } 
     voices[i].keydown = false;
     voices[i].sustained = false;
     voices[i].live = false;
