@@ -23,7 +23,7 @@ Name: "vst2_32"; Description: "32-bit VST2 Plugin (.dll)"; Types: full custom;
 Name: "vst2_64"; Description: "64-bit VST2 Plugin (.dll)"; Types: full custom;
 
 [Files]
-Source: "..\..\..\Builds\VisualStudio2017\Win32\Release\Standalone Plugin\Dexed.exe"; DestDir: "{app}"; Components:app; Flags: ignoreversion 
+Source: "..\..\..\Builds\VisualStudio2017\Win32\Release\Standalone Plugin\Dexed.exe"; DestDir: "{app}"; Components:app; Flags: ignoreversion recursesubdirs createallsubdirs 
 Source: "..\..\..\Builds\VisualStudio2017\Win32\Release\VST\Dexed.dll"; DestDir: {code:GetVST2Dir_32}; Components:vst2_32; Flags: ignoreversion 
 Source: "..\..\..\Builds\VisualStudio2017\x64\Release\VST\Dexed.dll"; DestDir: {code:GetVST2Dir_64}; Components:vst2_64; Flags: ignoreversion 
                    
