@@ -116,7 +116,7 @@ public:
         if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
             eg_mod = 127;
         
-        TRACE("amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
+        TRACE("controllers refresh>>> amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
     
     FmCore *core;
