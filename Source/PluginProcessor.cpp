@@ -144,7 +144,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
-    
+	controllers.refresh(); 
+
     sustain = false;
     extra_buf_size = 0;
 
@@ -386,6 +387,8 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     }
 }
 
+#define ACT(v) (v.keydown ? v.midi_note : -1)
+
 void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
         keyup(pitch);
@@ -435,6 +438,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     }
  
     voices[note].live = true;
+	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }
 
 void DexedAudioProcessor::keyup(uint8_t pitch) {
@@ -444,13 +448,14 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
         if ( voices[note].midi_note == pitch && voices[note].keydown ) {
             voices[note].keydown = false;
+			//TRACE("deactivate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
             break;
         }
     }
     
     // note not found ?
     if ( note >= MAX_ACTIVE_NOTES ) {
-        TRACE("note-off not found???");
+		TRACE("note found ??? %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
         return;
     }
     
