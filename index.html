@@ -29,11 +29,11 @@
           <a id="forkme_banner" href="https://github.com/asb2m10/dexed">View on GitHub</a>
 
           <h1 id="project_title">dexed</h1>
-          <h2 id="project_tagline">FM multi plaform/multi format plugin, version 0.9.3</h2>
+          <h2 id="project_tagline">FM multi plaform/multi format plugin, version 0.9.4</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/asb2m10/dexed/releases/download/v0.9.3/dexed-0.9.3-win.zip">Download Window plugin</a>
-              <a class="tar_download_link" href="https://github.com/asb2m10/dexed/releases/download/v0.9.3/dexed-0.9.3-osx.zip">Download OS X plugin</a>
+              <a class="zip_download_link" href="https://github.com/asb2m10/dexed/releases/download/v0.9.4/dexed-0.9.4-win.zip">Download Window plugin</a>
+              <a class="tar_download_link" href="https://github.com/asb2m10/dexed/releases/download/v0.9.4/dexed-0.9.4-osx.zip">Download OS X plugin</a>
             </section>
         </header>
     </div>
@@ -45,7 +45,7 @@
 <a id="dexed---fm-plugin-synth" class="anchor" href="#dexed---fm-plugin-synth" aria-hidden="true"><span class="octicon octicon-link"></span></a>dexed - FM Plugin Synth</h1>
 
 <p>Dexed is a multi platform, multi format plugin synth that is closely modeled on the <a href="http://en.wikipedia.org/wiki/Yamaha_DX7">Yamaha DX7</a>. Dexed is also a midi cartridge librarian/manager for the DX7.</p>
-<p>Dexed requires a AU/VST host (like <a href="http://www.hermannseib.com/english/savihost.htm">Savihost</a> or <a href="http://www.reaper.fm/">Reaper</a>) in order to run the plugin.</p>
+<p>Minimal documentation is available on <a href="https://github.com/asb2m10/dexed/wiki">Dexed Wiki</a>.</p>
 
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/wSs1-020nNY" frameborder="0" allowfullscreen></iframe></p>
 
@@ -104,69 +104,6 @@ available to be able to compare them easily.</p>
 <li>Modern : this is the original 24-bit music-synthesizer-for-android implementation.</li>
 <li>Mark I : Based on the OPL Series but at a higher resolution (LUT are 10-bits). The target of this engine is to be closest to the real DX7.</li>
 <li>OPL Series : this is an experimental implementation of the <a href="http://sourceforge.net/projects/peepeeplayer">reversed engineered OPL family chips</a>. 8-bit. Keep in mind that the envelopes stills needs tuning.</li>
-</ul>
-
-<h2>
-<a id="faq" class="anchor" href="#faq-possibly" aria-hidden="true"><span class="octicon octicon-link"></span></a>FAQ</h2>
-
-<ul>
-<li>Does Dexed works on OS X 10.6 ?<br>
-No, Apple makes it difficult for us to release new software with this old OS version. You can use an older version of Dexed that supports this Mac OS version : <a href="http://le-son666.com/software/dexed/dexed-0.9.0-osx.zip">dexed-0.9.0-osx.zip</a></li>
-<li>Does Dexed uses the same midi velocity range (0-100) as the original DX7 ?<br>
-No, the envelopes are based on the DX7II that are using the standard midi velocity range (0-127).</li>
-<li>Some notes seems stucked and/or generate sound indefinitly, is this a bug ?<br>
-The envelopes on the orignal DX7 can be programmed to played indefinitly. If you want to avoid any stuck notes, but sure to set L4 = 0 and R4 = 99.</li>
-<li>How can I find help/contact the author ?<br>
-If you have a generic question, you can use the <a href="http://www.kvraudio.com/forum/viewtopic.php?f=1&t=413885">kvraudio dedicated thread for dexed</a>. If you have found a bug, use the <a href="https://github.com/asb2m10/dexed/issues">github page to open a new issue</a>. I'm asb2m10 on kvraudio.</li>
-<li>Programmer/dsp enthusiast: I was expecting floating based 0.0->1.0 DSP stuff but when I read dexed code, the only thing I see are bit shifts and adds. What is going on ?<br>
-msfa / Dexed is an integer based synth engine, it uses the <a href="http://en.wikipedia.org/wiki/Q_%28number_format%29">Q** format</a>.</li></ul>
-
-
-<h2>
-<a id="using-as-a-dx7-editor" class="anchor" href="#using-as-a-dx7-editor" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using as a DX7 editor</h2>
-
-<p>You can use this plugin to edit your real DX7 patchs. Since midi sysex send/receive are quirky for the 
-majority of VST hosts, any sysex messages (editor messages) must be send or received with the external dexed
-midi interface. This is configurable in the "PARM" panel. By setting a DX7 in / DX7 out midi interface, 
-dexed will listen to specific program/cartridge changes from your DX7 and send controller/program/cartridge
-you edit.</p>
-
-<h3>
-<a id="prerequisite" class="anchor" href="#prerequisite" aria-hidden="true"><span class="octicon octicon-link"></span></a>Prerequisite</h3>
-
-<ul>
-<li>Before you use this interface, your DX7 must be configured to send or receive sysex messages. Do this by hitting [FUNCTION] and [8] button </li>
-<li>Check the midi channel. By reading some of DX7 literature, most DX7 are supposed to support only 1 channel. Unless you are running a cluster of DX7, you should keep this to 1.</li>
-<li>Press [8] again and you should see: "SYS INFO AVAIL" or "SYS INFO UNAVAIL". Keep it to "SYS INFO AVAIL" to be able to receive sysex messages. This step is not required on a TX7.</li>
-<li>You need to remove MEMORY PROTECT on the internal or cartridge memory to be able to receive a dexed 32 voice bulk dump. This is done by using the [MEMORY PROTECT] button and then by pushing [NO].</li>
-</ul>
-
-<h3>
-<a id="to-send-to-your-dx7" class="anchor" href="#to-send-to-your-dx7" aria-hidden="true"><span class="octicon octicon-link"></span></a>To send to your DX7</h3>
-
-<ul>
-<li>If the midi out port is configured, any parameter change will be sent to your DX7.</li>
-<li>You can send any program/cartridge in the "CART" window by using the context (right-click) menu.</li>
-</ul>
-
-<h3>
-<a id="to-receive-from-your-dx7" class="anchor" href="#to-receive-from-your-dx7" aria-hidden="true"><span class="octicon octicon-link"></span></a>To receive from your DX7</h3>
-
-<ul>
-<li>The midi in port must be configured.</li>
-<li>Receive a program by using [MEMORY SELECT] then the program you want to transmit ([1] to [32]). </li>
-<li>Receive a cartridge by pressing [FUNCTION] then 3 times on [8] you should see " MIDI TRANSMIT ? ". If you hit yes, dexed should receive the complete cartridge.</li>
-</ul>
-
-<h3>
-<a id="troubleshooting" class="anchor" href="#troubleshooting" aria-hidden="true"><span class="octicon octicon-link"></span></a>Troubleshooting</h3>
-
-<ul>
-<li>If you play on your DX7 keyboard, the |DX7 In| light should be flashing. Use this to test the midi in communication.</li>
-<li>If the data sent is corrupted (wrong checksum, DX7 crash), it might be the midi interface implementation. Default Windows USB midi driver are known to send corrupt sysex data. If it is the case, use a third party device (like the midiman uno) that have his own USB driver.</li>
-<li>If you are unable to open the interface (error message after the using the [PARM] dialog), it might be because the midi driver doesn't support multiple clients (common on Windows). Be sure that there are no other applications that are using the same midi interface. </li>
-</ul>
-
 </ul>
       </section>
     </div>
