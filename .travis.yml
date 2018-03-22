@@ -1,3 +1,8 @@
 language: cpp
+
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -qq libasound2-dev libxinerama-dev
+
 script: cd Builds/Linux/; make
 
