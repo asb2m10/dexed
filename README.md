@@ -1,6 +1,8 @@
 Dexed - FM Plugin Synth
 =======================
 
+[![Build Status](https://travis-ci.org/asb2m10/dexed.svg?branch=master](https://travis-ci.org/asb2m10/dexed)] 
+
 Please see [Dexed User Website](http://asb2m10.github.io/dexed) for user and download information.
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
@@ -17,6 +19,9 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.4HF1
+* Fixed sysex messages with unwanted pitch bend
+
 #### Version 0.9.4
 * Standalone application version of Dexed
 * Midi learn support for midi CC messages

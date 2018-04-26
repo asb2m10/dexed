@@ -379,11 +379,11 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
         return;
-            
-    }
-
-    if ( cmd & 0xe0 ) {
-       controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
+        
+		// pitchbend
+		case 0xe0 :
+			controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
+		return;
     }
 }
 
