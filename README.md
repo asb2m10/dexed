@@ -1,7 +1,7 @@
 Dexed - FM Plugin Synth
 =======================
 
-[![Build status][travis-badge]][travis-link]
+[![Build Status](https://travis-ci.org/asb2m10/dexed.svg?branch=master)](https://travis-ci.org/asb2m10/dexed)
 
 Please see [Dexed User Website](http://asb2m10.github.io/dexed) for user and download information.
 
