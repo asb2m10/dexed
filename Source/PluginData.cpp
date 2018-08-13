@@ -228,6 +228,7 @@ void DexedAudioProcessor::resetToInitVoice() {
     for(int i=0;i<sizeof(init_voice);i++) {
         data[i] = init_voice[i];
     }
+    unpackOpSwitch(0x3F);
     panic();
     triggerAsyncUpdate();
 }
