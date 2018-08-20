@@ -215,6 +215,7 @@ void Ctrl::bind(Slider *s) {
     updateComponent();
     s->addListener(this);
     s->addMouseListener(this, true);
+    s->setVelocityModeParameters (0.1, 1, 0.05, 1);
 }
 
 void Ctrl::bind(Button *b) {
