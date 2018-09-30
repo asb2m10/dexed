@@ -215,7 +215,7 @@ void Ctrl::bind(Slider *s) {
     updateComponent();
     s->addListener(this);
     s->addMouseListener(this, true);
-    s->setVelocityModeParameters (0.1, 1, 0.05, 1);
+    s->setVelocityModeParameters (0.1, 1, 0.05, 1, ModifierKeys::shiftModifier);
 }
 
 void Ctrl::bind(Button *b) {
@@ -280,7 +280,7 @@ void Ctrl::mouseEnter(const juce::MouseEvent &event) {
 }
 
 void Ctrl::mouseDown(const juce::MouseEvent &event) {
-    if ( event.mods.isRightButtonDown() || event.mods.isAnyModifierKeyDown()) {
+    if ( event.mods.isPopupMenu()) {
         PopupMenu popup;
 
         if ( parent->mappedMidiCC.containsValue(this) ) {
