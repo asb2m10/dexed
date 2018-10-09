@@ -213,7 +213,7 @@ void CartManager::fileDoubleClicked(const File& file) {
 }
 
 void CartManager::fileClicked(const File& file, const MouseEvent& e) {
-    if ( e.mods.isRightButtonDown() || e.mods.isAnyModifierKeyDown() ) {
+    if ( e.mods.isPopupMenu()) {
         PopupMenu menu;
         
         menu.addItem(1000, "Open location");

@@ -641,7 +641,7 @@ void GlobalEditor::setMonoState(bool state)  {
 }
 
 void GlobalEditor::mouseDown(const MouseEvent &e) {
-    if ( e.mods.isRightButtonDown() || e.mods.isAnyModifierKeyDown() ) {
+    if ( e.mods.isPopupMenu()) {
         PopupMenu popup;
         popup.addItem(1, "Send current program to DX7");
         if ( popup.show() == 1 )

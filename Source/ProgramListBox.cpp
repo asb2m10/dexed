@@ -107,7 +107,7 @@ void ProgramListBox::mouseDown(const MouseEvent &event) {
     
     int pos = programPosition(event.getMouseDownX(), event.getMouseDownY());
 
-    if ( event.mods.isRightButtonDown() || event.mods.isAnyModifierKeyDown() ) {
+    if ( event.mods.isPopupMenu()) {
         listener->programRightClicked(this, pos);
         return;
     }
