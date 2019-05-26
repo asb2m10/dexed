@@ -94,6 +94,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
     normalizeDxVelocity = false;
     sysexComm.listener = this;
     showKeyboard = true;
+    preferMidiKeyboardFocus = true;
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
     setEngineType(DEXED_ENGINE_MARKI);
