@@ -27,12 +27,13 @@
 #include "DXComponents.h"
 #include "DXLookNFeel.h"
 #include "CartManager.h"
+#include "DexedMidiKeyboardComponent.h"
 
 //==============================================================================
 /**
 */
 class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer {
-    MidiKeyboardComponent midiKeyboard;
+    DexedMidiKeyboardComponent midiKeyboard;
     OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;

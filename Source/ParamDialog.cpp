@@ -77,6 +77,8 @@ ParamDialog::ParamDialog ()
 
     addAndMakeVisible (showKeyboard = new ToggleButton ("showKeyboard"));
     showKeyboard->setButtonText (String());
+    addAndMakeVisible (preferMidiKeyboardFocus = new ToggleButton ("preferMidiKeyboardFocus"));
+    preferMidiKeyboardFocus->setButtonText (String());
 
     addAndMakeVisible (whlRange = new Slider ("whlRange"));
     whlRange->setRange (0, 99, 1);
@@ -188,6 +190,7 @@ ParamDialog::~ParamDialog()
     sysexChl = nullptr;
     engineReso = nullptr;
     showKeyboard = nullptr;
+    preferMidiKeyboardFocus = nullptr;
     whlRange = nullptr;
     ftRange = nullptr;
     brRange = nullptr;
@@ -255,7 +258,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 20, y = 156, width = 276, height = 23;
+        int x = 20, y = 196, width = 276, height = 23;
         String text (TRANS("Engine Resolution"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -267,7 +270,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 22, y = 138, width = 306, height = 1;
+        int x = 22, y = 178, width = 306, height = 1;
         Colour fillColour = Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -276,7 +279,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 22, y = 195, width = 306, height = 1;
+        int x = 22, y = 235, width = 306, height = 1;
         Colour fillColour = Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -287,6 +290,18 @@ void ParamDialog::paint (Graphics& g)
     {
         int x = 20, y = 96, width = 276, height = 23;
         String text (TRANS("Show Keyboard"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
+    {
+        int x = 20, y = 136, width = 276, height = 23;
+        String text (TRANS("Prefer Midi Keyboard Focus"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -416,8 +431,9 @@ void ParamDialog::resized()
     sysexIn->setBounds (104, 224, 224, 24);
     sysexOut->setBounds (104, 264, 224, 24);
     sysexChl->setBounds (264, 304, 72, 24);
-    engineReso->setBounds (160, 156, 168, 24);
+    engineReso->setBounds (160, 196, 168, 24);
     showKeyboard->setBounds (264, 96, 56, 24);
+    preferMidiKeyboardFocus->setBounds (264, 136, 56, 24);
     whlRange->setBounds (448, 16, 72, 24);
     ftRange->setBounds (448, 56, 72, 24);
     brRange->setBounds (448, 96, 72, 24);
@@ -583,7 +599,7 @@ void ParamDialog::buttonClicked (Button* buttonThatWasClicked)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey) {
+void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey, bool preferKeyFocus) {
     pitchRange->setValue(c.values_[kControllerPitchRange]);
     pitchStep->setValue(c.values_[kControllerPitchStep]);
     sysexChl->setValue(mgr.getChl() + 1);
@@ -621,9 +637,10 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 
     engineReso->setSelectedItemIndex(reso);
     showKeyboard->setToggleState(showKey, NotificationType::dontSendNotification);
+    preferMidiKeyboardFocus->setToggleState(preferKeyFocus, NotificationType::dontSendNotification);
 }
 
-bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey) {
+bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey, bool *preferKeyFocus) {
     bool ret = true;
 
     c.values_[kControllerPitchRange] = pitchRange->getValue();
@@ -659,6 +676,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
     *reso = engineReso->getSelectedItemIndex();
     *showKey = showKeyboard->getToggleState();
+    *preferKeyFocus = preferMidiKeyboardFocus->getToggleState();
     return ret;
 }
 

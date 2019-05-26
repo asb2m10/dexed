@@ -134,6 +134,7 @@ public :
     bool forceRefreshUI;
     float vuSignal;
     bool showKeyboard;
+    bool preferMidiKeyboardFocus;
     int getEngineType();
     void setEngineType(int rs);
     

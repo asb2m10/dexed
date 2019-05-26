@@ -24,6 +24,7 @@
 #include "ParamDialog.h"
 #include "SysexComm.h"
 #include "Dexed.h"
+#include "DexedMidiKeyboardComponent.h"
 #include "math.h"
 #include <fstream>
 
@@ -32,7 +33,8 @@
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
-    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard, 
+        ownerFilter->showKeyboard, ownerFilter->preferMidiKeyboardFocus),
     cartManager(this)
 {
     setSize(866, ownerFilter->showKeyboard ? 674 : 581);
@@ -159,7 +161,8 @@ void DexedAudioProcessorEditor::parmShow() {
     AlertWindow window("","", AlertWindow::NoIcon, this);
     ParamDialog param;
     param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
-    param.setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
+    param.setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, 
+        processor->preferMidiKeyboardFocus);
 
     window.addCustomComponent(&param);
     window.addButton("OK", 0);
@@ -167,11 +170,14 @@ void DexedAudioProcessorEditor::parmShow() {
     if ( window.runModalLoop() != 0 )
         return;
     
-    bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &tp, &processor->showKeyboard);
+    bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &tp, &processor->showKeyboard, 
+        &processor->preferMidiKeyboardFocus);
     processor->setEngineType(tp);
     processor->savePreference();
     
     setSize(866, processor->showKeyboard ? 674 : 581);
+    midiKeyboard.setShowKeyboard(processor->showKeyboard);
+    midiKeyboard.setPreferMidiKeyboardFocus(processor->preferMidiKeyboardFocus);
     midiKeyboard.repaint();
     
     if ( ret == false ) {

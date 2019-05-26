@@ -767,6 +767,10 @@ void DexedAudioProcessor::loadPreference() {
         showKeyboard = prop.getIntValue( String("showKeyboard") );
     }
 
+    if ( prop.containsKey( String("preferMidiKeyboardFocus") ) ) {
+        preferMidiKeyboardFocus = prop.getIntValue( String("preferMidiKeyboardFocus") );
+    }
+
     if ( prop.containsKey( String("wheelMod") ) ) {
         controllers.wheel.parseConfig(prop.getValue(String("wheelMod")).toRawUTF8());
     }
@@ -800,6 +804,7 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("sysexChl"), sysexComm.getChl());
     
     prop.setValue(String("showKeyboard"), showKeyboard);
+    prop.setValue(String("preferMidiKeyboardFocus"), preferMidiKeyboardFocus);
 
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
