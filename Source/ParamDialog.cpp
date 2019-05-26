@@ -301,7 +301,7 @@ void ParamDialog::paint (Graphics& g)
 
     {
         int x = 20, y = 136, width = 276, height = 23;
-        String text (TRANS("Prefer Midi Keyboard Focus"));
+        String text (TRANS("Prefer MIDI Keyboard Focus"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
