@@ -236,6 +236,8 @@ public :
     static File dexedCartDir;
     
     Value lastCCUsed;
+    int lastKeyDown;
+
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
