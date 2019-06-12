@@ -47,8 +47,16 @@ bool DexedMidiKeyboardComponent::getPreferMidiKeyboardFocus() {
 void DexedMidiKeyboardComponent::focusLost(FocusChangeType focusChangeType) {
     MidiKeyboardComponent::focusLost(focusChangeType);
     
-    // Only keep the keyboard focused if it is set to be visible too.
-    if (showKeyboard == true && preferMidiKeyboardFocus == true) {
+    /* Get the component that grabbed focus away from the keyboard.
+     * If the method returns null, it is not a Dexed component.
+     */
+    Component *currentlyFocusedComponent = getCurrentlyFocusedComponent();
+    bool currentlyFocusedComponentIsADexedComponent = currentlyFocusedComponent != NULL;
+    
+    // Only take the keyboard focus back if focus was lost to a Dexed component and if it is visible.
+    if (currentlyFocusedComponentIsADexedComponent == true 
+        && showKeyboard == true 
+        && preferMidiKeyboardFocus == true) {
         grabKeyboardFocus();
     }
 }
