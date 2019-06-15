@@ -97,6 +97,7 @@ OBJECTS_SHARED_CODE := \
   $(JUCE_OBJDIR)/PluginFx_d84f776e.o \
   $(JUCE_OBJDIR)/EngineMkI_615efdaa.o \
   $(JUCE_OBJDIR)/EngineOpl_d5a0e5ea.o \
+  $(JUCE_OBJDIR)/DexedMidiKeyboardComponent_1761D120.o \
   $(JUCE_OBJDIR)/PluginEditor_94d4fb09.o \
   $(JUCE_OBJDIR)/CartManager_8ad0044e.o \
   $(JUCE_OBJDIR)/ProgramListBox_58735432.o \
@@ -185,6 +186,11 @@ $(JUCE_OBJDIR)/EngineMkI_615efdaa.o: ../../Source/EngineMkI.cpp
 $(JUCE_OBJDIR)/EngineOpl_d5a0e5ea.o: ../../Source/EngineOpl.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling EngineOpl.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/DexedMidiKeyboardComponent_1761D120.o: ../../Source/DexedMidiKeyboardComponent.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling DexedMidiKeyboardComponent.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_SHARED_CODE) $(JUCE_CFLAGS_SHARED_CODE) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/PluginEditor_94d4fb09.o: ../../Source/PluginEditor.cpp

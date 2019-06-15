@@ -47,8 +47,8 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard);
-    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard);
+    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard, bool preferMidiKeyboardFocus);
+    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard, bool *preferMidiKeyboardFocus);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -71,6 +71,7 @@ private:
     ScopedPointer<Slider> sysexChl;
     ScopedPointer<ComboBox> engineReso;
     ScopedPointer<ToggleButton> showKeyboard;
+    ScopedPointer<ToggleButton> preferMidiKeyboardFocus;
     ScopedPointer<Slider> whlRange;
     ScopedPointer<Slider> ftRange;
     ScopedPointer<Slider> brRange;
