@@ -18,6 +18,8 @@
 
 //#define JUCE_CORETEXT_AVAILABLE 0
 
+#define JUCE_ALSA_MIDI_NAME "Dexed"
+
 // [END_USER_CODE_SECTION]
 
 /*
