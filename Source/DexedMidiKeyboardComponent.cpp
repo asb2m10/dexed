@@ -21,7 +21,11 @@
 #include "DexedMidiKeyboardComponent.h"
 
 //==============================================================================
-DexedMidiKeyboardComponent::DexedMidiKeyboardComponent(MidiKeyboardState& s, Orientation o, bool showKey, bool preferKeyFocus)
+DexedMidiKeyboardComponent::DexedMidiKeyboardComponent(
+    MidiKeyboardState& s, 
+    Orientation o, 
+    bool showKey, 
+    bool preferKeyFocus)
     : MidiKeyboardComponent(s, o), showKeyboard(showKey), preferMidiKeyboardFocus(preferKeyFocus) {
 }
 
@@ -47,26 +51,26 @@ bool DexedMidiKeyboardComponent::getPreferMidiKeyboardFocus() {
 void DexedMidiKeyboardComponent::focusLost(FocusChangeType focusChangeType) {
     MidiKeyboardComponent::focusLost(focusChangeType);
 
+    if (shouldKeepKeyboardFocus() == true)
+        grabKeyboardFocus();
+}
+
+bool DexedMidiKeyboardComponent::shouldKeepKeyboardFocus() {
+    // Return early if we're not interested in keeping focus.
+    if (showKeyboard == false || preferMidiKeyboardFocus == false)
+        return false;
+
     /* Get the component that grabbed focus away from the keyboard.
      * If the method returns null, it is not a Dexed component.
      */
     Component *currentlyFocusedComponent = getCurrentlyFocusedComponent();
     bool currentlyFocusedComponentIsNotADexedComponent = currentlyFocusedComponent == NULL;
 
-    // Return early if focus was lost to another application.
-    if (currentlyFocusedComponentIsNotADexedComponent == true) {
-        return;
-    }
+    if (currentlyFocusedComponentIsNotADexedComponent == true)
+        return false;
 
-    // If the parameters window is opened, grabbing keyboard focus back can push it behind the Dexed window.
-    bool parmButtonClicked = currentlyFocusedComponent->getName() == "parmButton";
+    bool currentlyFocusedComponentShouldHaveFocus = 
+        componentsThatShouldHaveFocus.contains(currentlyFocusedComponent->getName());
 
-    bool shouldGrabKeyboardFocus =
-        parmButtonClicked != true
-        && showKeyboard == true
-        && preferMidiKeyboardFocus == true;
-
-    if (shouldGrabKeyboardFocus == true) {
-        grabKeyboardFocus();
-    }
+    return currentlyFocusedComponentShouldHaveFocus != true;
 }

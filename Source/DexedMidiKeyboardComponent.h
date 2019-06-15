@@ -26,13 +26,14 @@
 class DexedMidiKeyboardComponent : public MidiKeyboardComponent
 {
 public:
-    DexedMidiKeyboardComponent(MidiKeyboardState& state, 
-                               Orientation orientation, 
-                               bool showKeyboard, 
-                               bool preferMidiKeyboardFocus);
+    DexedMidiKeyboardComponent(
+        MidiKeyboardState& state, 
+        Orientation orientation, 
+        bool showKeyboard, 
+        bool preferMidiKeyboardFocus);
 
     ~DexedMidiKeyboardComponent();
-    
+
     void setShowKeyboard(bool showKeyboard);
     void setPreferMidiKeyboardFocus(bool preferMidiKeyboardFocus);
     bool getShowKeyboard();
@@ -40,8 +41,10 @@ public:
     void focusLost(FocusChangeType) override;
 
 private:
+    bool shouldKeepKeyboardFocus();
     bool showKeyboard;
     bool preferMidiKeyboardFocus;
+    const juce::StringArray componentsThatShouldHaveFocus = { "parmButton", "storeButton", "aboutButton" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedMidiKeyboardComponent)
 };
