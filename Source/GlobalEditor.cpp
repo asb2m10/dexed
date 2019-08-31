@@ -28,7 +28,7 @@
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 
 /**
- * Ugly but usefull midi monitor to know if you are really sending/receiving something from the DX7
+ * Ugly but useful midi monitor to know if you are really sending/receiving something from the DX7
  * If the midi is not configured this component wont show up
  *
 class MidiMonitor : public Component {

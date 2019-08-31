@@ -421,7 +421,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     if ( monoMode ) {
         for(int i=0; i<MAX_ACTIVE_NOTES; i++) {            
             if ( voices[i].live ) {
-                // all keys are up, only transfert signal
+                // all keys are up, only transfer signal
                 if ( ! voices[i].keydown ) {
                     voices[i].live = false;
                     voices[note].dx7_note->transferSignal(*voices[i].dx7_note);

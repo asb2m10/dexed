@@ -101,7 +101,7 @@ void Cartridge::packProgram(uint8_t *src, int idx, String name, char *opSwitch) 
 
 /**
  * This function normalize data that comes from corrupted sysex.
- * It used to avoid engine crashing upon extrem values
+ * It used to avoid engine crashing upon extreme values
  */
 char normparm(char value, char max, int id) {
     if ( value <= max && value >= 0 )
@@ -360,7 +360,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     ScopedPointer<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
     
     if (root == nullptr) {
-        TRACE("unkown state format");
+        TRACE("unknown state format");
         return;
     }
     
@@ -405,7 +405,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     var program = blobSet["program"];
     
     if ( sysex_blob.isVoid() || program.isVoid() ) {
-        TRACE("unkown serialized blob data");
+        TRACE("unknown serialized blob data");
         return;
     }
     

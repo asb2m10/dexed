@@ -305,7 +305,7 @@ void Dx7Note::peekVoiceStatus(VoiceStatus &status) {
 }
 
 /**
- * Used in monophonic mode to transfert voice state from different notes
+ * Used in monophonic mode to transfer voice state from different notes
  */
 void Dx7Note::transferState(Dx7Note &src) {
     for (int i=0;i<6;i++) {
