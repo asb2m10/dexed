@@ -3,11 +3,11 @@ Dexed - FM Plugin Synth
 
 [![Build Status](https://travis-ci.org/asb2m10/dexed.svg?branch=master)](https://travis-ci.org/asb2m10/dexed)
 
-Please see [Dexed User Website](http://asb2m10.github.io/dexed) for user and download information.
+Please see [Dexed User Website](https://asb2m10.github.io/dexed) for user and download information.
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
 Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android) 
-for the synth engine and [JUCE](http://www.juce.com) as an application/plugin wrapper.
+for the synth engine and [JUCE](https://www.juce.com) as an application/plugin wrapper.
 
 The goal of this project is to be a tool/companion for the original DX7. Sound engine 
 with 'float' value parameters, different waveform à la TX81z would be great but anything that 
