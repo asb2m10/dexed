@@ -22,6 +22,7 @@
 #define PLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "../../MTS/libMTSClient.h"
 
 #include "msfa/controllers.h"
 #include "msfa/dx7note.h"
@@ -236,6 +237,8 @@ public :
     static File dexedCartDir;
     
     Value lastCCUsed;
+    
+    MTSClient *mtsClient;
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

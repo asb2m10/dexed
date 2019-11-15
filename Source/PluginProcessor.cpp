@@ -112,6 +112,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     midiMsg = NULL;
 
     clipboardContent = -1;
+    
+    mtsClient = MTS_RegisterClient();
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -121,6 +123,7 @@ DexedAudioProcessor::~DexedAudioProcessor() {
 		delete tmp;
 	}
     TRACE("Bye");
+    MTS_DeregisterClient(mtsClient);
 }
 
 //==============================================================================
@@ -235,6 +238,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
+                    voices[note].dx7_note->updateBasePitches();
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
                     
                     for (int j=0; j < N; ++j) {
@@ -302,6 +306,7 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     if ( msg->isSysEx() ) {
+        if (mtsClient) MTS_ParseMIDIDataU(mtsClient, msg->getRawData(), msg->getRawDataSize());
         handleIncomingMidiMessage(NULL, *msg);
         return;
     }
@@ -410,7 +415,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo);
+            voices[note].dx7_note->init(data, pitch, velo, mtsClient);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;

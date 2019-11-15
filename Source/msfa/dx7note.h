@@ -27,6 +27,7 @@
 #include "env.h"
 #include "pitchenv.h"
 #include "fm_core.h"
+#include "../../MTS/libMTSClient.h"
 
 struct VoiceStatus {
     uint32_t amp[6];
@@ -37,8 +38,8 @@ struct VoiceStatus {
 class Dx7Note {
 public:
     Dx7Note();
-    void init(const uint8_t patch[156], int midinote, int velocity);
-    
+    void init(const uint8_t patch[156], int midinote, int velocity, MTSClient *mtsc);
+
     // Note: this _adds_ to the buffer. Interesting question whether it's
     // worth it...
     void compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
@@ -53,6 +54,7 @@ public:
     
     // PG:add the update
     void update(const uint8_t patch[156], int midinote, int velocity);
+    void updateBasePitches();
     void peekVoiceStatus(VoiceStatus &status);
     void transferState(Dx7Note& src);
     void transferSignal(Dx7Note &src);
@@ -72,6 +74,13 @@ private:
     int algorithm_;
     int pitchmoddepth_;
     int pitchmodsens_;
+    
+    const uint8_t *currentPatch;
+    int note;
+    double mtsFreq;
+    
+    MTSClient *mtsClient;
+
 };
 
 #endif  // SYNTH_DX7NOTE_H_
