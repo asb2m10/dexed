@@ -72,7 +72,10 @@ int32_t Env::getsample() {
 #endif
 
     if (ix_ < 3 || ((ix_ < 4) && !down_)) {
-        if (rising_) {
+        if (staticcount_) {
+            ;
+        }
+        else if (rising_) {
             const int jumptarget = 1716;
             if (level_ < (jumptarget << 16)) {
                 level_ = jumptarget << 16;
@@ -83,9 +86,6 @@ int32_t Env::getsample() {
                 level_ = targetlevel_;
                 advance(ix_ + 1);
             }
-        }
-        else if (staticcount_) {
-            ;
         }
         else {  // !rising
             level_ -= inc_;
@@ -127,7 +127,7 @@ void Env::advance(int newix) {
         qrate = min(qrate, 63);
 
 #ifdef ACCURATE_ENVELOPE
-        if (targetlevel_ == level_) {
+        if (targetlevel_ == level_ || (ix_ == 0 && newlevel == 0)) {
             // approximate number of samples at 44.100 kHz to achieve the time
             // empirically gathered using 2 TF1s, could probably use some double-checking
             // and cleanup, but it's pretty close for now.
@@ -135,6 +135,9 @@ void Env::advance(int newix) {
             staticrate += rate_scaling_; // needs to be checked, as well, but seems correct
             staticrate = min(staticrate, 99);
             staticcount_ = staticrate < 77 ? statics[staticrate] : 20 * (99 - staticrate);
+            if (staticrate < 77 && (ix_ == 0 && newlevel == 0)) {
+                staticcount_ /= 20; // attack is scaled faster
+            }
             staticcount_ = (int)(((int64_t)staticcount_ * (int64_t)sr_multiplier) >> 24);
         }
         else {
