@@ -267,6 +267,7 @@
     <Lib />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\MTS\libMTSClient.cpp" />
     <ClCompile Include="..\..\Source\PluginFx.cpp" />
     <ClCompile Include="..\..\Source\EngineMkI.cpp" />
     <ClCompile Include="..\..\Source\EngineOpl.cpp" />
@@ -1945,6 +1946,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\MTS\libMTSClient.h" />
     <ClInclude Include="..\..\Source\PluginFx.h" />
     <ClInclude Include="..\..\Source\EngineMkI.h" />
     <ClInclude Include="..\..\Source\EngineOpl.h" />

@@ -364,6 +364,9 @@
     <Filter Include="JUCE Library Code">
       <UniqueIdentifier>{7ED5A90E-41AF-A1EF-659B-37CEEAB9BA61}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MTS">
+      <UniqueIdentifier>{6b926ccc-1edc-4667-842b-6ca09d47a072}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\PluginFx.cpp">
@@ -2117,6 +2120,9 @@
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp">
       <Filter>JUCE Library Code</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\MTS\libMTSClient.cpp">
+      <Filter>MTS</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -4129,6 +4135,9 @@
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h">
       <Filter>JUCE Library Code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\MTS\libMTSClient.h">
+      <Filter>MTS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
