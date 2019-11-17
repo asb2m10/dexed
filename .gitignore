@@ -7,3 +7,4 @@ Builds/VisualStudio2017/Dexed.vcxproj.filters
 Builds/VisualStudio2017/
 .vs/
 *.exe
+Builds/MacOSX/build
