@@ -320,7 +320,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         return;
 
         case 0x90 :
-            keydown(buf[1], buf[2]);
+            if (!MTS_ShouldFilterNote(mtsClient, buf[1]) || !buf[2]) keydown(buf[1], buf[2]);
         return;
             
         case 0xb0 : {

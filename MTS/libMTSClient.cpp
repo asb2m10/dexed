@@ -21,10 +21,11 @@ typedef void (*mts_pv)(void*);
 typedef const char *(*mts_pcc)(void);
 typedef const double *(*mts_cd)(void);
 typedef bool (*mts_bool)(void);
+typedef bool (*mts_boolchar)(char);
 
 struct mtsclientglobal
 {
-    mtsclientglobal() : RegisterClient(0), DeregisterClient(0), GetScaleName(0), GetTuning(0), HasMaster(0), esp_retuning(0)
+    mtsclientglobal() : RegisterClient(0), DeregisterClient(0), GetScaleName(0), GetTuning(0), HasMaster(0), ShouldFilterNote(0), esp_retuning(0)
     {
         for (int i=0;i<128;i++) iet[i]=1.0/(440.0*pow(2.0,(i-69.0)/12.0));
         load_lib();
@@ -32,7 +33,7 @@ struct mtsclientglobal
     }
     virtual inline bool isOnline() const {return esp_retuning && HasMaster && HasMaster();}
     
-    mts_pv RegisterClient,DeregisterClient;mts_pcc GetScaleName;mts_cd GetTuning;mts_bool HasMaster;    // Interface to lib
+    mts_pv RegisterClient,DeregisterClient;mts_pcc GetScaleName;mts_cd GetTuning;mts_bool HasMaster;mts_boolchar ShouldFilterNote;    // Interface to lib
     double iet[128];const double *esp_retuning;    // tuning tables
     
 #ifdef _WIN32
@@ -52,6 +53,7 @@ struct mtsclientglobal
         GetScaleName     =(mts_pcc)GetProcAddress(handle,"MTS_GetScaleName");
         GetTuning        =(mts_cd)GetProcAddress(handle,"MTS_GetTuningTable");
         HasMaster        =(mts_bool)GetProcAddress(handle,"MTS_HasMaster");
+        ShouldFilterNote =(mts_boolchar)GetProcAddress(handle,"MTS_ShouldFilterNote");
     }
     virtual ~mtsclientglobal() {FreeLibrary(handle);}
     HINSTANCE handle;
@@ -63,6 +65,7 @@ struct mtsclientglobal
         GetScaleName     =(mts_pcc)dlsym(handle,"MTS_GetScaleName");
         GetTuning        =(mts_cd)dlsym(handle,"MTS_GetTuningTable");
         HasMaster        =(mts_bool)dlsym(handle,"MTS_HasMaster");
+        ShouldFilterNote =(mts_boolchar)dlsym(handle,"MTS_ShouldFilterNote");
     }
     virtual ~mtsclientglobal() {dlclose(handle);}
     void *handle;
@@ -80,11 +83,8 @@ struct MTSClient
     }
     ~MTSClient() {if (global.DeregisterClient) global.DeregisterClient((void*)this);}
     bool hasMaster() {return global.isOnline();}
-    inline double freq(int note) const
-    {
-        if (global.isOnline()) return global.esp_retuning[note&127];
-        return retuning[note&127];
-    }
+    inline double freq(int note) const {return global.isOnline()?global.esp_retuning[note&127]:retuning[note&127];}
+    inline bool shouldFilterNote(char midinote) const {return global.ShouldFilterNote?global.ShouldFilterNote(midinote):false;}
     inline void parseMIDIData(const unsigned char *buffer,int len)
     {
         int sysex_ctr=0,sysex_value=0,note=0,numTunings=0;
@@ -219,6 +219,7 @@ struct MTSClient
 };
 
 // Exported functions:
+bool MTS_ShouldFilterNote(MTSClient* c,char midinote) {return c?c->shouldFilterNote(midinote&127):false;}
 double MTS_NoteToFrequency(MTSClient* c,char midinote) {return c?c->freq(midinote):(1.0/global.iet[midinote&127]);}
 double MTS_RetuningAsRatio(MTSClient* c,char midinote) {return c?c->freq(midinote)*global.iet[midinote&127]:1.0;}
 double MTS_RetuningInSemitones(MTSClient* c,char midinote) {return ratioToSemitones*log(MTS_RetuningAsRatio(c,midinote));}
