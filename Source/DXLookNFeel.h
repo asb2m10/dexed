@@ -33,7 +33,7 @@ public:
     Image imageSwitchOperator;
     Image imageOperator, imageGlobal;
 
-    /* overriden methods */
+    /* overridden methods */
     virtual void drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,  Slider &slider ) override;
     virtual void drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown) override;
     virtual void drawLinearSliderBackground (Graphics&, int x, int y, int width, int height,

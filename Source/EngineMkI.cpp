@@ -339,7 +339,7 @@ void EngineMkI::render(int32_t *output, FmOpParams *params, int algorithm, int32
                             op++; // ignore next operator;
                             break;
                         default:
-                            // one operator feedback, normal proces
+                            // one operator feedback, normal process
                             compute_fb(outptr, param.phase, param.freq, gain1, gain2, fb_buf, feedback_shift, add);
                             break;
                     }

@@ -92,7 +92,7 @@ public:
     
     /**
      * Loads sysex stream
-     * Returns 0 if it was parsed sucessfully
+     * Returns 0 if it was parsed successfully
      * Returns -1 if it cannot open the stream
      */
     int load(InputStream &fis) {
@@ -105,7 +105,7 @@ public:
     
     /**
      * Loads sysex buffer
-     * Returns 0 if it was parsed sucessfully
+     * Returns 0 if it was parsed successfully
      * Returns 1 if sysex checksum didn't match
      * Returns 2 if no sysex data found, probably random data
      */
@@ -183,7 +183,7 @@ public:
         int sz = fis->read(buffer, 65535);
         delete fis;
         
-        // if the file is smaller than 4104, it probably needs to be overriden.
+        // if the file is smaller than 4104, it probably needs to be overridden.
         if ( sz <= 4104 ) {
             return f.replaceWithData(voiceData, SYSEX_SIZE);
         }
