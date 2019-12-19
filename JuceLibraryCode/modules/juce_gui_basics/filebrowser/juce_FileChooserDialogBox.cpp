@@ -94,8 +94,9 @@ FileChooserDialogBox::FileChooserDialogBox (const String& name,
                                             const String& instructions,
                                             FileBrowserComponent& chooserComponent,
                                             bool shouldWarn,
-                                            Colour backgroundColour)
-    : ResizableWindow (name, backgroundColour, true),
+                                            Colour backgroundColour,
+                                            Component* parentComp)
+    : ResizableWindow (name, backgroundColour, parentComp == nullptr),
       warnAboutOverwritingExistingFiles (shouldWarn)
 {
     content = new ContentComponent (name, instructions, chooserComponent);
@@ -111,6 +112,9 @@ FileChooserDialogBox::FileChooserDialogBox (const String& name,
     content->chooserComponent.addListener (this);
 
     FileChooserDialogBox::selectionChanged();
+
+    if (parentComp != nullptr)
+        parentComp->addAndMakeVisible (this);
 }
 
 FileChooserDialogBox::~FileChooserDialogBox()

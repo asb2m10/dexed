@@ -36,17 +36,19 @@ namespace juce
     from files, streams or from memory.
 
     @see Image, ImageCache
+
+    @tags{Graphics}
 */
 class JUCE_API  ImageFileFormat
 {
 protected:
     //==============================================================================
     /** Creates an ImageFormat. */
-    ImageFileFormat()                   {}
+    ImageFileFormat() = default;
 
 public:
     /** Destructor. */
-    virtual ~ImageFileFormat()          {}
+    virtual ~ImageFileFormat() = default;
 
     //==============================================================================
     /** Returns a description of this file format.
@@ -143,13 +145,15 @@ public:
     A subclass of ImageFileFormat for reading and writing PNG files.
 
     @see ImageFileFormat, JPEGImageFormat
+
+    @tags{Graphics}
 */
 class JUCE_API  PNGImageFormat  : public ImageFileFormat
 {
 public:
     //==============================================================================
     PNGImageFormat();
-    ~PNGImageFormat();
+    ~PNGImageFormat() override;
 
     //==============================================================================
     String getFormatName() override;
@@ -165,13 +169,15 @@ public:
     A subclass of ImageFileFormat for reading and writing JPEG files.
 
     @see ImageFileFormat, PNGImageFormat
+
+    @tags{Graphics}
 */
 class JUCE_API  JPEGImageFormat  : public ImageFileFormat
 {
 public:
     //==============================================================================
     JPEGImageFormat();
-    ~JPEGImageFormat();
+    ~JPEGImageFormat() override;
 
     //==============================================================================
     /** Specifies the quality to be used when writing a JPEG file.
@@ -197,13 +203,15 @@ private:
     A subclass of ImageFileFormat for reading GIF files.
 
     @see ImageFileFormat, PNGImageFormat, JPEGImageFormat
+
+    @tags{Graphics}
 */
 class JUCE_API  GIFImageFormat  : public ImageFileFormat
 {
 public:
     //==============================================================================
     GIFImageFormat();
-    ~GIFImageFormat();
+    ~GIFImageFormat() override;
 
     //==============================================================================
     String getFormatName() override;

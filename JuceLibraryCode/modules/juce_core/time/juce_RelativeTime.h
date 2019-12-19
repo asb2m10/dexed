@@ -30,6 +30,8 @@ namespace juce
     point accuracy, and may be positive or negative.
 
     If you need an absolute time, (i.e. a date + time), see the Time class.
+
+    @tags{Core}
 */
 class JUCE_API  RelativeTime
 {
@@ -135,6 +137,13 @@ public:
     */
     String getDescription (const String& returnValueForZeroTime = "0") const;
 
+    //==============================================================================
+    /** This returns a string that roughly describes how long ago this time was, which
+        can be handy for showing ages of files, etc.
+        This will only attempt to be accurate to within the nearest order of magnitude
+        so returns strings such as "5 years", "2 weeks", "< 1 minute", "< 1 sec" etc.
+    */
+    String getApproximateDescription() const;
 
     //==============================================================================
     /** Adds another RelativeTime to this one. */

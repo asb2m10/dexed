@@ -33,16 +33,6 @@ SysexComm::SysexComm() {
     inputOutput = false;
 }
 
-SysexComm::~SysexComm() {
-    if ( input != NULL ) {
-        input->stop();
-        delete input;
-    }
-    
-    if ( output != NULL )
-        delete output;
-}
-
 String SysexComm::getInput() {
     return inputName;
 }
@@ -53,9 +43,7 @@ bool SysexComm::setInput(String target) {
     
     if ( input != NULL ) {
         input->stop();
-        delete input;
         input = NULL;
-
     }
     inputOutput = false;
     
@@ -95,7 +83,6 @@ String SysexComm::getOutput() {
 
 bool SysexComm::setOutput(String target) {
     if ( output != NULL ) {
-        delete output;
         output = NULL;
     }
     inputOutput = false;

@@ -43,6 +43,8 @@ class TreeView;
     do this the first time it's opened, or it might want to refresh itself each time.
     It also has the option of deleting its sub-items when it is closed, or leaving them
     in place.
+
+    @tags{GUI}
 */
 class JUCE_API  TreeViewItem
 {
@@ -512,7 +514,7 @@ public:
 
         @see TreeView::getOpennessState, restoreOpennessState
     */
-    XmlElement* getOpennessState() const;
+    std::unique_ptr<XmlElement> getOpennessState() const;
 
     /** Restores the openness of this item and all its sub-items from a saved state.
 
@@ -572,7 +574,7 @@ public:
 
     private:
         TreeViewItem& treeViewItem;
-        ScopedPointer<XmlElement> oldOpenness;
+        std::unique_ptr<XmlElement> oldOpenness;
 
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OpennessRestorer)
     };
@@ -615,12 +617,6 @@ private:
     void removeAllSubItemsFromList();
     bool areLinesDrawn() const;
 
-   #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
-    // The parameters for these methods have changed - please update your code!
-    virtual void isInterestedInDragSource (const String&, Component*) {}
-    virtual int itemDropped (const String&, Component*, int) { return 0; }
-   #endif
-
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TreeViewItem)
 };
 
@@ -631,6 +627,8 @@ private:
 
     Use one of these to hold and display a structure of TreeViewItem objects.
 
+
+    @tags{GUI}
 */
 class JUCE_API  TreeView  : public Component,
                             public SettableTooltipClient,
@@ -647,7 +645,7 @@ public:
     TreeView (const String& componentName = String());
 
     /** Destructor. */
-    ~TreeView();
+    ~TreeView() override;
 
     //==============================================================================
     /** Sets the item that is displayed in the treeview.
@@ -814,7 +812,7 @@ public:
                                             so this can also be restored
         @see restoreOpennessState
     */
-    XmlElement* getOpennessState (bool alsoIncludeScrollPosition) const;
+    std::unique_ptr<XmlElement> getOpennessState (bool alsoIncludeScrollPosition) const;
 
     /** Restores a previously saved arrangement of open/closed nodes.
 
@@ -854,7 +852,7 @@ public:
     */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual void drawTreeviewPlusMinusBox (Graphics&, const Rectangle<float>& area,
                                                Colour backgroundColour, bool isItemOpen, bool isMouseOver) = 0;
@@ -896,21 +894,18 @@ public:
     void itemDropped (const SourceDetails&) override;
 
 private:
+    friend class TreeViewItem;
+
     class ContentComponent;
     class TreeViewport;
     class InsertPointHighlight;
     class TargetGroupHighlight;
-    friend class TreeViewItem;
-    friend class ContentComponent;
-    friend struct ContainerDeletePolicy<TreeViewport>;
-    friend struct ContainerDeletePolicy<InsertPointHighlight>;
-    friend struct ContainerDeletePolicy<TargetGroupHighlight>;
 
-    ScopedPointer<TreeViewport> viewport;
+    std::unique_ptr<TreeViewport> viewport;
     CriticalSection nodeAlterationLock;
     TreeViewItem* rootItem = nullptr;
-    ScopedPointer<InsertPointHighlight> dragInsertPointHighlight;
-    ScopedPointer<TargetGroupHighlight> dragTargetGroupHighlight;
+    std::unique_ptr<InsertPointHighlight> dragInsertPointHighlight;
+    std::unique_ptr<TargetGroupHighlight> dragTargetGroupHighlight;
     int indentSize = -1;
     bool defaultOpenness = false, needsRecalculating = true, rootItemVisible = true;
     bool multiSelectEnabled = false, openCloseButtonsVisible = true;

@@ -27,6 +27,13 @@
 namespace juce
 {
 
+//==============================================================================
+/**
+    The latest JUCE look-and-feel style, as introduced in 2017.
+    @see LookAndFeel, LookAndFeel_V1, LookAndFeel_V2, LookAndFeel_V3
+
+    @tags{GUI}
+*/
 class JUCE_API  LookAndFeel_V4   : public LookAndFeel_V3
 {
 public:
@@ -88,7 +95,7 @@ public:
     LookAndFeel_V4 (ColourScheme);
 
     /** Destructor. */
-    ~LookAndFeel_V4();
+    ~LookAndFeel_V4() override;
 
     //==============================================================================
     void setColourScheme (ColourScheme);
@@ -105,13 +112,17 @@ public:
     void drawDocumentWindowTitleBar (DocumentWindow&, Graphics&, int, int, int, int, const Image*, bool) override;
 
     //==============================================================================
-    void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
-                               bool isMouseOverButton, bool isButtonDown) override;
+    Font getTextButtonFont (TextButton&, int buttonHeight) override;
 
-    void drawToggleButton (Graphics&, ToggleButton&, bool isMouseOverButton, bool isButtonDown) override;
+    void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
+                               bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
+
+    void drawToggleButton (Graphics&, ToggleButton&,
+                           bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
     void drawTickBox (Graphics&, Component&,
                       float x, float y, float w, float h,
-                      bool ticked, bool isEnabled, bool isMouseOverButton, bool isButtonDown) override;
+                      bool ticked, bool isEnabled,
+                      bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
 
     void changeToggleButtonWidthToFitText (ToggleButton&) override;
 
@@ -198,6 +209,8 @@ public:
 
     void drawPointer (Graphics&, float x, float y, float diameter,
                       const Colour&, int direction) noexcept;
+
+    Label* createSliderTextBox (Slider&) override;
 
     //==============================================================================
     void drawTooltip (Graphics&, const String& text, int width, int height) override;

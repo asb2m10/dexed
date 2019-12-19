@@ -24,6 +24,13 @@
   ==============================================================================
 */
 
+#if JUCE_CLANG
+ #if __has_warning("-Wzero-as-null-pointer-constant")
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+ #endif
+#endif
+
 namespace juce
 {
 
@@ -86,18 +93,8 @@ private:
 
         TouchInfo (const TouchInfo&) = default;
         TouchInfo& operator= (const TouchInfo&) = default;
-
-        // VS2013 can't default move constructors
-        TouchInfo (TouchInfo&& other) noexcept  : touchId (other.touchId), owner (other.owner) {}
-
-        // VS2013 can't default move assignments
-        TouchInfo& operator= (TouchInfo&& other) noexcept
-        {
-            touchId = other.touchId;
-            owner = other.owner;
-
-            return *this;
-        }
+        TouchInfo (TouchInfo&&) noexcept = default;
+        TouchInfo& operator= (TouchInfo&&) noexcept = default;
 
         IDType touchId;
         ComponentPeer* owner;
@@ -112,3 +109,9 @@ private:
 };
 
 } // namespace juce
+
+#if JUCE_CLANG
+ #if __has_warning("-Wzero-as-null-pointer-constant")
+  #pragma clang diagnostic pop
+ #endif
+#endif

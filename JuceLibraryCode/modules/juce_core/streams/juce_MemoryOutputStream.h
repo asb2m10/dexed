@@ -29,13 +29,15 @@ namespace juce
 
     The data that was written into the stream can then be accessed later as
     a contiguous block of memory.
+
+    @tags{Core}
 */
 class JUCE_API  MemoryOutputStream  : public OutputStream
 {
 public:
     //==============================================================================
     /** Creates an empty memory stream, ready to be written into.
-        @param initialSize  the intial amount of capacity to allocate for writing into
+        @param initialSize  the initial amount of capacity to allocate for writing into
     */
     MemoryOutputStream (size_t initialSize = 256);
 
@@ -64,7 +66,7 @@ public:
     /** Destructor.
         This will free any data that was written to it.
     */
-    ~MemoryOutputStream();
+    ~MemoryOutputStream() override;
 
     //==============================================================================
     /** Returns a pointer to the data that has been written to the stream.

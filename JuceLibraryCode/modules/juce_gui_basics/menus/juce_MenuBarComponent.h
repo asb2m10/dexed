@@ -32,6 +32,8 @@ namespace juce
     A menu bar component.
 
     @see MenuBarModel
+
+    @tags{GUI}
 */
 class JUCE_API  MenuBarComponent  : public Component,
                                     private MenuBarModel::Listener,
@@ -48,7 +50,7 @@ public:
     MenuBarComponent (MenuBarModel* model = nullptr);
 
     /** Destructor. */
-    ~MenuBarComponent();
+    ~MenuBarComponent() override;
 
     //==============================================================================
     /** Changes the model object to use to control the bar.

@@ -32,6 +32,8 @@ namespace juce
     A component that draws an outline around itself and has an optional title at
     the top, for drawing an outline around a group of controls.
 
+
+    @tags{GUI}
 */
 class JUCE_API  GroupComponent    : public Component
 {
@@ -42,11 +44,11 @@ public:
         @param componentName    the name to give the component
         @param labelText        the text to show at the top of the outline
     */
-    GroupComponent (const String& componentName = String(),
-                    const String& labelText = String());
+    GroupComponent (const String& componentName = {},
+                    const String& labelText = {});
 
     /** Destructor. */
-    ~GroupComponent();
+    ~GroupComponent() override;
 
     //==============================================================================
     /** Changes the text that's shown at the top of the component. */
@@ -56,15 +58,12 @@ public:
     String getText() const;
 
     /** Sets the positioning of the text label.
-
         (The default is Justification::left)
-
         @see getTextLabelPosition
     */
     void setTextLabelPosition (Justification justification);
 
     /** Returns the current text label position.
-
         @see setTextLabelPosition
     */
     Justification getTextLabelPosition() const noexcept           { return justification; }
@@ -87,7 +86,7 @@ public:
     /** This abstract base class is implemented by LookAndFeel classes. */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual void drawGroupComponentOutline (Graphics&, int w, int h, const String& text,
                                                 const Justification&, GroupComponent&) = 0;

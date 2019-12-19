@@ -157,8 +157,8 @@ const char* const WavAudioFormat::tracktionLoopInfo    = "tracktion loop info";
 //==============================================================================
 namespace WavFileHelpers
 {
-    inline int chunkName (const char* const name) noexcept   { return (int) ByteOrder::littleEndianInt (name[0], name[1], name[2], name[3]); }
-    inline size_t roundUpSize (size_t sz) noexcept           { return (sz + 3) & ~3u; }
+    JUCE_CONSTEXPR inline int chunkName (const char* name) noexcept         { return (int) ByteOrder::littleEndianInt (name); }
+    JUCE_CONSTEXPR inline size_t roundUpSize (size_t sz) noexcept           { return (sz + 3) & ~3u; }
 
     #if JUCE_MSVC
      #pragma pack (push, 1)
@@ -849,20 +849,21 @@ namespace WavFileHelpers
     {
         static void addToMetadata (StringPairArray& destValues, const String& source)
         {
-            ScopedPointer<XmlElement> xml (XmlDocument::parse (source));
-
-            if (xml != nullptr && xml->hasTagName ("ebucore:ebuCoreMain"))
+            if (auto xml = parseXML (source))
             {
-                if (auto* xml2 = xml->getChildByName ("ebucore:coreMetadata"))
+                if (xml->hasTagName ("ebucore:ebuCoreMain"))
                 {
-                    if (auto* xml3 = xml2->getChildByName ("ebucore:identifier"))
+                    if (auto xml2 = xml->getChildByName ("ebucore:coreMetadata"))
                     {
-                        if (auto* xml4 = xml3->getChildByName ("dc:identifier"))
+                        if (auto xml3 = xml2->getChildByName ("ebucore:identifier"))
                         {
-                            auto ISRCCode = xml4->getAllSubText().fromFirstOccurrenceOf ("ISRC:", false, true);
+                            if (auto xml4 = xml3->getChildByName ("dc:identifier"))
+                            {
+                                auto ISRCCode = xml4->getAllSubText().fromFirstOccurrenceOf ("ISRC:", false, true);
 
-                            if (ISRCCode.isNotEmpty())
-                                destValues.set (WavAudioFormat::ISRC, ISRCCode);
+                                if (ISRCCode.isNotEmpty())
+                                    destValues.set (WavAudioFormat::ISRC, ISRCCode);
+                            }
                         }
                     }
                 }
@@ -1000,7 +1001,7 @@ public:
                     }
                     else
                     {
-                        bytesPerFrame = numChannels * bitsPerSample / 8;
+                        bytesPerFrame = (int) (numChannels * bitsPerSample / 8);
                     }
 
                     if (format == 3)
@@ -1134,10 +1135,10 @@ public:
                                 auto identifier     = (uint32) input->readInt();
                                 auto sampleLength   = (uint32) input->readInt();
                                 auto purpose        = (uint32) input->readInt();
-                                auto country        = (uint16) input->readInt();
-                                auto language       = (uint16) input->readInt();
-                                auto dialect        = (uint16) input->readInt();
-                                auto codePage       = (uint16) input->readInt();
+                                auto country        = (uint16) input->readShort();
+                                auto language       = (uint16) input->readShort();
+                                auto dialect        = (uint16) input->readShort();
+                                auto codePage       = (uint16) input->readShort();
                                 auto stringLength   = adtlLength - 20;
 
                                 MemoryBlock textBlock;
@@ -1219,17 +1220,17 @@ public:
         return true;
     }
 
-    static void copySampleData (unsigned int bitsPerSample, const bool usesFloatingPointData,
+    static void copySampleData (unsigned int numBitsPerSample, const bool floatingPointData,
                                 int* const* destSamples, int startOffsetInDestBuffer, int numDestChannels,
-                                const void* sourceData, int numChannels, int numSamples) noexcept
+                                const void* sourceData, int numberOfChannels, int numSamples) noexcept
     {
-        switch (bitsPerSample)
+        switch (numBitsPerSample)
         {
-            case 8:     ReadHelper<AudioData::Int32, AudioData::UInt8, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples); break;
-            case 16:    ReadHelper<AudioData::Int32, AudioData::Int16, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples); break;
-            case 24:    ReadHelper<AudioData::Int32, AudioData::Int24, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples); break;
-            case 32:    if (usesFloatingPointData) ReadHelper<AudioData::Float32, AudioData::Float32, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples);
-                        else                       ReadHelper<AudioData::Int32,   AudioData::Int32,   AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples);
+            case 8:     ReadHelper<AudioData::Int32, AudioData::UInt8, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples); break;
+            case 16:    ReadHelper<AudioData::Int32, AudioData::Int16, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples); break;
+            case 24:    ReadHelper<AudioData::Int32, AudioData::Int24, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples); break;
+            case 32:    if (floatingPointData) ReadHelper<AudioData::Float32, AudioData::Float32, AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples);
+                        else                   ReadHelper<AudioData::Int32,   AudioData::Int32,   AudioData::LittleEndian>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples);
                         break;
             default:    jassertfalse; break;
         }
@@ -1318,7 +1319,7 @@ public:
         writeHeader();
     }
 
-    ~WavAudioFormatWriter()
+    ~WavAudioFormatWriter() override
     {
         writeHeader();
     }
@@ -1517,17 +1518,17 @@ private:
         }
     }
 
-    static int getChannelMaskFromChannelLayout (const AudioChannelSet& channelLayout)
+    static int getChannelMaskFromChannelLayout (const AudioChannelSet& layout)
     {
-        if (channelLayout.isDiscreteLayout())
+        if (layout.isDiscreteLayout())
             return 0;
 
         // Don't add an extended format chunk for mono and stereo. Basically, all wav players
         // interpret a wav file with only one or two channels to be mono or stereo anyway.
-        if (channelLayout == AudioChannelSet::mono() || channelLayout == AudioChannelSet::stereo())
+        if (layout == AudioChannelSet::mono() || layout == AudioChannelSet::stereo())
             return 0;
 
-        auto channels = channelLayout.getChannelTypes();
+        auto channels = layout.getChannelTypes();
         auto wavChannelMask = 0;
 
         for (auto channel : channels)
@@ -1580,7 +1581,7 @@ public:
         {
             jassertfalse; // you must make sure that the window contains all the samples you're going to attempt to read.
 
-            zeromem (result, sizeof (float) * (size_t) num);
+            zeromem (result, (size_t) num * sizeof (float));
             return;
         }
 
@@ -1624,6 +1625,8 @@ public:
             default:    jassertfalse; break;
         }
     }
+
+    using AudioFormatReader::readMaxLevels;
 
 private:
     template <typename SampleType>
@@ -1672,7 +1675,7 @@ bool WavAudioFormat::isChannelLayoutSupported (const AudioChannelSet& channelSet
 
 AudioFormatReader* WavAudioFormat::createReaderFor (InputStream* sourceStream, bool deleteStreamIfOpeningFails)
 {
-    ScopedPointer<WavAudioFormatReader> r (new WavAudioFormatReader (sourceStream));
+    std::unique_ptr<WavAudioFormatReader> r (new WavAudioFormatReader (sourceStream));
 
    #if JUCE_USE_OGGVORBIS
     if (r->isSubformatOggVorbis)
@@ -1682,7 +1685,7 @@ AudioFormatReader* WavAudioFormat::createReaderFor (InputStream* sourceStream, b
     }
    #endif
 
-    if (r->sampleRate > 0 && r->numChannels > 0 && r->bytesPerFrame > 0)
+    if (r->sampleRate > 0 && r->numChannels > 0 && r->bytesPerFrame > 0 && r->bitsPerSample <= 32)
         return r.release();
 
     if (! deleteStreamIfOpeningFails)
@@ -1738,17 +1741,17 @@ namespace WavFileHelpers
         TemporaryFile tempFile (file);
         WavAudioFormat wav;
 
-        ScopedPointer<AudioFormatReader> reader (wav.createReaderFor (file.createInputStream(), true));
+        std::unique_ptr<AudioFormatReader> reader (wav.createReaderFor (file.createInputStream(), true));
 
         if (reader != nullptr)
         {
-            ScopedPointer<OutputStream> outStream (tempFile.getFile().createOutputStream());
+            std::unique_ptr<OutputStream> outStream (tempFile.getFile().createOutputStream());
 
             if (outStream != nullptr)
             {
-                ScopedPointer<AudioFormatWriter> writer (wav.createWriterFor (outStream.get(), reader->sampleRate,
-                                                                              reader->numChannels, (int) reader->bitsPerSample,
-                                                                              metadata, 0));
+                std::unique_ptr<AudioFormatWriter> writer (wav.createWriterFor (outStream.get(), reader->sampleRate,
+                                                                                reader->numChannels, (int) reader->bitsPerSample,
+                                                                                metadata, 0));
 
                 if (writer != nullptr)
                 {
@@ -1771,7 +1774,7 @@ bool WavAudioFormat::replaceMetadataInFile (const File& wavFile, const StringPai
 {
     using namespace WavFileHelpers;
 
-    ScopedPointer<WavAudioFormatReader> reader (static_cast<WavAudioFormatReader*> (createReaderFor (wavFile.createInputStream(), true)));
+    std::unique_ptr<WavAudioFormatReader> reader (static_cast<WavAudioFormatReader*> (createReaderFor (wavFile.createInputStream(), true)));
 
     if (reader != nullptr)
     {
@@ -1808,12 +1811,16 @@ bool WavAudioFormat::replaceMetadataInFile (const File& wavFile, const StringPai
     return slowCopyWavFileWithNewMetadata (wavFile, newMetadata);
 }
 
+
+//==============================================================================
 //==============================================================================
 #if JUCE_UNIT_TESTS
 
 struct WaveAudioFormatTests : public UnitTest
 {
-    WaveAudioFormatTests() : UnitTest ("Wave audio format tests") {}
+    WaveAudioFormatTests()
+        : UnitTest ("Wave audio format tests", UnitTestCategories::audio)
+    {}
 
     void runTest() override
     {
@@ -1841,9 +1848,9 @@ struct WaveAudioFormatTests : public UnitTest
         {
             beginTest ("Creating a basic wave writer");
 
-            ScopedPointer<AudioFormatWriter> writer (format.createWriterFor (new MemoryOutputStream (memoryBlock, false),
-                                                                             44100.0, numTestAudioBufferChannels,
-                                                                             32, metadataValues, 0));
+            std::unique_ptr<AudioFormatWriter> writer (format.createWriterFor (new MemoryOutputStream (memoryBlock, false),
+                                                                               44100.0, numTestAudioBufferChannels,
+                                                                               32, metadataValues, 0));
             expect (writer != nullptr);
 
             AudioBuffer<float> buffer (numTestAudioBufferChannels, numTestAudioBufferSamples);
@@ -1856,7 +1863,7 @@ struct WaveAudioFormatTests : public UnitTest
         {
             beginTest ("Creating a basic wave reader");
 
-            ScopedPointer<AudioFormatReader> reader (format.createReaderFor (new MemoryInputStream (memoryBlock, false), false));
+            std::unique_ptr<AudioFormatReader> reader (format.createReaderFor (new MemoryInputStream (memoryBlock, false), false));
             expect (reader != nullptr);
             expect (reader->metadataValues == metadataValues, "Somehow, the metadata is different!");
         }

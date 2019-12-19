@@ -24,6 +24,12 @@
   ==============================================================================
 */
 
+#if JUCE_CLANG && ! (defined (MAC_OS_X_VERSION_10_16) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_16)
+ #pragma clang diagnostic push
+ #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ #define JUCE_DEPRECATION_IGNORED 1
+#endif
+
 #if JUCE_MAC
 
 namespace juce
@@ -283,44 +289,48 @@ public:
         {
             NSString* urlString = juceStringToNS (url);
 
-           #if (JUCE_MAC && (defined (__MAC_OS_X_VERSION_MIN_REQUIRED) && defined (__MAC_10_9) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_10_9)) || (JUCE_IOS && (defined (__IPHONE_OS_VERSION_MIN_REQUIRED) && defined (__IPHONE_7_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0))
+           #if (JUCE_MAC && (defined (MAC_OS_X_VERSION_10_9) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_9)) || (JUCE_IOS && (defined (__IPHONE_7_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0))
             urlString = [urlString stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
            #else
             urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
            #endif
-            NSMutableURLRequest* r
-                = [NSMutableURLRequest requestWithURL: [NSURL URLWithString: urlString]
-                                          cachePolicy: NSURLRequestUseProtocolCachePolicy
-                                      timeoutInterval: 30.0];
 
-            if (postData != nullptr && postData->getSize() > 0)
+            if (NSURL* nsURL = [NSURL URLWithString: urlString])
             {
-                [r setHTTPMethod: nsStringLiteral ("POST")];
-                [r setHTTPBody: [NSData dataWithBytes: postData->getData()
-                                               length: postData->getSize()]];
-            }
+                NSMutableURLRequest* r
+                    = [NSMutableURLRequest requestWithURL: nsURL
+                                              cachePolicy: NSURLRequestUseProtocolCachePolicy
+                                          timeoutInterval: 30.0];
 
-            if (headers != nullptr)
-            {
-                for (int i = 0; i < headers->size(); ++i)
+                if (postData != nullptr && postData->getSize() > 0)
                 {
-                    const String headerName  ((*headers)[i].upToFirstOccurrenceOf (":", false, false).trim());
-                    const String headerValue ((*headers)[i].fromFirstOccurrenceOf (":", false, false).trim());
-
-                    [r setValue: juceStringToNS (headerValue)
-                       forHTTPHeaderField: juceStringToNS (headerName)];
+                    [r setHTTPMethod: nsStringLiteral ("POST")];
+                    [r setHTTPBody: [NSData dataWithBytes: postData->getData()
+                                                   length: postData->getSize()]];
                 }
+
+                if (headers != nullptr)
+                {
+                    for (int i = 0; i < headers->size(); ++i)
+                    {
+                        auto headerName  = (*headers)[i].upToFirstOccurrenceOf (":", false, false).trim();
+                        auto headerValue = (*headers)[i].fromFirstOccurrenceOf (":", false, false).trim();
+
+                        [r setValue: juceStringToNS (headerValue)
+                           forHTTPHeaderField: juceStringToNS (headerName)];
+                    }
+                }
+
+               #if JUCE_MAC
+                [[webView mainFrame] loadRequest: r];
+               #else
+                [webView loadRequest: r];
+               #endif
+
+               #if JUCE_IOS
+                [webView setScalesPageToFit:YES];
+               #endif
             }
-
-           #if JUCE_MAC
-            [[webView mainFrame] loadRequest: r];
-           #else
-            [webView loadRequest: r];
-           #endif
-
-           #if JUCE_IOS
-            [webView setScalesPageToFit:YES];
-           #endif
         }
     }
 
@@ -354,6 +364,11 @@ private:
     UITapGestureRecognizer* gestureRecogniser;
    #endif
 };
+
+#if JUCE_DEPRECATION_IGNORED
+ #pragma clang diagnostic pop
+ #undef JUCE_DEPRECATION_IGNORED
+#endif
 
 //==============================================================================
 WebBrowserComponent::WebBrowserComponent (bool unloadWhenHidden)
@@ -436,7 +451,7 @@ void WebBrowserComponent::checkWindowAssociation()
             // page to avoid this, (and send it back when it's made visible again).
 
             blankPageShown = true;
-            browser->goToURL ("about:blank", 0, 0);
+            browser->goToURL ("about:blank", nullptr, nullptr);
         }
     }
 }

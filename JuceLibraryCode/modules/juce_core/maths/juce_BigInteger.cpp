@@ -112,7 +112,7 @@ BigInteger::BigInteger (const BigInteger& other)
 }
 
 BigInteger::BigInteger (BigInteger&& other) noexcept
-    : heapAllocation (static_cast<HeapBlock<uint32>&&> (other.heapAllocation)),
+    : heapAllocation (std::move (other.heapAllocation)),
       allocatedSize (other.allocatedSize),
       highestBit (other.highestBit),
       negative (other.negative)
@@ -122,7 +122,7 @@ BigInteger::BigInteger (BigInteger&& other) noexcept
 
 BigInteger& BigInteger::operator= (BigInteger&& other) noexcept
 {
-    heapAllocation = static_cast<HeapBlock<uint32>&&> (other.heapAllocation);
+    heapAllocation = std::move (other.heapAllocation);
     memcpy (preallocated, other.preallocated, sizeof (preallocated));
     allocatedSize = other.allocatedSize;
     highestBit = other.highestBit;
@@ -171,7 +171,7 @@ uint32* BigInteger::getValues() const noexcept
     jassert (heapAllocation != nullptr || allocatedSize <= numPreallocatedInts);
 
     return heapAllocation != nullptr ? heapAllocation
-                                     : (uint32*) preallocated;
+                                     : const_cast<uint32*> (preallocated);
 }
 
 uint32* BigInteger::ensureSize (const size_t numVals)
@@ -221,7 +221,7 @@ int64 BigInteger::toInt64() const noexcept
 BigInteger BigInteger::getBitRange (int startBit, int numBits) const
 {
     BigInteger r;
-    numBits = jmin (numBits, getHighestBit() + 1 - startBit);
+    numBits = jmax (0, jmin (numBits, getHighestBit() + 1 - startBit));
     auto* destValues = r.ensureSize (sizeNeededToHold (numBits));
     r.highestBit = numBits;
 
@@ -1196,7 +1196,7 @@ void BigInteger::loadFromMemoryBlock (const MemoryBlock& data)
     auto* values = ensureSize (numInts);
 
     for (int i = 0; i < (int) numInts - 1; ++i)
-        values[i] = (uint32) ByteOrder::littleEndianInt (addBytesToPointer (data.getData(), sizeof (uint32) * (size_t) i));
+        values[i] = (uint32) ByteOrder::littleEndianInt (addBytesToPointer (data.getData(), (size_t) i * sizeof (uint32)));
 
     values[numInts - 1] = 0;
 
@@ -1240,7 +1240,7 @@ void writeLittleEndianBitsInBuffer (void* buffer, uint32 startBit, uint32 numBit
     }
 
     if (numBits > 0)
-        *data = (uint8) ((*data & (0xff << numBits)) | value);
+        *data = (uint8) ((*data & (uint32) (0xff << numBits)) | value);
 }
 
 uint32 readLittleEndianBitsInBuffer (const void* buffer, uint32 startBit, uint32 numBits) noexcept
@@ -1255,7 +1255,7 @@ uint32 readLittleEndianBitsInBuffer (const void* buffer, uint32 startBit, uint32
     if (const uint32 offset = (startBit & 7))
     {
         const uint32 bitsInByte = 8 - offset;
-        result = (*data >> offset);
+        result = (uint32) (*data >> offset);
 
         if (bitsInByte >= numBits)
             return result & ((1u << numBits) - 1u);
@@ -1278,6 +1278,7 @@ uint32 readLittleEndianBitsInBuffer (const void* buffer, uint32 startBit, uint32
     return result;
 }
 
+
 //==============================================================================
 //==============================================================================
 #if JUCE_UNIT_TESTS
@@ -1285,7 +1286,9 @@ uint32 readLittleEndianBitsInBuffer (const void* buffer, uint32 startBit, uint32
 class BigIntegerTests  : public UnitTest
 {
 public:
-    BigIntegerTests() : UnitTest ("BigInteger", "Maths") {}
+    BigIntegerTests()
+        : UnitTest ("BigInteger", UnitTestCategories::maths)
+    {}
 
     static BigInteger getBigRandom (Random& r)
     {

@@ -35,16 +35,18 @@ namespace juce
     This class allows different types of text editor component to provide a uniform
     interface, which can be used by things like OS-specific input methods, on-screen
     keyboards, etc.
+
+    @tags{GUI}
 */
 class JUCE_API  TextInputTarget
 {
 public:
     //==============================================================================
     /** */
-    TextInputTarget() {}
+    TextInputTarget() = default;
 
     /** Destructor. */
-    virtual ~TextInputTarget() {}
+    virtual ~TextInputTarget() = default;
 
     /** Returns true if this input target is currently accepting input.
         For example, a text editor might return false if it's in read-only mode.

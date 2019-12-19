@@ -32,13 +32,15 @@ namespace juce
     A subclass of this is used to drive a ListBox.
 
     @see ListBox
+
+    @tags{GUI}
 */
 class JUCE_API  ListBoxModel
 {
 public:
     //==============================================================================
     /** Destructor. */
-    virtual ~ListBoxModel()  {}
+    virtual ~ListBoxModel() = default;
 
     //==============================================================================
     /** This has to return the number of items in the list.
@@ -156,12 +158,6 @@ public:
 
     /** You can override this to return a custom mouse cursor for each row. */
     virtual MouseCursor getMouseCursorForRow (int row);
-
-private:
-   #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
-    // This method's signature has changed to take a MouseEvent parameter - please update your code!
-    JUCE_DEPRECATED_WITH_BODY (virtual int backgroundClicked(), { return 0; })
-   #endif
 };
 
 
@@ -174,6 +170,8 @@ private:
     more specialised tasks, it can supply a custom component to fill each row.
 
     @see ComboBox, TableListBox
+
+    @tags{GUI}
 */
 class JUCE_API  ListBox  : public Component,
                            public SettableTooltipClient
@@ -189,7 +187,7 @@ public:
              ListBoxModel* model = nullptr);
 
     /** Destructor. */
-    ~ListBox();
+    ~ListBox() override;
 
 
     //==============================================================================
@@ -576,9 +574,9 @@ private:
     friend class ListViewport;
     friend class TableListBox;
     ListBoxModel* model;
-    ScopedPointer<ListViewport> viewport;
-    ScopedPointer<Component> headerComponent;
-    ScopedPointer<MouseListener> mouseMoveSelector;
+    std::unique_ptr<ListViewport> viewport;
+    std::unique_ptr<Component> headerComponent;
+    std::unique_ptr<MouseListener> mouseMoveSelector;
     SparseSet<int> selected;
     int totalItems = 0, rowHeight = 22, minimumRowWidth = 0;
     int outlineThickness = 0;

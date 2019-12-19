@@ -32,15 +32,17 @@ namespace juce
     out about the position of the audio that it is rendering.
 
     @see AudioProcessor::setPlayHead, AudioProcessor::getPlayHead
+
+    @tags{Audio}
 */
 class JUCE_API  AudioPlayHead
 {
 protected:
     //==============================================================================
-    AudioPlayHead() {}
+    AudioPlayHead() = default;
 
 public:
-    virtual ~AudioPlayHead() {}
+    virtual ~AudioPlayHead() = default;
 
     //==============================================================================
     /** Frame rate types. */

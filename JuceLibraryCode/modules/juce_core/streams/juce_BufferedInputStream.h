@@ -30,6 +30,8 @@ namespace juce
     small read accesses to it, it's probably sensible to wrap it in one of these,
     so that the source stream gets accessed in larger chunk sizes, meaning less
     work for the underlying stream.
+
+    @tags{Core}
 */
 class JUCE_API  BufferedInputStream  : public InputStream
 {
@@ -59,7 +61,7 @@ public:
         This may also delete the source stream, if that option was chosen when the
         buffered stream was created.
     */
-    ~BufferedInputStream();
+    ~BufferedInputStream() override;
 
 
     //==============================================================================

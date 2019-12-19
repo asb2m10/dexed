@@ -42,6 +42,8 @@ namespace juce
     each time the parent's size changes.
 
     @see ResizableCornerComponent
+
+    @tags{GUI}
 */
 class JUCE_API  ResizableBorderComponent  : public Component
 {
@@ -68,7 +70,7 @@ public:
                               ComponentBoundsConstrainer* constrainer);
 
     /** Destructor. */
-    ~ResizableBorderComponent();
+    ~ResizableBorderComponent() override;
 
 
     //==============================================================================
@@ -76,7 +78,7 @@ public:
 
         @see getBorderThickness
     */
-    void setBorderThickness (const BorderSize<int>& newBorderSize);
+    void setBorderThickness (BorderSize<int> newBorderSize);
 
     /** Returns the number of pixels wide that the draggable edges of this component are.
 
@@ -117,8 +119,8 @@ public:
         /** Given a point within a rectangle with a resizable border, this returns the
             zone that the point lies within.
         */
-        static Zone fromPositionOnBorder (const Rectangle<int>& totalSize,
-                                          const BorderSize<int>& border,
+        static Zone fromPositionOnBorder (Rectangle<int> totalSize,
+                                          BorderSize<int> border,
                                           Point<int> position);
 
         /** Returns an appropriate mouse-cursor for this resize zone. */
@@ -158,7 +160,7 @@ public:
 
     private:
         //==============================================================================
-        int zone;
+        int zone = centre;
     };
 
     /** Returns the zone in which the mouse was last seen. */

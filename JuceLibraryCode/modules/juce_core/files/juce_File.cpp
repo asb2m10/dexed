@@ -53,19 +53,17 @@ File& File::operator= (const File& other)
 }
 
 File::File (File&& other) noexcept
-    : fullPath (static_cast<String&&> (other.fullPath))
+    : fullPath (std::move (other.fullPath))
 {
 }
 
 File& File::operator= (File&& other) noexcept
 {
-    fullPath = static_cast<String&&> (other.fullPath);
+    fullPath = std::move (other.fullPath);
     return *this;
 }
 
-#if JUCE_ALLOW_STATIC_NULL_VARIABLES
-const File File::nonexistent;
-#endif
+JUCE_DECLARE_DEPRECATED_STATIC (const File File::nonexistent{};)
 
 //==============================================================================
 static String removeEllipsis (const String& path)
@@ -258,13 +256,13 @@ bool File::setExecutePermission (bool shouldBeExecutable) const
     return setFileExecutableInternal (shouldBeExecutable);
 }
 
-bool File::deleteRecursively() const
+bool File::deleteRecursively (bool followSymlinks) const
 {
     bool worked = true;
 
-    if (isDirectory())
+    if (isDirectory() && (followSymlinks || ! isSymbolicLink()))
         for (auto& f : findChildFiles (File::findFilesAndDirectories, false))
-            worked = f.deleteRecursively() && worked;
+            worked = f.deleteRecursively (followSymlinks) && worked;
 
     return deleteFile() && worked;
 }
@@ -710,7 +708,7 @@ bool File::startAsProcess (const String& parameters) const
 //==============================================================================
 FileInputStream* File::createInputStream() const
 {
-    ScopedPointer<FileInputStream> fin (new FileInputStream (*this));
+    std::unique_ptr<FileInputStream> fin (new FileInputStream (*this));
 
     if (fin->openedOk())
         return fin.release();
@@ -720,7 +718,7 @@ FileInputStream* File::createInputStream() const
 
 FileOutputStream* File::createOutputStream (size_t bufferSize) const
 {
-    ScopedPointer<FileOutputStream> out (new FileOutputStream (*this, bufferSize));
+    std::unique_ptr<FileOutputStream> out (new FileOutputStream (*this, bufferSize));
 
     return out->failedToOpen() ? nullptr
                                : out.release();
@@ -750,24 +748,20 @@ bool File::replaceWithData (const void* const dataToWrite,
     return tempFile.overwriteTargetFileWithTemporary();
 }
 
-bool File::appendText (const String& text,
-                       const bool asUnicode,
-                       const bool writeUnicodeHeaderBytes) const
+bool File::appendText (const String& text, bool asUnicode, bool writeHeaderBytes, const char* lineFeed) const
 {
     FileOutputStream out (*this);
 
     if (out.failedToOpen())
         return false;
 
-    return out.writeText (text, asUnicode, writeUnicodeHeaderBytes);
+    return out.writeText (text, asUnicode, writeHeaderBytes, lineFeed);
 }
 
-bool File::replaceWithText (const String& textToWrite,
-                            const bool asUnicode,
-                            const bool writeUnicodeHeaderBytes) const
+bool File::replaceWithText (const String& textToWrite, bool asUnicode, bool writeHeaderBytes, const char* lineFeed) const
 {
     TemporaryFile tempFile (*this, TemporaryFile::useHiddenFile);
-    tempFile.getFile().appendText (textToWrite, asUnicode, writeUnicodeHeaderBytes);
+    tempFile.getFile().appendText (textToWrite, asUnicode, writeHeaderBytes, lineFeed);
     return tempFile.overwriteTargetFileWithTemporary();
 }
 
@@ -941,7 +935,9 @@ File File::createTempFile (StringRef fileNameEnding)
     return tempFile;
 }
 
-bool File::createSymbolicLink (const File& linkFileToCreate, bool overwriteExisting) const
+bool File::createSymbolicLink (const File& linkFileToCreate,
+                               const String& nativePathOfTarget,
+                               bool overwriteExisting)
 {
     if (linkFileToCreate.exists())
     {
@@ -959,7 +955,7 @@ bool File::createSymbolicLink (const File& linkFileToCreate, bool overwriteExist
 
    #if JUCE_MAC || JUCE_LINUX
     // one common reason for getting an error here is that the file already exists
-    if (symlink (fullPath.toRawUTF8(), linkFileToCreate.getFullPathName().toRawUTF8()) == -1)
+    if (symlink (nativePathOfTarget.toRawUTF8(), linkFileToCreate.getFullPathName().toRawUTF8()) == -1)
     {
         jassertfalse;
         return false;
@@ -967,14 +963,32 @@ bool File::createSymbolicLink (const File& linkFileToCreate, bool overwriteExist
 
     return true;
    #elif JUCE_MSVC
+    File targetFile (linkFileToCreate.getSiblingFile (nativePathOfTarget));
+
     return CreateSymbolicLink (linkFileToCreate.getFullPathName().toWideCharPointer(),
-                               fullPath.toWideCharPointer(),
-                               isDirectory() ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0) != FALSE;
+                               nativePathOfTarget.toWideCharPointer(),
+                               targetFile.isDirectory() ? SYMBOLIC_LINK_FLAG_DIRECTORY : 0) != FALSE;
    #else
+    ignoreUnused (nativePathOfTarget);
     jassertfalse; // symbolic links not supported on this platform!
     return false;
    #endif
 }
+
+bool File::createSymbolicLink (const File& linkFileToCreate, bool overwriteExisting) const
+{
+    return createSymbolicLink (linkFileToCreate, getFullPathName(), overwriteExisting);
+}
+
+#if ! JUCE_WINDOWS
+File File::getLinkedTarget() const
+{
+    if (isSymbolicLink())
+        return getSiblingFile (getNativeLinkedTarget());
+
+    return *this;
+}
+#endif
 
 //==============================================================================
 MemoryMappedFile::MemoryMappedFile (const File& file, MemoryMappedFile::AccessMode mode, bool exclusive)
@@ -991,12 +1005,15 @@ MemoryMappedFile::MemoryMappedFile (const File& file, const Range<int64>& fileRa
 
 
 //==============================================================================
+//==============================================================================
 #if JUCE_UNIT_TESTS
 
 class FileTests  : public UnitTest
 {
 public:
-    FileTests() : UnitTest ("Files", "Files") {}
+    FileTests()
+        : UnitTest ("Files", UnitTestCategories::files)
+    {}
 
     void runTest() override
     {
@@ -1014,7 +1031,6 @@ public:
         expect (home.isDirectory());
         expect (home.exists());
         expect (! home.existsAsFile());
-        expect (File::getSpecialLocation (File::userDocumentsDirectory).isDirectory());
         expect (File::getSpecialLocation (File::userApplicationDataDirectory).isDirectory());
         expect (File::getSpecialLocation (File::currentExecutableFile).exists());
         expect (File::getSpecialLocation (File::currentApplicationFile).exists());
@@ -1181,6 +1197,28 @@ public:
 
         expect (demoFolder.deleteRecursively());
         expect (! demoFolder.exists());
+
+        {
+            URL url ("https://audio.dev/foo/bar/");
+            expectEquals (url.toString (false), String ("https://audio.dev/foo/bar/"));
+            expectEquals (url.getChildURL ("x").toString (false), String ("https://audio.dev/foo/bar/x"));
+            expectEquals (url.getParentURL().toString (false), String ("https://audio.dev/foo"));
+            expectEquals (url.getParentURL().getParentURL().toString (false), String ("https://audio.dev/"));
+            expectEquals (url.getParentURL().getParentURL().getParentURL().toString (false), String ("https://audio.dev/"));
+            expectEquals (url.getParentURL().getChildURL ("x").toString (false), String ("https://audio.dev/foo/x"));
+            expectEquals (url.getParentURL().getParentURL().getParentURL().getChildURL ("x").toString (false), String ("https://audio.dev/x"));
+        }
+
+        {
+            URL url ("https://audio.dev/foo/bar");
+            expectEquals (url.toString (false), String ("https://audio.dev/foo/bar"));
+            expectEquals (url.getChildURL ("x").toString (false), String ("https://audio.dev/foo/bar/x"));
+            expectEquals (url.getParentURL().toString (false), String ("https://audio.dev/foo"));
+            expectEquals (url.getParentURL().getParentURL().toString (false), String ("https://audio.dev/"));
+            expectEquals (url.getParentURL().getParentURL().getParentURL().toString (false), String ("https://audio.dev/"));
+            expectEquals (url.getParentURL().getChildURL ("x").toString (false), String ("https://audio.dev/foo/x"));
+            expectEquals (url.getParentURL().getParentURL().getParentURL().getChildURL ("x").toString (false), String ("https://audio.dev/x"));
+        }
     }
 };
 

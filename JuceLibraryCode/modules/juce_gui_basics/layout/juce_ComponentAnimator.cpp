@@ -159,8 +159,7 @@ public:
             else
                 jassertfalse; // seem to be trying to animate a component that's not visible..
 
-            auto scale = (float) Desktop::getInstance().getDisplays()
-                                  .getDisplayContaining (getScreenBounds().getCentre()).scale;
+            auto scale = (float) Desktop::getInstance().getDisplays().findDisplayForRect (getScreenBounds()).scale;
 
             image = c.createComponentSnapshot (c.getLocalBounds(), false, scale);
 
@@ -182,7 +181,7 @@ public:
     };
 
     WeakReference<Component> component;
-    ScopedPointer<Component> proxy;
+    std::unique_ptr<Component> proxy;
 
     Rectangle<int> destination;
     double destAlpha;

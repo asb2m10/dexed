@@ -81,14 +81,14 @@ MemoryBlock& MemoryBlock::operator= (const MemoryBlock& other)
 }
 
 MemoryBlock::MemoryBlock (MemoryBlock&& other) noexcept
-    : data (static_cast<HeapBlockType&&> (other.data)),
+    : data (std::move (other.data)),
       size (other.size)
 {
 }
 
 MemoryBlock& MemoryBlock::operator= (MemoryBlock&& other) noexcept
 {
-    data = static_cast<HeapBlockType&&> (other.data);
+    data = std::move (other.data);
     size = other.size;
     return *this;
 }
@@ -356,7 +356,7 @@ String MemoryBlock::toBase64Encoding() const
 
     String destString ((unsigned int) size); // store the length, followed by a '.', and then the data.
     auto initialLen = destString.length();
-    destString.preallocateBytes (sizeof (String::CharPointerType::CharType) * (size_t) initialLen + 2 + numChars);
+    destString.preallocateBytes ((size_t) initialLen * sizeof (String::CharPointerType::CharType) + 2 + numChars);
 
     auto d = destString.getCharPointer();
     d += initialLen;

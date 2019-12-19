@@ -32,6 +32,8 @@ namespace juce
     A PropertyComponent that shows its value as editable text.
 
     @see PropertyComponent
+
+    @tags{GUI}
 */
 class JUCE_API  TextPropertyComponent  : public PropertyComponent
 {
@@ -72,7 +74,7 @@ public:
 
     /** Creates a text property component with a default value.
 
-        @param valueToControl The ValueWithDefault that is controlled by the TextPropertyComponent
+        @param valueToControl The ValueWithDefault that is controlled by the TextPropertyComponent.
         @param propertyName   The name of the property
         @param maxNumChars    If not zero, then this specifies the maximum allowable length of
                               the string. If zero, then the string will have no length limit.
@@ -81,14 +83,14 @@ public:
 
         @see TextEditor, setEditable
     */
-    TextPropertyComponent (const ValueWithDefault& valueToControl,
+    TextPropertyComponent (ValueWithDefault& valueToControl,
                            const String& propertyName,
                            int maxNumChars,
                            bool isMultiLine,
                            bool isEditable = true);
 
     /** Destructor. */
-    ~TextPropertyComponent();
+    ~TextPropertyComponent() override;
 
     //==============================================================================
     /** Called when the user edits the text.
@@ -103,6 +105,10 @@ public:
 
     /** Returns the text that should be shown in the text editor as a Value object. */
     Value& getValue() const;
+
+    //==============================================================================
+    /** Returns true if the text editor allows carriage returns. */
+    bool isTextEditorMultiLine() const noexcept    { return isMultiLine; }
 
     //==============================================================================
     /** A set of colour IDs to use to change the colour of various aspects of the component.
@@ -122,11 +128,12 @@ public:
     void colourChanged() override;
 
     //==============================================================================
+    /** Used to receive callbacks for text changes */
     class JUCE_API Listener
     {
     public:
         /** Destructor. */
-        virtual ~Listener() {}
+        virtual ~Listener() = default;
 
         /** Called when text has finished being entered (i.e. not per keypress) has changed. */
         virtual void textPropertyComponentChanged (TextPropertyComponent*) = 0;
@@ -162,16 +169,22 @@ public:
 
 private:
     class RemapperValueSourceWithDefault;
-
     class LabelComp;
     friend class LabelComp;
 
-    ScopedPointer<LabelComp> textEditor;
+    //==============================================================================
+    void callListeners();
+    void createEditor (int maxNumChars, bool isEditable);
+
+    //==============================================================================
+    bool isMultiLine;
+
+    std::unique_ptr<LabelComp> textEditor;
     ListenerList<Listener> listenerList;
 
-    void callListeners();
-    void createEditor (int maxNumChars, bool isMultiLine, bool isEditable);
+    WeakReference<ValueWithDefault> valueWithDefault;
 
+    //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TextPropertyComponent)
 };
 

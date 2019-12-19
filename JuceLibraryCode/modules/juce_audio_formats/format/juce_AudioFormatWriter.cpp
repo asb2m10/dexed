@@ -86,7 +86,7 @@ bool AudioFormatWriter::writeFromAudioReader (AudioFormatReader& reader,
     const int bufferSize = 16384;
     AudioBuffer<float> tempBuffer ((int) numChannels, bufferSize);
 
-    int* buffers[128] = { 0 };
+    int* buffers[128] = { nullptr };
 
     for (int i = tempBuffer.getNumChannels(); --i >= 0;)
         buffers[i] = reinterpret_cast<int*> (tempBuffer.getWritePointer (i, 0));
@@ -170,7 +170,7 @@ bool AudioFormatWriter::writeFromFloatArrays (const float* const* channels, int 
 
     while (numSamples > 0)
     {
-        const int numToDo = jmin (numSamples, maxSamples);
+        auto numToDo = jmin (numSamples, maxSamples);
 
         for (int i = 0; i < numSourceChannels; ++i)
             convertFloatsToInts (chans[i], channels[i] + startSample, numToDo);
@@ -217,17 +217,12 @@ public:
         : fifo (numSamples),
           buffer (channels, numSamples),
           timeSliceThread (tst),
-          writer (w),
-          receiver (nullptr),
-          samplesWritten (0),
-          samplesPerFlush (0),
-          flushSampleCounter (0),
-          isRunning (true)
+          writer (w)
     {
         timeSliceThread.addTimeSliceClient (this);
     }
 
-    ~Buffer()
+    ~Buffer() override
     {
         isRunning = false;
         timeSliceThread.removeTimeSliceClient (this);
@@ -267,7 +262,7 @@ public:
 
     int writePendingData()
     {
-        const int numToDo = fifo.getTotalSize() / 4;
+        auto numToDo = fifo.getTotalSize() / 4;
 
         int start1, size1, start2, size2;
         fifo.prepareToRead (numToDo, start1, size1, start2, size2);
@@ -278,6 +273,7 @@ public:
         writer->writeFromAudioSampleBuffer (buffer, start1, size1);
 
         const ScopedLock sl (thumbnailLock);
+
         if (receiver != nullptr)
             receiver->addBlock (samplesWritten, buffer, start1, size1);
 
@@ -328,12 +324,12 @@ private:
     AbstractFifo fifo;
     AudioBuffer<float> buffer;
     TimeSliceThread& timeSliceThread;
-    ScopedPointer<AudioFormatWriter> writer;
+    std::unique_ptr<AudioFormatWriter> writer;
     CriticalSection thumbnailLock;
-    IncomingDataReceiver* receiver;
-    int64 samplesWritten;
-    int samplesPerFlush, flushSampleCounter;
-    volatile bool isRunning;
+    IncomingDataReceiver* receiver = {};
+    int64 samplesWritten = 0;
+    int samplesPerFlush = 0, flushSampleCounter = 0;
+    std::atomic<bool> isRunning { true };
 
     JUCE_DECLARE_NON_COPYABLE (Buffer)
 };

@@ -36,6 +36,8 @@ namespace juce
     to tell any listeners.
 
     @see FileListComponent, FileBrowserComponent
+
+    @tags{GUI}
 */
 class JUCE_API  DirectoryContentsList   : public ChangeBroadcaster,
                                           private TimeSliceClient
@@ -64,7 +66,7 @@ public:
                            TimeSliceThread& threadToUse);
 
     /** Destructor. */
-    ~DirectoryContentsList();
+    ~DirectoryContentsList() override;
 
 
     //==============================================================================
@@ -199,15 +201,17 @@ public:
 
 private:
     File root;
-    const FileFilter* fileFilter;
+    const FileFilter* fileFilter = nullptr;
     TimeSliceThread& thread;
-    int fileTypeFlags;
+    int fileTypeFlags = File::ignoreHiddenFiles | File::findFiles;
 
     CriticalSection fileListLock;
     OwnedArray<FileInfo> files;
 
-    ScopedPointer<DirectoryIterator> fileFindHandle;
-    bool volatile shouldStop;
+    std::unique_ptr<DirectoryIterator> fileFindHandle;
+    std::atomic<bool> shouldStop { true };
+
+    bool wasEmpty = true;
 
     int useTimeSlice() override;
     void stopSearching();

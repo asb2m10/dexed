@@ -67,6 +67,8 @@ namespace juce
     }
 
     @endcode
+
+    @tags{GUI}
 */
 class JUCE_API  SplashScreen  : public Component,
                                 private Timer,
@@ -104,7 +106,7 @@ public:
                   bool useDropShadow);
 
     /** Destructor. */
-    ~SplashScreen();
+    ~SplashScreen() override;
 
     /** Tells the component to auto-delete itself after a timeout period, or when the
         mouse is clicked.

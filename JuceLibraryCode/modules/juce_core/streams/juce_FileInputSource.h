@@ -28,6 +28,8 @@ namespace juce
     A type of InputSource that represents a normal file.
 
     @see InputSource
+
+    @tags{Core}
 */
 class JUCE_API  FileInputSource     : public InputSource
 {
@@ -41,11 +43,11 @@ public:
     FileInputSource (const File& file, bool useFileTimeInHashGeneration = false);
 
     /** Destructor. */
-    ~FileInputSource();
+    ~FileInputSource() override;
 
-    InputStream* createInputStream();
-    InputStream* createInputStreamFor (const String& relatedItemPath);
-    int64 hashCode() const;
+    InputStream* createInputStream() override;
+    InputStream* createInputStreamFor (const String& relatedItemPath) override;
+    int64 hashCode() const override;
 
 private:
     //==============================================================================

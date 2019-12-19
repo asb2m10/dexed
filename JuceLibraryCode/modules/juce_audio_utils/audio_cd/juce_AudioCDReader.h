@@ -39,6 +39,8 @@ namespace juce
     within the stream.
 
     @see AudioFormatReader
+
+    @tags{Audio}
 */
 class JUCE_API  AudioCDReader  : public AudioFormatReader
 {
@@ -153,7 +155,7 @@ private:
     File volumeDir;
     Array<File> tracks;
     int currentReaderTrack;
-    ScopedPointer<AudioFormatReader> reader;
+    std::unique_ptr<AudioFormatReader> reader;
     AudioCDReader (const File& volume);
 
    #elif JUCE_WINDOWS

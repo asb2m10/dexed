@@ -39,9 +39,9 @@ namespace juce
 
 #if JUCE_NATIVE_WCHAR_IS_UTF32 || DOXYGEN
  /** A platform-independent 32-bit unicode character type. */
- typedef wchar_t        juce_wchar;
+ using juce_wchar = wchar_t;
 #else
- typedef uint32         juce_wchar;
+ using juce_wchar = uint32;
 #endif
 
 #ifndef DOXYGEN
@@ -60,18 +60,22 @@ namespace juce
  #define T(stringLiteral)   JUCE_T(stringLiteral)
 #endif
 
+#if ! DOXYGEN
+
 //==============================================================================
 // GNU libstdc++ does not have std::make_unsigned
 namespace internal
 {
-    template <typename Type> struct make_unsigned               { typedef Type type; };
-    template <> struct make_unsigned<signed char>               { typedef unsigned char      type; };
-    template <> struct make_unsigned<char>                      { typedef unsigned char      type; };
-    template <> struct make_unsigned<short>                     { typedef unsigned short     type; };
-    template <> struct make_unsigned<int>                       { typedef unsigned int       type; };
-    template <> struct make_unsigned<long>                      { typedef unsigned long      type; };
-    template <> struct make_unsigned<long long>                 { typedef unsigned long long type; };
+    template <typename Type> struct make_unsigned               { using type = Type; };
+    template <> struct make_unsigned<signed char>               { using type = unsigned char; };
+    template <> struct make_unsigned<char>                      { using type = unsigned char; };
+    template <> struct make_unsigned<short>                     { using type = unsigned short; };
+    template <> struct make_unsigned<int>                       { using type = unsigned int; };
+    template <> struct make_unsigned<long>                      { using type = unsigned long; };
+    template <> struct make_unsigned<long long>                 { using type = unsigned long long; };
 }
+
+#endif
 
 //==============================================================================
 /**
@@ -81,6 +85,8 @@ namespace internal
     classes, but some of them may be useful to call directly.
 
     @see String, CharPointer_UTF8, CharPointer_UTF16, CharPointer_UTF32
+
+    @tags{Core}
 */
 class JUCE_API  CharacterFunctions
 {
@@ -145,7 +151,7 @@ public:
        #else
         JUCE_CONSTEXPR const int maxSignificantDigits = 17 + 1; // An additional digit for rounding
         JUCE_CONSTEXPR const int bufferSize = maxSignificantDigits + 7 + 1; // -.E-XXX and a trailing null-terminator
-        char buffer[bufferSize] = {};
+        char buffer[(size_t) bufferSize] = {};
         char* currentCharacter = &(buffer[0]);
        #endif
 
@@ -289,6 +295,7 @@ public:
 
         int numSigFigs = 0;
         bool decimalPointFound = false;
+        int extraExponent = 0;
 
         for (;;)
         {
@@ -296,9 +303,22 @@ public:
             {
                 auto digit = (int) text.getAndAdvance() - '0';
 
-                if (numSigFigs >= maxSignificantDigits
-                     || ((numSigFigs == 0 && (! decimalPointFound)) && digit == 0))
-                    continue;
+                if (decimalPointFound)
+                {
+                    if (numSigFigs >= maxSignificantDigits)
+                        continue;
+                }
+                else
+                {
+                    if (numSigFigs >= maxSignificantDigits)
+                    {
+                        ++extraExponent;
+                        continue;
+                    }
+
+                    if (numSigFigs == 0 && digit == 0)
+                        continue;
+                }
 
                 *currentCharacter++ = (char) ('0' + (char) digit);
                 numSigFigs++;
@@ -317,37 +337,58 @@ public:
 
         c = *text;
 
+        auto writeExponentDigits = [](int exponent, char* destination)
+        {
+            auto exponentDivisor = 100;
+
+            while (exponentDivisor > 1)
+            {
+                auto digit = exponent / exponentDivisor;
+                *destination++ = (char) ('0' + (char) digit);
+                exponent -= digit * exponentDivisor;
+                exponentDivisor /= 10;
+            }
+
+            *destination++ = (char) ('0' + (char) exponent);
+        };
+
         if ((c == 'e' || c == 'E') && numSigFigs > 0)
         {
             *currentCharacter++ = 'e';
+            bool parsedExponentIsPositive = true;
 
             switch (*++text)
             {
-                case '-':   *currentCharacter++ = '-'; // Fall-through..
+                case '-':   parsedExponentIsPositive = false; // Fall-through..
                 case '+':   ++text;
             }
 
-            int exponentMagnitude = 0;
+            int exponent = 0;
 
             while (text.isDigit())
             {
-                if (currentCharacter == &buffer[bufferSize - 1])
-                    return std::numeric_limits<double>::quiet_NaN();
-
                 auto digit = (int) text.getAndAdvance() - '0';
 
-                if (digit != 0 || exponentMagnitude != 0)
-                {
-                    *currentCharacter++ = (char) ('0' + (char) digit);
-                    exponentMagnitude = (exponentMagnitude * 10) + digit;
-                }
+                if (digit != 0 || exponent != 0)
+                    exponent = (exponent * 10) + digit;
             }
 
-            if (exponentMagnitude > std::numeric_limits<double>::max_exponent10)
+            exponent = extraExponent + (parsedExponentIsPositive ? exponent : -exponent);
+
+            if (exponent < 0)
+                *currentCharacter++ = '-';
+
+            exponent = std::abs (exponent);
+
+            if (exponent > std::numeric_limits<double>::max_exponent10)
                 return std::numeric_limits<double>::quiet_NaN();
 
-            if (exponentMagnitude == 0)
-                *currentCharacter++ = '0';
+            writeExponentDigits (exponent, currentCharacter);
+        }
+        else if (extraExponent > 0)
+        {
+            *currentCharacter++ = 'e';
+            writeExponentDigits (extraExponent, currentCharacter);
         }
 
        #if JUCE_WINDOWS
@@ -377,7 +418,7 @@ public:
     template <typename IntType, typename CharPointerType>
     static IntType getIntValue (const CharPointerType text) noexcept
     {
-        typedef typename internal::make_unsigned<IntType>::type UIntType;
+        using UIntType = typename internal::make_unsigned<IntType>::type;
 
         UIntType v = 0;
         auto s = text.findEndOfWhitespace();
@@ -399,6 +440,7 @@ public:
         return isNeg ? - (IntType) v : (IntType) v;
     }
 
+    /** Parses a character string, to read a hexadecimal value. */
     template <typename ResultType>
     struct HexParser
     {
@@ -463,12 +505,12 @@ public:
     {
         auto startAddress = dest.getAddress();
         auto maxBytes = (ssize_t) maxBytesToWrite;
-        maxBytes -= sizeof (typename DestCharPointerType::CharType); // (allow for a terminating null)
+        maxBytes -= (ssize_t) sizeof (typename DestCharPointerType::CharType); // (allow for a terminating null)
 
         for (;;)
         {
             auto c = src.getAndAdvance();
-            auto bytesNeeded = DestCharPointerType::getBytesRequiredFor (c);
+            auto bytesNeeded = (ssize_t) DestCharPointerType::getBytesRequiredFor (c);
             maxBytes -= bytesNeeded;
 
             if (c == 0 || maxBytes < 0)

@@ -32,6 +32,8 @@
 namespace juce
 {
 
+#ifndef DOXYGEN
+
 struct AudioUnitHelpers
 {
     class ChannelRemapper
@@ -302,7 +304,7 @@ struct AudioUnitHelpers
         }
     }
 
-    template <int numLayouts>
+    template <size_t numLayouts>
     static bool isLayoutSupported (const AudioProcessor& processor,
                                    bool isInput, int busIdx,
                                    int numChannels,
@@ -529,5 +531,7 @@ struct AudioUnitHelpers
        #endif
     }
 };
+
+#endif // ! DOXYGEN
 
 } // namespace juce

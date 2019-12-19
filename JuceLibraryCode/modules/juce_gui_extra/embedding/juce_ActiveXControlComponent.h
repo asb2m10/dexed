@@ -40,6 +40,8 @@ namespace juce
 
     Of course, since the control is a heavyweight window, it'll obliterate any
     JUCE components that may overlap this component, but that's life.
+
+    @tags{GUI}
 */
 class JUCE_API  ActiveXControlComponent   : public Component
 {
@@ -116,8 +118,7 @@ public:
 
 private:
     class Pimpl;
-    friend struct ContainerDeletePolicy<Pimpl>;
-    ScopedPointer<Pimpl> control;
+    std::unique_ptr<Pimpl> control;
     bool mouseEventsAllowed = true;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ActiveXControlComponent)

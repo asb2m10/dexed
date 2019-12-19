@@ -40,6 +40,8 @@ namespace juce
     set the Component::windowHasDropShadow flag when calling
     Component::addToDesktop(), and the system will create one of these if it's
     needed (which it obviously isn't on the Mac, for example).
+
+    @tags{GUI}
 */
 class JUCE_API  DropShadower  : private ComponentListener
 {
@@ -49,7 +51,7 @@ public:
     DropShadower (const DropShadow& shadowType);
 
     /** Destructor. */
-    ~DropShadower();
+    ~DropShadower() override;
 
     /** Attaches the DropShadower to the component you want to shadow. */
     void setOwner (Component* componentToFollow);

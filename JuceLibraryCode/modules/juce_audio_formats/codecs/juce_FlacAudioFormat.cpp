@@ -117,6 +117,16 @@ namespace FlacNamespace
   #pragma clang diagnostic ignored "-Wconversion"
   #pragma clang diagnostic ignored "-Wshadow"
   #pragma clang diagnostic ignored "-Wdeprecated-register"
+  #if __has_warning("-Wzero-as-null-pointer-constant")
+   #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+  #endif
+ #endif
+
+ #if JUCE_GCC
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+  #pragma GCC diagnostic ignored "-Wconversion"
+  #pragma GCC diagnostic ignored "-Wsign-conversion"
  #endif
 
  #if JUCE_INTEL
@@ -157,6 +167,10 @@ namespace FlacNamespace
 
  #if JUCE_CLANG
   #pragma clang diagnostic pop
+ #endif
+
+ #if JUCE_GCC
+  #pragma GCC diagnostic pop
  #endif
 }
 
@@ -201,7 +215,7 @@ public:
         }
     }
 
-    ~FlacReader()
+    ~FlacReader() override
     {
         FlacNamespace::FLAC__stream_decoder_delete (decoder);
     }
@@ -237,7 +251,7 @@ public:
                     if (destSamples[i] != nullptr)
                         memcpy (destSamples[i] + startOffsetInDestBuffer,
                                 reservoir.getReadPointer (i, (int) (startSampleInFile - reservoirStart)),
-                                sizeof (int) * (size_t) num);
+                                (size_t) num * sizeof (int));
 
                 startOffsetInDestBuffer += num;
                 startSampleInFile += num;
@@ -245,7 +259,7 @@ public:
             }
             else
             {
-                if (startSampleInFile >= (int) lengthInSamples)
+                if (startSampleInFile >= lengthInSamples)
                 {
                     samplesInReservoir = 0;
                 }
@@ -274,7 +288,7 @@ public:
         {
             for (int i = numDestChannels; --i >= 0;)
                 if (destSamples[i] != nullptr)
-                    zeromem (destSamples[i] + startOffsetInDestBuffer, sizeof (int) * (size_t) numSamples);
+                    zeromem (destSamples[i] + startOffsetInDestBuffer, (size_t) numSamples * sizeof (int));
         }
 
         return true;
@@ -298,7 +312,7 @@ public:
                 auto* src = buffer[i];
                 int n = i;
 
-                while (src == 0 && n > 0)
+                while (src == nullptr && n > 0)
                     src = buffer [--n];
 
                 if (src != nullptr)
@@ -401,7 +415,7 @@ public:
                                                this) == FlacNamespace::FLAC__STREAM_ENCODER_INIT_STATUS_OK;
     }
 
-    ~FlacWriter()
+    ~FlacWriter() override
     {
         if (ok)
         {
@@ -560,7 +574,7 @@ bool FlacAudioFormat::isCompressed()    { return true; }
 
 AudioFormatReader* FlacAudioFormat::createReaderFor (InputStream* in, const bool deleteStreamIfOpeningFails)
 {
-    ScopedPointer<FlacReader> r (new FlacReader (in));
+    std::unique_ptr<FlacReader> r (new FlacReader (in));
 
     if (r->sampleRate > 0)
         return r.release();
@@ -580,7 +594,7 @@ AudioFormatWriter* FlacAudioFormat::createWriterFor (OutputStream* out,
 {
     if (out != nullptr && getPossibleBitDepths().contains (bitsPerSample))
     {
-        ScopedPointer<FlacWriter> w (new FlacWriter (out, sampleRate, numberOfChannels,
+        std::unique_ptr<FlacWriter> w (new FlacWriter (out, sampleRate, numberOfChannels,
                                                      (uint32) bitsPerSample, qualityOptionIndex));
         if (w->ok)
             return w.release();

@@ -48,6 +48,8 @@ namespace juce
     A top-level window also has an optional drop-shadow.
 
     @see ResizableWindow, DocumentWindow, DialogWindow
+
+    @tags{GUI}
 */
 class JUCE_API  TopLevelWindow  : public Component
 {
@@ -62,7 +64,7 @@ public:
     TopLevelWindow (const String& name, bool addToDesktop);
 
     /** Destructor. */
-    ~TopLevelWindow();
+    ~TopLevelWindow() override;
 
     //==============================================================================
     /** True if this is currently the TopLevelWindow that is actively being used.
@@ -154,7 +156,7 @@ private:
     friend class TopLevelWindowManager;
     friend class ResizableWindow;
     bool useDropShadow = true, useNativeTitleBar = false, isCurrentlyActive = false;
-    ScopedPointer<DropShadower> shadower;
+    std::unique_ptr<DropShadower> shadower;
 
     void setWindowActive (bool);
 

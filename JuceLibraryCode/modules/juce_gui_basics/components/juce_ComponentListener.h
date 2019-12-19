@@ -37,12 +37,14 @@ namespace juce
     Be sure to deregister listeners before you delete them!
 
     @see Component::addComponentListener, Component::removeComponentListener
+
+    @tags{GUI}
 */
 class JUCE_API  ComponentListener
 {
 public:
     /** Destructor. */
-    virtual ~ComponentListener()  {}
+    virtual ~ComponentListener() = default;
 
     /** Called when the component's position or size changes.
 

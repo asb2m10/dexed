@@ -39,26 +39,6 @@ PositionedGlyph::PositionedGlyph (const Font& font_, juce_wchar character_, int 
 {
 }
 
-PositionedGlyph::PositionedGlyph (PositionedGlyph&& other) noexcept
-    : font (static_cast<Font&&> (other.font)),
-      character (other.character), glyph (other.glyph),
-      x (other.x), y (other.y), w (other.w), whitespace (other.whitespace)
-{
-}
-
-PositionedGlyph& PositionedGlyph::operator= (PositionedGlyph&& other) noexcept
-{
-    font = static_cast<Font&&> (other.font);
-    character = other.character;
-    glyph = other.glyph;
-    x = other.x;
-    y = other.y;
-    w = other.w;
-    whitespace = other.whitespace;
-
-    return *this;
-}
-
 PositionedGlyph::~PositionedGlyph() {}
 
 static inline void drawGlyphWithFont (Graphics& g, int glyph, const Font& font, AffineTransform t)
@@ -127,20 +107,6 @@ GlyphArrangement::GlyphArrangement()
 {
     glyphs.ensureStorageAllocated (128);
 }
-
-GlyphArrangement::GlyphArrangement (GlyphArrangement&& other)
-    : glyphs (static_cast<Array<PositionedGlyph>&&> (other.glyphs))
-{
-}
-
-GlyphArrangement& GlyphArrangement::operator= (GlyphArrangement&& other)
-{
-    glyphs = static_cast<Array<PositionedGlyph>&&> (other.glyphs);
-
-    return *this;
-}
-
-GlyphArrangement::~GlyphArrangement() {}
 
 //==============================================================================
 void GlyphArrangement::clear()
@@ -256,7 +222,8 @@ int GlyphArrangement::insertEllipsis (const Font& font, float maxXPos, int start
 
 void GlyphArrangement::addJustifiedText (const Font& font, const String& text,
                                          float x, float y, float maxLineWidth,
-                                         Justification horizontalLayout)
+                                         Justification horizontalLayout,
+                                         float leading)
 {
     auto lineStartIndex = glyphs.size();
     addLineOfText (font, text, x, y);
@@ -331,7 +298,7 @@ void GlyphArrangement::addJustifiedText (const Font& font, const String& text,
 
         lineStartIndex = i;
 
-        y += font.getHeight();
+        y += font.getHeight() + leading;
     }
 }
 

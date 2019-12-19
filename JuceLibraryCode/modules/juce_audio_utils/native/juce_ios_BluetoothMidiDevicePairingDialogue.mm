@@ -39,7 +39,7 @@ public:
                                   const Rectangle<int>& boundsToUse)
         : bounds (boundsToUse)
     {
-        ScopedPointer<ModalComponentManager::Callback> exitCallback (exitCallbackToUse);
+        std::unique_ptr<ModalComponentManager::Callback> exitCallback (exitCallbackToUse);
 
         setAlwaysOnTop (true);
         setVisible (true);
@@ -51,7 +51,7 @@ public:
             setBounds (bounds);
 
         toFront (true);
-        setOpaque (! bounds.isEmpty());
+        setOpaque (true);
 
         controller = [[CABTMIDICentralViewController alloc] init];
         nativeSelectorComponent.setView ([controller view]);
@@ -61,7 +61,7 @@ public:
         enterModalState (true, exitCallback.release(), true);
     }
 
-    ~BluetoothMidiSelectorOverlay()
+    ~BluetoothMidiSelectorOverlay() override
     {
         nativeSelectorComponent.setView (nullptr);
         [controller release];
@@ -112,7 +112,7 @@ private:
 bool BluetoothMidiDevicePairingDialogue::open (ModalComponentManager::Callback* exitCallback,
                                                Rectangle<int>* btBounds)
 {
-    ScopedPointer<ModalComponentManager::Callback> cb (exitCallback);
+    std::unique_ptr<ModalComponentManager::Callback> cb (exitCallback);
     auto boundsToUse = (btBounds != nullptr ? *btBounds : Rectangle<int> {});
 
     if (isAvailable())
@@ -126,7 +126,7 @@ bool BluetoothMidiDevicePairingDialogue::open (ModalComponentManager::Callback* 
 
 bool BluetoothMidiDevicePairingDialogue::isAvailable()
 {
-    return NSClassFromString ([NSString stringWithUTF8String: "CABTMIDICentralViewController"]) != nil;
+    return NSClassFromString (@"CABTMIDICentralViewController") != nil;
 }
 
 } // namespace juce
@@ -139,7 +139,7 @@ namespace juce
     bool BluetoothMidiDevicePairingDialogue::open (ModalComponentManager::Callback* exitCallback,
                                                    Rectangle<int>*)
     {
-        ScopedPointer<ModalComponentManager::Callback> cb (exitCallback);
+        std::unique_ptr<ModalComponentManager::Callback> cb (exitCallback);
         return false;
     }
 

@@ -52,6 +52,8 @@ namespace juce
     out-of-the-box, but if you want to use more complex custom types, you may need to implement
     some template specialisations of VariantConverter which this class uses to convert between
     the type and the ValueTree's internal var.
+
+    @tags{DataStructures}
 */
 template <typename Type>
 class CachedValue   : private ValueTree::Listener
@@ -179,11 +181,14 @@ public:
     /** Returns the property ID of the referenced property. */
     const Identifier& getPropertyID() const noexcept        { return targetProperty; }
 
+    /** Returns the UndoManager that is being used. */
+    UndoManager* getUndoManager() noexcept                  { return undoManager; }
+
 private:
     //==============================================================================
     ValueTree targetTree;
     Identifier targetProperty;
-    UndoManager* undoManager;
+    UndoManager* undoManager = nullptr;
     Type defaultValue;
     Type cachedValue;
 
@@ -192,18 +197,16 @@ private:
     Type getTypedValue() const;
 
     void valueTreePropertyChanged (ValueTree& changedTree, const Identifier& changedProperty) override;
-    void valueTreeChildAdded (ValueTree&, ValueTree&) override {}
-    void valueTreeChildRemoved (ValueTree&, ValueTree&, int) override {}
-    void valueTreeChildOrderChanged (ValueTree&, int, int) override {}
-    void valueTreeParentChanged (ValueTree&) override {}
 
+    //==============================================================================
+    JUCE_DECLARE_WEAK_REFERENCEABLE (CachedValue)
     JUCE_DECLARE_NON_COPYABLE (CachedValue)
 };
 
 
 //==============================================================================
 template <typename Type>
-inline CachedValue<Type>::CachedValue()  : undoManager (nullptr) {}
+inline CachedValue<Type>::CachedValue() = default;
 
 template <typename Type>
 inline CachedValue<Type>::CachedValue (ValueTree& v, const Identifier& i, UndoManager* um)

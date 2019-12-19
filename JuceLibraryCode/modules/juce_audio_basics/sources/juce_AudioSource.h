@@ -26,13 +26,13 @@ namespace juce
 //==============================================================================
 /**
     Used by AudioSource::getNextAudioBlock().
+
+    @tags{Audio}
 */
 struct JUCE_API  AudioSourceChannelInfo
 {
     /** Creates an uninitialised AudioSourceChannelInfo. */
-    AudioSourceChannelInfo() noexcept
-    {
-    }
+    AudioSourceChannelInfo() = default;
 
     /** Creates an AudioSourceChannelInfo. */
     AudioSourceChannelInfo (AudioBuffer<float>* bufferToUse,
@@ -103,17 +103,19 @@ struct JUCE_API  AudioSourceChannelInfo
     back into an 'unprepared' state.
 
     @see AudioFormatReaderSource, ResamplingAudioSource
+
+    @tags{Audio}
 */
 class JUCE_API  AudioSource
 {
 protected:
     //==============================================================================
     /** Creates an AudioSource. */
-    AudioSource() noexcept      {}
+    AudioSource() = default;
 
 public:
     /** Destructor. */
-    virtual ~AudioSource()      {}
+    virtual ~AudioSource()      = default;
 
     //==============================================================================
     /** Tells the source to prepare for playing.

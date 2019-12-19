@@ -30,24 +30,24 @@ NamedValueSet::NamedValue::NamedValue (const Identifier& n, const var& v)  : nam
 NamedValueSet::NamedValue::NamedValue (const NamedValue& other) : NamedValue (other.name, other.value) {}
 
 NamedValueSet::NamedValue::NamedValue (NamedValue&& other) noexcept
-   : NamedValue (static_cast<Identifier&&> (other.name),
-                 static_cast<var&&> (other.value))
+   : NamedValue (std::move (other.name),
+                 std::move (other.value))
 {}
 
 NamedValueSet::NamedValue::NamedValue (const Identifier& n, var&& v) noexcept
-   : name (n), value (static_cast<var&&> (v))
+   : name (n), value (std::move (v))
 {
 }
 
 NamedValueSet::NamedValue::NamedValue (Identifier&& n, var&& v) noexcept
-   : name (static_cast<Identifier&&> (n)),
-     value (static_cast<var&&> (v))
+   : name (std::move (n)),
+     value (std::move (v))
 {}
 
 NamedValueSet::NamedValue& NamedValueSet::NamedValue::operator= (NamedValue&& other) noexcept
 {
-    name = static_cast<Identifier&&> (other.name);
-    value = static_cast<var&&> (other.value);
+    name = std::move (other.name);
+    value = std::move (other.value);
     return *this;
 }
 
@@ -59,7 +59,14 @@ NamedValueSet::NamedValueSet() noexcept {}
 NamedValueSet::~NamedValueSet() noexcept {}
 
 NamedValueSet::NamedValueSet (const NamedValueSet& other)  : values (other.values) {}
-NamedValueSet::NamedValueSet (NamedValueSet&& other) noexcept  : values (static_cast<Array<NamedValue>&&> (other.values)) {}
+
+NamedValueSet::NamedValueSet (NamedValueSet&& other) noexcept
+   : values (std::move (other.values)) {}
+
+NamedValueSet::NamedValueSet (std::initializer_list<NamedValue> list)
+   : values (std::move (list))
+{
+}
 
 NamedValueSet& NamedValueSet::operator= (const NamedValueSet& other)
 {
@@ -140,7 +147,16 @@ var NamedValueSet::getWithDefault (const Identifier& name, const var& defaultRet
     return defaultReturnValue;
 }
 
-var* NamedValueSet::getVarPointer (const Identifier& name) const noexcept
+var* NamedValueSet::getVarPointer (const Identifier& name) noexcept
+{
+    for (auto& i : values)
+        if (i.name == name)
+            return &(i.value);
+
+    return {};
+}
+
+const var* NamedValueSet::getVarPointer (const Identifier& name) const noexcept
 {
     for (auto& i : values)
         if (i.name == name)
@@ -156,11 +172,11 @@ bool NamedValueSet::set (const Identifier& name, var&& newValue)
         if (v->equalsWithSameType (newValue))
             return false;
 
-        *v = static_cast<var&&> (newValue);
+        *v = std::move (newValue);
         return true;
     }
 
-    values.add ({ name, static_cast<var&&> (newValue) });
+    values.add ({ name, std::move (newValue) });
     return true;
 }
 
@@ -229,7 +245,15 @@ const var& NamedValueSet::getValueAt (const int index) const noexcept
     return getNullVarRef();
 }
 
-var* NamedValueSet::getVarPointerAt (int index) const noexcept
+var* NamedValueSet::getVarPointerAt (int index) noexcept
+{
+    if (isPositiveAndBelow (index, values.size()))
+        return &(values.getReference (index).value);
+
+    return {};
+}
+
+const var* NamedValueSet::getVarPointerAt (int index) const noexcept
 {
     if (isPositiveAndBelow (index, values.size()))
         return &(values.getReference (index).value);

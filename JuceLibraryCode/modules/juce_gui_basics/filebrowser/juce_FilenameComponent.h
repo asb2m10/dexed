@@ -35,12 +35,14 @@ namespace juce
     register one of these objects for event callbacks when the filename is changed.
 
     @see FilenameComponent
+
+    @tags{GUI}
 */
 class JUCE_API  FilenameComponentListener
 {
 public:
     /** Destructor. */
-    virtual ~FilenameComponentListener() {}
+    virtual ~FilenameComponentListener() = default;
 
     /** This method is called after the FilenameComponent's file has been changed. */
     virtual void filenameComponentChanged (FilenameComponent* fileComponentThatHasChanged) = 0;
@@ -60,6 +62,8 @@ public:
     and clicking 'ok', or by typing a new filename into the box and pressing return.
 
     @see FileChooser, ComboBox
+
+    @tags{GUI}
 */
 class JUCE_API  FilenameComponent  : public Component,
                                      public SettableTooltipClient,
@@ -96,7 +100,7 @@ public:
                        const String& textWhenNothingSelected);
 
     /** Destructor. */
-    ~FilenameComponent();
+    ~FilenameComponent() override;
 
     //==============================================================================
     /** Returns the currently displayed filename. */
@@ -187,7 +191,7 @@ public:
     /** This abstract base class is implemented by LookAndFeel classes. */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual Button* createFilenameComponentBrowseButton (const String& text) = 0;
         virtual void layoutFilenameComponent (FilenameComponent&, ComboBox* filenameBox, Button* browseButton) =  0;
@@ -215,7 +219,7 @@ private:
     //==============================================================================
     ComboBox filenameBox;
     String lastFilename;
-    ScopedPointer<Button> browseButton;
+    std::unique_ptr<Button> browseButton;
     int maxRecentFiles = 30;
     bool isDir, isSaving, isFileDragOver = false;
     String wildcard, enforcedSuffix, browseButtonText;

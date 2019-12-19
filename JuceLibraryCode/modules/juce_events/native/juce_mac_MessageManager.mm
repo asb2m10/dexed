@@ -23,13 +23,13 @@
 namespace juce
 {
 
-typedef void (*AppFocusChangeCallback)();
+using AppFocusChangeCallback = void (*)();
 AppFocusChangeCallback appFocusChangeCallback = nullptr;
 
-typedef bool (*CheckEventBlockedByModalComps) (NSEvent*);
+using CheckEventBlockedByModalComps = bool (*)(NSEvent*);
 CheckEventBlockedByModalComps isEventBlockedByModalComps = nullptr;
 
-typedef void (*MenuTrackingChangedCallback)(bool);
+using MenuTrackingChangedCallback = void (*)(bool);
 MenuTrackingChangedCallback menuTrackingChangedCallback = nullptr;
 
 //==============================================================================
@@ -235,8 +235,10 @@ private:
         static String quotedIfContainsSpaces (NSString* file)
         {
             String s (nsStringToJuce (file));
+            s = s.unquoted().replace ("\"", "\\\"");
+
             if (s.containsChar (' '))
-                s = s.quoted ('"');
+                s = s.quoted();
 
             return s;
         }
@@ -381,24 +383,25 @@ bool MessageManager::runDispatchLoopUntil (int millisecondsToRunFor)
     jassert (millisecondsToRunFor >= 0);
     jassert (isThisTheMessageThread()); // must only be called by the message thread
 
-    uint32 endTime = Time::getMillisecondCounter() + (uint32) millisecondsToRunFor;
+    auto endTime = Time::currentTimeMillis() + millisecondsToRunFor;
 
     while (quitMessagePosted.get() == 0)
     {
         JUCE_AUTORELEASEPOOL
         {
-            CFRunLoopRunInMode (kCFRunLoopDefaultMode, 0.001, true);
+            auto msRemaining = endTime - Time::currentTimeMillis();
 
-            NSEvent* e = [NSApp nextEventMatchingMask: NSEventMaskAny
-                                            untilDate: [NSDate dateWithTimeIntervalSinceNow: 0.001]
-                                               inMode: NSDefaultRunLoopMode
-                                              dequeue: YES];
-
-            if (e != nil && (isEventBlockedByModalComps == nullptr || ! (*isEventBlockedByModalComps) (e)))
-                [NSApp sendEvent: e];
-
-            if (Time::getMillisecondCounter() >= endTime)
+            if (msRemaining <= 0)
                 break;
+
+            CFRunLoopRunInMode (kCFRunLoopDefaultMode, jmin (1.0, msRemaining * 0.001), true);
+
+            if (NSEvent* e = [NSApp nextEventMatchingMask: NSEventMaskAny
+                                                untilDate: [NSDate dateWithTimeIntervalSinceNow: 0.001]
+                                                   inMode: NSDefaultRunLoopMode
+                                                  dequeue: YES])
+                if (isEventBlockedByModalComps == nullptr || ! (*isEventBlockedByModalComps) (e))
+                    [NSApp sendEvent: e];
         }
     }
 
@@ -454,7 +457,7 @@ void __attribute__ ((visibility("default"))) repostCurrentNSEvent()
     struct EventReposter  : public CallbackMessage
     {
         EventReposter() : e ([[NSApp currentEvent] retain])  {}
-        ~EventReposter()  { [e release]; }
+        ~EventReposter() override  { [e release]; }
 
         void messageCallback() override
         {

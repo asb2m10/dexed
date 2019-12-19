@@ -41,6 +41,8 @@ namespace juce
     The juce demo app has a good example of this class in action.
 
     @see ChildProcessMaster, InterprocessConnection, ChildProcess
+
+    @tags{Events}
 */
 class JUCE_API  ChildProcessSlave
 {
@@ -102,9 +104,7 @@ public:
 
 private:
     struct Connection;
-    friend struct Connection;
-    friend struct ContainerDeletePolicy<Connection>;
-    ScopedPointer<Connection> connection;
+    std::unique_ptr<Connection> connection;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChildProcessSlave)
 };
@@ -126,6 +126,8 @@ private:
     The juce demo app has a good example of this class in action.
 
     @see ChildProcessSlave, InterprocessConnection, ChildProcess
+
+    @tags{Events}
 */
 class JUCE_API ChildProcessMaster
 {
@@ -187,12 +189,10 @@ public:
     bool sendMessageToSlave (const MemoryBlock&);
 
 private:
-    ScopedPointer<ChildProcess> childProcess;
+    std::unique_ptr<ChildProcess> childProcess;
 
     struct Connection;
-    friend struct Connection;
-    friend struct ContainerDeletePolicy<Connection>;
-    ScopedPointer<Connection> connection;
+    std::unique_ptr<Connection> connection;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChildProcessMaster)
 };

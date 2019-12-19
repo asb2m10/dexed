@@ -179,6 +179,8 @@ juce_wchar CharacterFunctions::getUnicodeCharFromWindows1252Codepage (const uint
     return (juce_wchar) lookup[c - 0x80];
 }
 
+
+//==============================================================================
 //==============================================================================
 #if JUCE_UNIT_TESTS
 
@@ -197,7 +199,9 @@ juce_wchar CharacterFunctions::getUnicodeCharFromWindows1252Codepage (const uint
 class CharacterFunctionsTests  : public UnitTest
 {
 public:
-    CharacterFunctionsTests() : UnitTest ("CharacterFunctions", "Text") {}
+    CharacterFunctionsTests()
+        : UnitTest ("CharacterFunctions", UnitTestCategories::text)
+    {}
 
     void runTest() override
     {
@@ -236,13 +240,23 @@ public:
             STRING_DOUBLE_PAIR_COMBOS (10e10),
             STRING_DOUBLE_PAIR_COMBOS (1.4962e+2),
             STRING_DOUBLE_PAIR_COMBOS (3198693.0973e4),
-            STRING_DOUBLE_PAIR_COMBOS (10973097.2087e-4),
+            STRING_DOUBLE_PAIR_COMBOS (10973097.2087E-4),
             STRING_DOUBLE_PAIR_COMBOS (1.3986e00006),
             STRING_DOUBLE_PAIR_COMBOS (2087.3087e+00006),
             STRING_DOUBLE_PAIR_COMBOS (6.0872e-00006),
 
             // Too many sig figs. The parsing routine on MinGW gets the last
             // significant figure wrong.
+            STRING_DOUBLE_PAIR_COMBOS (17654321098765432.9),
+            STRING_DOUBLE_PAIR_COMBOS (183456789012345678.9),
+            STRING_DOUBLE_PAIR_COMBOS (1934567890123456789.9),
+            STRING_DOUBLE_PAIR_COMBOS (20345678901234567891.9),
+            STRING_DOUBLE_PAIR_COMBOS (10000000000000000303786028427003666890752.000000),
+            STRING_DOUBLE_PAIR_COMBOS (10000000000000000303786028427003666890752e3),
+            STRING_DOUBLE_PAIR_COMBOS (10000000000000000303786028427003666890752e100),
+            STRING_DOUBLE_PAIR_COMBOS (10000000000000000303786028427003666890752.000000e-5),
+            STRING_DOUBLE_PAIR_COMBOS (10000000000000000303786028427003666890752.000000e-40),
+
             STRING_DOUBLE_PAIR_COMBOS (1.23456789012345678901234567890),
             STRING_DOUBLE_PAIR_COMBOS (1.23456789012345678901234567890e-111)
 
@@ -262,6 +276,7 @@ public:
 
         {
             String nans[] = { "NaN", "-nan", "+NAN", "1.0E1024", "-1.0E-999", "1.23456789012345678901234567890e123456789"};
+
             for (auto nan : nans)
             {
                 auto charPtr = nan.getCharPointer();
@@ -271,6 +286,7 @@ public:
 
         {
             String infs[] = { "Inf", "-inf",  "INF"};
+
             for (auto inf : infs)
             {
                 auto charPtr = inf.getCharPointer();

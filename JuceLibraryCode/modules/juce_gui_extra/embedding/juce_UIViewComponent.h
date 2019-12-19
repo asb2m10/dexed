@@ -39,6 +39,8 @@ namespace juce
 
     Of course, since the view is a native object, it'll obliterate any
     juce components that may overlap this component, but that's life.
+
+    @tags{GUI}
 */
 class JUCE_API  UIViewComponent   : public Component
 {
@@ -48,21 +50,21 @@ public:
     UIViewComponent();
 
     /** Destructor. */
-    ~UIViewComponent();
+    ~UIViewComponent() override;
 
     /** Assigns an UIView to this peer.
 
         The view will be retained and released by this component for as long as
         it is needed. To remove the current view, just call setView (nullptr).
 
-        Note: a void* is used here to avoid including the cocoa headers as
+        Note: A void* is used here to avoid including the cocoa headers as
         part of the juce.h, but the method expects an UIView*.
     */
     void setView (void* uiView);
 
     /** Returns the current UIView.
 
-        Note: a void* is returned here to avoid the needing to include the cocoa
+        Note: A void* is returned here to avoid the needing to include the cocoa
         headers, so you should just cast the return value to an UIView*.
     */
     void* getView() const;
@@ -78,8 +80,7 @@ public:
 
 private:
     class Pimpl;
-    friend class Pimpl;
-    ScopedPointer<Pimpl> pimpl;
+    std::unique_ptr<Pimpl> pimpl;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (UIViewComponent)
 };

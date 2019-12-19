@@ -35,7 +35,7 @@
 
   ID:               juce_gui_basics
   vendor:           juce
-  version:          5.2.1
+  version:          5.4.5
   name:             JUCE GUI core classes
   description:      Basic user-interface components and related classes.
   website:          http://www.juce.com/juce
@@ -111,6 +111,13 @@
  #define JUCE_USE_XCURSOR 1
 #endif
 
+/** Config: JUCE_WIN_PER_MONITOR_DPI_AWARE
+    Enables per-monitor DPI awareness on Windows 8.1 and above.
+*/
+#ifndef JUCE_WIN_PER_MONITOR_DPI_AWARE
+ #define JUCE_WIN_PER_MONITOR_DPI_AWARE 1
+#endif
+
 //==============================================================================
 namespace juce
 {
@@ -148,13 +155,12 @@ namespace juce
     class KeyPressMappingSet;
     class ApplicationCommandManagerListener;
     class DrawableButton;
+    class Displays;
 
-   #if JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS
     class FlexBox;
     #if JUCE_HAS_CONSTEXPR
      class Grid;
     #endif
-   #endif
 }
 
 #include "mouse/juce_MouseCursor.h"
@@ -170,7 +176,8 @@ namespace juce
 #include "components/juce_CachedComponentImage.h"
 #include "components/juce_Component.h"
 #include "layout/juce_ComponentAnimator.h"
-#include "components/juce_Desktop.h"
+#include "desktop/juce_Desktop.h"
+#include "desktop/juce_Displays.h"
 #include "layout/juce_ComponentBoundsConstrainer.h"
 #include "mouse/juce_ComponentDragger.h"
 #include "mouse/juce_DragAndDropTarget.h"
@@ -280,6 +287,7 @@ namespace juce
 #include "properties/juce_PropertyPanel.h"
 #include "properties/juce_SliderPropertyComponent.h"
 #include "properties/juce_TextPropertyComponent.h"
+#include "properties/juce_MultiChoicePropertyComponent.h"
 #include "application/juce_Application.h"
 #include "misc/juce_BubbleComponent.h"
 #include "lookandfeel/juce_LookAndFeel.h"
@@ -293,13 +301,10 @@ namespace juce
  #include "native/juce_linux_X11.h"
 #endif
 
-// these classes are C++11-only
-#if JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS
- #include "layout/juce_FlexItem.h"
- #include "layout/juce_FlexBox.h"
+#include "layout/juce_FlexItem.h"
+#include "layout/juce_FlexBox.h"
 
- #if JUCE_HAS_CONSTEXPR
-  #include "layout/juce_GridItem.h"
-  #include "layout/juce_Grid.h"
- #endif
+#if JUCE_HAS_CONSTEXPR
+ #include "layout/juce_GridItem.h"
+ #include "layout/juce_Grid.h"
 #endif

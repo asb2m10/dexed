@@ -38,6 +38,8 @@ namespace juce
     or addSection().
 
     @see PropertyComponent
+
+    @tags{GUI}
 */
 class JUCE_API  PropertyPanel  : public Component
 {
@@ -50,7 +52,7 @@ public:
     PropertyPanel (const String& name);
 
     /** Destructor. */
-    ~PropertyPanel();
+    ~PropertyPanel() override;
 
     //==============================================================================
     /** Deletes all property components from the panel. */
@@ -121,13 +123,10 @@ public:
 
     //==============================================================================
     /** Saves the current state of open/closed sections so it can be restored later.
-
-        The caller is responsible for deleting the object that is returned.
         To restore this state, use restoreOpennessState().
-
         @see restoreOpennessState
     */
-    XmlElement* getOpennessState() const;
+    std::unique_ptr<XmlElement> getOpennessState() const;
 
     /** Restores a previously saved arrangement of open/closed sections.
 

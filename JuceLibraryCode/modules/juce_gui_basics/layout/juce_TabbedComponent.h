@@ -36,6 +36,8 @@ namespace juce
     user clicks on a different tab.
 
     @see TabbedButtonBar
+
+    @tags{GUI}
 */
 class JUCE_API  TabbedComponent  : public Component
 {
@@ -47,7 +49,7 @@ public:
     explicit TabbedComponent (TabbedButtonBar::Orientation orientation);
 
     /** Destructor. */
-    ~TabbedComponent();
+    ~TabbedComponent() override;
 
     //==============================================================================
     /** Changes the placement of the tabs.
@@ -160,7 +162,7 @@ public:
     /** Returns the current component that's filling the panel.
         This will return nullptr if there isn't one.
     */
-    Component* getCurrentContentComponent() const noexcept          { return panelComponent; }
+    Component* getCurrentContentComponent() const noexcept          { return panelComponent.get(); }
 
     //==============================================================================
     /** Callback method to indicate the selected tab has been changed.
@@ -207,7 +209,7 @@ protected:
     virtual TabBarButton* createTabButton (const String& tabName, int tabIndex);
 
     /** @internal */
-    ScopedPointer<TabbedButtonBar> tabs;
+    std::unique_ptr<TabbedButtonBar> tabs;
 
 private:
     //==============================================================================

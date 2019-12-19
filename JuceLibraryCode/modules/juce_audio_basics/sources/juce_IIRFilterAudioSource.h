@@ -26,6 +26,8 @@ namespace juce
 //==============================================================================
 /**
     An AudioSource that performs an IIR filter on another source.
+
+    @tags{Audio}
 */
 class JUCE_API  IIRFilterAudioSource  : public AudioSource
 {
@@ -41,7 +43,7 @@ public:
                           bool deleteInputWhenDeleted);
 
     /** Destructor. */
-    ~IIRFilterAudioSource();
+    ~IIRFilterAudioSource() override;
 
     //==============================================================================
     /** Changes the filter to use the same parameters as the one being passed in. */

@@ -36,12 +36,14 @@ class AudioIODevice;
     the next block of data.
 
     @see AudioIODevice, AudioDeviceManager
+
+    @tags{Audio}
 */
 class JUCE_API  AudioIODeviceCallback
 {
 public:
     /** Destructor. */
-    virtual ~AudioIODeviceCallback()  {}
+    virtual ~AudioIODeviceCallback()  = default;
 
     /** Processes a block of incoming and outgoing audio data.
 
@@ -128,6 +130,8 @@ public:
     AudioDeviceManager class.
 
     @see AudioIODeviceType, AudioDeviceManager
+
+    @tags{Audio}
 */
 class JUCE_API  AudioIODevice
 {

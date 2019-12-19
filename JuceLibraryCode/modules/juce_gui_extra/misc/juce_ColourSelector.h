@@ -35,6 +35,8 @@ namespace juce
 
     This class is also a ChangeBroadcaster, so listeners can register to be told
     when the colour changes.
+
+    @tags{GUI}
 */
 class JUCE_API  ColourSelector  : public Component,
                                   public ChangeBroadcaster
@@ -67,7 +69,7 @@ public:
                     int gapAroundColourSpaceComponent = 7);
 
     /** Destructor. */
-    ~ColourSelector();
+    ~ColourSelector() override;
 
     //==============================================================================
     /** Returns the colour that the user has currently selected.
@@ -131,25 +133,20 @@ public:
         labelTextColourId               = 0x1007001     /**< the colour used for the labels next to the sliders. */
     };
 
+    //==============================================================================
+    // These need to be public otherwise the Projucer's live-build engine will complain
+    class ColourSpaceView;
+    class HueSelectorComp;
 
 private:
     //==============================================================================
-    class ColourSpaceView;
-    class HueSelectorComp;
     class SwatchComponent;
-    class ColourComponentSlider;
-    class ColourSpaceMarker;
-    class HueSelectorMarker;
-    friend class ColourSpaceView;
-    friend struct ContainerDeletePolicy<ColourSpaceView>;
-    friend class HueSelectorComp;
-    friend struct ContainerDeletePolicy<HueSelectorComp>;
 
     Colour colour;
     float h, s, v;
-    ScopedPointer<Slider> sliders[4];
-    ScopedPointer<ColourSpaceView> colourSpace;
-    ScopedPointer<HueSelectorComp> hueSelector;
+    std::unique_ptr<Slider> sliders[4];
+    std::unique_ptr<ColourSpaceView> colourSpace;
+    std::unique_ptr<HueSelectorComp> hueSelector;
     OwnedArray<SwatchComponent> swatchComponents;
     const int flags;
     int edgeGap;

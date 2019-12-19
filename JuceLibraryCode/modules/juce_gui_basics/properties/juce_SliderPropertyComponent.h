@@ -32,6 +32,8 @@ namespace juce
     A PropertyComponent that shows its value as a slider.
 
     @see PropertyComponent, Slider
+
+    @tags{GUI}
 */
 class JUCE_API  SliderPropertyComponent   : public PropertyComponent
 {
@@ -73,7 +75,7 @@ public:
                              bool symmetricSkew = false);
 
     /** Destructor. */
-    ~SliderPropertyComponent();
+    ~SliderPropertyComponent() override;
 
 
     //==============================================================================
@@ -90,7 +92,7 @@ public:
 
     //==============================================================================
     /** @internal */
-    void refresh();
+    void refresh() override;
 
 protected:
     /** The slider component being used in this component.

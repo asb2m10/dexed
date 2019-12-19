@@ -28,6 +28,8 @@ namespace juce
     Holds a list of ChangeListeners, and sends messages to them when instructed.
 
     @see ChangeListener
+
+    @tags{Events}
 */
 class JUCE_API  ChangeBroadcaster
 {
@@ -92,6 +94,8 @@ private:
     friend class ChangeBroadcasterCallback;
     ChangeBroadcasterCallback broadcastCallback;
     ListenerList <ChangeListener> changeListeners;
+
+    std::atomic<bool> anyListeners { false };
 
     void callListeners();
 

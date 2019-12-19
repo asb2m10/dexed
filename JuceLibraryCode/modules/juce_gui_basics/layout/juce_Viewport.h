@@ -39,6 +39,8 @@ namespace juce
     A subclass of the viewport can be created which will receive calls to its
     visibleAreaChanged() method when the subcomponent changes position or size.
 
+
+    @tags{GUI}
 */
 class JUCE_API  Viewport  : public Component,
                             private ComponentListener,
@@ -54,7 +56,7 @@ public:
     explicit Viewport (const String& componentName = String());
 
     /** Destructor. */
-    ~Viewport();
+    ~Viewport() override;
 
     //==============================================================================
     /** Sets the component that this viewport will contain and scroll around.
@@ -79,7 +81,7 @@ public:
 
         @see setViewedComponent
     */
-    Component* getViewedComponent() const noexcept                  { return contentComp; }
+    Component* getViewedComponent() const noexcept                  { return contentComp.get(); }
 
     //==============================================================================
     /** Changes the position of the viewed component.
@@ -202,6 +204,25 @@ public:
                              bool allowVerticalScrollingWithoutScrollbar = false,
                              bool allowHorizontalScrollingWithoutScrollbar = false);
 
+    /** Changes where the scroll bars are positioned
+
+        If verticalScrollbarOnRight is set to true, then the vertical scrollbar will
+        appear on the right side of the view port's content (this is the default),
+        otherwise it will be on the left side of the content.
+
+        If horizontalScrollbarAtBottom is set to true, then the horizontal scrollbar
+        will appear at the bottom of the view port's content (this is the default),
+        otherwise it will be at the top.
+    */
+    void setScrollBarPosition (bool verticalScrollbarOnRight,
+                               bool horizontalScrollbarAtBottom);
+
+    /** True if the vertical scrollbar will appear on the right side of the content */
+    bool isVerticalScrollbarOnTheRight() const noexcept         { return vScrollbarRight; }
+
+    /** True if the horizontal scrollbar will appear at the bottom of the content */
+    bool isHorizontalScrollbarAtBottom() const noexcept         { return hScrollbarBottom; }
+
     /** True if the vertical scrollbar is enabled.
         @see setScrollBarsShown
     */
@@ -251,7 +272,12 @@ public:
     */
     bool canScrollHorizontally() const noexcept;
 
-    /** Enables or disables drag-to-scroll functionality in the viewport. */
+    /** Enables or disables drag-to-scroll functionality in the viewport.
+
+        If your viewport contains a Component that you don't want to receive mouse events when the
+        user is drag-scrolling, you can disable this with the Component::setViewportIgnoreDragFlag()
+        method.
+    */
     void setScrollOnDragEnabled (bool shouldScrollOnDrag);
 
     /** Returns true if drag-to-scroll functionality is enabled. */
@@ -289,7 +315,7 @@ protected:
 
 private:
     //==============================================================================
-    ScopedPointer<ScrollBar> verticalScrollBar, horizontalScrollBar;
+    std::unique_ptr<ScrollBar> verticalScrollBar, horizontalScrollBar;
     Component contentHolder;
     WeakReference<Component> contentComp;
     Rectangle<int> lastVisibleArea;
@@ -298,21 +324,15 @@ private:
     bool showHScrollbar = true, showVScrollbar = true, deleteContent = true;
     bool customScrollBarThickness = false;
     bool allowScrollingWithoutScrollbarV = false, allowScrollingWithoutScrollbarH = false;
+    bool vScrollbarRight = true, hScrollbarBottom = true;
 
     struct DragToScrollListener;
-    friend struct DragToScrollListener;
-    friend struct ContainerDeletePolicy<DragToScrollListener>;
-    ScopedPointer<DragToScrollListener> dragToScrollListener;
+    std::unique_ptr<DragToScrollListener> dragToScrollListener;
 
     Point<int> viewportPosToCompPos (Point<int>) const;
 
     void updateVisibleArea();
     void deleteOrRemoveContentComp();
-
-   #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
-    // If you get an error here, it's because this method's parameters have changed! See the new definition above..
-    virtual int visibleAreaChanged (int, int, int, int) { return 0; }
-   #endif
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Viewport)
 };

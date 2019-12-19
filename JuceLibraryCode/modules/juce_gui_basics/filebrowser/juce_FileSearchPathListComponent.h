@@ -33,6 +33,8 @@ namespace juce
     re-ordered.
 
     @see FileSearchPath
+
+    @tags{GUI}
 */
 class JUCE_API  FileSearchPathListComponent  : public Component,
                                                public SettableTooltipClient,
@@ -45,7 +47,7 @@ public:
     FileSearchPathListComponent();
 
     /** Destructor. */
-    ~FileSearchPathListComponent();
+    ~FileSearchPathListComponent() override;
 
     //==============================================================================
     /** Returns the path as it is currently shown. */

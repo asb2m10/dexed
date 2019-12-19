@@ -174,7 +174,7 @@ public:
         layout (400);
     }
 
-    ~MissingItemsComponent()
+    ~MissingItemsComponent() override
     {
         if (owner != nullptr)
         {
@@ -542,8 +542,9 @@ void Toolbar::showMissingItems()
     if (missingItemsButton->isShowing())
     {
         PopupMenu m;
-        m.addCustomItem (1, new MissingItemsComponent (*this, getThickness()));
-        m.showMenuAsync (PopupMenu::Options().withTargetComponent (missingItemsButton.get()), nullptr);
+        auto comp = std::make_unique<MissingItemsComponent> (*this, getThickness());
+        m.addCustomItem (1, std::move (comp));
+        m.showMenuAsync (PopupMenu::Options().withTargetComponent (missingItemsButton.get()));
     }
 }
 
@@ -656,7 +657,7 @@ public:
         positionNearBar();
     }
 
-    ~CustomisationDialog()
+    ~CustomisationDialog() override
     {
         toolbar.setEditingActive (false);
     }

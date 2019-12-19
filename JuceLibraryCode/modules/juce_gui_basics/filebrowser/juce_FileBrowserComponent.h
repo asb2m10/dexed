@@ -36,6 +36,8 @@ namespace juce
     be used for loading or saving a file, or for choosing a directory.
 
     @see FileChooserDialogBox, FileChooser, FileListComponent
+
+    @tags{GUI}
 */
 class JUCE_API  FileBrowserComponent  : public Component,
                                         private FileBrowserListener,
@@ -86,7 +88,7 @@ public:
                           FilePreviewComponent* previewComp);
 
     /** Destructor. */
-    ~FileBrowserComponent();
+    ~FileBrowserComponent() override;
 
     //==============================================================================
     /** Returns the number of files that the user has got selected.
@@ -181,7 +183,7 @@ public:
     */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         // These return a pointer to an internally cached drawable - make sure you don't keep
         // a copy of this pointer anywhere, as it may become invalid in the future.
@@ -265,7 +267,7 @@ protected:
 
 private:
     //==============================================================================
-    ScopedPointer<DirectoryContentsList> fileList;
+    std::unique_ptr<DirectoryContentsList> fileList;
     const FileFilter* fileFilter;
 
     int flags;
@@ -273,12 +275,12 @@ private:
     Array<File> chosenFiles;
     ListenerList<FileBrowserListener> listeners;
 
-    ScopedPointer<DirectoryContentsDisplayComponent> fileListComponent;
+    std::unique_ptr<DirectoryContentsDisplayComponent> fileListComponent;
     FilePreviewComponent* previewComp;
     ComboBox currentPathBox;
     TextEditor filenameBox;
     Label fileLabel;
-    ScopedPointer<Button> goUpButton;
+    std::unique_ptr<Button> goUpButton;
     TimeSliceThread thread;
     bool wasProcessActive;
 

@@ -32,13 +32,15 @@ namespace juce
     A simple lexical analyser for syntax colouring of C++ code.
 
     @see CodeEditorComponent, CodeDocument
+
+    @tags{GUI}
 */
 class JUCE_API  CPlusPlusCodeTokeniser    : public CodeTokeniser
 {
 public:
     //==============================================================================
     CPlusPlusCodeTokeniser();
-    ~CPlusPlusCodeTokeniser();
+    ~CPlusPlusCodeTokeniser() override;
 
     //==============================================================================
     int readNextToken (CodeDocument::Iterator&) override;

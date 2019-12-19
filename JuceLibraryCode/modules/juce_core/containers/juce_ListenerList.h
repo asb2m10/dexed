@@ -60,6 +60,8 @@ namespace juce
     operation. For an example of a bail-out checker, see the Component::BailOutChecker class,
     which can be used to check when a Component has been deleted. See also
     ListenerList::DummyBailOutChecker, which is a dummy checker that always returns false.
+
+    @tags{Core}
 */
 template <class ListenerClass,
           class ArrayType = Array<ListenerClass*>>
@@ -68,10 +70,10 @@ class ListenerList
 public:
     //==============================================================================
     /** Creates an empty list. */
-    ListenerList() {}
+    ListenerList() = default;
 
     /** Destructor. */
-    ~ListenerList() {}
+    ~ListenerList() = default;
 
     //==============================================================================
     /** Adds a listener to the list.
@@ -99,7 +101,7 @@ public:
     /** Returns the number of registered listeners. */
     int size() const noexcept                                { return listeners.size(); }
 
-    /** Returns true if any listeners are registered. */
+    /** Returns true if no listeners are registered, false otherwise. */
     bool isEmpty() const noexcept                            { return listeners.isEmpty(); }
 
     /** Clears the list. */
@@ -116,6 +118,8 @@ public:
     template <typename Callback>
     void call (Callback&& callback)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<DummyBailOutChecker, ThisType> iter (*this); iter.next();)
             callback (*iter.getListener());
     }
@@ -126,6 +130,8 @@ public:
     template <typename Callback>
     void callExcluding (ListenerClass* listenerToExclude, Callback&& callback)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<DummyBailOutChecker, ThisType> iter (*this); iter.next();)
         {
             auto* l = iter.getListener();
@@ -141,6 +147,8 @@ public:
     template <typename Callback, typename BailOutCheckerType>
     void callChecked (const BailOutCheckerType& bailOutChecker, Callback&& callback)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<BailOutCheckerType, ThisType> iter (*this); iter.next (bailOutChecker);)
             callback (*iter.getListener());
     }
@@ -154,6 +162,8 @@ public:
                                const BailOutCheckerType& bailOutChecker,
                                Callback&& callback)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<BailOutCheckerType, ThisType> iter (*this); iter.next (bailOutChecker);)
         {
             auto* l = iter.getListener();
@@ -172,8 +182,8 @@ public:
         bool shouldBailOut() const noexcept                 { return false; }
     };
 
-    typedef ListenerList<ListenerClass, ArrayType> ThisType;
-    typedef ListenerClass ListenerType;
+    using ThisType      = ListenerList<ListenerClass, ArrayType>;
+    using ListenerType  = ListenerClass;
 
     //==============================================================================
     /** Iterates the listeners in a ListenerList. */
@@ -184,7 +194,7 @@ public:
             : list (listToIterate), index (listToIterate.size())
         {}
 
-        ~Iterator() noexcept {}
+        ~Iterator() = default;
 
         //==============================================================================
         bool next() noexcept
@@ -250,6 +260,8 @@ public:
     template <typename... MethodArgs, typename... Args>
     void call (void (ListenerClass::*callbackFunction) (MethodArgs...), Args&&... args)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<DummyBailOutChecker, ThisType> iter (*this); iter.next();)
             (iter.getListener()->*callbackFunction) (static_cast<typename TypeHelpers::ParameterType<Args>::type> (args)...);
     }
@@ -259,6 +271,8 @@ public:
                         void (ListenerClass::*callbackFunction) (MethodArgs...),
                         Args&&... args)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<DummyBailOutChecker, ThisType> iter (*this); iter.next();)
             if (iter.getListener() != listenerToExclude)
                 (iter.getListener()->*callbackFunction) (static_cast<typename TypeHelpers::ParameterType<Args>::type> (args)...);
@@ -269,6 +283,8 @@ public:
                       void (ListenerClass::*callbackFunction) (MethodArgs...),
                       Args&&... args)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<BailOutCheckerType, ThisType> iter (*this); iter.next (bailOutChecker);)
             (iter.getListener()->*callbackFunction) (static_cast<typename TypeHelpers::ParameterType<Args>::type> (args)...);
     }
@@ -279,6 +295,8 @@ public:
                                void (ListenerClass::*callbackFunction) (MethodArgs...),
                                Args&&... args)
     {
+        typename ArrayType::ScopedLockType lock (listeners.getLock());
+
         for (Iterator<BailOutCheckerType, ThisType> iter (*this); iter.next (bailOutChecker);)
             if (iter.getListener() != listenerToExclude)
                 (iter.getListener()->*callbackFunction) (static_cast<typename TypeHelpers::ParameterType<Args>::type> (args)...);

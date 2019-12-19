@@ -32,7 +32,9 @@ namespace juce
 class CachedValueTests  : public UnitTest
 {
 public:
-    CachedValueTests() : UnitTest ("CachedValues", "Values") {}
+    CachedValueTests()
+        : UnitTest ("CachedValues", UnitTestCategories::values)
+    {}
 
     void runTest() override
     {
@@ -143,11 +145,6 @@ public:
             expectEquals (cv.get(), 45);
 
             expect (t["testkey"] == var());
-        }
-
-        beginTest ("reset value");
-        {
-
         }
     }
 };

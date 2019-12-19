@@ -46,6 +46,8 @@ namespace juce
     instead of handling a scrollbar directly.
 
     @see ScrollBar::Listener
+
+    @tags{GUI}
 */
 class JUCE_API  ScrollBar  : public Component,
                              public AsyncUpdater,
@@ -59,7 +61,7 @@ public:
     ScrollBar (bool isVertical);
 
     /** Destructor. */
-    ~ScrollBar();
+    ~ScrollBar() override;
 
     //==============================================================================
     /** Returns true if the scrollbar is vertical, false if it's horizontal. */
@@ -303,7 +305,7 @@ public:
     {
     public:
         /** Destructor. */
-        virtual ~Listener() {}
+        virtual ~Listener() = default;
 
         /** Called when a ScrollBar is moved.
 
@@ -326,7 +328,7 @@ public:
     */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual bool areScrollbarButtonsVisible() = 0;
 
@@ -406,6 +408,8 @@ public:
     void resized() override;
     /** @internal */
     void parentHierarchyChanged() override;
+    /** @internal */
+    void setVisible (bool) override;
 
 private:
     //==============================================================================
@@ -414,15 +418,15 @@ private:
     int thumbAreaStart = 0, thumbAreaSize = 0, thumbStart = 0, thumbSize = 0;
     int dragStartMousePos = 0, lastMousePos = 0;
     int initialDelayInMillisecs = 100, repeatDelayInMillisecs = 50, minimumDelayInMillisecs = 10;
-    bool vertical, isDraggingThumb = false, autohides = true;
+    bool vertical, isDraggingThumb = false, autohides = true, userVisibilityFlag = false;
     class ScrollbarButton;
-    friend struct ContainerDeletePolicy<ScrollbarButton>;
-    ScopedPointer<ScrollbarButton> upButton, downButton;
+    std::unique_ptr<ScrollbarButton> upButton, downButton;
     ListenerList<Listener> listeners;
 
     void handleAsyncUpdate() override;
     void updateThumbPosition();
     void timerCallback() override;
+    bool getVisibility() const noexcept;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ScrollBar)
 };

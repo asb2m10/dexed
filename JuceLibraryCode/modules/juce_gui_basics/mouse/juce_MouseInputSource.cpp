@@ -47,7 +47,7 @@ public:
 
     ModifierKeys getCurrentModifiers() const noexcept
     {
-        return ModifierKeys::getCurrentModifiers().withoutMouseButtons().withFlags (buttonState.getRawFlags());
+        return ModifierKeys::currentModifiers.withoutMouseButtons().withFlags (buttonState.getRawFlags());
     }
 
     ComponentPeer* getPeer() noexcept
@@ -149,7 +149,7 @@ public:
         comp.internalMouseDrag (MouseInputSource (this), screenPosToLocalPos (comp, screenPos), time, pressure, orientation, rotation, tiltX, tiltY);
     }
 
-    void sendMouseUp (Component& comp, Point<float> screenPos, Time time, const ModifierKeys oldMods)
+    void sendMouseUp (Component& comp, Point<float> screenPos, Time time, ModifierKeys oldMods)
     {
         JUCE_MOUSE_EVENT_DBG ("up")
             comp.internalMouseUp (MouseInputSource (this), screenPosToLocalPos (comp, screenPos), time, oldMods, pressure, orientation, rotation, tiltX, tiltY);
@@ -161,7 +161,7 @@ public:
         comp.internalMouseWheel (MouseInputSource (this), screenPosToLocalPos (comp, screenPos), time, wheel);
     }
 
-    void sendMagnifyGesture (Component& comp, Point<float> screenPos, Time time, const float amount)
+    void sendMagnifyGesture (Component& comp, Point<float> screenPos, Time time, float amount)
     {
         JUCE_MOUSE_EVENT_DBG ("magnify")
         comp.internalMagnifyGesture (MouseInputSource (this), screenPosToLocalPos (comp, screenPos), time, amount);
@@ -169,7 +169,7 @@ public:
 
     //==============================================================================
     // (returns true if the button change caused a modal event loop)
-    bool setButtons (Point<float> screenPos, Time time, const ModifierKeys newButtonState)
+    bool setButtons (Point<float> screenPos, Time time, ModifierKeys newButtonState)
     {
         if (buttonState == newButtonState)
             return false;
@@ -220,7 +220,7 @@ public:
         return lastCounter != mouseEventCounter;
     }
 
-    void setComponentUnderMouse (Component* const newComponent, Point<float> screenPos, Time time)
+    void setComponentUnderMouse (Component* newComponent, Point<float> screenPos, Time time)
     {
         auto* current = getComponentUnderMouse();
 
@@ -234,16 +234,17 @@ public:
                 WeakReference<Component> safeOldComp (current);
                 setButtons (screenPos, time, ModifierKeys());
 
-                if (safeOldComp != nullptr)
+                if (auto oldComp = safeOldComp.get())
                 {
                     componentUnderMouse = safeNewComp;
-                    sendMouseExit (*safeOldComp, screenPos, time);
+                    sendMouseExit (*oldComp, screenPos, time);
                 }
 
                 buttonState = originalButtonState;
             }
 
-            current = componentUnderMouse = safeNewComp;
+            componentUnderMouse = safeNewComp.get();
+            current = safeNewComp.get();
 
             if (current != nullptr)
                 sendMouseEnter (*current, screenPos, time);
@@ -255,8 +256,6 @@ public:
 
     void setPeer (ComponentPeer& newPeer, Point<float> screenPos, Time time)
     {
-        ModifierKeys::updateCurrentModifiers();
-
         if (&newPeer != lastPeer)
         {
             setComponentUnderMouse (nullptr, screenPos, time);
@@ -265,7 +264,7 @@ public:
         }
     }
 
-    void setScreenPos (Point<float> newScreenPos, Time time, const bool forceUpdate)
+    void setScreenPos (Point<float> newScreenPos, Time time, bool forceUpdate)
     {
         if (! isDragging())
             setComponentUnderMouse (findComponentAt (newScreenPos), newScreenPos, time);
@@ -273,7 +272,9 @@ public:
         if (newScreenPos != lastScreenPos || forceUpdate)
         {
             cancelPendingUpdate();
-            lastScreenPos = newScreenPos;
+
+            if (newScreenPos != MouseInputSource::offscreenMousePos)
+                lastScreenPos = newScreenPos;
 
             if (auto* current = getComponentUnderMouse())
             {
@@ -370,7 +371,7 @@ public:
         else
             screenPos = peer.localToGlobal (positionWithinPeer);
 
-        if (Component* target = lastNonInertialWheelTarget)
+        if (auto target = lastNonInertialWheelTarget.get())
             sendMouseWheel (*target, screenPos, time, wheel);
     }
 
@@ -391,7 +392,7 @@ public:
     {
         int numClicks = 1;
 
-        if (! hasMouseMovedSignificantlySincePressed())
+        if (! isLongPressOrDrag())
         {
             for (int i = 1; i < numElementsInArray (mouseDowns); ++i)
             {
@@ -405,10 +406,20 @@ public:
         return numClicks;
     }
 
+    bool isLongPressOrDrag() const noexcept
+    {
+        return movedSignificantly || lastTime > mouseDowns[0].time + RelativeTime::milliseconds (300);
+    }
+
+    bool hasMovedSignificantlySincePressed() const noexcept
+    {
+        return movedSignificantly;
+    }
+
+    // Deprecated method
     bool hasMouseMovedSignificantlySincePressed() const noexcept
     {
-        return mouseMovedSignificantlySincePressed
-                || lastTime > mouseDowns[0].time + RelativeTime::milliseconds (300);
+        return isLongPressOrDrag();
     }
 
     //==============================================================================
@@ -539,7 +550,7 @@ private:
 
     RecentMouseDown mouseDowns[4];
     Time lastTime;
-    bool mouseMovedSignificantlySincePressed = false;
+    bool movedSignificantly = false;
 
     void registerMouseDown (Point<float> screenPos, Time time, Component& component,
                             const ModifierKeys modifiers, bool isTouchSource) noexcept
@@ -557,14 +568,13 @@ private:
         else
             mouseDowns[0].peerID = 0;
 
-        mouseMovedSignificantlySincePressed = false;
+        movedSignificantly = false;
         lastNonInertialWheelTarget = nullptr;
     }
 
     void registerMouseDrag (Point<float> screenPos) noexcept
     {
-        mouseMovedSignificantlySincePressed = mouseMovedSignificantlySincePressed
-               || mouseDowns[0].position.getDistanceFrom (screenPos) >= 4;
+        movedSignificantly = movedSignificantly || mouseDowns[0].position.getDistanceFrom (screenPos) >= 4;
     }
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MouseInputSourceInternal)
@@ -605,7 +615,8 @@ void MouseInputSource::triggerFakeMove() const                                  
 int MouseInputSource::getNumberOfMultipleClicks() const noexcept                { return pimpl->getNumberOfMultipleClicks(); }
 Time MouseInputSource::getLastMouseDownTime() const noexcept                    { return pimpl->getLastMouseDownTime(); }
 Point<float> MouseInputSource::getLastMouseDownPosition() const noexcept        { return pimpl->getLastMouseDownPosition(); }
-bool MouseInputSource::hasMouseMovedSignificantlySincePressed() const noexcept  { return pimpl->hasMouseMovedSignificantlySincePressed(); }
+bool MouseInputSource::isLongPressOrDrag() const noexcept                       { return pimpl->isLongPressOrDrag(); }
+bool MouseInputSource::hasMovedSignificantlySincePressed() const noexcept       { return pimpl->hasMovedSignificantlySincePressed(); }
 bool MouseInputSource::canDoUnboundedMovement() const noexcept                  { return ! isTouch(); }
 void MouseInputSource::enableUnboundedMouseMovement (bool isEnabled, bool keepCursorVisibleUntilOffscreen) const
                                                                          { pimpl->enableUnboundedMouseMovement (isEnabled, keepCursorVisibleUntilOffscreen); }
@@ -640,6 +651,11 @@ const float MouseInputSource::invalidRotation = 0.0f;
 const float MouseInputSource::invalidTiltX = 0.0f;
 const float MouseInputSource::invalidTiltY = 0.0f;
 
+const Point<float> MouseInputSource::offscreenMousePos { -10.0f, -10.0f };
+
+// Deprecated method
+bool MouseInputSource::hasMouseMovedSignificantlySincePressed() const noexcept  { return pimpl->hasMouseMovedSignificantlySincePressed(); }
+
 //==============================================================================
 struct MouseInputSource::SourceList  : public Timer
 {
@@ -666,7 +682,7 @@ struct MouseInputSource::SourceList  : public Timer
         return &sourceArray.getReference (sourceArray.size() - 1);
     }
 
-    MouseInputSource* getMouseSource (int index) const noexcept
+    MouseInputSource* getMouseSource (int index) noexcept
     {
         return isPositiveAndBelow (index, sourceArray.size()) ? &sourceArray.getReference (index)
                                                               : nullptr;
@@ -708,7 +724,7 @@ struct MouseInputSource::SourceList  : public Timer
         return num;
     }
 
-    MouseInputSource* getDraggingMouseSource (int index) const noexcept
+    MouseInputSource* getDraggingMouseSource (int index) noexcept
     {
         int num = 0;
 
@@ -726,7 +742,7 @@ struct MouseInputSource::SourceList  : public Timer
         return nullptr;
     }
 
-    void beginDragAutoRepeat (const int interval)
+    void beginDragAutoRepeat (int interval)
     {
         if (interval > 0)
         {
@@ -747,7 +763,7 @@ struct MouseInputSource::SourceList  : public Timer
         {
             // NB: when doing auto-repeat, we need to force an update of the current position and button state,
             // because on some OSes the queue can get overloaded with messages so that mouse-events don't get through..
-            if (s->isDragging() && ModifierKeys::getCurrentModifiersRealtime().isAnyMouseButtonDown())
+            if (s->isDragging() && ComponentPeer::getCurrentModifiersRealtime().isAnyMouseButtonDown())
             {
                 s->lastScreenPos = s->getRawScreenPosition();
                 s->triggerFakeMove();

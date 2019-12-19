@@ -42,6 +42,8 @@ namespace juce
     Once you've got the component you can either take it and delete the ComponentBuilder
     object, or if you keep the ComponentBuilder around, it'll monitor any changes in the
     ValueTree and automatically update the component to reflect these changes.
+
+    @tags{GUI}
 */
 class JUCE_API  ComponentBuilder  : private ValueTree::Listener
 {
@@ -57,7 +59,7 @@ public:
     ComponentBuilder();
 
     /** Destructor. */
-    ~ComponentBuilder();
+    ~ComponentBuilder() override;
 
     /** This is the ValueTree data object that the builder is working with. */
     ValueTree state;
@@ -184,8 +186,8 @@ public:
     class JUCE_API  ImageProvider
     {
     public:
-        ImageProvider() {}
-        virtual ~ImageProvider() {}
+        ImageProvider() = default;
+        virtual ~ImageProvider() = default;
 
         /** Retrieves the image associated with this identifier, which could be any
             kind of string, number, filename, etc.
@@ -228,7 +230,7 @@ public:
 private:
     //==============================================================================
     OwnedArray<TypeHandler> types;
-    ScopedPointer<Component> component;
+    std::unique_ptr<Component> component;
     ImageProvider* imageProvider;
    #if JUCE_DEBUG
     WeakReference<Component> componentRef;

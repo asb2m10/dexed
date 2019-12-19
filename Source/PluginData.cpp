@@ -355,9 +355,9 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
 void DexedAudioProcessor::setStateInformation(const void* source, int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    
+
     // used to LOAD plugin state
-    ScopedPointer<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
+    std::unique_ptr<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
     
     if (root == nullptr) {
         TRACE("unknown state format");

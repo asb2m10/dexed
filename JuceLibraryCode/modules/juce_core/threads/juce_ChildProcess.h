@@ -29,6 +29,8 @@ namespace juce
 
     This class lets you launch an executable, and read its output. You can also
     use it to check whether the child process has finished.
+
+    @tags{Core}
 */
 class JUCE_API  ChildProcess
 {
@@ -102,8 +104,7 @@ public:
 private:
     //==============================================================================
     class ActiveProcess;
-    friend struct ContainerDeletePolicy<ActiveProcess>;
-    ScopedPointer<ActiveProcess> activeProcess;
+    std::unique_ptr<ActiveProcess> activeProcess;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ChildProcess)
 };

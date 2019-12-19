@@ -32,28 +32,6 @@ namespace juce
 //==============================================================================
 namespace MouseCursorHelpers
 {
-    NSImage* createNSImage (const Image&, float scaleFactor = 1.0f);
-    NSImage* createNSImage (const Image& image, float scaleFactor)
-    {
-        JUCE_AUTORELEASEPOOL
-        {
-            NSImage* im = [[NSImage alloc] init];
-            auto requiredSize = NSMakeSize (image.getWidth() / scaleFactor, image.getHeight() / scaleFactor);
-
-            [im setSize: requiredSize];
-            CGColorSpaceRef colourSpace = CGColorSpaceCreateDeviceRGB();
-            CGImageRef imageRef = juce_createCoreGraphicsImage (image, colourSpace, true);
-            CGColorSpaceRelease (colourSpace);
-
-            NSBitmapImageRep* imageRep = [[NSBitmapImageRep alloc] initWithCGImage: imageRef];
-            [imageRep setSize: requiredSize];
-            [im addRepresentation: imageRep];
-            [imageRep release];
-            CGImageRelease (imageRef);
-            return im;
-        }
-    }
-
     static NSCursor* fromNSImage (NSImage* im, NSPoint hotspot)
     {
         NSCursor* c = [[NSCursor alloc] initWithImage: im
@@ -110,7 +88,7 @@ namespace MouseCursorHelpers
 
 void* CustomMouseCursorInfo::create() const
 {
-    return MouseCursorHelpers::fromNSImage (MouseCursorHelpers::createNSImage (image, scaleFactor),
+    return MouseCursorHelpers::fromNSImage (imageToNSImage (image, scaleFactor),
                                             NSMakePoint (hotspot.x, hotspot.y));
 }
 
@@ -135,12 +113,7 @@ void* MouseCursor::createStandardMouseCursor (MouseCursor::StandardCursorType ty
 
             case CopyingCursor:
             {
-               #if MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_6
-                if (void* m = MouseCursorHelpers::fromHIServices ("copy"))
-                    return m;
-               #endif
-
-                c = [NSCursor dragCopyCursor]; // added in 10.6
+                c = [NSCursor dragCopyCursor];
                 break;
             }
 
@@ -186,11 +159,6 @@ void MouseCursor::deleteMouseCursor (void* const cursorHandle, const bool /*isSt
     [((NSCursor*) cursorHandle) release];
 }
 
-void MouseCursor::showInAllWindows() const
-{
-    showInWindow (nullptr);
-}
-
 void MouseCursor::showInWindow (ComponentPeer*) const
 {
     auto c = (NSCursor*) getHandle();
@@ -206,7 +174,6 @@ void MouseCursor::showInWindow (ComponentPeer*) const
 void* CustomMouseCursorInfo::create() const                                              { return nullptr; }
 void* MouseCursor::createStandardMouseCursor (MouseCursor::StandardCursorType)           { return nullptr; }
 void MouseCursor::deleteMouseCursor (void*, bool)                                        {}
-void MouseCursor::showInAllWindows() const                                               {}
 void MouseCursor::showInWindow (ComponentPeer*) const                                    {}
 
 #endif

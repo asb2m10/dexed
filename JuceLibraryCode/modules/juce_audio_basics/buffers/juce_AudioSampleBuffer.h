@@ -26,6 +26,8 @@ namespace juce
 //==============================================================================
 /**
     A multi-channel buffer containing floating point audio samples.
+
+    @tags{Audio}
 */
 template <typename Type>
 class AudioBuffer
@@ -170,15 +172,15 @@ public:
     /** Destructor.
         This will free any memory allocated by the buffer.
     */
-    ~AudioBuffer() noexcept {}
+    ~AudioBuffer() = default;
 
     /** Move constructor */
     AudioBuffer (AudioBuffer&& other) noexcept
         : numChannels (other.numChannels),
           size (other.size),
           allocatedBytes (other.allocatedBytes),
-          allocatedData (static_cast<HeapBlock<char, true>&&> (other.allocatedData)),
-          isClear (other.isClear)
+          allocatedData (std::move (other.allocatedData)),
+          isClear (other.isClear.load())
     {
         if (numChannels < (int) numElementsInArray (preallocatedChannelSpace))
         {
@@ -203,8 +205,8 @@ public:
         numChannels = other.numChannels;
         size = other.size;
         allocatedBytes = other.allocatedBytes;
-        allocatedData = static_cast<HeapBlock<char, true>&&> (other.allocatedData);
-        isClear = other.isClear;
+        allocatedData = std::move (other.allocatedData);
+        isClear = other.isClear.load();
 
         if (numChannels < (int) numElementsInArray (preallocatedChannelSpace))
         {
@@ -338,7 +340,7 @@ public:
         if (newNumSamples != size || newNumChannels != numChannels)
         {
             auto allocatedSamplesPerChannel = ((size_t) newNumSamples + 3) & ~3u;
-            auto channelListSize = ((sizeof (Type*) * (size_t) (newNumChannels + 1)) + 15) & ~15u;
+            auto channelListSize = ((static_cast<size_t> (1 + newNumChannels) * sizeof (Type*)) + 15) & ~15u;
             auto newTotalBytes = ((size_t) newNumChannels * (size_t) allocatedSamplesPerChannel * sizeof (Type))
                                     + channelListSize + 32;
 
@@ -1060,7 +1062,7 @@ public:
 
     //==============================================================================
     /** This allows templated code that takes an AudioBuffer to access its sample type. */
-    typedef Type SampleType;
+    using SampleType = Type;
 
 private:
     //==============================================================================
@@ -1069,16 +1071,16 @@ private:
     Type** channels;
     HeapBlock<char, true> allocatedData;
     Type* preallocatedChannelSpace[32];
-    bool isClear = false;
+    std::atomic<bool> isClear { false };
 
     void allocateData()
     {
         jassert (size >= 0);
-        auto channelListSize = sizeof (Type*) * (size_t) (numChannels + 1);
+        auto channelListSize = (size_t) (numChannels + 1) * sizeof (Type*);
         allocatedBytes = (size_t) numChannels * (size_t) size * sizeof (Type) + channelListSize + 32;
         allocatedData.malloc (allocatedBytes);
         channels = reinterpret_cast<Type**> (allocatedData.get());
-        auto* chan = (Type*) (allocatedData + channelListSize);
+        auto chan = reinterpret_cast<Type*> (allocatedData + channelListSize);
 
         for (int i = 0; i < numChannels; ++i)
         {
@@ -1123,12 +1125,12 @@ private:
 /**
     A multi-channel buffer of 32-bit floating point audio samples.
 
-    This typedef is here for backwards compatibility with the older AudioSampleBuffer
+    This type is here for backwards compatibility with the older AudioSampleBuffer
     class, which was fixed for 32-bit data, but is otherwise the same as the new
     templated AudioBuffer class.
 
     @see AudioBuffer
 */
-typedef AudioBuffer<float> AudioSampleBuffer;
+using AudioSampleBuffer = AudioBuffer<float>;
 
 } // namespace juce

@@ -36,6 +36,8 @@ class CodeTokeniser;
 
     This is designed to handle syntax highlighting and fast editing of very large
     files.
+
+    @tags{GUI}
 */
 class JUCE_API  CodeEditorComponent   : public Component,
                                         public ApplicationCommandTarget,
@@ -55,7 +57,7 @@ public:
                          CodeTokeniser* codeTokeniser);
 
     /** Destructor. */
-    ~CodeEditorComponent();
+    ~CodeEditorComponent() override;
 
     //==============================================================================
     /** Returns the code document that this component is editing. */
@@ -219,8 +221,10 @@ public:
     bool isReadOnly() const noexcept                    { return readOnly; }
 
     //==============================================================================
+    /** Defines a syntax highlighting colour scheme */
     struct JUCE_API  ColourScheme
     {
+        /** Defines a colour for a token type */
         struct TokenType
         {
             String name;
@@ -247,6 +251,19 @@ public:
         @see setColourScheme
     */
     Colour getColourForTokenType (int tokenType) const;
+
+    /** Rebuilds the syntax highlighting for a section of text.
+
+        This happens automatically any time the CodeDocument is edited, but this
+        method lets you change text colours even when the CodeDocument hasn't changed.
+
+        For example, you could use this to highlight tokens as the cursor moves.
+        To do so you'll need to tell your custom CodeTokeniser where the token you
+        want to highlight is, and make it return a special type of token. Then you
+        should call this method supplying the range of the highlighted text.
+        @see CodeTokeniser
+     */
+    void retokenise (int startIndex, int endIndex);
 
     //==============================================================================
     /** A set of colour IDs to use to change the colour of various aspects of the editor.
@@ -282,6 +299,9 @@ public:
 
     /** Called when the view position is scrolled horizontally or vertically. */
     virtual void editorViewportPositionChanged();
+
+    /** Called when the caret position moves. */
+    virtual void caretPositionMoved();
 
     //==============================================================================
     /** This adds the items to the popup menu.
@@ -373,19 +393,15 @@ private:
     double xOffset = 0;
     CodeDocument::Position caretPos, selectionStart, selectionEnd;
 
-    ScopedPointer<CaretComponent> caret;
+    std::unique_ptr<CaretComponent> caret;
     ScrollBar verticalScrollBar { true }, horizontalScrollBar { false };
     ApplicationCommandManager* appCommandManager = nullptr;
 
     class Pimpl;
-    friend class Pimpl;
-    friend struct ContainerDeletePolicy<Pimpl>;
-    ScopedPointer<Pimpl> pimpl;
+    std::unique_ptr<Pimpl> pimpl;
 
     class GutterComponent;
-    friend class GutterComponent;
-    friend struct ContainerDeletePolicy<GutterComponent>;
-    ScopedPointer<GutterComponent> gutter;
+    std::unique_ptr<GutterComponent> gutter;
 
     enum DragType
     {
@@ -406,7 +422,7 @@ private:
     void rebuildLineTokensAsync();
     void codeDocumentChanged (int start, int end);
 
-    OwnedArray<CodeDocument::Iterator> cachedIterators;
+    Array<CodeDocument::Iterator> cachedIterators;
     void clearCachedIterators (int firstLineToBeInvalid);
     void updateCachedIterators (int maxLineNum);
     void getIteratorForPosition (int position, CodeDocument::Iterator&);

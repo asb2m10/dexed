@@ -28,6 +28,8 @@ namespace juce
     An input stream that reads from a local file.
 
     @see InputStream, FileOutputStream, File::createInputStream
+
+    @tags{Core}
 */
 class JUCE_API  FileInputStream  : public InputStream
 {
@@ -42,7 +44,7 @@ public:
     explicit FileInputStream (const File& fileToRead);
 
     /** Destructor. */
-    ~FileInputStream();
+    ~FileInputStream() override;
 
     //==============================================================================
     /** Returns the file that this stream is reading from. */

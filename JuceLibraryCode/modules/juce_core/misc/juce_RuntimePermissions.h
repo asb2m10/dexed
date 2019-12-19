@@ -58,6 +58,8 @@ namespace juce
                  audioDeviceManager.initialise (2, 2, nullptr, true, String(), nullptr);
             }
         );
+
+    @tags{Core}
 */
 class JUCE_API  RuntimePermissions
 {
@@ -81,12 +83,15 @@ public:
         readExternalStorage = 3,
 
         /** Permission to write to external storage such as SD cards */
-        writeExternalStorage = 4
+        writeExternalStorage = 4,
+
+        /** Permission to use camera */
+        camera = 5
     };
 
     //==============================================================================
     /** Function type of runtime permission request callbacks. */
-    typedef std::function<void (bool)> Callback;
+    using Callback = std::function<void(bool)>;
 
     //==============================================================================
     /** Call this method to request a runtime permission.

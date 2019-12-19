@@ -63,6 +63,8 @@ JUCE_API void JUCE_CALLTYPE  shutdownJuce_GUI();
 
     Be careful with your threading though - to be safe, you should always make sure
     that these objects are created and deleted on the message thread.
+
+    @tags{Events}
 */
 class JUCE_API  ScopedJuceInitialiser_GUI  final
 {
@@ -114,7 +116,7 @@ public:
  #elif JUCE_ANDROID
 
   #define JUCE_CREATE_APPLICATION_DEFINE(AppClass) \
-    juce::JUCEApplicationBase* juce_CreateApplication() { return new AppClass(); }
+    extern "C" juce::JUCEApplicationBase* juce_CreateApplication() { return new AppClass(); }
 
   #define JUCE_MAIN_FUNCTION_DEFINITION
 
@@ -153,7 +155,7 @@ public:
 
   #if JUCE_IOS
     /**
-       You can instruct JUCE to use a custom iOS app delegate class instaed of JUCE's default
+       You can instruct JUCE to use a custom iOS app delegate class instead of JUCE's default
        app delegate. For JUCE to work you must pass all messages to JUCE's internal app delegate.
        Below is an example of minimal forwarding custom delegate. Note that you are at your own
        risk if you decide to use your own delegate and subtle, hard to debug bugs may occur.

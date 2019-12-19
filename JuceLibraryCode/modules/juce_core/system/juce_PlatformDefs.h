@@ -48,10 +48,12 @@ namespace juce
 //==============================================================================
 // Debugging and assertion macros
 
-#if JUCE_LOG_ASSERTIONS || JUCE_DEBUG
- #define JUCE_LOG_CURRENT_ASSERTION    juce::logAssertion (__FILE__, __LINE__);
-#else
- #define JUCE_LOG_CURRENT_ASSERTION
+#ifndef JUCE_LOG_CURRENT_ASSERTION
+ #if JUCE_LOG_ASSERTIONS || JUCE_DEBUG
+  #define JUCE_LOG_CURRENT_ASSERTION    juce::logAssertion (__FILE__, __LINE__);
+ #else
+  #define JUCE_LOG_CURRENT_ASSERTION
+ #endif
 #endif
 
 //==============================================================================
@@ -268,8 +270,31 @@ namespace juce
  #define JUCE_DEPRECATED(functionDef)                   functionDef JUCE_DEPRECATED_ATTRIBUTE
  #define JUCE_DEPRECATED_WITH_BODY(functionDef, body)   functionDef JUCE_DEPRECATED_ATTRIBUTE body
 #else
+ #define JUCE_DEPRECATED_ATTRIBUTE
  #define JUCE_DEPRECATED(functionDef)                   functionDef
  #define JUCE_DEPRECATED_WITH_BODY(functionDef, body)   functionDef body
+#endif
+
+#if JUCE_ALLOW_STATIC_NULL_VARIABLES
+ #if ! (defined (DOXYGEN) || defined (JUCE_GCC) || (JUCE_MSVC && _MSC_VER <= 1900))
+  #define JUCE_DEPRECATED_STATIC(valueDef)       JUCE_DEPRECATED_ATTRIBUTE valueDef
+
+  #if JUCE_MSVC
+   #define JUCE_DECLARE_DEPRECATED_STATIC(valueDef) \
+        __pragma(warning(push)) \
+        __pragma(warning(disable:4996)) \
+         valueDef \
+        __pragma(warning(pop))
+  #else
+   #define JUCE_DECLARE_DEPRECATED_STATIC(valueDef)   valueDef
+  #endif
+ #else
+  #define JUCE_DEPRECATED_STATIC(valueDef)           valueDef
+  #define JUCE_DECLARE_DEPRECATED_STATIC(valueDef)   valueDef
+ #endif
+#else
+ #define JUCE_DEPRECATED_STATIC(valueDef)
+ #define JUCE_DECLARE_DEPRECATED_STATIC(valueDef)
 #endif
 
 //==============================================================================

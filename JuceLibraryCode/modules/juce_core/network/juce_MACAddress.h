@@ -26,11 +26,16 @@ namespace juce
 //==============================================================================
 /**
     Represents a MAC network card adapter address ID.
+
+    @tags{Core}
 */
 class JUCE_API  MACAddress  final
 {
 public:
     //==============================================================================
+    /** Returns a list of the MAC addresses of all the available network cards. */
+    static Array<MACAddress> getAllAddresses();
+
     /** Populates a list of the MAC addresses of all the available network cards. */
     static void findAllAddresses (Array<MACAddress>& results);
 

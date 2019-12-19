@@ -36,6 +36,8 @@ namespace juce
     GlyphArrangement class will do what you need for text layout.
 
     @see GlyphArrangement, Font
+
+    @tags{Graphics}
 */
 class JUCE_API  PositionedGlyph  final
 {
@@ -48,10 +50,8 @@ public:
 
     PositionedGlyph (const PositionedGlyph&) = default;
     PositionedGlyph& operator= (const PositionedGlyph&) = default;
-
-    // VS2013 can't default move constructors and assignmants
-    PositionedGlyph (PositionedGlyph&&) noexcept;
-    PositionedGlyph& operator= (PositionedGlyph&&) noexcept;
+    PositionedGlyph (PositionedGlyph&&) noexcept = default;
+    PositionedGlyph& operator= (PositionedGlyph&&) noexcept = default;
 
     ~PositionedGlyph();
 
@@ -118,6 +118,8 @@ private:
     Graphics class, but can be used directly if more control is needed.
 
     @see Font, PositionedGlyph
+
+    @tags{Graphics}
 */
 class JUCE_API  GlyphArrangement  final
 {
@@ -128,13 +130,11 @@ public:
 
     GlyphArrangement (const GlyphArrangement&) = default;
     GlyphArrangement& operator= (const GlyphArrangement&) = default;
-
-    // VS2013 can't default move constructors and assignmants
-    GlyphArrangement (GlyphArrangement&&);
-    GlyphArrangement& operator= (GlyphArrangement&&);
+    GlyphArrangement (GlyphArrangement&&) = default;
+    GlyphArrangement& operator= (GlyphArrangement&&) = default;
 
     /** Destructor. */
-    ~GlyphArrangement();
+    ~GlyphArrangement() = default;
 
     //==============================================================================
     /** Returns the total number of glyphs in the arrangement. */
@@ -190,18 +190,19 @@ public:
         between x and (x + maxLineWidth).
 
         The y coordinate is the position of the baseline of the first line of text - subsequent
-        lines will be placed below it, separated by a distance of font.getHeight().
+        lines will be placed below it, separated by a distance of font.getHeight() + leading.
     */
     void addJustifiedText (const Font& font,
                            const String& text,
                            float x, float y,
                            float maxLineWidth,
-                           Justification horizontalLayout);
+                           Justification horizontalLayout,
+                           float leading = 0.0f);
 
     /** Tries to fit some text within a given space.
 
         This does its best to make the given text readable within the specified rectangle,
-        so it useful for labelling things.
+        so it's useful for labelling things.
 
         If the text is too big, it'll be squashed horizontally or broken over multiple lines
         if the maximumLinesToUse value allows this. If the text just won't fit into the space,

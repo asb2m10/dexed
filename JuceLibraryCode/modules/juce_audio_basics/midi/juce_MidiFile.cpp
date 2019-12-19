@@ -169,14 +169,14 @@ MidiFile& MidiFile::operator= (const MidiFile& other)
 }
 
 MidiFile::MidiFile (MidiFile&& other)
-    : tracks (static_cast<OwnedArray<MidiMessageSequence>&&> (other.tracks)),
+    : tracks (std::move (other.tracks)),
       timeFormat (other.timeFormat)
 {
 }
 
 MidiFile& MidiFile::operator= (MidiFile&& other)
 {
-    tracks = static_cast<OwnedArray<MidiMessageSequence>&&> (other.tracks);
+    tracks = std::move (other.tracks);
     timeFormat = other.timeFormat;
     return *this;
 }
@@ -245,7 +245,7 @@ double MidiFile::getLastTimestamp() const
 }
 
 //==============================================================================
-bool MidiFile::readFrom (InputStream& sourceStream)
+bool MidiFile::readFrom (InputStream& sourceStream, bool createMatchingNoteOffs)
 {
     clear();
     MemoryBlock data;
@@ -262,25 +262,26 @@ bool MidiFile::readFrom (InputStream& sourceStream)
         if (size > 16 && MidiFileHelpers::parseMidiHeader (d, timeFormat, fileType, expectedTracks))
         {
             size -= (size_t) (d - static_cast<const uint8*> (data.getData()));
-
             int track = 0;
 
-            while (size > 0 && track < expectedTracks)
+            for (;;)
             {
                 auto chunkType = (int) ByteOrder::bigEndianInt (d);
                 d += 4;
                 auto chunkSize = (int) ByteOrder::bigEndianInt (d);
                 d += 4;
 
-                if (chunkSize <= 0)
+                if (chunkSize <= 0 || (size_t) chunkSize > size)
                     break;
 
                 if (chunkType == (int) ByteOrder::bigEndianInt ("MTrk"))
-                    readNextTrack (d, chunkSize);
+                    readNextTrack (d, chunkSize, createMatchingNoteOffs);
+
+                if (++track >= expectedTracks)
+                    break;
 
                 size -= (size_t) chunkSize + 8;
                 d += chunkSize;
-                ++track;
             }
 
             return true;
@@ -290,7 +291,7 @@ bool MidiFile::readFrom (InputStream& sourceStream)
     return false;
 }
 
-void MidiFile::readNextTrack (const uint8* data, int size)
+void MidiFile::readNextTrack (const uint8* data, int size, bool createMatchingNoteOffs)
 {
     double time = 0;
     uint8 lastStatusByte = 0;
@@ -337,7 +338,9 @@ void MidiFile::readNextTrack (const uint8* data, int size)
     });
 
     addTrack (result);
-    tracks.getLast()->updateMatchedPairs();
+
+    if (createMatchingNoteOffs)
+        tracks.getLast()->updateMatchedPairs();
 }
 
 //==============================================================================
@@ -361,7 +364,7 @@ void MidiFile::convertTimestampTicksToSeconds()
 }
 
 //==============================================================================
-bool MidiFile::writeTo (OutputStream& out, int midiFileType)
+bool MidiFile::writeTo (OutputStream& out, int midiFileType) const
 {
     jassert (midiFileType >= 0 && midiFileType <= 2);
 
@@ -379,7 +382,7 @@ bool MidiFile::writeTo (OutputStream& out, int midiFileType)
     return true;
 }
 
-bool MidiFile::writeTrack (OutputStream& mainOut, const MidiMessageSequence& ms)
+bool MidiFile::writeTrack (OutputStream& mainOut, const MidiMessageSequence& ms) const
 {
     MemoryOutputStream out;
 

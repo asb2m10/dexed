@@ -45,6 +45,8 @@ namespace juce
     simply by overriding FileDragAndDropTarget::filesDropped().
 
     @see DragAndDropTarget
+
+    @tags{GUI}
 */
 class JUCE_API  DragAndDropContainer
 {
@@ -151,42 +153,46 @@ public:
 
 
     //==============================================================================
-    /** This performs a synchronous drag-and-drop of a set of files to some external
+    /** This performs an asynchronous drag-and-drop of a set of files to some external
         application.
 
         You can call this function in response to a mouseDrag callback, and it will
-        block, running its own internal message loop and tracking the mouse, while it
-        uses a native operating system drag-and-drop operation to move or copy some
+        use a native operating system drag-and-drop operation to move or copy some
         files to another application.
 
         @param files            a list of filenames to drag
         @param canMoveFiles     if true, the app that receives the files is allowed to move the files to a new location
                                 (if this is appropriate). If false, the receiver is expected to make a copy of them.
-        @param sourceComponent  Normally, JUCE will assume that the component under the mouse is the source component
+        @param sourceComponent  normally, JUCE will assume that the component under the mouse is the source component
                                 of the drag, but you can use this parameter to override this.
-        @returns                true if the files were successfully dropped somewhere, or false if it
-                                was interrupted
+        @param callback         an optional completion callback that will be called when the operation has ended.
+
+        @returns                true if the drag operation was successfully started, or false if it failed for some reason
+
         @see performExternalDragDropOfText
     */
     static bool performExternalDragDropOfFiles (const StringArray& files, bool canMoveFiles,
-                                                Component* sourceComponent = nullptr);
+                                                Component* sourceComponent = nullptr,
+                                                std::function<void()> callback = nullptr);
 
-    /** This performs a synchronous drag-and-drop of a block of text to some external
+    /** This performs an asynchronous drag-and-drop of a block of text to some external
         application.
 
         You can call this function in response to a mouseDrag callback, and it will
-        block, running its own internal message loop and tracking the mouse, while it
-        uses a native operating system drag-and-drop operation to move or copy some
+        use a native operating system drag-and-drop operation to move or copy some
         text to another application.
 
         @param text             the text to copy
         @param sourceComponent  Normally, JUCE will assume that the component under the mouse is the source component
                                 of the drag, but you can use this parameter to override this.
-        @returns                true if the text was successfully dropped somewhere, or false if it
-                                was interrupted
+        @param callback         an optional completion callback that will be called when the operation has ended.
+
+        @returns                true if the drag operation was successfully started, or false if it failed for some reason
+
         @see performExternalDragDropOfFiles
     */
-    static bool performExternalDragDropOfText (const String& text, Component* sourceComponent = nullptr);
+    static bool performExternalDragDropOfText (const String& text, Component* sourceComponent = nullptr,
+                                               std::function<void()> callback = nullptr);
 
 protected:
     /** Override this if you want to be able to perform an external drag of a set of files
@@ -228,8 +234,6 @@ protected:
 private:
     //==============================================================================
     class DragImageComponent;
-    friend class DragImageComponent;
-    friend struct ContainerDeletePolicy<DragImageComponent>;
     OwnedArray<DragImageComponent> dragImageComponents;
 
     const MouseInputSource* getMouseInputSourceForDrag (Component* sourceComponent, const MouseInputSource* inputSourceCausingDrag);
@@ -241,8 +245,6 @@ private:
     virtual int dragOperationStarted()              { return 0; }
     virtual int dragOperationEnded()                { return 0; }
    #endif
-
-    JUCE_DEPRECATED_WITH_BODY (virtual bool shouldDropFilesWhenDraggedExternally (const String&, Component*, StringArray&, bool&), { return false; })
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DragAndDropContainer)
 };

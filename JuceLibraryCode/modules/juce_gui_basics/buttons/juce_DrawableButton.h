@@ -35,6 +35,8 @@ namespace juce
     'normal', 'over' and 'down' states.
 
     @see Button
+
+    @tags{GUI}
 */
 class JUCE_API  DrawableButton  : public Button
 {
@@ -42,14 +44,16 @@ public:
     //==============================================================================
     enum ButtonStyle
     {
-        ImageFitted,                /**< The button will just display the images, but will resize and centre them to fit inside it. */
-        ImageRaw,                   /**< The button will just display the images in their normal size and position.
-                                         This leaves it up to the caller to make sure the images are the correct size and position for the button. */
-        ImageAboveTextLabel,        /**< Draws the button as a text label across the bottom with the image resized and scaled to fit above it. */
-        ImageOnButtonBackground,    /**< Draws the button as a standard rounded-rectangle button with the image on top.
-                                         Note that if you use this style, the colour IDs that control the button colour are
-                                         TextButton::buttonColourId and TextButton::buttonOnColourId. */
-        ImageStretched              /**< Fills the button with a stretched version of the image. */
+        ImageFitted,                            /**< The button will just display the images, but will resize and centre them to fit inside it. */
+        ImageRaw,                               /**< The button will just display the images in their normal size and position.
+                                                     This leaves it up to the caller to make sure the images are the correct size and position for the button. */
+        ImageAboveTextLabel,                    /**< Draws the button as a text label across the bottom with the image resized and scaled to fit above it. */
+        ImageOnButtonBackground,                /**< Draws the button as a standard rounded-rectangle button with the image on top. The image will be resized
+                                                     to match the button's proportions.
+                                                     Note that if you use this style, the colour IDs that control the button colour are
+                                                     TextButton::buttonColourId and TextButton::buttonOnColourId. */
+        ImageOnButtonBackgroundOriginalSize,    /** Same as ImageOnButtonBackground, but keeps the original image size. */
+        ImageStretched                          /**< Fills the button with a stretched version of the image. */
     };
 
     //==============================================================================
@@ -66,7 +70,7 @@ public:
                     ButtonStyle buttonStyle);
 
     /** Destructor. */
-    ~DrawableButton();
+    ~DrawableButton() override;
 
     //==============================================================================
     /** Sets up the images to draw for the various button states.
@@ -167,7 +171,7 @@ public:
 
     //==============================================================================
     /** @internal */
-    void paintButton (Graphics&, bool isMouseOverButton, bool isButtonDown) override;
+    void paintButton (Graphics&, bool, bool) override;
     /** @internal */
     void buttonStateChanged() override;
     /** @internal */
@@ -179,9 +183,12 @@ public:
 
 private:
     //==============================================================================
+    bool shouldDrawButtonBackground() const  { return style == ImageOnButtonBackground || style == ImageOnButtonBackgroundOriginalSize; }
+
+    //==============================================================================
     ButtonStyle style;
-    ScopedPointer<Drawable> normalImage, overImage, downImage, disabledImage,
-                            normalImageOn, overImageOn, downImageOn, disabledImageOn;
+    std::unique_ptr<Drawable> normalImage, overImage, downImage, disabledImage,
+                              normalImageOn, overImageOn, downImageOn, disabledImageOn;
     Drawable* currentImage = nullptr;
     int edgeIndent = 3;
 

@@ -31,7 +31,7 @@
 
   ID:               juce_audio_devices
   vendor:           juce
-  version:          5.2.1
+  version:          5.4.5
   name:             JUCE audio and MIDI I/O device classes
   description:      Classes to play and record from audio and MIDI I/O devices
   website:          http://www.juce.com/juce
@@ -59,6 +59,22 @@
 #endif
 
 //==============================================================================
+/** Config: JUCE_USE_WINRT_MIDI
+    Enables the use of the Windows Runtime API for MIDI, allowing connections
+    to Bluetooth Low Energy devices on Windows 10 version 1809 (October 2018
+    Update) and later. If you enable this flag then older, unsupported,
+    versions of Windows will automatically fall back to using the regualar
+    Win32 MIDI API.
+
+    You will need version 10.0.14393.0 of the Windows Standalone SDK to compile
+    and you may need to add the path to the WinRT headers. The path to the
+    headers will be something similar to
+    "C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\winrt".
+*/
+#ifndef JUCE_USE_WINRT_MIDI
+ #define JUCE_USE_WINRT_MIDI 0
+#endif
+
 /** Config: JUCE_ASIO
     Enables ASIO audio devices (MS Windows only).
     Turning this on means that you'll need to have the Steinberg ASIO SDK installed
@@ -108,34 +124,42 @@
  #define JUCE_JACK 0
 #endif
 
+/** Config: JUCE_BELA
+    Enables Bela audio devices on Bela boards.
+*/
+#ifndef JUCE_BELA
+ #define JUCE_BELA 0
+#endif
+
+/** Config: JUCE_USE_ANDROID_OBOE
+    ***
+    DEVELOPER PREVIEW - Oboe is currently in developer preview and
+    is in active development. This preview allows for early access
+    and evaluation for developers targeting Android platform.
+    ***
+
+    Enables Oboe devices (Android only, API 16 or above). Requires
+    Oboe repository path to be specified in Android exporter.
+*/
+
+#ifndef JUCE_USE_ANDROID_OBOE
+ #define JUCE_USE_ANDROID_OBOE 0
+#endif
+
+#if JUCE_USE_ANDROID_OBOE && JUCE_ANDROID_API_VERSION < 16
+ #undef JUCE_USE_ANDROID_OBOE
+ #define JUCE_USE_ANDROID_OBOE 0
+#endif
+
 /** Config: JUCE_USE_ANDROID_OPENSLES
     Enables OpenSLES devices (Android only).
 */
 #ifndef JUCE_USE_ANDROID_OPENSLES
- #if JUCE_ANDROID_API_VERSION > 8
+ #if ! JUCE_USE_ANDROID_OBOE && JUCE_ANDROID_API_VERSION >= 9
   #define JUCE_USE_ANDROID_OPENSLES 1
  #else
   #define JUCE_USE_ANDROID_OPENSLES 0
  #endif
-#endif
-
-/** Config: JUCE_USE_WINRT_MIDI
-    ***
-    EXPERIMENTAL - Microsoft's Bluetooth MIDI stack has multiple issues,
-    use at your own risk!
-    ***
-
-    Enables the use of the Windows Runtime API for MIDI, which supports
-    Bluetooth Low Energy connections on computers with the Anniversary Update
-    of Windows 10.
-
-    To compile with this flag requires version 10.0.14393.0 of the Windows
-    Standalone SDK and you must add the path to the WinRT headers. This path
-    should be something similar to
-    "C:\Program Files (x86)\Windows Kits\10\Include\10.0.14393.0\winrt".
-*/
-#ifndef JUCE_USE_WINRT_MIDI
- #define JUCE_USE_WINRT_MIDI 0
 #endif
 
 /** Config: JUCE_DISABLE_AUDIO_MIXING_WITH_OTHER_APPS
@@ -147,9 +171,8 @@
 #endif
 
 //==============================================================================
-#include "midi_io/juce_MidiInput.h"
+#include "midi_io/juce_MidiDevices.h"
 #include "midi_io/juce_MidiMessageCollector.h"
-#include "midi_io/juce_MidiOutput.h"
 #include "audio_io/juce_AudioIODevice.h"
 #include "audio_io/juce_AudioIODeviceType.h"
 #include "audio_io/juce_SystemAudioVolume.h"

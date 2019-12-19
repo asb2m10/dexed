@@ -40,6 +40,8 @@ namespace juce
 
     To play back a graph through an audio device, you might want to use an
     AudioProcessorPlayer object.
+
+    @tags{Audio}
 */
 class JUCE_API  AudioProcessorGraph   : public AudioProcessor,
                                         public ChangeBroadcaster,
@@ -53,10 +55,20 @@ public:
     /** Destructor.
         Any processor objects that have been added to the graph will also be deleted.
     */
-    ~AudioProcessorGraph();
+    ~AudioProcessorGraph() override;
 
     /** Each node in the graph has a UID of this type. */
-    typedef uint32 NodeID;
+    struct NodeID
+    {
+        NodeID() {}
+        explicit NodeID (uint32 i) : uid (i) {}
+
+        uint32 uid = 0;
+
+        bool operator== (const NodeID& other) const noexcept    { return uid == other.uid; }
+        bool operator!= (const NodeID& other) const noexcept    { return uid != other.uid; }
+        bool operator<  (const NodeID& other) const noexcept    { return uid <  other.uid; }
+    };
 
     //==============================================================================
     /** A special index that represents the midi channel of a node.
@@ -107,8 +119,15 @@ public:
         NamedValueSet properties;
 
         //==============================================================================
+        /** Returns if the node is bypassed or not. */
+        bool isBypassed() const noexcept;
+
+        /** Tell this node to bypass processing. */
+        void setBypassed (bool shouldBeBypassed) noexcept;
+
+        //==============================================================================
         /** A convenient typedef for referring to a pointer to a node object. */
-        typedef ReferenceCountedObjectPtr<Node> Ptr;
+        using Ptr = ReferenceCountedObjectPtr<Node>;
 
     private:
         //==============================================================================
@@ -122,11 +141,11 @@ public:
             bool operator== (const Connection&) const noexcept;
         };
 
-        const ScopedPointer<AudioProcessor> processor;
+        const std::unique_ptr<AudioProcessor> processor;
         Array<Connection> inputs, outputs;
-        bool isPrepared = false;
+        bool isPrepared = false, bypassed = false;
 
-        Node (NodeID, AudioProcessor*) noexcept;
+        Node (NodeID, std::unique_ptr<AudioProcessor>) noexcept;
 
         void setParentGraph (AudioProcessorGraph*) const;
         void prepare (double newSampleRate, int newBlockSize, AudioProcessorGraph*, ProcessingPrecision);
@@ -143,6 +162,7 @@ public:
     struct JUCE_API  Connection
     {
         //==============================================================================
+        Connection() = default;
         Connection (NodeAndChannel source, NodeAndChannel destination) noexcept;
 
         Connection (const Connection&) = default;
@@ -154,10 +174,10 @@ public:
 
         //==============================================================================
         /** The channel and node which is the input source for this connection. */
-        NodeAndChannel source;
+        NodeAndChannel source { {}, 0 };
 
         /** The channel and node which is the input source for this connection. */
-        NodeAndChannel destination;
+        NodeAndChannel destination { {}, 0 };
     };
 
     //==============================================================================
@@ -176,7 +196,7 @@ public:
         This will return nullptr if the index is out of range.
         @see getNodeForId
     */
-    Node* getNode (int index) const noexcept                        { return nodes [index]; }
+    Node::Ptr getNode (int index) const noexcept                    { return nodes[index]; }
 
     /** Searches the graph for a node with the given ID number and returns it.
         If no such node was found, this returns nullptr.
@@ -195,7 +215,7 @@ public:
 
         If this succeeds, it returns a pointer to the newly-created node.
     */
-    Node::Ptr addNode (AudioProcessor* newProcessor, NodeID nodeId = {});
+    Node::Ptr addNode (std::unique_ptr<AudioProcessor> newProcessor, NodeID nodeId = {});
 
     /** Deletes a node within the graph which has the specified ID.
         This will also delete any connections that are attached to this node.
@@ -303,7 +323,7 @@ public:
 
         //==============================================================================
         AudioGraphIOProcessor (IODeviceType);
-        ~AudioGraphIOProcessor();
+        ~AudioGraphIOProcessor() override;
 
         const String getName() const override;
         void fillInPluginDescription (PluginDescription&) const override;
@@ -371,12 +391,12 @@ private:
 
     struct RenderSequenceFloat;
     struct RenderSequenceDouble;
-    ScopedPointer<RenderSequenceFloat> renderSequenceFloat;
-    ScopedPointer<RenderSequenceDouble> renderSequenceDouble;
+    std::unique_ptr<RenderSequenceFloat> renderSequenceFloat;
+    std::unique_ptr<RenderSequenceDouble> renderSequenceDouble;
 
     friend class AudioGraphIOProcessor;
 
-    bool isPrepared = false;
+    Atomic<int> isPrepared { 0 };
 
     void topologyChanged();
     void handleAsyncUpdate() override;

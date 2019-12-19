@@ -23,9 +23,8 @@
 namespace juce
 {
 
-class ThreadPool::ThreadPoolThread  : public Thread
+struct ThreadPool::ThreadPoolThread  : public Thread
 {
-public:
     ThreadPoolThread (ThreadPool& p, size_t stackSize)
        : Thread ("Pool", stackSize), pool (p)
     {
@@ -38,7 +37,7 @@ public:
                 wait (500);
     }
 
-    ThreadPoolJob* volatile currentJob = nullptr;
+    std::atomic<ThreadPoolJob*> currentJob { nullptr };
     ThreadPool& pool;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ThreadPoolThread)
@@ -85,13 +84,13 @@ void ThreadPoolJob::removeListener (Thread::Listener* listener)
 ThreadPoolJob* ThreadPoolJob::getCurrentThreadPoolJob()
 {
     if (auto* t = dynamic_cast<ThreadPool::ThreadPoolThread*> (Thread::getCurrentThread()))
-        return t->currentJob;
+        return t->currentJob.load();
 
     return nullptr;
 }
 
 //==============================================================================
-ThreadPool::ThreadPool (const int numThreads, size_t threadStackSize)
+ThreadPool::ThreadPool (int numThreads, size_t threadStackSize)
 {
     jassert (numThreads > 0); // not much point having a pool without any threads!
 
@@ -127,7 +126,7 @@ void ThreadPool::stopThreads()
         t->stopThread (500);
 }
 
-void ThreadPool::addJob (ThreadPoolJob* const job, const bool deleteJobWhenFinished)
+void ThreadPool::addJob (ThreadPoolJob* job, bool deleteJobWhenFinished)
 {
     jassert (job != nullptr);
     jassert (job->pool == nullptr);
@@ -177,6 +176,7 @@ void ThreadPool::addJob (std::function<void()> jobToRun)
 
 int ThreadPool::getNumJobs() const noexcept
 {
+    const ScopedLock sl (lock);
     return jobs.size();
 }
 
@@ -191,13 +191,13 @@ ThreadPoolJob* ThreadPool::getJob (int index) const noexcept
     return jobs [index];
 }
 
-bool ThreadPool::contains (const ThreadPoolJob* const job) const noexcept
+bool ThreadPool::contains (const ThreadPoolJob* job) const noexcept
 {
     const ScopedLock sl (lock);
     return jobs.contains (const_cast<ThreadPoolJob*> (job));
 }
 
-bool ThreadPool::isJobRunning (const ThreadPoolJob* const job) const noexcept
+bool ThreadPool::isJobRunning (const ThreadPoolJob* job) const noexcept
 {
     const ScopedLock sl (lock);
     return jobs.contains (const_cast<ThreadPoolJob*> (job)) && job->isActive;
@@ -207,16 +207,13 @@ void ThreadPool::moveJobToFront (const ThreadPoolJob* job) noexcept
 {
     const ScopedLock sl (lock);
 
-    if (! job->isActive)
-    {
-        auto index = jobs.indexOf (const_cast<ThreadPoolJob*> (job));
+    auto index = jobs.indexOf (const_cast<ThreadPoolJob*> (job));
 
-        if (index > 0)
-            jobs.move (index, 0);
-    }
+    if (index > 0 && ! job->isActive)
+        jobs.move (index, 0);
 }
 
-bool ThreadPool::waitForJobToFinish (const ThreadPoolJob* const job, const int timeOutMs) const
+bool ThreadPool::waitForJobToFinish (const ThreadPoolJob* job, int timeOutMs) const
 {
     if (job != nullptr)
     {
@@ -234,9 +231,7 @@ bool ThreadPool::waitForJobToFinish (const ThreadPoolJob* const job, const int t
     return true;
 }
 
-bool ThreadPool::removeJob (ThreadPoolJob* const job,
-                            const bool interruptIfRunning,
-                            const int timeOutMs)
+bool ThreadPool::removeJob (ThreadPoolJob* job, bool interruptIfRunning, int timeOutMs)
 {
     bool dontWait = true;
     OwnedArray<ThreadPoolJob> deletionList;
@@ -265,8 +260,8 @@ bool ThreadPool::removeJob (ThreadPoolJob* const job,
     return dontWait || waitForJobToFinish (job, timeOutMs);
 }
 
-bool ThreadPool::removeAllJobs (const bool interruptRunningJobs, const int timeOutMs,
-                                ThreadPool::JobSelector* const selectedJobsToRemove)
+bool ThreadPool::removeAllJobs (bool interruptRunningJobs, int timeOutMs,
+                                ThreadPool::JobSelector* selectedJobsToRemove)
 {
     Array<ThreadPoolJob*> jobsToWaitFor;
 
@@ -323,7 +318,7 @@ bool ThreadPool::removeAllJobs (const bool interruptRunningJobs, const int timeO
     return true;
 }
 
-StringArray ThreadPool::getNamesOfAllJobs (const bool onlyReturnActiveJobs) const
+StringArray ThreadPool::getNamesOfAllJobs (bool onlyReturnActiveJobs) const
 {
     StringArray s;
     const ScopedLock sl (lock);
@@ -335,7 +330,7 @@ StringArray ThreadPool::getNamesOfAllJobs (const bool onlyReturnActiveJobs) cons
     return s;
 }
 
-bool ThreadPool::setThreadPriorities (const int newPriority)
+bool ThreadPool::setThreadPriorities (int newPriority)
 {
     bool ok = true;
 
@@ -425,7 +420,7 @@ bool ThreadPool::runNextJob (ThreadPoolThread& thread)
     return false;
 }
 
-void ThreadPool::addToDeleteList (OwnedArray<ThreadPoolJob>& deletionList, ThreadPoolJob* const job) const
+void ThreadPool::addToDeleteList (OwnedArray<ThreadPoolJob>& deletionList, ThreadPoolJob* job) const
 {
     job->shouldStop = true;
     job->pool = nullptr;

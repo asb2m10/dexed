@@ -42,6 +42,8 @@ namespace juce
     the writer.
 
     @see AudioFormat
+
+    @tags{Audio}
 */
 class JUCE_API  LAMEEncoderAudioFormat    : public AudioFormat
 {
@@ -65,6 +67,7 @@ public:
     AudioFormatWriter* createWriterFor (OutputStream*, double sampleRateToUse,
                                         unsigned int numberOfChannels, int bitsPerSample,
                                         const StringPairArray& metadataValues, int qualityOptionIndex);
+    using AudioFormat::createWriterFor;
 
 private:
     File lameApp;

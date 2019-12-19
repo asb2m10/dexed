@@ -40,6 +40,8 @@ namespace juce
     with it, and these will be signalled when a value changes.
 
     @see PropertySet
+
+    @tags{DataStructures}
 */
 class JUCE_API  PropertiesFile  : public PropertySet,
                                   public ChangeBroadcaster,
@@ -55,6 +57,7 @@ public:
     };
 
     //==============================================================================
+    /** Structure describing properties file options */
     struct JUCE_API  Options
     {
         /** Creates an empty Options structure.
@@ -177,7 +180,7 @@ public:
     /** Destructor.
         When deleted, the file will first call saveIfNeeded() to flush any changes to disk.
     */
-    ~PropertiesFile();
+    ~PropertiesFile() override;
 
     //==============================================================================
     /** Returns true if this file was created from a valid (or non-existent) file.
@@ -236,7 +239,7 @@ private:
     Options options;
     bool loadedOk = false, needsWriting = false;
 
-    typedef const ScopedPointer<InterProcessLock::ScopedLockType> ProcessScopedLock;
+    using ProcessScopedLock = const std::unique_ptr<InterProcessLock::ScopedLockType>;
     InterProcessLock::ScopedLockType* createProcessLock() const;
 
     void timerCallback() override;

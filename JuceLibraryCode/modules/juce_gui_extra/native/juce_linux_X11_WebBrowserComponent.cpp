@@ -57,7 +57,7 @@ public:
 
     void tryNextRead()
     {
-        while (true)
+        for (;;)
         {
             size_t len = (receivingLength ? sizeof (size_t) : bufferLength.len);
 
@@ -102,7 +102,7 @@ public:
         if (! params.isVoid())
             obj->setProperty (getParamIdentifier(), params);
 
-        String json (JSON::toString (var (obj)));
+        String json (JSON::toString (var (obj.get())));
 
         size_t jsonLength = static_cast<size_t> (json.length());
         size_t len        = sizeof (size_t) + jsonLength;
@@ -290,7 +290,7 @@ public:
 
             params->setProperty ("url", String (webkit_uri_request_get_uri (webkit_navigation_action_get_request (action))));
             params->setProperty ("decision_id", (int64) decision);
-            CommandReceiver::sendCommand (outChannel, "pageAboutToLoad", var (params));
+            CommandReceiver::sendCommand (outChannel, "pageAboutToLoad", var (params.get()));
 
             return true;
         }
@@ -307,7 +307,7 @@ public:
             DynamicObject::Ptr params = new DynamicObject;
 
             params->setProperty ("url", String (webkit_uri_request_get_uri (webkit_navigation_action_get_request (action))));
-            CommandReceiver::sendCommand (outChannel, "newWindowAttemptingToLoad", var (params));
+            CommandReceiver::sendCommand (outChannel, "newWindowAttemptingToLoad", var (params.get()));
 
             // never allow new windows
             webkit_policy_decision_ignore (decision);
@@ -325,7 +325,7 @@ public:
             DynamicObject::Ptr params = new DynamicObject;
 
             params->setProperty ("url", String (webkit_web_view_get_uri (webview)));
-            CommandReceiver::sendCommand (outChannel, "pageFinishedLoading", var (params));
+            CommandReceiver::sendCommand (outChannel, "pageFinishedLoading", var (params.get()));
         }
     }
 
@@ -376,7 +376,7 @@ public:
         DynamicObject::Ptr params = new DynamicObject;
 
         params->setProperty ("error", String (error != nullptr ? error->message : "unknown error"));
-        CommandReceiver::sendCommand (outChannel, "pageLoadHadNetworkError", var (params));
+        CommandReceiver::sendCommand (outChannel, "pageLoadHadNetworkError", var (params.get()));
     }
 
 private:
@@ -427,7 +427,7 @@ public:
         : Thread ("Webview"), owner (parent)
     {}
 
-    ~Pimpl()
+    ~Pimpl() override
     {
         quit();
     }
@@ -449,17 +449,22 @@ public:
 
         unsigned long windowHandle;
         ssize_t actual = read (inChannel, &windowHandle, sizeof (windowHandle));
-        if (actual != sizeof (windowHandle))
+
+        if (actual != (ssize_t) sizeof (windowHandle))
         {
             killChild();
             return;
         }
 
-        receiver = new CommandReceiver (this, inChannel);
+        receiver.reset (new CommandReceiver (this, inChannel));
+
+        pfds.push_back ({ threadControl[0],  POLLIN, 0 });
+        pfds.push_back ({ receiver->getFd(), POLLIN, 0 });
+
         startThread();
 
-        xembed = new XEmbedComponent (windowHandle);
-        owner.addAndMakeVisible (xembed);
+        xembed.reset (new XEmbedComponent (windowHandle));
+        owner.addAndMakeVisible (xembed.get());
     }
 
     void quit()
@@ -500,7 +505,7 @@ public:
         if (postData != nullptr)
             params->setProperty ("postData", var (*postData));
 
-        CommandReceiver::sendCommand (outChannel, "goToURL", var (params));
+        CommandReceiver::sendCommand (outChannel, "goToURL", var (params.get()));
     }
 
     void goBack()      { CommandReceiver::sendCommand (outChannel, "goBack",    var()); }
@@ -601,17 +606,10 @@ private:
 
             receiver->tryNextRead();
 
-            fd_set set;
-            FD_ZERO (&set);
-            FD_SET (threadControl[0],  &set);
-            FD_SET (receiver->getFd(), &set);
-
-            int max_fd = jmax (threadControl[0], receiver->getFd());
-
             int result = 0;
 
             while (result == 0 || (result < 0 && errno == EINTR))
-                result = select (max_fd + 1, &set, NULL, NULL, NULL);
+                result = poll (&pfds.front(), static_cast<nfds_t> (pfds.size()), 0);
 
             if (result < 0)
                 break;
@@ -651,7 +649,7 @@ private:
             params->setProperty ("decision_id", decision_id);
             params->setProperty ("allow", owner.pageAboutToLoad (url));
 
-            CommandReceiver::sendCommand (outChannel, "decision", var (params));
+            CommandReceiver::sendCommand (outChannel, "decision", var (params.get()));
         }
     }
 
@@ -696,19 +694,22 @@ private:
 
 private:
     WebBrowserComponent& owner;
-    ScopedPointer<CommandReceiver> receiver;
+    std::unique_ptr<CommandReceiver> receiver;
     int childProcess = 0, inChannel = 0, outChannel = 0;
     int threadControl[2];
-    ScopedPointer<XEmbedComponent> xembed;
+    std::unique_ptr<XEmbedComponent> xembed;
     WaitableEvent threadBlocker;
+    std::vector<pollfd> pfds;
 };
 
 //==============================================================================
 WebBrowserComponent::WebBrowserComponent (const bool unloadPageWhenBrowserIsHidden_)
     : browser (new Pimpl (*this)),
-      blankPageShown (false),
       unloadPageWhenBrowserIsHidden (unloadPageWhenBrowserIsHidden_)
 {
+    ignoreUnused (blankPageShown);
+    ignoreUnused (unloadPageWhenBrowserIsHidden);
+
     setOpaque (true);
 
     browser->init();
@@ -735,8 +736,6 @@ void WebBrowserComponent::goToURL (const String& url,
     else
         lastPostData.reset();
 
-    blankPageShown = false;
-
     browser->goToURL (url, headers, postData);
 }
 
@@ -748,7 +747,6 @@ void WebBrowserComponent::stop()
 void WebBrowserComponent::goBack()
 {
     lastURL.clear();
-    blankPageShown = false;
 
     browser->goBack();
 }

@@ -27,6 +27,14 @@
 namespace juce
 {
 
+#if JUCE_MSVC
+ #pragma warning (push, 0)
+
+ // MSVC does not like it if you override a deprecated method even if you
+ // keep the deprecation attribute. Other compilers are more forgiving.
+ #pragma warning (disable: 4996)
+#endif
+
 //==============================================================================
 /**
     Base class for an active instance of a plugin.
@@ -39,6 +47,8 @@ namespace juce
     return AudioPluginInstance objects which wrap external plugins.
 
     @see AudioProcessor, AudioPluginFormat
+
+    @tags{Audio}
 */
 class JUCE_API  AudioPluginInstance   : public AudioProcessor
 {
@@ -49,41 +59,75 @@ public:
         Make sure that you delete any UI components that belong to this plugin before
         deleting the plugin.
     */
-    virtual ~AudioPluginInstance() {}
+    ~AudioPluginInstance() override = default;
 
     //==============================================================================
     /** Fills-in the appropriate parts of this plugin description object. */
-    virtual void fillInPluginDescription (PluginDescription& description) const = 0;
+    virtual void fillInPluginDescription (PluginDescription&) const = 0;
 
     /** Returns a PluginDescription for this plugin.
         This is just a convenience method to avoid calling fillInPluginDescription.
     */
-    PluginDescription getPluginDescription() const
-    {
-        PluginDescription desc;
-        fillInPluginDescription (desc);
-        return desc;
-    }
+    PluginDescription getPluginDescription() const;
 
     /** Returns a pointer to some kind of platform-specific data about the plugin.
         E.g. For a VST, this value can be cast to an AEffect*. For an AudioUnit, it can be
         cast to an AudioUnit handle.
     */
-    virtual void* getPlatformSpecificData()                 { return nullptr; }
+    virtual void* getPlatformSpecificData();
 
-    /** For some formats (currently AudioUnit), this forces a reload of the list of
-        available parameters.
-    */
-    virtual void refreshParameterList() {}
+    // Rather than using these methods you should call the corresponding methods
+    // on the AudioProcessorParameter objects returned from getParameters().
+    // See the implementations of the methods below for some examples of how to
+    // do this.
+    //
+    // In addition to being marked as deprecated these methods will assert on
+    // the first call.
+    JUCE_DEPRECATED (String getParameterID (int index) override);
+    JUCE_DEPRECATED (float getParameter (int parameterIndex) override);
+    JUCE_DEPRECATED (void setParameter (int parameterIndex, float newValue) override);
+    JUCE_DEPRECATED (const String getParameterName (int parameterIndex) override);
+    JUCE_DEPRECATED (String getParameterName (int parameterIndex, int maximumStringLength) override);
+    JUCE_DEPRECATED (const String getParameterText (int parameterIndex) override);
+    JUCE_DEPRECATED (String getParameterText (int parameterIndex, int maximumStringLength) override);
+    JUCE_DEPRECATED (int getParameterNumSteps (int parameterIndex) override);
+    JUCE_DEPRECATED (bool isParameterDiscrete (int parameterIndex) const override);
+    JUCE_DEPRECATED (bool isParameterAutomatable (int parameterIndex) const override);
+    JUCE_DEPRECATED (float getParameterDefaultValue (int parameterIndex) override);
+    JUCE_DEPRECATED (String getParameterLabel (int parameterIndex) const override);
+    JUCE_DEPRECATED (bool isParameterOrientationInverted (int parameterIndex) const override);
+    JUCE_DEPRECATED (bool isMetaParameter (int parameterIndex) const override);
+    JUCE_DEPRECATED (AudioProcessorParameter::Category getParameterCategory (int parameterIndex) const override);
 
 protected:
     //==============================================================================
-    AudioPluginInstance() {}
+    /** Structure used to describe plugin parameters */
+    struct Parameter   : public AudioProcessorParameter
+    {
+        Parameter();
+        ~Parameter() override;
+
+        String getText (float value, int maximumStringLength) const override;
+        float getValueForText (const String& text) const override;
+
+        StringArray onStrings, offStrings;
+    };
+
+    AudioPluginInstance() = default;
     AudioPluginInstance (const BusesProperties& ioLayouts) : AudioProcessor (ioLayouts) {}
-    template <int numLayouts>
+    template <size_t numLayouts>
     AudioPluginInstance (const short channelLayoutList[numLayouts][2]) : AudioProcessor (channelLayoutList) {}
+
+private:
+    void assertOnceOnDeprecatedMethodUse() const noexcept;
+
+    static bool deprecationAssertiontriggered;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginInstance)
 };
+
+#if JUCE_MSVC
+ #pragma warning (pop)
+#endif
 
 } // namespace juce

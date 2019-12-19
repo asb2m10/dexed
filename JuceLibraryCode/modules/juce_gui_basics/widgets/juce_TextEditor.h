@@ -35,6 +35,8 @@ namespace juce
     fonts and colours.
 
     @see TextEditor::Listener, Label
+
+    @tags{GUI}
 */
 class JUCE_API  TextEditor  : public Component,
                               public TextInputTarget,
@@ -56,7 +58,7 @@ public:
                          juce_wchar passwordCharacter = 0);
 
     /** Destructor. */
-    ~TextEditor();
+    ~TextEditor() override;
 
     //==============================================================================
     /** Puts the editor into either multi- or single-line mode.
@@ -277,6 +279,12 @@ public:
     */
     void setTextToShowWhenEmpty (const String& text, Colour colourToUse);
 
+    /** Returns the text that will be shown when the text editor is empty.
+
+        @see setTextToShowWhenEmpty
+    */
+    String getTextToShowWhenEmpty() const noexcept    { return textToShowWhenEmpty; }
+
     //==============================================================================
     /** Changes the size of the scrollbars that are used.
         Handy if you need smaller scrollbars for a small text box.
@@ -293,7 +301,7 @@ public:
     {
     public:
         /** Destructor. */
-        virtual ~Listener()  {}
+        virtual ~Listener() = default;
 
         /** Called when the user changes the text in some way. */
         virtual void textEditorTextChanged (TextEditor&) {}
@@ -474,7 +482,7 @@ public:
     /** Changes the size of border left around the edge of the component.
         @see getBorder
     */
-    void setBorder (const BorderSize<int>& border);
+    void setBorder (BorderSize<int> border);
 
     /** Returns the size of border around the edge of the component.
         @see setBorder
@@ -567,8 +575,8 @@ public:
     class JUCE_API  InputFilter
     {
     public:
-        InputFilter() {}
-        virtual ~InputFilter() {}
+        InputFilter() = default;
+        virtual ~InputFilter() = default;
 
         /** This method is called whenever text is entered into the editor.
             An implementation of this class should should check the input string,
@@ -630,7 +638,7 @@ public:
     */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual void fillTextEditorBackground (Graphics&, int width, int height, TextEditor&) = 0;
         virtual void drawTextEditorOutline (Graphics&, int width, int height, TextEditor&) = 0;
@@ -702,7 +710,7 @@ private:
     struct InsertAction;
     struct RemoveAction;
 
-    ScopedPointer<Viewport> viewport;
+    std::unique_ptr<Viewport> viewport;
     TextHolderComponent* textHolder;
     BorderSize<int> borderSize { 1, 1, 1, 3 };
     Justification justification { Justification::left };
@@ -723,7 +731,7 @@ private:
     bool consumeEscAndReturnKeys = true;
 
     UndoManager undoManager;
-    ScopedPointer<CaretComponent> caret;
+    std::unique_ptr<CaretComponent> caret;
     Range<int> selection;
     int leftIndent = 4, topIndent = 4;
     unsigned int lastTransactionTime = 0;
@@ -775,6 +783,7 @@ private:
     float getWordWrapWidth() const;
     float getJustificationWidth() const;
     void timerCallbackInt();
+    void checkFocus();
     void repaintText (Range<int>);
     void scrollByLines (int deltaLines);
     bool undoOrRedo (bool shouldUndo);

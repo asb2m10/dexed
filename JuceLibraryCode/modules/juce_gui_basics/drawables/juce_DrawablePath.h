@@ -34,6 +34,8 @@ namespace juce
     For details on how to change the fill and stroke, see the DrawableShape class.
 
     @see Drawable, DrawableShape
+
+    @tags{GUI}
 */
 class JUCE_API  DrawablePath  : public DrawableShape
 {
@@ -44,7 +46,7 @@ public:
     DrawablePath (const DrawablePath&);
 
     /** Destructor. */
-    ~DrawablePath();
+    ~DrawablePath() override;
 
     //==============================================================================
     /** Changes the path that will be drawn.
@@ -65,7 +67,7 @@ public:
 
     //==============================================================================
     /** @internal */
-    Drawable* createCopy() const;
+    std::unique_ptr<Drawable> createCopy() const override;
 
 private:
     //==============================================================================

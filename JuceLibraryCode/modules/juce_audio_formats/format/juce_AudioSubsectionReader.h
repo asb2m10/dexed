@@ -39,6 +39,8 @@ namespace juce
     be at a non-zero position.
 
     @see AudioFormatReader
+
+    @tags{Audio}
 */
 class JUCE_API  AudioSubsectionReader  : public AudioFormatReader
 {
@@ -61,7 +63,7 @@ public:
                            bool deleteSourceWhenDeleted);
 
     /** Destructor. */
-    ~AudioSubsectionReader();
+    ~AudioSubsectionReader() override;
 
 
     //==============================================================================
@@ -71,6 +73,7 @@ public:
     void readMaxLevels (int64 startSample, int64 numSamples,
                         Range<float>* results, int numChannelsToRead) override;
 
+    using AudioFormatReader::readMaxLevels;
 
 private:
     //==============================================================================

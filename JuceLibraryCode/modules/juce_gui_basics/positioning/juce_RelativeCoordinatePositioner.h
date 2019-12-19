@@ -30,6 +30,8 @@ namespace juce
 //==============================================================================
 /**
     Base class for Component::Positioners that are based upon relative coordinates.
+
+    @tags{GUI}
 */
 class JUCE_API  RelativeCoordinatePositionerBase  : public Component::Positioner,
                                                     public ComponentListener,
@@ -37,14 +39,14 @@ class JUCE_API  RelativeCoordinatePositionerBase  : public Component::Positioner
 {
 public:
     RelativeCoordinatePositionerBase (Component&);
-    ~RelativeCoordinatePositionerBase();
+    ~RelativeCoordinatePositionerBase() override;
 
-    void componentMovedOrResized (Component&, bool, bool);
-    void componentParentHierarchyChanged (Component&);
-    void componentChildrenChanged (Component&);
-    void componentBeingDeleted (Component&);
-    void markersChanged (MarkerList*);
-    void markerListBeingDeleted (MarkerList*);
+    void componentMovedOrResized (Component&, bool, bool) override;
+    void componentParentHierarchyChanged (Component&) override;
+    void componentChildrenChanged (Component&) override;
+    void componentBeingDeleted (Component&) override;
+    void markersChanged (MarkerList*) override;
+    void markerListBeingDeleted (MarkerList*) override;
 
     void apply();
 
@@ -58,12 +60,9 @@ public:
     public:
         ComponentScope (Component&);
 
-        // Suppress a VS2013 compiler warning
-        ComponentScope& operator= (const ComponentScope&) = delete;
-
-        Expression getSymbolValue (const String& symbol) const;
-        void visitRelativeScope (const String& scopeName, Visitor&) const;
-        String getScopeUID() const;
+        Expression getSymbolValue (const String& symbol) const override;
+        void visitRelativeScope (const String& scopeName, Visitor&) const override;
+        String getScopeUID() const override;
 
     protected:
         Component& component;

@@ -49,6 +49,8 @@ namespace juce
     TypeOfCriticalSectionToUse parameter, instead of the default DummyCriticalSection.
 
     @see Array, OwnedArray, ReferenceCountedArray, StringArray, CriticalSection
+
+    @tags{Core}
 */
 template <class ElementType, class TypeOfCriticalSectionToUse = DummyCriticalSection>
 class SortedSet
@@ -56,25 +58,22 @@ class SortedSet
 public:
     //==============================================================================
     /** Creates an empty set. */
-    // VS2013 doesn't allow defaulted noexcept constructors.
-    SortedSet() noexcept {}
+    SortedSet() = default;
 
     /** Creates a copy of another set. */
     SortedSet (const SortedSet&) = default;
 
     /** Creates a copy of another set. */
-    // VS2013 doesn't allow defaulted noexcept constructors.
-    SortedSet (SortedSet&& other) noexcept : data (static_cast<decltype(data)&&> (other.data)) {}
+    SortedSet (SortedSet&&) noexcept = default;
 
     /** Makes a copy of another set. */
     SortedSet& operator= (const SortedSet&) = default;
 
     /** Makes a copy of another set. */
-    // VS2013 doesn't allow defaulted noexcept constructors.
-    SortedSet& operator= (SortedSet&& other) noexcept { data = static_cast<decltype(data)&&> (other.data); return *this; }
+    SortedSet& operator= (SortedSet&&) noexcept = default;
 
     /** Destructor. */
-    ~SortedSet() noexcept {}
+    ~SortedSet() = default;
 
     //==============================================================================
     /** Compares this set to another one.
@@ -167,7 +166,16 @@ public:
 
         @param index    the index of the element being requested (0 is the first element in the array)
     */
-    inline ElementType& getReference (const int index) const noexcept
+    inline ElementType& getReference (const int index) noexcept
+    {
+        return data.getReference (index);
+    }
+
+    /** Returns a direct reference to one of the elements in the set, without checking the index passed in.
+
+        @param index    the index of the element being requested (0 is the first element in the array)
+    */
+    inline const ElementType& getReference (const int index) const noexcept
     {
         return data.getReference (index);
     }
@@ -192,7 +200,7 @@ public:
     /** Returns a pointer to the first element in the set.
         This method is provided for compatibility with standard C++ iteration mechanisms.
     */
-    inline ElementType* begin() const noexcept
+    inline const ElementType* begin() const noexcept
     {
         return data.begin();
     }
@@ -200,7 +208,7 @@ public:
     /** Returns a pointer to the element which follows the last element in the set.
         This method is provided for compatibility with standard C++ iteration mechanisms.
     */
-    inline ElementType* end() const noexcept
+    inline const ElementType* end() const noexcept
     {
         return data.end();
     }
@@ -471,7 +479,7 @@ public:
     inline const TypeOfCriticalSectionToUse& getLock() const noexcept      { return data.getLock(); }
 
     /** Returns the type of scoped lock to use for locking this array */
-    typedef typename TypeOfCriticalSectionToUse::ScopedLockType ScopedLockType;
+    using ScopedLockType = typename TypeOfCriticalSectionToUse::ScopedLockType;
 
 
 private:

@@ -31,16 +31,18 @@ namespace juce
 /**
     The latest JUCE look-and-feel style, as introduced in 2013.
     @see LookAndFeel, LookAndFeel_V1, LookAndFeel_V2
+
+    @tags{GUI}
 */
 class JUCE_API  LookAndFeel_V3   : public LookAndFeel_V2
 {
 public:
     LookAndFeel_V3();
-    ~LookAndFeel_V3();
+    ~LookAndFeel_V3() override;
 
     //==============================================================================
     void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
-                               bool isMouseOverButton, bool isButtonDown) override;
+                               bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override;
 
     void drawTableHeaderBackground (Graphics&, TableHeaderComponent&) override;
 

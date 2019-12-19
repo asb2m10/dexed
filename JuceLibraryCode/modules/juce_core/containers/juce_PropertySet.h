@@ -32,6 +32,8 @@ namespace juce
 
     See the PropertiesFile class for a subclass of this, which automatically broadcasts change
     messages and saves/loads the list from a file.
+
+    @tags{Core}
 */
 class JUCE_API  PropertySet
 {
@@ -111,7 +113,7 @@ public:
 
         @param keyName              the name of the property to retrieve
     */
-    XmlElement* getXmlValue (StringRef keyName) const;
+    std::unique_ptr<XmlElement> getXmlValue (StringRef keyName) const;
 
     //==============================================================================
     /** Sets a named property.
@@ -159,7 +161,7 @@ public:
         The string parameter is the tag name that should be used for the node.
         @see restoreFromXml
     */
-    XmlElement* createXml (const String& nodeName) const;
+    std::unique_ptr<XmlElement> createXml (const String& nodeName) const;
 
     /** Reloads a set of properties that were previously stored as XML.
         The node passed in must have been created by the createXml() method.

@@ -32,6 +32,8 @@ namespace juce
     A component that simply displays an image.
 
     Use setImage to give it an image, and it'll display it - simple as that!
+
+    @tags{GUI}
 */
 class JUCE_API  ImageComponent  : public Component,
                                   public SettableTooltipClient
@@ -42,7 +44,7 @@ public:
     ImageComponent (const String& componentName = String());
 
     /** Destructor. */
-    ~ImageComponent();
+    ~ImageComponent() override;
 
     //==============================================================================
     /** Sets the image that should be displayed. */

@@ -37,7 +37,9 @@ namespace juce
     This should be able to understand formats such as mp3, m4a, etc.
 
     @see AudioFormat
- */
+
+    @tags{Audio}
+*/
 class JUCE_API  CoreAudioFormat     : public AudioFormat
 {
 public:
@@ -46,7 +48,7 @@ public:
     CoreAudioFormat();
 
     /** Destructor. */
-    ~CoreAudioFormat();
+    ~CoreAudioFormat() override;
 
     //==============================================================================
     /** Metadata property name used when reading a caf file with a MIDI chunk. */
@@ -74,6 +76,7 @@ public:
                                         int bitsPerSample,
                                         const StringPairArray& metadataValues,
                                         int qualityOptionIndex) override;
+    using AudioFormat::createWriterFor;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CoreAudioFormat)

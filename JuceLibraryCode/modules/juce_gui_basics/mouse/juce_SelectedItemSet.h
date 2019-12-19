@@ -39,21 +39,21 @@ namespace juce
 
     To be informed when items are selected/deselected, register a ChangeListener with
     this object.
+
+    @tags{GUI}
 */
 template <class SelectableItemType>
 class SelectedItemSet   : public ChangeBroadcaster
 {
 public:
     //==============================================================================
-    typedef SelectableItemType ItemType;
-    typedef Array<SelectableItemType> ItemArray;
-    typedef typename TypeHelpers::ParameterType<SelectableItemType>::type ParameterType;
+    using ItemType = SelectableItemType;
+    using ItemArray = Array<SelectableItemType>;
+    using ParameterType = typename TypeHelpers::ParameterType<SelectableItemType>::type;
 
     //==============================================================================
     /** Creates an empty set. */
-    SelectedItemSet()
-    {
-    }
+    SelectedItemSet() = default;
 
     /** Creates a set based on an array of items. */
     explicit SelectedItemSet (const ItemArray& items)
@@ -63,7 +63,7 @@ public:
 
     /** Creates a copy of another set. */
     SelectedItemSet (const SelectedItemSet& other)
-        : selectedItems (other.selectedItems)
+        : ChangeBroadcaster(), selectedItems (other.selectedItems)
     {
     }
 
@@ -274,10 +274,15 @@ public:
     const ItemArray& getItemArray() const noexcept              { return selectedItems; }
 
     /** Provides iterator access to the array of items. */
-    SelectableItemType* begin() const noexcept                  { return selectedItems.begin(); }
+    SelectableItemType* begin() noexcept                        { return selectedItems.begin(); }
+
+    const SelectableItemType* begin() const noexcept            { return selectedItems.begin(); }
 
     /** Provides iterator access to the array of items. */
-    SelectableItemType* end() const noexcept                    { return selectedItems.end(); }
+    SelectableItemType* end() noexcept                          { return selectedItems.end(); }
+
+    /** Provides iterator access to the array of items. */
+    const SelectableItemType* end() const noexcept              { return selectedItems.end(); }
 
     //==============================================================================
     /** Can be overridden to do special handling when an item is selected.

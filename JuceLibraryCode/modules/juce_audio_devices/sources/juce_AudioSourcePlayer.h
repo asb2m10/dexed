@@ -30,6 +30,8 @@ namespace juce
 
     This object acts as an AudioIODeviceCallback, so can be attached to an
     output device, and will stream audio from an AudioSource.
+
+    @tags{Audio}
 */
 class JUCE_API  AudioSourcePlayer  : public AudioIODeviceCallback
 {
@@ -43,7 +45,7 @@ public:
         Make sure this object isn't still being used by an AudioIODevice before
         deleting it!
     */
-    virtual ~AudioSourcePlayer();
+    ~AudioSourcePlayer() override;
 
     //==============================================================================
     /** Changes the current audio source to play from.

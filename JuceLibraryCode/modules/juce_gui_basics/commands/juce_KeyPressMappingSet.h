@@ -81,6 +81,8 @@ namespace juce
     to easily edit the key mappings.
 
     @see Component::addKeyListener(), KeyMappingEditorComponent, ApplicationCommandManager
+
+    @tags{GUI}
 */
 class JUCE_API  KeyPressMappingSet  : public KeyListener,
                                       public ChangeBroadcaster,
@@ -106,7 +108,7 @@ public:
     KeyPressMappingSet (const KeyPressMappingSet&);
 
     /** Destructor. */
-    ~KeyPressMappingSet();
+    ~KeyPressMappingSet() override;
 
     //==============================================================================
     ApplicationCommandManager& getCommandManager() const noexcept       { return commandManager; }
@@ -204,7 +206,7 @@ public:
 
         @see restoreFromXml
     */
-    XmlElement* createXml (bool saveDifferencesFromDefaultSet) const;
+    std::unique_ptr<XmlElement> createXml (bool saveDifferencesFromDefaultSet) const;
 
     //==============================================================================
     /** @internal */

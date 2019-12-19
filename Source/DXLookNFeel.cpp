@@ -78,7 +78,7 @@ DXLookNFeel::DXLookNFeel() {
     if ( ! dexedTheme.existsAsFile() )
         return;
     
-    XmlElement *root = XmlDocument::parse(dexedTheme);
+    std::unique_ptr<XmlElement> root = XmlDocument::parse(dexedTheme);
     if ( root == NULL )
         return;
 
@@ -150,8 +150,6 @@ DXLookNFeel::DXLookNFeel() {
             continue;
         }
     }
-
-    delete root;
 }
 
 Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {

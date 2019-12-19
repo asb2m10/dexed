@@ -32,7 +32,7 @@ static Typeface::Ptr getTypefaceForFontFromLookAndFeel (const Font& font)
     return LookAndFeel::getDefaultLookAndFeel().getTypefaceForFont (font);
 }
 
-typedef Typeface::Ptr (*GetTypefaceForFont) (const Font&);
+using GetTypefaceForFont = Typeface::Ptr (*)(const Font&);
 extern GetTypefaceForFont juce_getTypefaceForFont;
 
 //==============================================================================
@@ -81,7 +81,7 @@ Colour LookAndFeel::findColour (int colourID) const noexcept
     auto index = colours.indexOf (c);
 
     if (index >= 0)
-        return colours.getReference (index).colour;
+        return colours[index].colour;
 
     jassertfalse;
     return Colours::black;
@@ -118,20 +118,36 @@ void LookAndFeel::setDefaultLookAndFeel (LookAndFeel* newDefaultLookAndFeel) noe
 //==============================================================================
 Typeface::Ptr LookAndFeel::getTypefaceForFont (const Font& font)
 {
-    if (defaultSans.isNotEmpty() && font.getTypefaceName() == Font::getDefaultSansSerifFontName())
+    if (font.getTypefaceName() == Font::getDefaultSansSerifFontName())
     {
-        Font f (font);
-        f.setTypefaceName (defaultSans);
-        return Typeface::createSystemTypefaceFor (f);
+        if (defaultTypeface != nullptr)
+            return defaultTypeface;
+
+        if (defaultSans.isNotEmpty())
+        {
+            Font f (font);
+            f.setTypefaceName (defaultSans);
+            return Typeface::createSystemTypefaceFor (f);
+        }
     }
 
     return Font::getDefaultTypefaceForFont (font);
+}
+
+void LookAndFeel::setDefaultSansSerifTypeface (Typeface::Ptr newDefaultTypeface)
+{
+    if (defaultTypeface != newDefaultTypeface)
+    {
+        defaultTypeface = newDefaultTypeface;
+        Typeface::clearTypefaceCache();
+    }
 }
 
 void LookAndFeel::setDefaultSansSerifTypefaceName (const String& newName)
 {
     if (defaultSans != newName)
     {
+        defaultTypeface.reset();
         Typeface::clearTypefaceCache();
         defaultSans = newName;
     }
@@ -152,10 +168,11 @@ MouseCursor LookAndFeel::getMouseCursorFor (Component& component)
     return cursor;
 }
 
-LowLevelGraphicsContext* LookAndFeel::createGraphicsContext (const Image& imageToRenderOn, const Point<int>& origin,
-                                                             const RectangleList<int>& initialClip)
+std::unique_ptr<LowLevelGraphicsContext> LookAndFeel::createGraphicsContext (const Image& imageToRenderOn,
+                                                                             Point<int> origin,
+                                                                             const RectangleList<int>& initialClip)
 {
-    return new LowLevelGraphicsSoftwareRenderer (imageToRenderOn, origin, initialClip);
+    return std::make_unique<LowLevelGraphicsSoftwareRenderer> (imageToRenderOn, origin, initialClip);
 }
 
 //==============================================================================

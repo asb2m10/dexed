@@ -43,6 +43,8 @@ namespace juce
     progress, see the ThreadWithProgressWindow class.
 
     @see ThreadWithProgressWindow
+
+    @tags{GUI}
 */
 class JUCE_API  ProgressBar  : public Component,
                                public SettableTooltipClient,
@@ -63,7 +65,7 @@ public:
     explicit ProgressBar (double& progress);
 
     /** Destructor. */
-    ~ProgressBar();
+    ~ProgressBar() override;
 
     //==============================================================================
     /** Turns the percentage display on or off.
@@ -100,7 +102,7 @@ public:
     /** This abstract base class is implemented by LookAndFeel classes. */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         /** Draws a progress bar.
 

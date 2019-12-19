@@ -65,8 +65,42 @@ public:
         }
     }
 
+    // g++ 4.8 cannot deduce the parameter pack inside the function pointer when it has more than one element
+   #if defined(__GNUC__) && __GNUC__ < 5 && ! defined(__clang__)
+    template <typename... Params>
     static void sendMouseEvent (Component& comp, Component::BailOutChecker& checker,
-                                void (MouseListener::*eventMethod) (const MouseEvent&), const MouseEvent& e)
+                                void (MouseListener::*eventMethod) (const MouseEvent&),
+                                Params... params)
+    {
+        sendMouseEvent <decltype (eventMethod), Params...> (comp, checker, eventMethod, params...);
+    }
+
+    template <typename... Params>
+    static void sendMouseEvent (Component& comp, Component::BailOutChecker& checker,
+                                void (MouseListener::*eventMethod) (const MouseEvent&, const MouseWheelDetails&),
+                                Params... params)
+    {
+        sendMouseEvent <decltype (eventMethod), Params...> (comp, checker, eventMethod, params...);
+    }
+
+    template <typename... Params>
+    static void sendMouseEvent (Component& comp, Component::BailOutChecker& checker,
+                                void (MouseListener::*eventMethod) (const MouseEvent&, float),
+                                Params... params)
+    {
+        sendMouseEvent <decltype (eventMethod), Params...> (comp, checker, eventMethod, params...);
+    }
+
+    template <typename EventMethod, typename... Params>
+    static void sendMouseEvent (Component& comp, Component::BailOutChecker& checker,
+                                EventMethod eventMethod,
+                                Params... params)
+   #else
+    template <typename... Params>
+    static void sendMouseEvent (Component& comp, Component::BailOutChecker& checker,
+                                void (MouseListener::*eventMethod) (Params...),
+                                Params... params)
+   #endif
     {
         if (checker.shouldBailOut())
             return;
@@ -75,7 +109,7 @@ public:
         {
             for (int i = list->listeners.size(); --i >= 0;)
             {
-                (list->listeners.getUnchecked(i)->*eventMethod) (e);
+                (list->listeners.getUnchecked(i)->*eventMethod) (params...);
 
                 if (checker.shouldBailOut())
                     return;
@@ -94,45 +128,7 @@ public:
 
                     for (int i = list->numDeepMouseListeners; --i >= 0;)
                     {
-                        (list->listeners.getUnchecked(i)->*eventMethod) (e);
-
-                        if (checker2.shouldBailOut())
-                            return;
-
-                        i = jmin (i, list->numDeepMouseListeners);
-                    }
-                }
-            }
-        }
-    }
-
-    static void sendWheelEvent (Component& comp, Component::BailOutChecker& checker,
-                                const MouseEvent& e, const MouseWheelDetails& wheel)
-    {
-        if (auto* list = comp.mouseListeners.get())
-        {
-            for (int i = list->listeners.size(); --i >= 0;)
-            {
-                list->listeners.getUnchecked(i)->mouseWheelMove (e, wheel);
-
-                if (checker.shouldBailOut())
-                    return;
-
-                i = jmin (i, list->listeners.size());
-            }
-        }
-
-        for (Component* p = comp.parentComponent; p != nullptr; p = p->parentComponent)
-        {
-            if (auto* list = p->mouseListeners.get())
-            {
-                if (list->numDeepMouseListeners > 0)
-                {
-                    BailOutChecker2 checker2 (checker, p);
-
-                    for (int i = list->numDeepMouseListeners; --i >= 0;)
-                    {
-                        list->listeners.getUnchecked(i)->mouseWheelMove (e, wheel);
+                        (list->listeners.getUnchecked(i)->*eventMethod) (params...);
 
                         if (checker2.shouldBailOut())
                             return;
@@ -362,7 +358,7 @@ struct Component::ComponentHelpers
     }
 
     template <typename PointOrRect>
-    static PointOrRect convertFromDistantParentSpace (const Component* parent, const Component& target, const PointOrRect& coordInParent)
+    static PointOrRect convertFromDistantParentSpace (const Component* parent, const Component& target, PointOrRect coordInParent)
     {
         auto* directParent = target.getParentComponent();
         jassert (directParent != nullptr);
@@ -493,7 +489,7 @@ void Component::setName (const String& name)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
 
     if (componentName != name)
     {
@@ -519,7 +515,7 @@ void Component::setVisible (bool shouldBeVisible)
     {
         // if component methods are being called from threads other than the message
         // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-        ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+        JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
 
         const WeakReference<Component> safePointer (this);
         flags.visibleFlag = shouldBeVisible;
@@ -599,7 +595,7 @@ void Component::addToDesktop (int styleWanted, void* nativeWindowToAttachTo)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
     if (isOpaque())
         styleWanted &= ~ComponentPeer::windowIsSemiTransparent;
@@ -632,7 +628,7 @@ void Component::addToDesktop (int styleWanted, void* nativeWindowToAttachTo)
 
         if (peer != nullptr)
         {
-            ScopedPointer<ComponentPeer> oldPeerToDelete (peer);
+            std::unique_ptr<ComponentPeer> oldPeerToDelete (peer);
 
             wasFullscreen = peer->isFullScreen();
             wasMinimised = peer->isMinimised();
@@ -700,10 +696,12 @@ void Component::removeFromDesktop()
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
 
     if (flags.hasHeavyweightPeerFlag)
     {
+        ComponentHelpers::releaseAllCachedImageResources (*this);
+
         auto* peer = ComponentPeer::getPeerFor (this);
         jassert (peer != nullptr);
 
@@ -876,7 +874,7 @@ void Component::toFront (bool setAsForeground)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
 
     if (flags.hasHeavyweightPeerFlag)
     {
@@ -1046,7 +1044,7 @@ int Component::getParentHeight() const noexcept
 
 Rectangle<int> Component::getParentMonitorArea() const
 {
-    return Desktop::getInstance().getDisplays().getDisplayContaining (getScreenBounds().getCentre()).userArea;
+    return Desktop::getInstance().getDisplays().findDisplayForRect (getScreenBounds()).userArea;
 }
 
 int Component::getScreenX() const                       { return getScreenPosition().x; }
@@ -1067,7 +1065,7 @@ void Component::setBounds (int x, int y, int w, int h)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
 
     if (w < 0) w = 0;
     if (h < 0) h = 0;
@@ -1290,6 +1288,21 @@ AffineTransform Component::getTransform() const
     return affineTransform != nullptr ? *affineTransform : AffineTransform();
 }
 
+float Component::getApproximateScaleFactorForComponent (Component* targetComponent)
+{
+    AffineTransform transform;
+
+    for (auto* target = targetComponent; target != nullptr; target = target->getParentComponent())
+    {
+        transform = transform.followedBy (target->getTransform());
+
+        if (target->isOnDesktop())
+            transform = transform.scaled (target->getDesktopScaleFactor());
+    }
+
+    return (transform.getScaleFactor() / Desktop::getInstance().getGlobalScaleFactor());
+}
+
 //==============================================================================
 bool Component::hitTest (int x, int y)
 {
@@ -1381,7 +1394,9 @@ void Component::addChildComponent (Component& child, int zOrder)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+
+    jassert (this != &child); // adding a component to itself!?
 
     if (child.parentComponent != this)
     {
@@ -1457,7 +1472,7 @@ Component* Component::removeChildComponent (int index, bool sendParentEvents, bo
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN
 
     auto* child = childComponentList [index];
 
@@ -1644,7 +1659,7 @@ void Component::enterModalState (bool shouldTakeKeyboardFocus,
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
     if (! isCurrentlyModal (false))
     {
@@ -1821,7 +1836,7 @@ void Component::internalRepaintUnchecked (Rectangle<int> area, bool isEntireComp
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
     if (flags.visibleFlag)
     {
@@ -2050,8 +2065,8 @@ void Component::setComponentEffect (ImageEffectFilter* newEffect)
 LookAndFeel& Component::getLookAndFeel() const noexcept
 {
     for (auto* c = this; c != nullptr; c = c->parentComponent)
-        if (c->lookAndFeel != nullptr)
-            return *(c->lookAndFeel);
+        if (auto lf = c->lookAndFeel.get())
+            return *lf;
 
     return LookAndFeel::getDefaultLookAndFeel();
 }
@@ -2201,10 +2216,12 @@ void Component::addComponentListener (ComponentListener* newListener)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    #if JUCE_DEBUG || JUCE_LOG_ASSERTIONS
+   #if JUCE_DEBUG || JUCE_LOG_ASSERTIONS
     if (getParentComponent() != nullptr)
-        ASSERT_MESSAGE_MANAGER_IS_LOCKED;
-    #endif
+    {
+        JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    }
+   #endif
 
     componentListeners.add (newListener);
 }
@@ -2255,7 +2272,7 @@ void Component::addMouseListener (MouseListener* newListener,
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
     // If you register a component as a mouselistener for itself, it'll receive all the events
     // twice - once via the direct callback that all components get anyway, and then again as a listener!
@@ -2271,7 +2288,7 @@ void Component::removeMouseListener (MouseListener* listenerToRemove)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
     if (mouseListeners != nullptr)
         mouseListeners->removeListener (listenerToRemove);
@@ -2303,7 +2320,7 @@ void Component::internalMouseEnter (MouseInputSource source, Point<float> relati
 
     Desktop::getInstance().getMouseListeners().callChecked (checker, [&] (MouseListener& l) { l.mouseEnter (me); });
 
-    MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseEnter, me);
+    MouseListenerList::template sendMouseEvent<const MouseEvent&> (*this, checker, &MouseListener::mouseEnter, me);
 }
 
 void Component::internalMouseExit (MouseInputSource source, Point<float> relativePos, Time time)
@@ -2332,7 +2349,7 @@ void Component::internalMouseExit (MouseInputSource source, Point<float> relativ
 
     Desktop::getInstance().getMouseListeners().callChecked (checker, [&] (MouseListener& l) { l.mouseExit (me); });
 
-    MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseExit, me);
+    MouseListenerList::template sendMouseEvent<const MouseEvent&> (*this, checker, &MouseListener::mouseExit, me);
 }
 
 void Component::internalMouseDown (MouseInputSource source, Point<float> relativePos, Time time,
@@ -2397,7 +2414,7 @@ void Component::internalMouseDown (MouseInputSource source, Point<float> relativ
 
     desktop.getMouseListeners().callChecked (checker, [&] (MouseListener& l) { l.mouseDown (me); });
 
-    MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseDown, me);
+    MouseListenerList::template sendMouseEvent<const MouseEvent&> (*this, checker, &MouseListener::mouseDown, me);
 }
 
 void Component::internalMouseUp (MouseInputSource source, Point<float> relativePos, Time time,
@@ -2416,7 +2433,7 @@ void Component::internalMouseUp (MouseInputSource source, Point<float> relativeP
                          getLocalPoint (nullptr, source.getLastMouseDownPosition()),
                          source.getLastMouseDownTime(),
                          source.getNumberOfMultipleClicks(),
-                         source.hasMouseMovedSignificantlySincePressed());
+                         source.isLongPressOrDrag());
     mouseUp (me);
 
     if (checker.shouldBailOut())
@@ -2425,7 +2442,7 @@ void Component::internalMouseUp (MouseInputSource source, Point<float> relativeP
     auto& desktop = Desktop::getInstance();
     desktop.getMouseListeners().callChecked (checker, [&] (MouseListener& l) { l.mouseUp (me); });
 
-    MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseUp, me);
+    MouseListenerList::template sendMouseEvent<const MouseEvent&> (*this, checker, &MouseListener::mouseUp, me);
 
     if (checker.shouldBailOut())
         return;
@@ -2439,7 +2456,7 @@ void Component::internalMouseUp (MouseInputSource source, Point<float> relativeP
             return;
 
         desktop.mouseListeners.callChecked (checker, [&] (MouseListener& l) { l.mouseDoubleClick (me); });
-        MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseDoubleClick, me);
+        MouseListenerList::template sendMouseEvent<const MouseEvent&> (*this, checker, &MouseListener::mouseDoubleClick, me);
     }
 }
 
@@ -2455,7 +2472,7 @@ void Component::internalMouseDrag (MouseInputSource source, Point<float> relativ
                              getLocalPoint (nullptr, source.getLastMouseDownPosition()),
                              source.getLastMouseDownTime(),
                              source.getNumberOfMultipleClicks(),
-                             source.hasMouseMovedSignificantlySincePressed());
+                             source.isLongPressOrDrag());
         mouseDrag (me);
 
         if (checker.shouldBailOut())
@@ -2463,7 +2480,7 @@ void Component::internalMouseDrag (MouseInputSource source, Point<float> relativ
 
         Desktop::getInstance().getMouseListeners().callChecked (checker, [&] (MouseListener& l) { l.mouseDrag (me); });
 
-        MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseDrag, me);
+        MouseListenerList::template sendMouseEvent<const MouseEvent&> (*this, checker, &MouseListener::mouseDrag, me);
     }
 }
 
@@ -2491,7 +2508,7 @@ void Component::internalMouseMove (MouseInputSource source, Point<float> relativ
 
         desktop.getMouseListeners().callChecked (checker, [&] (MouseListener& l) { l.mouseMove (me); });
 
-        MouseListenerList::sendMouseEvent (*this, checker, &MouseListener::mouseMove, me);
+        MouseListenerList::template sendMouseEvent<const MouseEvent&> (*this, checker, &MouseListener::mouseMove, me);
     }
 }
 
@@ -2521,27 +2538,43 @@ void Component::internalMouseWheel (MouseInputSource source, Point<float> relati
         desktop.mouseListeners.callChecked (checker, [&] (MouseListener& l) { l.mouseWheelMove (me, wheel); });
 
         if (! checker.shouldBailOut())
-            MouseListenerList::sendWheelEvent (*this, checker, me, wheel);
+            MouseListenerList::template sendMouseEvent<const MouseEvent&, const MouseWheelDetails&> (*this, checker, &MouseListener::mouseWheelMove, me, wheel);
     }
 }
 
 void Component::internalMagnifyGesture (MouseInputSource source, Point<float> relativePos,
                                         Time time, float amount)
 {
-    if (! isCurrentlyBlockedByAnotherModalComponent())
-    {
-        const MouseEvent me (source, relativePos, source.getCurrentModifiers(), MouseInputSource::invalidPressure,
-                             MouseInputSource::invalidOrientation, MouseInputSource::invalidRotation,
-                             MouseInputSource::invalidTiltX, MouseInputSource::invalidTiltY,
-                             this, this, time, relativePos, time, 0, false);
+    auto& desktop = Desktop::getInstance();
+    BailOutChecker checker (this);
 
+    const MouseEvent me (source, relativePos, source.getCurrentModifiers(), MouseInputSource::invalidPressure,
+                         MouseInputSource::invalidOrientation, MouseInputSource::invalidRotation,
+                         MouseInputSource::invalidTiltX, MouseInputSource::invalidTiltY,
+                         this, this, time, relativePos, time, 0, false);
+
+    if (isCurrentlyBlockedByAnotherModalComponent())
+    {
+        // allow blocked mouse-events to go to global listeners..
+        desktop.mouseListeners.callChecked (checker, [&] (MouseListener& l) { l.mouseMagnify (me, amount); });
+    }
+    else
+    {
         mouseMagnify (me, amount);
+
+        if (checker.shouldBailOut())
+            return;
+
+        desktop.mouseListeners.callChecked (checker, [&] (MouseListener& l) { l.mouseMagnify (me, amount); });
+
+        if (! checker.shouldBailOut())
+            MouseListenerList::template sendMouseEvent<const MouseEvent&, float> (*this, checker, &MouseListener::mouseMagnify, me, amount);
     }
 }
 
 void Component::sendFakeMouseMove() const
 {
-    MouseInputSource mainMouse = Desktop::getInstance().getMainMouseSource();
+    auto mainMouse = Desktop::getInstance().getMainMouseSource();
 
     if (! mainMouse.isDragging())
         mainMouse.triggerFakeMove();
@@ -2726,7 +2759,7 @@ void Component::grabFocusInternal (FocusChangeType cause, bool canTryParent)
             else
             {
                 // find the default child component..
-                ScopedPointer<KeyboardFocusTraverser> traverser (createFocusTraverser());
+                std::unique_ptr<KeyboardFocusTraverser> traverser (createFocusTraverser());
 
                 if (traverser != nullptr)
                 {
@@ -2755,7 +2788,7 @@ void Component::grabKeyboardFocus()
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
     grabFocusInternal (focusChangedDirectly, true);
 
@@ -2770,11 +2803,11 @@ void Component::moveKeyboardFocusToSibling (bool moveToNext)
 {
     // if component methods are being called from threads other than the message
     // thread, you'll need to use a MessageManagerLock object to make sure it's thread-safe.
-    ASSERT_MESSAGE_MANAGER_IS_LOCKED
+    JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED
 
     if (parentComponent != nullptr)
     {
-        ScopedPointer<KeyboardFocusTraverser> traverser (createFocusTraverser());
+        std::unique_ptr<KeyboardFocusTraverser> traverser (createFocusTraverser());
 
         if (traverser != nullptr)
         {
@@ -2883,20 +2916,25 @@ bool Component::isMouseOver (bool includeChildren) const
     {
         auto* c = ms.getComponentUnderMouse();
 
-        if ((c == this || (includeChildren && isParentOf (c)))
-             && c->reallyContains (c->getLocalPoint (nullptr, ms.getScreenPosition().roundToInt()), false)
-             && ((! ms.isTouch()) || ms.isDragging()))
-            return true;
+        if (c == this || (includeChildren && isParentOf (c)))
+            if (ms.isDragging() || ! (ms.isTouch() || ms.isPen()))
+                if (c->reallyContains (c->getLocalPoint (nullptr, ms.getScreenPosition()).roundToInt(), false))
+                    return true;
     }
 
     return false;
 }
 
-bool Component::isMouseButtonDown() const
+bool Component::isMouseButtonDown (bool includeChildren) const
 {
     for (auto& ms : Desktop::getInstance().getMouseSources())
-        if (ms.isDragging() && ms.getComponentUnderMouse() == this)
-            return true;
+    {
+        auto* c = ms.getComponentUnderMouse();
+
+        if (c == this || (includeChildren && isParentOf (c)))
+            if (ms.isDragging())
+                return true;
+    }
 
     return false;
 }
@@ -2907,9 +2945,9 @@ bool Component::isMouseOverOrDragging (bool includeChildren) const
     {
         auto* c = ms.getComponentUnderMouse();
 
-        if ((c == this || (includeChildren && isParentOf (c)))
-              && ((! ms.isTouch()) || ms.isDragging()))
-            return true;
+        if (c == this || (includeChildren && isParentOf (c)))
+            if (ms.isDragging() || ! ms.isTouch())
+                return true;
     }
 
     return false;
@@ -2917,7 +2955,7 @@ bool Component::isMouseOverOrDragging (bool includeChildren) const
 
 bool JUCE_CALLTYPE Component::isMouseButtonDownAnywhere() noexcept
 {
-    return ModifierKeys::getCurrentModifiers().isAnyMouseButtonDown();
+    return ModifierKeys::currentModifiers.isAnyMouseButtonDown();
 }
 
 Point<int> Component::getMouseXYRelative() const
@@ -2940,8 +2978,8 @@ void Component::removeKeyListener (KeyListener* listenerToRemove)
         keyListeners->removeFirstMatchingValue (listenerToRemove);
 }
 
-bool Component::keyPressed (const KeyPress&)                { return false; }
-bool Component::keyStateChanged (const bool /*isKeyDown*/)  { return false; }
+bool Component::keyPressed (const KeyPress&)            { return false; }
+bool Component::keyStateChanged (bool /*isKeyDown*/)    { return false; }
 
 void Component::modifierKeysChanged (const ModifierKeys& modifiers)
 {
@@ -2952,7 +2990,7 @@ void Component::modifierKeysChanged (const ModifierKeys& modifiers)
 void Component::internalModifierKeysChanged()
 {
     sendFakeMouseMove();
-    modifierKeysChanged (ModifierKeys::getCurrentModifiers());
+    modifierKeysChanged (ModifierKeys::currentModifiers);
 }
 
 //==============================================================================

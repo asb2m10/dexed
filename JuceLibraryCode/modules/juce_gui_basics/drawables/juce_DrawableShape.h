@@ -33,6 +33,8 @@ namespace juce
     consist of some kind of filled and stroked outline.
 
     @see DrawablePath, DrawableRectangle
+
+    @tags{GUI}
 */
 class JUCE_API  DrawableShape   : public Drawable
 {
@@ -43,7 +45,7 @@ protected:
 
 public:
     /** Destructor. */
-    ~DrawableShape();
+    ~DrawableShape() override;
 
     //==============================================================================
     /** Sets a fill type for the path.

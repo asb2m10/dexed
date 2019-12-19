@@ -40,6 +40,8 @@ namespace juce
     Each column must be given a unique ID number that's used to refer to it.
 
     @see TableListBox, TableHeaderComponent::Listener
+
+    @tags{GUI}
 */
 class JUCE_API  TableHeaderComponent   : public Component,
                                          private AsyncUpdater
@@ -51,7 +53,7 @@ public:
     TableHeaderComponent();
 
     /** Destructor. */
-    ~TableHeaderComponent();
+    ~TableHeaderComponent() override;
 
     //==============================================================================
     /** A combination of these flags are passed into the addColumn() method to specify
@@ -304,10 +306,10 @@ public:
     {
     public:
         //==============================================================================
-        Listener() {}
+        Listener() = default;
 
         /** Destructor. */
-        virtual ~Listener() {}
+        virtual ~Listener() = default;
 
         //==============================================================================
         /** This is called when some of the table's columns are added, removed, hidden,
@@ -388,7 +390,7 @@ public:
     /** This abstract base class is implemented by LookAndFeel classes. */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual void drawTableHeaderBackground (Graphics&, TableHeaderComponent&) = 0;
 
@@ -431,7 +433,7 @@ private:
 
     OwnedArray<ColumnInfo> columns;
     Array<Listener*> listeners;
-    ScopedPointer<Component> dragOverlayComp;
+    std::unique_ptr<Component> dragOverlayComp;
     class DragOverlayComp;
 
     bool columnsChanged = false, columnsResized = false, sortChanged = false;

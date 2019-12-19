@@ -35,6 +35,8 @@ namespace juce
     a brush type. It can either be a solid colour, a gradient, or a tiled image.
 
     @see Graphics::setFillType, DrawablePath::setFill
+
+    @tags{Graphics}
 */
 class JUCE_API  FillType  final
 {
@@ -129,11 +131,11 @@ public:
     Colour colour;
 
     /** Returns the gradient that should be used for filling.
-        This will be zero if the object is some other type of fill.
+        This will be nullptr if the object is some other type of fill.
         If a gradient is active, the overall opacity with which it should be applied
         is indicated by the alpha channel of the colour variable.
     */
-    ScopedPointer<ColourGradient> gradient;
+    std::unique_ptr<ColourGradient> gradient;
 
     /** The image that should be used for tiling.
         If an image fill is active, the overall opacity with which it should be applied

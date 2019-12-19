@@ -31,20 +31,22 @@ namespace juce
     This abstract base class is used by some AudioProcessorParameter helper classes.
 
     @see AudioParameterFloat, AudioParameterInt, AudioParameterBool, AudioParameterChoice
+
+    @tags{Audio}
 */
 class JUCE_API  AudioProcessorParameterWithID  : public AudioProcessorParameter
 {
 public:
-    /** Creation of this object requires providing a name and ID which will be
+    /** The creation of this object requires providing a name and ID which will be
         constant for its lifetime.
     */
     AudioProcessorParameterWithID (const String& parameterID,
-                                   const String& name,
-                                   const String& label = String(),
-                                   Category category = AudioProcessorParameter::genericParameter);
+                                   const String& parameterName,
+                                   const String& parameterLabel = {},
+                                   Category parameterCategory = AudioProcessorParameter::genericParameter);
 
     /** Destructor. */
-    ~AudioProcessorParameterWithID();
+    ~AudioProcessorParameterWithID() override;
 
     /** Provides access to the parameter's ID string. */
     const String paramID;
@@ -58,11 +60,11 @@ public:
     /** Provides access to the parameter's category. */
     const Category category;
 
-private:
     String getName (int) const override;
     String getLabel() const override;
     Category getCategory() const override;
 
+private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioProcessorParameterWithID)
 };
 

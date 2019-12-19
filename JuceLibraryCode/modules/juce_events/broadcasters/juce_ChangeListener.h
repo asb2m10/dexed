@@ -38,24 +38,19 @@ class ChangeBroadcaster;
     callbacks, but ActionListeners perform one callback for every event posted.
 
     @see ChangeBroadcaster, ActionListener
+
+    @tags{Events}
 */
 class JUCE_API  ChangeListener
 {
 public:
     /** Destructor. */
-    virtual ~ChangeListener()  {}
+    virtual ~ChangeListener() = default;
 
     /** Your subclass should implement this method to receive the callback.
         @param source the ChangeBroadcaster that triggered the callback.
     */
     virtual void changeListenerCallback (ChangeBroadcaster* source) = 0;
-
-
-    //==============================================================================
-   #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
-    // This method's signature has changed to take a ChangeBroadcaster parameter - please update your code!
-    private: virtual int changeListenerCallback (void*) { return 0; }
-   #endif
 };
 
 } // namespace juce

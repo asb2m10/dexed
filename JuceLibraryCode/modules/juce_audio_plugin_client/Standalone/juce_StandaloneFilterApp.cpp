@@ -99,10 +99,10 @@ public:
     //==============================================================================
     void initialise (const String&) override
     {
-        mainWindow = createWindow();
+        mainWindow.reset (createWindow());
 
        #if JUCE_STANDALONE_FILTER_WINDOW_USE_KIOSK_MODE
-        Desktop::getInstance().setKioskModeComponent (mainWindow, false);
+        Desktop::getInstance().setKioskModeComponent (mainWindow.get(), false);
        #endif
 
         mainWindow->setVisible (true);
@@ -117,6 +117,9 @@ public:
     //==============================================================================
     void systemRequestedQuit() override
     {
+        if (mainWindow.get() != nullptr)
+            mainWindow->pluginHolder->savePluginState();
+
         if (ModalComponentManager::getInstance()->cancelAllModalComponents())
         {
             Timer::callAfterDelay (100, []()
@@ -133,7 +136,7 @@ public:
 
 protected:
     ApplicationProperties appProperties;
-    ScopedPointer<StandaloneFilterWindow> mainWindow;
+    std::unique_ptr<StandaloneFilterWindow> mainWindow;
 };
 
 } // namespace juce

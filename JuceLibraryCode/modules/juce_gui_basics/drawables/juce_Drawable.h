@@ -32,6 +32,8 @@ namespace juce
     The base class for objects which can draw themselves, e.g. polygons, images, etc.
 
     @see DrawableComposite, DrawableImage, DrawablePath, DrawableText
+
+    @tags{GUI}
 */
 class JUCE_API  Drawable  : public Component
 {
@@ -45,14 +47,14 @@ protected:
 
 public:
     /** Destructor. */
-    virtual ~Drawable();
+    ~Drawable() override;
 
     //==============================================================================
     /** Creates a deep copy of this Drawable object.
 
         Use this to create a new copy of this and any sub-objects in the tree.
     */
-    virtual Drawable* createCopy() const = 0;
+    virtual std::unique_ptr<Drawable> createCopy() const = 0;
 
     /** Creates a path that describes the outline of this drawable. */
     virtual Path getOutlineAsPath() const = 0;
@@ -121,9 +123,9 @@ public:
     DrawableComposite* getParent() const;
 
     /** Sets a the clipping region of this drawable using another drawable.
-        The drawbale passed in ill be deleted when no longer needed.
+        The drawbale passed in will be deleted when no longer needed.
     */
-    void setClipPath (Drawable* drawableClipPath);
+    void setClipPath (std::unique_ptr<Drawable> drawableClipPath);
 
     //==============================================================================
     /** Tries to turn some kind of image file into a drawable.
@@ -131,21 +133,21 @@ public:
         The data could be an image that the ImageFileFormat class understands, or it
         could be SVG.
     */
-    static Drawable* createFromImageData (const void* data, size_t numBytes);
+    static std::unique_ptr<Drawable> createFromImageData (const void* data, size_t numBytes);
 
     /** Tries to turn a stream containing some kind of image data into a drawable.
 
         The data could be an image that the ImageFileFormat class understands, or it
         could be SVG.
     */
-    static Drawable* createFromImageDataStream (InputStream& dataSource);
+    static std::unique_ptr<Drawable> createFromImageDataStream (InputStream& dataSource);
 
     /** Tries to turn a file containing some kind of image data into a drawable.
 
         The data could be an image that the ImageFileFormat class understands, or it
         could be SVG.
     */
-    static Drawable* createFromImageFile (const File& file);
+    static std::unique_ptr<Drawable> createFromImageFile (const File& file);
 
     /** Attempts to parse an SVG (Scalable Vector Graphics) document, and to turn this
         into a Drawable tree.
@@ -156,7 +158,7 @@ public:
         SVG is a pretty large and complex spec, and this doesn't aim to be a full
         implementation, but it can return the basic vector objects.
     */
-    static Drawable* createFromSVG (const XmlElement& svgDocument);
+    static std::unique_ptr<Drawable> createFromSVG (const XmlElement& svgDocument);
 
     /** Attempts to parse an SVG (Scalable Vector Graphics) document from a file,
         and to turn this into a Drawable tree.
@@ -170,7 +172,7 @@ public:
         Any references to references to external image files will be relative to
         the parent directory of the file passed.
     */
-    static Drawable* createFromSVGFile (const File& svgFile);
+    static std::unique_ptr<Drawable> createFromSVGFile (const File& svgFile);
 
     /** Parses an SVG path string and returns it. */
     static Path parseSVGPath (const String& svgPath);
@@ -202,7 +204,7 @@ protected:
     void applyDrawableClipPath (Graphics&);
 
     Point<int> originRelativeToComponent;
-    ScopedPointer<Drawable> drawableClipPath;
+    std::unique_ptr<Drawable> drawableClipPath;
 
     void nonConstDraw (Graphics&, float opacity, const AffineTransform&);
 

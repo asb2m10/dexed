@@ -38,6 +38,8 @@ struct ModalComponentManager::ModalItem  : public ComponentMovementWatcher
 
     void componentMovedOrResized (bool, bool) override {}
 
+    using ComponentMovementWatcher::componentMovedOrResized;
+
     void componentPeerChanged() override
     {
         componentVisibilityChanged();
@@ -48,6 +50,8 @@ struct ModalComponentManager::ModalItem  : public ComponentMovementWatcher
         if (! component->isShowing())
             cancel();
     }
+
+    using ComponentMovementWatcher::componentVisibilityChanged;
 
     void componentBeingDeleted (Component& comp) override
     {
@@ -104,7 +108,7 @@ void ModalComponentManager::attachCallback (Component* component, Callback* call
 {
     if (callback != nullptr)
     {
-        ScopedPointer<Callback> callbackDeleter (callback);
+        std::unique_ptr<Callback> callbackDeleter (callback);
 
         for (int i = stack.size(); --i >= 0;)
         {
@@ -194,7 +198,7 @@ void ModalComponentManager::handleAsyncUpdate()
 
         if (! item->isActive)
         {
-            ScopedPointer<ModalItem> deleter (stack.removeAndReturn (i));
+            std::unique_ptr<ModalItem> deleter (stack.removeAndReturn (i));
             Component::SafePointer<Component> compToDelete (item->autoDelete ? item->component : nullptr);
 
             for (int j = item->callbacks.size(); --j >= 0;)
@@ -254,7 +258,7 @@ bool ModalComponentManager::cancelAllModalComponents()
 int ModalComponentManager::runEventLoopForCurrentComponent()
 {
     // This can only be run from the message thread!
-    jassert (MessageManager::getInstance()->isThisTheMessageThread());
+    JUCE_ASSERT_MESSAGE_THREAD
 
     int returnValue = 0;
 
@@ -283,8 +287,13 @@ int ModalComponentManager::runEventLoopForCurrentComponent()
 //==============================================================================
 struct LambdaCallback  : public ModalComponentManager::Callback
 {
-    LambdaCallback (std::function<void(int)> fn) noexcept : function (fn) {}
-    void modalStateFinished (int result) override  { function (result); }
+    LambdaCallback (std::function<void(int)> fn) noexcept  : function (fn)  {}
+
+    void modalStateFinished (int result) override
+    {
+        if (function != nullptr)
+            function (result);
+    }
 
     std::function<void(int)> function;
 

@@ -32,6 +32,8 @@ namespace juce
     Reads and Writes AIFF format audio files.
 
     @see AudioFormat
+
+    @tags{Audio}
 */
 class JUCE_API  AiffAudioFormat  : public AudioFormat
 {
@@ -41,7 +43,7 @@ public:
     AiffAudioFormat();
 
     /** Destructor. */
-    ~AiffAudioFormat();
+    ~AiffAudioFormat() override;
 
     //==============================================================================
     /** Metadata property name used when reading a aiff file with a basc chunk. */
@@ -84,6 +86,7 @@ public:
                                         int bitsPerSample,
                                         const StringPairArray& metadataValues,
                                         int qualityOptionIndex) override;
+    using AudioFormat::createWriterFor;
 
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(AiffAudioFormat)

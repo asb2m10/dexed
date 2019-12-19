@@ -39,10 +39,11 @@ public:
 
           filter (selectsFiles ? owner.filters : String(), selectsDirectories ? "*" : String(), {}),
           browserComponent (flags, owner.startingFile, &filter, preview),
-          dialogBox (owner.title, {}, browserComponent, warnAboutOverwrite, browserComponent.findColour (AlertWindow::backgroundColourId))
+          dialogBox (owner.title, {}, browserComponent, warnAboutOverwrite,
+                     browserComponent.findColour (AlertWindow::backgroundColourId), owner.parent)
     {}
 
-    ~NonNative()
+    ~NonNative() override
     {
         dialogBox.exitModalState (0);
     }
@@ -92,10 +93,12 @@ FileChooser::FileChooser (const String& chooserBoxTitle,
                           const File& currentFileOrDirectory,
                           const String& fileFilters,
                           const bool useNativeBox,
-                          const bool treatFilePackagesAsDirectories)
+                          const bool treatFilePackagesAsDirectories,
+                          Component* parentComponentToUse)
     : title (chooserBoxTitle),
       filters (fileFilters),
       startingFile (currentFileOrDirectory),
+      parent (parentComponentToUse),
       useNativeDialogBox (useNativeBox && isPlatformDialogAvailable()),
       treatFilePackagesAsDirs (treatFilePackagesAsDirectories)
 {
@@ -166,7 +169,7 @@ bool FileChooser::showDialog (const int flags, FilePreviewComponent* const previ
 }
 #endif
 
-void FileChooser::launchAsync (int flags, std::function<void (const FileChooser&)> callback,
+void FileChooser::launchAsync (int flags, std::function<void(const FileChooser&)> callback,
                                FilePreviewComponent* previewComp)
 {
     // You must specify a callback when using launchAsync
@@ -175,7 +178,7 @@ void FileChooser::launchAsync (int flags, std::function<void (const FileChooser&
     // you cannot run two file chooser dialog boxes at the same time
     jassert (asyncCallback == nullptr);
 
-    asyncCallback = static_cast<std::function<void (const FileChooser&)>&&> (callback);
+    asyncCallback = std::move (callback);
 
     pimpl.reset (createPimpl (flags, previewComp));
     pimpl->launch();
@@ -251,7 +254,7 @@ URL FileChooser::getURLResult() const
 
 void FileChooser::finished (const Array<URL>& asyncResults)
 {
-     std::function<void (const FileChooser&)> callback;
+     std::function<void(const FileChooser&)> callback;
      std::swap (callback, asyncCallback);
 
      results = asyncResults;

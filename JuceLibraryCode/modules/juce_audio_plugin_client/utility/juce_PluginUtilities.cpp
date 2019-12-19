@@ -38,6 +38,19 @@ namespace juce
 {
 
 AudioProcessor::WrapperType PluginHostType::jucePlugInClientCurrentWrapperType = AudioProcessor::wrapperType_Undefined;
+std::function<bool(AudioProcessor&)> PluginHostType::jucePlugInIsRunningInAudioSuiteFn = nullptr;
+
+#if JucePlugin_Build_Unity
+ bool juce_isRunningInUnity()    { return PluginHostType::getPluginLoadedAs() == AudioProcessor::wrapperType_Unity; }
+#endif
+
+#if JUCE_MODULE_AVAILABLE_juce_opengl && JucePlugin_Build_VST
+ bool juce_shouldDoubleScaleNativeGLWindow()
+ {
+     return PluginHostType::getPluginLoadedAs() == AudioProcessor::wrapperType_VST
+           && getHostType().type == PluginHostType::AbletonLive10;
+ }
+#endif
 
 #ifndef JUCE_VST3_CAN_REPLACE_VST2
  #define JUCE_VST3_CAN_REPLACE_VST2 1
@@ -151,12 +164,12 @@ bool JUCE_API handleManufacturerSpecificVST2Opcode (int32 index, pointer_sized_i
 extern AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 
 #if JucePlugin_Enable_IAA && JucePlugin_Build_Standalone && JUCE_IOS && (! JUCE_USE_CUSTOM_PLUGIN_STANDALONE_APP)
-extern bool JUCE_CALLTYPE juce_isInterAppAudioConnected();
-extern void JUCE_CALLTYPE juce_switchToHostApplication();
+ extern bool JUCE_CALLTYPE juce_isInterAppAudioConnected();
+ extern void JUCE_CALLTYPE juce_switchToHostApplication();
 
-#if JUCE_MODULE_AVAILABLE_juce_gui_basics
-extern Image JUCE_CALLTYPE juce_getIAAHostIcon (int);
-#endif
+ #if JUCE_MODULE_AVAILABLE_juce_gui_basics
+ extern Image JUCE_CALLTYPE juce_getIAAHostIcon (int);
+ #endif
 #endif
 
 AudioProcessor* JUCE_API JUCE_CALLTYPE createPluginFilterOfType (AudioProcessor::WrapperType type)
@@ -187,6 +200,20 @@ void PluginHostType::switchToHostApplication() const
     if (getPluginLoadedAs() == AudioProcessor::wrapperType_Standalone)
         juce_switchToHostApplication();
    #endif
+}
+
+bool PluginHostType::isInAAXAudioSuite (AudioProcessor& processor)
+{
+   #if JucePlugin_Build_AAX
+    if (PluginHostType::getPluginLoadedAs() == AudioProcessor::wrapperType_AAX
+        && jucePlugInIsRunningInAudioSuiteFn != nullptr)
+    {
+        return jucePlugInIsRunningInAudioSuiteFn (processor);
+    }
+   #endif
+
+    ignoreUnused (processor);
+    return false;
 }
 
 #if JUCE_MODULE_AVAILABLE_juce_gui_basics

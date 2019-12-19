@@ -9852,11 +9852,11 @@ static const unsigned char temp_binary_data_15[] =
 const char* OperatorEditor_287x218_png = (const char*) temp_binary_data_15;
 
 
-const char* getNamedResource (const char*, int&) throw();
-const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw()
+const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
 {
     unsigned int hash = 0;
-    if (resourceNameUTF8 != 0)
+
+    if (resourceNameUTF8 != nullptr)
         while (*resourceNameUTF8 != 0)
             hash = 31 * hash + (unsigned int) *resourceNameUTF8++;
 
@@ -9882,7 +9882,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes) throw
     }
 
     numBytes = 0;
-    return 0;
+    return nullptr;
 }
 
 const char* namedResourceList[] =
@@ -9904,5 +9904,36 @@ const char* namedResourceList[] =
     "GlobalEditor_864x144_png",
     "OperatorEditor_287x218_png"
 };
+
+const char* originalFilenames[] =
+{
+    "dexedIcon.png",
+    "Switch_32x32.png",
+    "Switch_48x26.png",
+    "ButtonUnlabeled_50x30.png",
+    "Knob_34x34.png",
+    "LFO_36_26.png",
+    "Light_14x14.png",
+    "Meter_140x8.png",
+    "Scaling_36_26.png",
+    "Slider_26x26.png",
+    "NotoSans-Regular.ttf",
+    "NotoSans-Bold.ttf",
+    "builtin_pgm.zip",
+    "about.png",
+    "GlobalEditor_864x144.png",
+    "OperatorEditor_287x218.png"
+};
+
+const char* getNamedResourceOriginalFilename (const char* resourceNameUTF8)
+{
+    for (unsigned int i = 0; i < (sizeof (namedResourceList) / sizeof (namedResourceList[0])); ++i)
+    {
+        if (namedResourceList[i] == resourceNameUTF8)
+            return originalFilenames[i];
+    }
+
+    return nullptr;
+}
 
 }

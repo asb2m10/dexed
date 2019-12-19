@@ -28,12 +28,20 @@
 #if JUCE_MAC || JUCE_IOS
 
  #if JUCE_IOS
+  #if JUCE_MODULE_AVAILABLE_juce_opengl && defined (__IPHONE_12_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_12_0
+   #define GLES_SILENCE_DEPRECATION 1
+  #endif
+
   #import <Foundation/Foundation.h>
   #import <UIKit/UIKit.h>
   #import <CoreData/CoreData.h>
   #import <MobileCoreServices/MobileCoreServices.h>
   #include <sys/fcntl.h>
  #else
+  #if JUCE_MODULE_AVAILABLE_juce_opengl && defined (MAC_OS_X_VERSION_10_14) && MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_14
+   #define GL_SILENCE_DEPRECATION 1
+  #endif
+
   #import <Cocoa/Cocoa.h>
   #if (! defined MAC_OS_X_VERSION_10_12) || MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_12
    #define NSEventModifierFlagCommand       NSCommandKeyMask
@@ -96,6 +104,7 @@
  #include <objc/runtime.h>
  #include <objc/objc.h>
  #include <objc/message.h>
+ #include <poll.h>
 
 //==============================================================================
 #elif JUCE_WINDOWS
@@ -143,6 +152,7 @@
  #include <shlobj.h>
  #include <shlwapi.h>
  #include <mmsystem.h>
+ #include <winioctl.h>
 
  #if JUCE_MINGW
   #include <basetyps.h>
@@ -232,6 +242,7 @@
  #include <sys/vfs.h>
  #include <sys/wait.h>
  #include <utime.h>
+ #include <poll.h>
 
 //==============================================================================
 #elif JUCE_BSD
@@ -260,6 +271,7 @@
  #include <sys/types.h>
  #include <sys/wait.h>
  #include <utime.h>
+ #include <poll.h>
 
 //==============================================================================
 #elif JUCE_ANDROID
@@ -281,6 +293,7 @@
  #include <fnmatch.h>
  #include <sys/wait.h>
  #include <android/api-level.h>
+ #include <poll.h>
 
  // If you are getting include errors here, then you to re-build the Projucer
  // and re-save your .jucer file.

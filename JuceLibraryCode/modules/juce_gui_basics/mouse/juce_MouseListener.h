@@ -33,12 +33,14 @@ namespace juce
     about mouse events that happen to that component.
 
     @see Component::addMouseListener, Component::removeMouseListener
+
+    @tags{GUI}
 */
 class JUCE_API  MouseListener
 {
 public:
     /** Destructor. */
-    virtual ~MouseListener()  {}
+    virtual ~MouseListener() = default;
 
     /** Called when the mouse moves inside a component.
 
@@ -153,13 +155,18 @@ public:
     virtual void mouseWheelMove (const MouseEvent& event,
                                  const MouseWheelDetails& wheel);
 
+    /** Called when a pinch-to-zoom mouse-gesture is used.
 
-private:
-   #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
-    // This is just here to cause a compile error in old code that hasn't been
-    // updated to use the new version of this method.
-    virtual int mouseWheelMove (const MouseEvent&, float, float) { return 0; }
-   #endif
+        If not overridden, a component will forward this message to its parent, so
+        that parent components can collect gesture messages that are unused by child
+        components.
+
+        @param event   details about the mouse event
+        @param scaleFactor  a multiplier to indicate by how much the size of the target
+                            should be changed. A value of 1.0 would indicate no change,
+                            values greater than 1.0 mean it should be enlarged.
+    */
+    virtual void mouseMagnify (const MouseEvent& event, float scaleFactor);
 };
 
 } // namespace juce

@@ -104,7 +104,7 @@ public:
         }
         else
         {
-            ModifierKeys eventMods (ModifierKeys::getCurrentModifiersRealtime());
+            ModifierKeys eventMods (ComponentPeer::getCurrentModifiersRealtime());
 
             if (lParam == WM_LBUTTONDOWN || lParam == WM_LBUTTONDBLCLK)
                 eventMods = eventMods.withFlags (ModifierKeys::leftButtonModifier);
@@ -146,7 +146,7 @@ public:
         if (JuceWindowIdentifier::isJUCEWindow (hwnd))
             if (ComponentPeer* peer = (ComponentPeer*) GetWindowLongPtr (hwnd, 8))
                 if (SystemTrayIconComponent* const iconComp = dynamic_cast<SystemTrayIconComponent*> (&(peer->getComponent())))
-                    return iconComp->pimpl;
+                    return iconComp->pimpl.get();
 
         return nullptr;
     }
@@ -196,11 +196,11 @@ private:
 };
 
 //==============================================================================
-void SystemTrayIconComponent::setIconImage (const Image& newImage)
+void SystemTrayIconComponent::setIconImage (const Image& colourImage, const Image&)
 {
-    if (newImage.isValid())
+    if (colourImage.isValid())
     {
-        HICON hicon = IconConverters::createHICONFromImage (newImage, TRUE, 0, 0);
+        HICON hicon = IconConverters::createHICONFromImage (colourImage, TRUE, 0, 0);
 
         if (pimpl == nullptr)
             pimpl.reset (new Pimpl (*this, hicon, (HWND) getWindowHandle()));

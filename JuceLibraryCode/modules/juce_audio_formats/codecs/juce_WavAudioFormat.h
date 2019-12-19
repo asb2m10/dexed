@@ -32,6 +32,8 @@ namespace juce
     Reads and Writes WAV format audio files.
 
     @see AudioFormat
+
+    @tags{Audio}
 */
 class JUCE_API  WavAudioFormat  : public AudioFormat
 {
@@ -41,7 +43,7 @@ public:
     WavAudioFormat();
 
     /** Destructor. */
-    ~WavAudioFormat();
+    ~WavAudioFormat() override;
 
     //==============================================================================
     // BWAV chunk properties:
@@ -208,6 +210,7 @@ public:
                                         int bitsPerSample,
                                         const StringPairArray& metadataValues,
                                         int qualityOptionIndex) override;
+    using AudioFormat::createWriterFor;
 
     //==============================================================================
     /** Utility function to replace the metadata in a wav file with a new set of values.

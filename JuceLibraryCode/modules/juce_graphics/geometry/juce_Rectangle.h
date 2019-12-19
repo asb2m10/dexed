@@ -32,6 +32,8 @@ namespace juce
     Manages a rectangle and allows geometric operations to be performed on it.
 
     @see RectangleList, Path, Line, Point
+
+    @tags{Graphics}
 */
 template <typename ValueType>
 class Rectangle
@@ -41,16 +43,10 @@ public:
     /** Creates a rectangle of zero size.
         The default coordinates will be (0, 0, 0, 0).
     */
-    Rectangle() noexcept
-      : w(), h()
-    {
-    }
+    Rectangle() = default;
 
     /** Creates a copy of another rectangle. */
-    Rectangle (const Rectangle& other) noexcept
-      : pos (other.pos), w (other.w), h (other.h)
-    {
-    }
+    Rectangle (const Rectangle&) = default;
 
     /** Creates a rectangle with a given position and size. */
     Rectangle (ValueType initialX, ValueType initialY,
@@ -87,15 +83,11 @@ public:
         return { left, top, right - left, bottom - top };
     }
 
-    Rectangle& operator= (const Rectangle& other) noexcept
-    {
-        pos = other.pos;
-        w = other.w; h = other.h;
-        return *this;
-    }
+    /** Creates a copy of another rectangle. */
+    Rectangle& operator= (const Rectangle&) = default;
 
     /** Destructor. */
-    ~Rectangle() noexcept {}
+    ~Rectangle() = default;
 
     //==============================================================================
     /** Returns true if the rectangle's width or height are zero or less */
@@ -223,13 +215,13 @@ public:
                                                                                                                newCentre.y - h / (ValueType) 2, w, h }; }
 
     /** Returns a rectangle which has the same position and height as this one, but with a different width. */
-    Rectangle withWidth (ValueType newWidth) const noexcept                                         { return { pos.x, pos.y, newWidth, h }; }
+    Rectangle withWidth (ValueType newWidth) const noexcept                                         { return { pos.x, pos.y, jmax (ValueType(), newWidth), h }; }
 
     /** Returns a rectangle which has the same position and width as this one, but with a different height. */
-    Rectangle withHeight (ValueType newHeight) const noexcept                                       { return { pos.x, pos.y, w, newHeight }; }
+    Rectangle withHeight (ValueType newHeight) const noexcept                                       { return { pos.x, pos.y, w, jmax (ValueType(), newHeight) }; }
 
     /** Returns a rectangle with the same top-left position as this one, but a new size. */
-    Rectangle withSize (ValueType newWidth, ValueType newHeight) const noexcept                     { return { pos.x, pos.y, newWidth, newHeight }; }
+    Rectangle withSize (ValueType newWidth, ValueType newHeight) const noexcept                     { return { pos.x, pos.y, jmax (ValueType(), newWidth), jmax (ValueType(), newHeight) }; }
 
     /** Returns a rectangle with the same centre position as this one, but a new size. */
     Rectangle withSizeKeepingCentre (ValueType newWidth, ValueType newHeight) const noexcept        { return { pos.x + (w - newWidth)  / (ValueType) 2,
@@ -777,12 +769,13 @@ public:
     */
     Rectangle constrainedWithin (Rectangle areaToFitWithin) const noexcept
     {
-        auto newW = jmin (w, areaToFitWithin.getWidth());
-        auto newH = jmin (h, areaToFitWithin.getHeight());
+        auto newPos = areaToFitWithin.withSize (areaToFitWithin.getWidth() - w,
+                                                areaToFitWithin.getHeight() - h)
+                        .getConstrainedPoint (pos);
 
-        return { jlimit (areaToFitWithin.getX(), areaToFitWithin.getRight()  - newW, pos.x),
-                 jlimit (areaToFitWithin.getY(), areaToFitWithin.getBottom() - newH, pos.y),
-                 newW, newH };
+        return { newPos.x, newPos.y,
+                 jmin (w, areaToFitWithin.getWidth()),
+                 jmin (h, areaToFitWithin.getHeight()) };
     }
 
     /** Returns the smallest rectangle that can contain the shape created by applying
@@ -792,7 +785,7 @@ public:
     */
     Rectangle transformedBy (const AffineTransform& transform) const noexcept
     {
-        typedef typename TypeHelpers::SmallestFloatType<ValueType>::type FloatType;
+        using FloatType = typename TypeHelpers::SmallestFloatType<ValueType>::type;
 
         auto x1 = static_cast<FloatType> (pos.x),     y1 = static_cast<FloatType> (pos.y);
         auto x2 = static_cast<FloatType> (pos.x + w), y2 = static_cast<FloatType> (pos.y);
@@ -814,7 +807,7 @@ public:
 
     /** Returns the smallest integer-aligned rectangle that completely contains this one.
         This is only relevant for floating-point rectangles, of course.
-        @see toFloat(), toNearestInt()
+        @see toFloat(), toNearestInt(), toNearestIntEdges()
     */
     Rectangle<int> getSmallestIntegerContainer() const noexcept
     {
@@ -827,12 +820,23 @@ public:
     /** Casts this rectangle to a Rectangle<int>.
         This uses roundToInt to snap x, y, width and height to the nearest integer (losing precision).
         If the rectangle already uses integers, this will simply return a copy.
-        @see getSmallestIntegerContainer()
+        @see getSmallestIntegerContainer(), toNearestIntEdges()
     */
     Rectangle<int> toNearestInt() const noexcept
     {
         return { roundToInt (pos.x), roundToInt (pos.y),
                  roundToInt (w),     roundToInt (h) };
+    }
+
+    /** Casts this rectangle to a Rectangle<int>.
+        This uses roundToInt to snap top, left, right and bottom to the nearest integer (losing precision).
+        If the rectangle already uses integers, this will simply return a copy.
+        @see getSmallestIntegerContainer(), toNearestInt()
+    */
+    Rectangle<int> toNearestIntEdges() const noexcept
+    {
+        return Rectangle<int>::leftTopRightBottom (roundToInt (pos.x),       roundToInt (pos.y),
+                                                   roundToInt (getRight()),  roundToInt (getBottom()));
     }
 
     /** Casts this rectangle to a Rectangle<float>.
@@ -961,7 +965,7 @@ private:
     template <typename OtherType> friend class Rectangle;
 
     Point<ValueType> pos;
-    ValueType w, h;
+    ValueType w {}, h {};
 
     static ValueType parseIntAfterSpace (StringRef s) noexcept
         { return static_cast<ValueType> (s.text.findEndOfWhitespace().getIntValue32()); }

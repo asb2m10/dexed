@@ -35,6 +35,8 @@ namespace juce
     Very easy to use - just create one of these and show it to the user.
 
     @see AudioDeviceManager
+
+    @tags{Audio}
 */
 class JUCE_API  AudioDeviceSelectorComponent  : public Component,
                                                 private ChangeListener,
@@ -71,7 +73,7 @@ public:
                                   bool hideAdvancedOptionsWithButton);
 
     /** Destructor */
-    ~AudioDeviceSelectorComponent();
+    ~AudioDeviceSelectorComponent() override;
 
     /** The device manager that this component is controlling */
     AudioDeviceManager& deviceManager;
@@ -93,9 +95,15 @@ public:
 
 private:
     //==============================================================================
-    ScopedPointer<ComboBox> deviceTypeDropDown;
-    ScopedPointer<Label> deviceTypeDropDownLabel;
-    ScopedPointer<Component> audioDeviceSettingsComp;
+    void handleBluetoothButton();
+    void updateDeviceType();
+    void updateMidiOutput();
+    void changeListenerCallback (ChangeBroadcaster*) override;
+    void updateAllControls();
+
+    std::unique_ptr<ComboBox> deviceTypeDropDown;
+    std::unique_ptr<Label> deviceTypeDropDownLabel;
+    std::unique_ptr<Component> audioDeviceSettingsComp;
     String audioDeviceSettingsCompType;
     int itemHeight;
     const int minOutputChannels, maxOutputChannels, minInputChannels, maxInputChannels;
@@ -103,17 +111,11 @@ private:
     const bool hideAdvancedOptionsWithButton;
 
     class MidiInputSelectorComponentListBox;
-    friend struct ContainerDeletePolicy<MidiInputSelectorComponentListBox>;
-    ScopedPointer<MidiInputSelectorComponentListBox> midiInputsList;
-    ScopedPointer<ComboBox> midiOutputSelector;
-    ScopedPointer<Label> midiInputsLabel, midiOutputLabel;
-    ScopedPointer<TextButton> bluetoothButton;
-
-    void handleBluetoothButton();
-    void updateDeviceType();
-    void updateMidiOutput();
-    void changeListenerCallback (ChangeBroadcaster*) override;
-    void updateAllControls();
+    Array<MidiDeviceInfo> currentMidiOutputs;
+    std::unique_ptr<MidiInputSelectorComponentListBox> midiInputsList;
+    std::unique_ptr<ComboBox> midiOutputSelector;
+    std::unique_ptr<Label> midiInputsLabel, midiOutputLabel;
+    std::unique_ptr<TextButton> bluetoothButton;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioDeviceSelectorComponent)
 };

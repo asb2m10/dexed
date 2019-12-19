@@ -224,9 +224,16 @@ MidiMessage::MidiMessage (const void* srcData, int sz, int& numBytesUsed, const 
         }
         else if (byte == 0xff)
         {
-            int n;
-            const int bytesLeft = readVariableLengthVal (src + 1, n);
-            size = jmin (sz + 1, n + 2 + bytesLeft);
+            if (sz == 1)
+            {
+                size = 1;
+            }
+            else
+            {
+                int n;
+                const int bytesLeft = readVariableLengthVal (src + 1, n);
+                size = jmin (sz + 1, n + 2 + bytesLeft);
+            }
 
             auto dest = allocateSpace (size);
             *dest = (uint8) byte;
@@ -621,6 +628,12 @@ bool MidiMessage::isAllSoundOff() const noexcept
 {
     auto data = getRawData();
     return data[1] == 120 && (data[0] & 0xf0) == 0xb0;
+}
+
+bool MidiMessage::isResetAllControllers() const noexcept
+{
+    auto data = getRawData();
+    return (data[0] & 0xf0) == 0xb0 && data[1] == 121;
 }
 
 MidiMessage MidiMessage::allControllersOff (const int channel) noexcept

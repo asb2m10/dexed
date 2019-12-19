@@ -27,8 +27,6 @@
 namespace juce
 {
 
-template <> struct ContainerDeletePolicy<NSObject<NSApplicationDelegate, NSUserNotificationCenterDelegate>> { static void destroy (NSObject* o) { [o release]; } };
-
 namespace PushNotificationsDelegateDetailsOsx
 {
     using Action = PushNotifications::Notification::Action;
@@ -38,7 +36,7 @@ namespace PushNotificationsDelegateDetailsOsx
                                                               bool isEarlierThanMavericks,
                                                               bool isEarlierThanYosemite)
     {
-        auto* notification = [[NSUserNotification alloc] init];
+        auto notification = [[NSUserNotification alloc] init];
 
         notification.title           = juceStringToNS (n.title);
         notification.subtitle        = juceStringToNS (n.subtitle);
@@ -50,7 +48,7 @@ namespace PushNotificationsDelegateDetailsOsx
 
         if (n.repeat && n.triggerIntervalSec >= 60)
         {
-            auto* dateComponents = [[NSDateComponents alloc] init];
+            auto dateComponents = [[NSDateComponents alloc] init];
             auto intervalSec = NSInteger (n.triggerIntervalSec);
             dateComponents.second = intervalSec;
             dateComponents.nanosecond = NSInteger ((n.triggerIntervalSec - intervalSec) * 1000000000);
@@ -117,7 +115,7 @@ namespace PushNotificationsDelegateDetailsOsx
             {
                 if (n.actions.size() > 1)
                 {
-                    auto* additionalActions = [NSMutableArray arrayWithCapacity: (NSUInteger) n.actions.size() - 1];
+                    auto additionalActions = [NSMutableArray arrayWithCapacity: (NSUInteger) n.actions.size() - 1];
 
                     for (int a = 1; a < n.actions.size(); ++a)
                         [additionalActions addObject: [NSUserNotificationAction actionWithIdentifier: juceStringToNS (n.actions[a].identifier)
@@ -267,16 +265,16 @@ struct PushNotificationsDelegate
 {
     PushNotificationsDelegate() : delegate ([getClass().createInstance() init])
     {
-        Class::setThis (delegate, this);
+        Class::setThis (delegate.get(), this);
 
         id<NSApplicationDelegate> appDelegate = [[NSApplication sharedApplication] delegate];
 
         SEL selector = NSSelectorFromString (@"setPushNotificationsDelegate:");
 
         if ([appDelegate respondsToSelector: selector])
-            [appDelegate performSelector: selector withObject: delegate];
+            [appDelegate performSelector: selector withObject: delegate.get()];
 
-        [NSUserNotificationCenter defaultUserNotificationCenter].delegate = delegate;
+        [NSUserNotificationCenter defaultUserNotificationCenter].delegate = delegate.get();
     }
 
     virtual ~PushNotificationsDelegate()
@@ -297,7 +295,7 @@ struct PushNotificationsDelegate
     virtual bool shouldPresentNotification (NSUserNotification* notification) = 0;
 
 protected:
-    ScopedPointer<NSObject<NSApplicationDelegate, NSUserNotificationCenterDelegate>> delegate;
+    std::unique_ptr<NSObject<NSApplicationDelegate, NSUserNotificationCenterDelegate>, NSObjectDeleter> delegate;
 
 private:
     struct Class    : public ObjCClass<NSObject<NSApplicationDelegate, NSUserNotificationCenterDelegate>>
@@ -471,10 +469,10 @@ struct PushNotifications::Pimpl : private PushNotificationsDelegate
     //PushNotificationsDelegate
     void registeredForRemoteNotifications (NSData* deviceTokenToUse) override
     {
-        auto* deviceTokenString = [[[[deviceTokenToUse description]
-                                      stringByReplacingOccurrencesOfString: nsStringLiteral ("<") withString: nsStringLiteral ("")]
-                                      stringByReplacingOccurrencesOfString: nsStringLiteral (">") withString: nsStringLiteral ("")]
-                                      stringByReplacingOccurrencesOfString: nsStringLiteral (" ") withString: nsStringLiteral ("")];
+        auto deviceTokenString = [[[[deviceTokenToUse description]
+                                     stringByReplacingOccurrencesOfString: nsStringLiteral ("<") withString: nsStringLiteral ("")]
+                                     stringByReplacingOccurrencesOfString: nsStringLiteral (">") withString: nsStringLiteral ("")]
+                                     stringByReplacingOccurrencesOfString: nsStringLiteral (" ") withString: nsStringLiteral ("")];
 
         deviceToken = nsStringToJuce (deviceTokenString);
 

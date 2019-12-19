@@ -35,9 +35,9 @@ DrawablePath::DrawablePath (const DrawablePath& other)  : DrawableShape (other)
     setPath (other.path);
 }
 
-Drawable* DrawablePath::createCopy() const
+std::unique_ptr<Drawable> DrawablePath::createCopy() const
 {
-    return new DrawablePath (*this);
+    return std::make_unique<DrawablePath> (*this);
 }
 
 void DrawablePath::setPath (const Path& newPath)
@@ -48,7 +48,7 @@ void DrawablePath::setPath (const Path& newPath)
 
 void DrawablePath::setPath (Path&& newPath)
 {
-    path = static_cast<Path&&> (newPath);
+    path = std::move (newPath);
     pathChanged();
 }
 

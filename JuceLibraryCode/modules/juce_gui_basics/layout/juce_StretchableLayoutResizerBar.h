@@ -35,6 +35,8 @@ namespace juce
     One of these acts with a StretchableLayoutManager to resize the other components.
 
     @see StretchableLayoutManager
+
+    @tags{GUI}
 */
 class JUCE_API  StretchableLayoutResizerBar  : public Component
 {
@@ -58,7 +60,7 @@ public:
                                  bool isBarVertical);
 
     /** Destructor. */
-    ~StretchableLayoutResizerBar();
+    ~StretchableLayoutResizerBar() override;
 
     //==============================================================================
     /** This is called when the bar is dragged.
@@ -77,7 +79,7 @@ public:
     /** This abstract base class is implemented by LookAndFeel classes. */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual void drawStretchableLayoutResizerBar (Graphics&, int w, int h,
                                                       bool isVerticalBar, bool isMouseOver, bool isMouseDragging) = 0;

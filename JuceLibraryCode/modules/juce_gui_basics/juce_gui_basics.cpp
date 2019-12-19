@@ -135,15 +135,13 @@
  #undef KeyPress
 #endif
 
-#include <map>
 #include <set>
 
 //==============================================================================
-#define ASSERT_MESSAGE_MANAGER_IS_LOCKED \
-    jassert (MessageManager::getInstance()->currentThreadHasLockedMessageManager());
-
-#define ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN \
-    jassert (MessageManager::getInstance()->currentThreadHasLockedMessageManager() || getPeer() == nullptr);
+#define JUCE_ASSERT_MESSAGE_MANAGER_IS_LOCKED_OR_OFFSCREEN \
+    jassert ((MessageManager::getInstanceWithoutCreating() != nullptr \
+               && MessageManager::getInstanceWithoutCreating()->currentThreadHasLockedMessageManager()) \
+              || getPeer() == nullptr);
 
 namespace juce
 {
@@ -153,7 +151,8 @@ namespace juce
 #include "components/juce_Component.cpp"
 #include "components/juce_ComponentListener.cpp"
 #include "mouse/juce_MouseInputSource.cpp"
-#include "components/juce_Desktop.cpp"
+#include "desktop/juce_Displays.cpp"
+#include "desktop/juce_Desktop.cpp"
 #include "components/juce_ModalComponentManager.cpp"
 #include "mouse/juce_ComponentDragger.cpp"
 #include "mouse/juce_DragAndDropContainer.cpp"
@@ -235,6 +234,7 @@ namespace juce
 #include "properties/juce_PropertyPanel.cpp"
 #include "properties/juce_SliderPropertyComponent.cpp"
 #include "properties/juce_TextPropertyComponent.cpp"
+#include "properties/juce_MultiChoicePropertyComponent.cpp"
 #include "widgets/juce_ComboBox.cpp"
 #include "widgets/juce_ImageComponent.cpp"
 #include "widgets/juce_Label.cpp"
@@ -266,16 +266,10 @@ namespace juce
 #include "misc/juce_DropShadower.cpp"
 #include "misc/juce_JUCESplashScreen.cpp"
 
-// these classes are C++11-only
-#if JUCE_COMPILER_SUPPORTS_INITIALIZER_LISTS
- #include "layout/juce_FlexBox.cpp"
- #if JUCE_HAS_CONSTEXPR
-  #include "layout/juce_GridItem.cpp"
-  #include "layout/juce_Grid.cpp"
-  #if JUCE_UNIT_TESTS
-   #include "layout/juce_GridUnitTests.cpp"
-  #endif
- #endif
+#include "layout/juce_FlexBox.cpp"
+#if JUCE_HAS_CONSTEXPR
+ #include "layout/juce_GridItem.cpp"
+ #include "layout/juce_Grid.cpp"
 #endif
 
 #if JUCE_IOS || JUCE_WINDOWS
@@ -315,7 +309,18 @@ namespace juce
 #elif JUCE_LINUX
  #include "native/juce_linux_X11.cpp"
  #include "native/juce_linux_X11_Clipboard.cpp"
+
+ #if JUCE_GCC
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+ #endif
+
  #include "native/juce_linux_X11_Windowing.cpp"
+
+ #if JUCE_GCC
+  #pragma GCC diagnostic pop
+ #endif
+
  #include "native/juce_linux_FileChooser.cpp"
 
 #elif JUCE_ANDROID

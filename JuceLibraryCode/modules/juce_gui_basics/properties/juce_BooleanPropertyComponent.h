@@ -35,6 +35,8 @@ namespace juce
     toggle on/off.
 
     @see PropertyComponent
+
+    @tags{GUI}
 */
 class JUCE_API  BooleanPropertyComponent  : public PropertyComponent
 {
@@ -69,7 +71,7 @@ public:
                               const String& buttonText);
 
     /** Destructor. */
-    ~BooleanPropertyComponent();
+    ~BooleanPropertyComponent() override;
 
     //==============================================================================
     /** Called to change the state of the boolean value. */

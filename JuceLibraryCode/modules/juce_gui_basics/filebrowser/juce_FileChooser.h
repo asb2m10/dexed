@@ -52,6 +52,8 @@ namespace juce
         }
     }
     @endcode
+
+    @tags{GUI}
 */
 class JUCE_API  FileChooser
 {
@@ -66,9 +68,14 @@ public:
         @param initialFileOrDirectory         the file or directory that should be selected
                                               when the dialog box opens. If this parameter is
                                               set to File(), a sensible default directory will
-                                              be used instead.
+                                              be used instead. When using native dialogs, not
+                                              all platforms will actually select the file. For
+                                              example, on macOS, when initialFileOrDirectory is
+                                              a file, only the parent directory of
+                                              initialFileOrDirectory will be used as the initial
+                                              directory of the native file chooser.
 
-                                              Note: on iOS when saving a file, a user will not
+                                              Note: On iOS when saving a file, a user will not
                                               be able to change a file name, so it may be a good
                                               idea to include at least a valid file name in
                                               initialFileOrDirectory. When no filename is found,
@@ -100,6 +107,11 @@ public:
                                               selection of files inside packages when
                                               invoked on OS X and when using native dialog
                                               boxes.
+        @param parentComponent                An optional component which should be the parent
+                                              for the file chooser. If this is a nullptr then the
+                                              FileChooser will be a top-level window. AUv3s on iOS
+                                              must specify this parameter as opening a top-level window
+                                              in an AUv3 is forbidden due to sandbox restrictions.
 
         @see browseForFileToOpen, browseForFileToSave, browseForDirectory
     */
@@ -107,7 +119,8 @@ public:
                  const File& initialFileOrDirectory = File(),
                  const String& filePatternsAllowed = String(),
                  bool useOSNativeDialogBox = true,
-                 bool treatFilePackagesAsDirectories = false);
+                 bool treatFilePackagesAsDirectories = false,
+                 Component* parentComponent = nullptr);
 
     /** Destructor. */
     ~FileChooser();
@@ -196,7 +209,7 @@ public:
         the lifetime of the file-chooser.
     */
     void launchAsync (int flags,
-                      std::function<void (const FileChooser&)>,
+                      std::function<void(const FileChooser&)>,
                       FilePreviewComponent* previewComponent = nullptr);
 
     //==============================================================================
@@ -238,7 +251,7 @@ public:
         may return a URL to a remote document. If a local file is chosen then you can
         convert this file to a JUCE File class via the URL::getLocalFile method.
 
-        Note: on iOS you must use the returned URL object directly (you are also
+        Note: On iOS you must use the returned URL object directly (you are also
         allowed to copy- or move-construct another URL from the returned URL), rather
         than just storing the path as a String and then creating a new URL from that
         String. This is because the returned URL contains internally a security
@@ -261,7 +274,7 @@ public:
         This array may be empty if no files were chosen, or can contain multiple entries
         if multiple files were chosen.
 
-        Note: on iOS you must use the returned URL object directly (you are also
+        Note: On iOS you must use the returned URL object directly (you are also
         allowed to copy- or move-construct another URL from the returned URL), rather
         than just storing the path as a String and then creating a new URL from that
         String. This is because the returned URL contains internally a security
@@ -293,10 +306,11 @@ private:
     //==============================================================================
     String title, filters;
     File startingFile;
+    Component* parent;
     Array<URL> results;
     const bool useNativeDialogBox;
     const bool treatFilePackagesAsDirs;
-    std::function<void (const FileChooser&)> asyncCallback;
+    std::function<void(const FileChooser&)> asyncCallback;
 
     //==============================================================================
     void finished (const Array<URL>&);
@@ -304,13 +318,13 @@ private:
     //==============================================================================
     struct Pimpl
     {
-        virtual ~Pimpl() {}
+        virtual ~Pimpl() = default;
 
         virtual void launch()     = 0;
         virtual void runModally() = 0;
     };
 
-    ScopedPointer<Pimpl> pimpl;
+    std::unique_ptr<Pimpl> pimpl;
 
     //==============================================================================
     Pimpl* createPimpl (int, FilePreviewComponent*);

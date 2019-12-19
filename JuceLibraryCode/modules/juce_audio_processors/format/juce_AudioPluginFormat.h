@@ -32,22 +32,14 @@ namespace juce
     The base class for a type of plugin format, such as VST, AudioUnit, LADSPA, etc.
 
     @see AudioPluginFormatManager
+
+    @tags{Audio}
 */
-class JUCE_API  AudioPluginFormat
+class JUCE_API  AudioPluginFormat  : private MessageListener
 {
 public:
-    //==============================================================================
-    struct JUCE_API  InstantiationCompletionCallback
-    {
-        virtual ~InstantiationCompletionCallback() {}
-        virtual void completionCallback (AudioPluginInstance* instance, const String& error) = 0;
-
-        JUCE_LEAK_DETECTOR (InstantiationCompletionCallback)
-    };
-
-    //==============================================================================
     /** Destructor. */
-    virtual ~AudioPluginFormat();
+    ~AudioPluginFormat() override;
 
     //==============================================================================
     /** Returns the format name.
@@ -70,32 +62,30 @@ public:
     /** Tries to recreate a type from a previously generated PluginDescription.
         @see AudioPluginFormatManager::createInstance
     */
-    AudioPluginInstance* createInstanceFromDescription (const PluginDescription&,
-                                                        double initialSampleRate,
-                                                        int initialBufferSize);
+    std::unique_ptr<AudioPluginInstance> createInstanceFromDescription (const PluginDescription&,
+                                                                        double initialSampleRate,
+                                                                        int initialBufferSize);
 
     /** Same as above but with the possibility of returning an error message.
-
         @see AudioPluginFormatManager::createInstance
     */
-    AudioPluginInstance* createInstanceFromDescription (const PluginDescription&,
-                                                        double initialSampleRate,
-                                                        int initialBufferSize,
-                                                        String& errorMessage);
+    std::unique_ptr<AudioPluginInstance> createInstanceFromDescription (const PluginDescription&,
+                                                                        double initialSampleRate,
+                                                                        int initialBufferSize,
+                                                                        String& errorMessage);
+
+    /** A callback lambda that is passed to createPluginInstanceAsync() */
+    using PluginCreationCallback = std::function<void(std::unique_ptr<AudioPluginInstance>, const String&)>;
 
     /** Tries to recreate a type from a previously generated PluginDescription.
-
-        @see AudioPluginFormatManager::createInstanceAsync
+        When the plugin has been created, it will be passed to the caller via an
+        asynchronous call to the PluginCreationCallback lambda that was provided.
+        @see AudioPluginFormatManager::createPluginInstanceAsync
      */
     void createPluginInstanceAsync (const PluginDescription& description,
                                     double initialSampleRate,
                                     int initialBufferSize,
-                                    InstantiationCompletionCallback* completionCallback);
-
-    void createPluginInstanceAsync (const PluginDescription& description,
-                                    double initialSampleRate,
-                                    int initialBufferSize,
-                                    std::function<void (AudioPluginInstance*, const String&)> completionCallback);
+                                    PluginCreationCallback);
 
     /** Should do a quick check to see if this file or directory might be a plugin of
         this format.
@@ -119,6 +109,12 @@ public:
 
     /** Returns true if this format needs to run a scan to find its list of plugins. */
     virtual bool canScanForPlugins() const = 0;
+
+    /** Should return true if this format is both safe and quick to scan - i.e. if a file
+        can be scanned within a few milliseconds on a background thread, without actually
+        needing to load an executable.
+    */
+    virtual bool isTrivialToScan() const = 0;
 
     /** Searches a suggested set of directories for any plugins in this format.
         The path might be ignored, e.g. by AUs, which are found by the OS rather
@@ -146,21 +142,20 @@ protected:
     //==============================================================================
     friend class AudioPluginFormatManager;
 
-    AudioPluginFormat() noexcept;
+    AudioPluginFormat();
 
     /** Implementors must override this function. This is guaranteed to be called on
         the message thread. You may call the callback on any thread.
     */
     virtual void createPluginInstance (const PluginDescription&, double initialSampleRate,
-                                       int initialBufferSize, void* userData,
-                                       void (*callback) (void*, AudioPluginInstance*, const String&)) = 0;
+                                       int initialBufferSize, PluginCreationCallback) = 0;
 
-    virtual bool requiresUnblockedMessageThreadDuringCreation (const PluginDescription&) const noexcept = 0;
+    /** Returns true if instantiation of this plugin type must be done from a non-message thread. */
+    virtual bool requiresUnblockedMessageThreadDuringCreation (const PluginDescription&) const = 0;
 
 private:
-    /** @internal */
-    void createPluginInstanceOnMessageThread (const PluginDescription&, double rate, int size,
-                                              AudioPluginFormat::InstantiationCompletionCallback*);
+    struct AsyncCreateMessage;
+    void handleMessage (const Message&) override;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginFormat)
 };

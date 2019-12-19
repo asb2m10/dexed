@@ -163,12 +163,21 @@ using namespace juce;
 namespace juce
 {
 
+struct UIViewPeerControllerReceiver
+{
+    virtual ~UIViewPeerControllerReceiver();
+    virtual void setViewController (UIViewController*) = 0;
+};
+
+UIViewPeerControllerReceiver::~UIViewPeerControllerReceiver() {}
+
 class UIViewComponentPeer  : public ComponentPeer,
-                             public FocusChangeListener
+                             public FocusChangeListener,
+                             public UIViewPeerControllerReceiver
 {
 public:
     UIViewComponentPeer (Component&, int windowStyleFlags, UIView* viewToAttachTo);
-    ~UIViewComponentPeer();
+    ~UIViewComponentPeer() override;
 
     //==============================================================================
     void* getNativeHandle() const override                  { return view; }
@@ -176,10 +185,18 @@ public:
     void setTitle (const String& title) override;
     void setBounds (const Rectangle<int>&, bool isNowFullScreen) override;
 
+    void setViewController (UIViewController* newController) override
+    {
+        jassert (controller == nullptr);
+        controller = [newController retain];
+    }
+
     Rectangle<int> getBounds() const override               { return getBounds (! isSharedWindow); }
     Rectangle<int> getBounds (bool global) const;
     Point<float> localToGlobal (Point<float> relativePosition) override;
+    using ComponentPeer::localToGlobal;
     Point<float> globalToLocal (Point<float> screenPosition) override;
+    using ComponentPeer::globalToLocal;
     void setAlpha (float newAlpha) override;
     void setMinimised (bool) override                       {}
     bool isMinimised() const override                       { return false; }
@@ -218,9 +235,8 @@ public:
     //==============================================================================
     UIWindow* window;
     JuceUIView* view;
-    JuceUIViewController* controller;
+    UIViewController* controller;
     bool isSharedWindow, fullScreen, insideDrawRect, isAppex;
-    static ModifierKeys currentModifiers;
 
     static int64 getMouseTime (UIEvent* e) noexcept
     {
@@ -375,6 +391,13 @@ MultiTouchMapper<UITouch*> UIViewComponentPeer::currentTouches;
 {
     return isKioskModeView (self);
 }
+
+#if defined (__IPHONE_11_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_11_0
+ - (BOOL) prefersHomeIndicatorAutoHidden
+ {
+     return isKioskModeView (self);
+ }
+#endif
 
 - (UIStatusBarStyle) preferredStatusBarStyle
 {
@@ -534,18 +557,6 @@ namespace juce
 bool KeyPress::isKeyCurrentlyDown (int)
 {
     return false;
-}
-
-ModifierKeys UIViewComponentPeer::currentModifiers;
-
-ModifierKeys ModifierKeys::getCurrentModifiersRealtime() noexcept
-{
-    return UIViewComponentPeer::currentModifiers;
-}
-
-void ModifierKeys::updateCurrentModifiers() noexcept
-{
-    currentModifiers = UIViewComponentPeer::currentModifiers;
 }
 
 Point<float> juce_lastMousePos;
@@ -715,7 +726,7 @@ void UIViewComponentPeer::updateTransformAndScreenBounds()
     const Rectangle<int> oldArea (component.getBounds());
     const Rectangle<int> oldDesktop (desktop.getDisplays().getMainDisplay().userArea);
 
-    const_cast<Desktop::Displays&> (desktop.getDisplays()).refresh();
+    const_cast<Displays&> (desktop.getDisplays()).refresh();
 
     window.transform = Orientations::getCGTransformFor (desktop.getCurrentOrientation());
     view.transform = CGAffineTransformIdentity;
@@ -844,15 +855,15 @@ void UIViewComponentPeer::handleTouches (UIEvent* event, const bool isDown, cons
         const int64 time = getMouseTime (event);
         const int touchIndex = currentTouches.getIndexOfTouch (this, touch);
 
-        ModifierKeys modsToSend (currentModifiers);
+        ModifierKeys modsToSend (ModifierKeys::currentModifiers);
 
         if (isDown)
         {
             if ([touch phase] != UITouchPhaseBegan)
                 continue;
 
-            currentModifiers = currentModifiers.withoutMouseButtons().withFlags (ModifierKeys::leftButtonModifier);
-            modsToSend = currentModifiers;
+            ModifierKeys::currentModifiers = ModifierKeys::currentModifiers.withoutMouseButtons().withFlags (ModifierKeys::leftButtonModifier);
+            modsToSend = ModifierKeys::currentModifiers;
 
             // this forces a mouse-enter/up event, in case for some reason we didn't get a mouse-up before.
             handleMouseEvent (MouseInputSource::InputSourceType::touch, pos, modsToSend.withoutMouseButtons(),
@@ -876,7 +887,7 @@ void UIViewComponentPeer::handleTouches (UIEvent* event, const bool isDown, cons
         if (isCancel)
         {
             currentTouches.clearTouch (touchIndex);
-            modsToSend = currentModifiers = currentModifiers.withoutMouseButtons();
+            modsToSend = ModifierKeys::currentModifiers = ModifierKeys::currentModifiers.withoutMouseButtons();
         }
 
         // NB: some devices return 0 or 1.0 if pressure is unknown, so we'll clip our value to a believable range:
@@ -891,7 +902,7 @@ void UIViewComponentPeer::handleTouches (UIEvent* event, const bool isDown, cons
 
         if (isUp || isCancel)
         {
-            handleMouseEvent (MouseInputSource::InputSourceType::touch, Point<float> (-1.0f, -1.0f), modsToSend,
+            handleMouseEvent (MouseInputSource::InputSourceType::touch, MouseInputSource::offscreenMousePos, modsToSend,
                               MouseInputSource::invalidPressure, MouseInputSource::invalidOrientation, time, {}, touchIndex);
 
             if (! isValidPeer (this))
@@ -1075,7 +1086,7 @@ void Desktop::allowedOrientationsChanged()
         jassert (i < n);
         i = jmin (n - 1, i);
 
-        NSNumber *value = [NSNumber numberWithInt:Orientations::convertFromJuce (orientations[i])];
+        NSNumber *value = [NSNumber numberWithInt: (int) Orientations::convertFromJuce (orientations[i])];
         [[UIDevice currentDevice] setValue:value forKey:@"orientation"];
         [value release];
     }

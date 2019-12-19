@@ -27,6 +27,8 @@
 namespace juce
 {
 
+#ifndef DOXYGEN
+
 #if JUCE_MAC
 
 //==============================================================================
@@ -39,6 +41,18 @@ public:
         startTimer (1000 / 30);
     }
 
+    static bool componentContainsAudioProcessorEditor (Component* comp) noexcept
+    {
+        if (dynamic_cast<AudioProcessorEditor*> (comp) != nullptr)
+            return true;
+
+        for (auto* child : comp->getChildren())
+            if (componentContainsAudioProcessorEditor (child))
+                return true;
+
+        return false;
+    }
+
     void timerCallback() override
     {
         // Workaround for windows not getting mouse-moves...
@@ -47,36 +61,39 @@ public:
         if (screenPos != lastScreenPos)
         {
             lastScreenPos = screenPos;
-            auto mods = ModifierKeys::getCurrentModifiers();
+            auto mods = ModifierKeys::currentModifiers;
 
             if (! mods.isAnyMouseButtonDown())
             {
                 if (auto* comp = Desktop::getInstance().findComponentAt (screenPos.roundToInt()))
                 {
-                    safeOldComponent = comp;
-
-                    if (auto* peer = comp->getPeer())
+                    if (componentContainsAudioProcessorEditor (comp->getTopLevelComponent()))
                     {
-                        if (! peer->isFocused())
+                        safeOldComponent = comp;
+
+                        if (auto* peer = comp->getPeer())
                         {
-                            peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, peer->globalToLocal (screenPos), mods,
-                                                    MouseInputSource::invalidPressure, MouseInputSource::invalidOrientation, Time::currentTimeMillis());
+                            if (! peer->isFocused())
+                            {
+                                peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, peer->globalToLocal (screenPos), mods,
+                                                        MouseInputSource::invalidPressure, MouseInputSource::invalidOrientation, Time::currentTimeMillis());
+                            }
                         }
+
+                        return;
                     }
                 }
-                else
+
+                if (safeOldComponent != nullptr)
                 {
-                    if (safeOldComponent != nullptr)
+                    if (auto* peer = safeOldComponent->getPeer())
                     {
-                        if (auto* peer = safeOldComponent->getPeer())
-                        {
-                            peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, { -1.0f, -1.0f }, mods,
-                                                    MouseInputSource::invalidPressure, MouseInputSource::invalidOrientation, Time::currentTimeMillis());
-                        }
+                        peer->handleMouseEvent (MouseInputSource::InputSourceType::mouse, MouseInputSource::offscreenMousePos, mods,
+                                                MouseInputSource::invalidPressure, MouseInputSource::invalidOrientation, Time::currentTimeMillis());
                     }
-
-                    safeOldComponent = nullptr;
                 }
+
+                safeOldComponent = nullptr;
             }
         }
     }
@@ -88,6 +105,8 @@ private:
 
 #else
 struct FakeMouseMoveGenerator {};
+#endif
+
 #endif
 
 } // namespace juce

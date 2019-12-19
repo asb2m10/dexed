@@ -52,6 +52,8 @@ class ImagePixelData;
     ImageFileFormat, which provides a way to load common image files.
 
     @see Graphics, ImageFileFormat, ImageCache, ImageConvolutionKernel
+
+    @tags{Graphics}
 */
 class JUCE_API  Image  final
 {
@@ -324,13 +326,13 @@ public:
             The coordinate you provide here isn't checked, so it's the caller's responsibility to make
             sure it's not out-of-range.
         */
-        inline uint8* getLinePointer (int y) const noexcept                 { return data + y * lineStride; }
+        inline uint8* getLinePointer (int y) const noexcept                 { return data + (size_t) y * (size_t) lineStride; }
 
         /** Returns a pointer to a pixel in the image.
             The coordinates you give here are not checked, so it's the caller's responsibility to make sure they're
             not out-of-range.
         */
-        inline uint8* getPixelPointer (int x, int y) const noexcept         { return data + y * lineStride + x * pixelStride; }
+        inline uint8* getPixelPointer (int x, int y) const noexcept         { return data + (size_t) y * (size_t) lineStride + (size_t) x * (size_t) pixelStride; }
 
         /** Returns the colour of a given pixel.
             For performance reasons, this won't do any bounds-checking on the coordinates, so it's the caller's
@@ -358,12 +360,12 @@ public:
         class BitmapDataReleaser
         {
         protected:
-            BitmapDataReleaser() {}
+            BitmapDataReleaser() = default;
         public:
-            virtual ~BitmapDataReleaser() {}
+            virtual ~BitmapDataReleaser() = default;
         };
 
-        ScopedPointer<BitmapDataReleaser> dataReleaser;
+        std::unique_ptr<BitmapDataReleaser> dataReleaser;
 
     private:
         JUCE_DECLARE_NON_COPYABLE (BitmapData)
@@ -396,7 +398,7 @@ public:
     /** Creates a context suitable for drawing onto this image.
         Don't call this method directly! It's used internally by the Graphics class.
     */
-    LowLevelGraphicsContext* createLowLevelContext() const;
+    std::unique_ptr<LowLevelGraphicsContext> createLowLevelContext() const;
 
     /** Returns the number of Image objects which are currently referring to the same internal
         shared image data.
@@ -407,17 +409,15 @@ public:
 
     //==============================================================================
     /** @internal */
-    ImagePixelData* getPixelData() const noexcept       { return image; }
+    ImagePixelData* getPixelData() const noexcept       { return image.get(); }
 
     /** @internal */
-    explicit Image (ImagePixelData*) noexcept;
+    explicit Image (ReferenceCountedObjectPtr<ImagePixelData>) noexcept;
 
-   #if JUCE_ALLOW_STATIC_NULL_VARIABLES
-    /** A null Image object that can be used when you need to return an invalid image.
+    /* A null Image object that can be used when you need to return an invalid image.
         @deprecated If you need a default-constructed var, just use Image() or {}.
     */
-    static const Image null;
-   #endif
+    JUCE_DEPRECATED_STATIC (static const Image null;)
 
 private:
     //==============================================================================
@@ -437,21 +437,23 @@ private:
 
     ImagePixelData objects are created indirectly, by subclasses of ImageType.
     @see Image, ImageType
+
+    @tags{Graphics}
 */
 class JUCE_API  ImagePixelData  : public ReferenceCountedObject
 {
 public:
     ImagePixelData (Image::PixelFormat, int width, int height);
-    ~ImagePixelData();
+    ~ImagePixelData() override;
 
-    typedef ReferenceCountedObjectPtr<ImagePixelData> Ptr;
+    using Ptr = ReferenceCountedObjectPtr<ImagePixelData>;
 
     /** Creates a context that will draw into this image. */
-    virtual LowLevelGraphicsContext* createLowLevelContext() = 0;
+    virtual std::unique_ptr<LowLevelGraphicsContext> createLowLevelContext() = 0;
     /** Creates a copy of this image. */
     virtual Ptr clone() = 0;
     /** Creates an instance of the type of this image. */
-    virtual ImageType* createType() const = 0;
+    virtual std::unique_ptr<ImageType> createType() const = 0;
     /** Initialises a BitmapData object. */
     virtual void initialiseBitmapData (Image::BitmapData&, int x, int y, Image::BitmapData::ReadWriteMode) = 0;
     /** Returns the number of Image objects which are currently referring to the same internal
@@ -470,9 +472,10 @@ public:
     NamedValueSet userData;
 
     //==============================================================================
+    /** Used to receive callbacks for image data changes */
     struct Listener
     {
-        virtual ~Listener() {}
+        virtual ~Listener() = default;
 
         virtual void imageDataChanged (ImagePixelData*) = 0;
         virtual void imageDataBeingDeleted (ImagePixelData*) = 0;
@@ -492,6 +495,8 @@ private:
     e.g. an in-memory bitmap, an OpenGL image, CoreGraphics image, etc.
 
     @see SoftwareImageType, NativeImageType, OpenGLImageType
+
+    @tags{Graphics}
 */
 class JUCE_API  ImageType
 {
@@ -516,12 +521,14 @@ public:
 /**
     An image storage type which holds the pixels in-memory as a simple block of values.
     @see ImageType, NativeImageType
+
+    @tags{Graphics}
 */
 class JUCE_API  SoftwareImageType   : public ImageType
 {
 public:
     SoftwareImageType();
-    ~SoftwareImageType();
+    ~SoftwareImageType() override;
 
     ImagePixelData::Ptr create (Image::PixelFormat, int width, int height, bool clearImage) const override;
     int getTypeID() const override;
@@ -532,12 +539,14 @@ public:
     An image storage type which holds the pixels using whatever is the default storage
     format on the current platform.
     @see ImageType, SoftwareImageType
+
+    @tags{Graphics}
 */
 class JUCE_API  NativeImageType   : public ImageType
 {
 public:
     NativeImageType();
-    ~NativeImageType();
+    ~NativeImageType() override;
 
     ImagePixelData::Ptr create (Image::PixelFormat, int width, int height, bool clearImage) const override;
     int getTypeID() const override;

@@ -42,13 +42,15 @@ namespace juce
     intellectual property. If you wish to use it, please seek your own independent advice about the
     legality of doing so. If you are not willing to accept full responsibility for the consequences
     of using this code, then do not enable the JUCE_USE_MP3AUDIOFORMAT setting.
+
+    @tags{Audio}
 */
 class MP3AudioFormat  : public AudioFormat
 {
 public:
     //==============================================================================
     MP3AudioFormat();
-    ~MP3AudioFormat();
+    ~MP3AudioFormat() override;
 
     //==============================================================================
     Array<int> getPossibleSampleRates() override;
@@ -64,6 +66,7 @@ public:
     AudioFormatWriter* createWriterFor (OutputStream*, double sampleRateToUse,
                                         unsigned int numberOfChannels, int bitsPerSample,
                                         const StringPairArray& metadataValues, int qualityOptionIndex) override;
+    using AudioFormat::createWriterFor;
 };
 
 #endif

@@ -38,6 +38,8 @@ namespace juce
     class and the FileBrowserListener class.
 
     @see DirectoryContentsList, FileListComponent
+
+    @tags{GUI}
 */
 class JUCE_API  FileTreeComponent  : public TreeView,
                                      public DirectoryContentsDisplayComponent
@@ -49,7 +51,7 @@ public:
     FileTreeComponent (DirectoryContentsList& listToShow);
 
     /** Destructor. */
-    ~FileTreeComponent();
+    ~FileTreeComponent() override;
 
     //==============================================================================
     /** Returns the number of files the user has got selected.

@@ -40,15 +40,15 @@ namespace juce
     to allow the storage to be re-used by another thread. If a thread exits without calling
     this method, the object storage will be left allocated until the ThreadLocalValue object
     is deleted.
+
+    @tags{Core}
 */
 template <typename Type>
 class ThreadLocalValue
 {
 public:
     /** */
-    ThreadLocalValue() noexcept
-    {
-    }
+    ThreadLocalValue() = default;
 
     /** Destructor.
         When this object is deleted, all the value objects for all threads will be deleted.

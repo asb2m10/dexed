@@ -37,12 +37,14 @@ class TimeSliceThread;
     deleting your client!
 
     @see TimeSliceThread
+
+    @tags{Core}
 */
 class JUCE_API  TimeSliceClient
 {
 public:
     /** Destructor. */
-    virtual ~TimeSliceClient()   {}
+    virtual ~TimeSliceClient() = default;
 
     /** Called back by a TimeSliceThread.
 
@@ -74,6 +76,8 @@ private:
     all a chance to run some sort of short task.
 
     @see TimeSliceClient, Thread
+
+    @tags{Core}
 */
 class JUCE_API  TimeSliceThread   : public Thread
 {
@@ -94,7 +98,7 @@ public:
         should always call stopThread() with a decent timeout before deleting,
         to avoid the thread being forcibly killed (which is a Bad Thing).
     */
-    ~TimeSliceThread();
+    ~TimeSliceThread() override;
 
     //==============================================================================
     /** Adds a client to the list.

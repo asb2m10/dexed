@@ -28,6 +28,8 @@ namespace juce
 
     This lets you take a subsection of a stream and present it as an entire
     stream in its own right.
+
+    @tags{Core}
 */
 class JUCE_API  SubregionStream  : public InputStream
 {
@@ -60,7 +62,7 @@ public:
         This may also delete the source stream, if that option was chosen when the
         buffered stream was created.
     */
-    ~SubregionStream();
+    ~SubregionStream() override;
 
 
     //==============================================================================

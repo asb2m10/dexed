@@ -47,6 +47,8 @@ class ToolbarItemFactory;
     component as a source of new items.
 
     @see ToolbarItemFactory, ToolbarItemComponent, ToolbarItemPalette
+
+    @tags{GUI}
 */
 class JUCE_API  Toolbar   : public Component,
                             public DragAndDropContainer,
@@ -68,7 +70,7 @@ public:
 
         Any items on the bar will be deleted when the toolbar is deleted.
     */
-    ~Toolbar();
+    ~Toolbar() override;
 
     //==============================================================================
     /** Changes the bar's orientation.
@@ -272,7 +274,7 @@ public:
     /** This abstract base class is implemented by LookAndFeel classes. */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual void paintToolbarBackground (Graphics&, int width, int height, Toolbar&) = 0;
 
@@ -310,7 +312,7 @@ public:
 
 private:
     //==============================================================================
-    ScopedPointer<Button> missingItemsButton;
+    std::unique_ptr<Button> missingItemsButton;
     bool vertical = false, isEditingActive = false;
     ToolbarItemStyle toolbarStyle = iconsOnly;
     class MissingItemsComponent;

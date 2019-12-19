@@ -36,6 +36,8 @@ namespace juce
     around.
 
     @see ResizableBorderComponent
+
+    @tags{GUI}
 */
 class JUCE_API  ResizableCornerComponent  : public Component
 {
@@ -63,7 +65,7 @@ public:
                               ComponentBoundsConstrainer* constrainer);
 
     /** Destructor. */
-    ~ResizableCornerComponent();
+    ~ResizableCornerComponent() override;
 
 
 protected:

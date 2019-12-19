@@ -32,17 +32,19 @@ namespace juce
     that has a current read position.
 
     @see AudioSource, AudioTransportSource
+
+    @tags{Audio}
 */
 class JUCE_API  PositionableAudioSource  : public AudioSource
 {
 protected:
     //==============================================================================
     /** Creates the PositionableAudioSource. */
-    PositionableAudioSource() noexcept  {}
+    PositionableAudioSource() = default;
 
 public:
     /** Destructor */
-    ~PositionableAudioSource()          {}
+    ~PositionableAudioSource() override = default;
 
     //==============================================================================
     /** Tells the stream to move to a new position.

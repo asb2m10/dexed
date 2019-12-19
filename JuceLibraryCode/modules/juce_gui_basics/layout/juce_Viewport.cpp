@@ -37,10 +37,7 @@ Viewport::Viewport (const String& name)  : Component (name)
 
     setInterceptsMouseClicks (false, true);
     setWantsKeyboardFocus (true);
-
-  #if JUCE_ANDROID || JUCE_IOS
-    setScrollOnDragEnabled (true);
-  #endif
+    setScrollOnDragEnabled (Desktop::getInstance().getMainMouseSource().isTouch());
 
     recreateScrollbars();
 }
@@ -66,7 +63,7 @@ void Viewport::deleteOrRemoveContentComp()
         {
             // This sets the content comp to a null pointer before deleting the old one, in case
             // anything tries to use the old one while it's in mid-deletion..
-            ScopedPointer<Component> oldCompDeleter (contentComp);
+            std::unique_ptr<Component> oldCompDeleter (contentComp.get());
             contentComp = nullptr;
         }
         else
@@ -124,7 +121,7 @@ Point<int> Viewport::viewportPosToCompPos (Point<int> pos) const
 {
     jassert (contentComp != nullptr);
 
-    auto contentBounds = contentHolder.getLocalArea (contentComp, contentComp->getLocalBounds());
+    auto contentBounds = contentHolder.getLocalArea (contentComp.get(), contentComp->getLocalBounds());
 
     Point<int> p (jmax (jmin (0, contentHolder.getWidth()  - contentBounds.getWidth()),  jmin (0, -(pos.x))),
                   jmax (jmin (0, contentHolder.getHeight() - contentBounds.getHeight()), jmin (0, -(pos.y))));
@@ -214,9 +211,10 @@ struct Viewport::DragToScrollListener   : private MouseListener,
         offsetY.behaviour.setMinimumVelocity (60);
     }
 
-    ~DragToScrollListener()
+    ~DragToScrollListener() override
     {
         viewport.contentHolder.removeMouseListener (this);
+        Desktop::getInstance().removeGlobalMouseListener (this);
     }
 
     void positionChanged (ViewportDragPosition&, double) override
@@ -227,14 +225,23 @@ struct Viewport::DragToScrollListener   : private MouseListener,
 
     void mouseDown (const MouseEvent&) override
     {
-        offsetX.setPosition (offsetX.getPosition());
-        offsetY.setPosition (offsetY.getPosition());
-        ++numTouches;
+        if (! isGlobalMouseListener)
+        {
+            offsetX.setPosition (offsetX.getPosition());
+            offsetY.setPosition (offsetY.getPosition());
+
+            // switch to a global mouse listener so we still receive mouseUp events
+            // if the original event component is deleted
+            viewport.contentHolder.removeMouseListener (this);
+            Desktop::getInstance().addGlobalMouseListener (this);
+
+            isGlobalMouseListener = true;
+        }
     }
 
     void mouseDrag (const MouseEvent& e) override
     {
-        if (numTouches == 1 && ! doesMouseEventComponentBlockViewportDrag (e.eventComponent))
+        if (Desktop::getInstance().getNumDraggingMouseSources() == 1 && ! doesMouseEventComponentBlockViewportDrag (e.eventComponent))
         {
             auto totalOffset = e.getOffsetFromDragStart().toFloat();
 
@@ -259,13 +266,20 @@ struct Viewport::DragToScrollListener   : private MouseListener,
 
     void mouseUp (const MouseEvent&) override
     {
-        if (--numTouches <= 0)
-        {
-            offsetX.endDrag();
-            offsetY.endDrag();
-            isDragging = false;
-            numTouches = 0;
-        }
+        if (isGlobalMouseListener && Desktop::getInstance().getNumDraggingMouseSources() == 0)
+            endDragAndClearGlobalMouseListener();
+    }
+
+    void endDragAndClearGlobalMouseListener()
+    {
+        offsetX.endDrag();
+        offsetY.endDrag();
+        isDragging = false;
+
+        viewport.contentHolder.addMouseListener (this, true);
+        Desktop::getInstance().removeGlobalMouseListener (this);
+
+        isGlobalMouseListener = false;
     }
 
     bool doesMouseEventComponentBlockViewportDrag (const Component* eventComp)
@@ -280,8 +294,8 @@ struct Viewport::DragToScrollListener   : private MouseListener,
     Viewport& viewport;
     ViewportDragPosition offsetX, offsetY;
     Point<int> originalViewPos;
-    int numTouches = 0;
     bool isDragging = false;
+    bool isGlobalMouseListener = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DragToScrollListener)
 };
@@ -360,6 +374,12 @@ void Viewport::updateVisibleArea()
         if (vBarVisible)  contentArea.setWidth  (getWidth()  - scrollbarWidth);
         if (hBarVisible)  contentArea.setHeight (getHeight() - scrollbarWidth);
 
+        if (! vScrollbarRight  && vBarVisible)
+            contentArea.setX (scrollbarWidth);
+
+        if (! hScrollbarBottom && hBarVisible)
+            contentArea.setY (scrollbarWidth);
+
         if (contentComp == nullptr)
         {
             contentHolder.setBounds (contentArea);
@@ -375,15 +395,16 @@ void Viewport::updateVisibleArea()
     }
 
     Rectangle<int> contentBounds;
-    if (contentComp != nullptr)
-        contentBounds = contentHolder.getLocalArea (contentComp, contentComp->getLocalBounds());
+
+    if (auto cc = contentComp.get())
+        contentBounds = contentHolder.getLocalArea (cc, cc->getLocalBounds());
 
     auto visibleOrigin = -contentBounds.getPosition();
 
     auto& hbar = getHorizontalScrollBar();
     auto& vbar = getVerticalScrollBar();
 
-    hbar.setBounds (0, contentArea.getHeight(), contentArea.getWidth(), scrollbarWidth);
+    hbar.setBounds (contentArea.getX(), hScrollbarBottom ? contentArea.getHeight() : 0, contentArea.getWidth(), scrollbarWidth);
     hbar.setRangeLimits (0.0, contentBounds.getWidth());
     hbar.setCurrentRange (visibleOrigin.x, contentArea.getWidth());
     hbar.setSingleStepSize (singleStepX);
@@ -392,7 +413,7 @@ void Viewport::updateVisibleArea()
     if (canShowHBar && ! hBarVisible)
         visibleOrigin.setX (0);
 
-    vbar.setBounds (contentArea.getWidth(), 0, scrollbarWidth, contentArea.getHeight());
+    vbar.setBounds (vScrollbarRight ? contentArea.getWidth() : 0, contentArea.getY(), scrollbarWidth, contentArea.getHeight());
     vbar.setRangeLimits (0.0, contentBounds.getHeight());
     vbar.setCurrentRange (visibleOrigin.y, contentArea.getHeight());
     vbar.setSingleStepSize (singleStepY);
@@ -597,6 +618,15 @@ bool Viewport::respondsToKey (const KeyPress& key)
 ScrollBar* Viewport::createScrollBarComponent (bool isVertical)
 {
     return new ScrollBar (isVertical);
+}
+
+void Viewport::setScrollBarPosition (bool verticalScrollbarOnRight,
+                                     bool horizontalScrollbarAtBottom)
+{
+    vScrollbarRight  = verticalScrollbarOnRight;
+    hScrollbarBottom = horizontalScrollbarAtBottom;
+
+    resized();
 }
 
 } // namespace juce

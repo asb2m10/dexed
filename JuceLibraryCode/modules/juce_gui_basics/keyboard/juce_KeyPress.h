@@ -34,6 +34,8 @@ namespace juce
     E.g. a KeyPress might represent CTRL+C, SHIFT+ALT+H, Spacebar, Escape, etc.
 
     @see Component, KeyListener, KeyPressMappingSet, Button::addShortcut
+
+    @tags{GUI}
 */
 class JUCE_API  KeyPress
 {
@@ -43,7 +45,10 @@ public:
 
         @see isValid
     */
-    KeyPress() noexcept;
+    KeyPress() = default;
+
+    /** Destructor. */
+    ~KeyPress() = default;
 
     /** Creates a KeyPress for a key and some modifiers.
 
@@ -72,10 +77,10 @@ public:
     explicit KeyPress (int keyCode) noexcept;
 
     /** Creates a copy of another KeyPress. */
-    KeyPress (const KeyPress& other) noexcept;
+    KeyPress (const KeyPress&) = default;
 
     /** Copies this KeyPress from another one. */
-    KeyPress& operator= (const KeyPress& other) noexcept;
+    KeyPress& operator= (const KeyPress&) = default;
 
     /** Compares two KeyPress objects. */
     bool operator== (const KeyPress& other) const noexcept;

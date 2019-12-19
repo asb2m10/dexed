@@ -65,6 +65,7 @@ FileBrowserComponent::FileBrowserComponent (int flags_,
     }
 
     fileList.reset (new DirectoryContentsList (this, thread));
+    fileList->setDirectory (currentRoot, true, true);
 
     if ((flags & useTreeView) != 0)
     {
@@ -124,6 +125,9 @@ FileBrowserComponent::FileBrowserComponent (int flags_,
 
     setRoot (currentRoot);
 
+    if (filename.isNotEmpty())
+        setFileName (filename);
+
     thread.startThread (4);
 
     startTimer (2000);
@@ -176,10 +180,10 @@ bool FileBrowserComponent::currentFileIsValid() const
 {
     auto f = getSelectedFile (0);
 
-    if (isSaveMode())
-        return (flags & canSelectDirectories) != 0 || ! f.isDirectory();
+    if ((flags & canSelectDirectories) == 0 && f.isDirectory())
+        return false;
 
-    return f.exists();
+    return isSaveMode() || f.exists();
 }
 
 File FileBrowserComponent::getHighlightedFile() const noexcept

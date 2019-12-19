@@ -311,7 +311,11 @@ public:
                         p3 += last;
                     }
 
-                    p2 = last + (last - last2);
+                    p2 = last;
+
+                    if (CharPointer_ASCII ("CcSs").indexOf (previousCommand) >= 0)
+                        p2 += (last - last2);
+
                     path.cubicTo (p2, p1, p3);
 
                     last2 = p1;
@@ -344,8 +348,11 @@ public:
                     if (isRelative)
                         p1 += last;
 
-                    p2 = CharPointer_ASCII ("QqTt").indexOf (previousCommand) >= 0 ? last + (last - last2)
-                                                                                   : p1;
+                    p2 = last;
+
+                    if (CharPointer_ASCII ("QqTt").indexOf (previousCommand) >= 0)
+                        p2 += (last - last2);
+
                     path.quadraticTo (p2, p1);
 
                     last2 = p2;
@@ -802,14 +809,14 @@ private:
     {
         if (xmlPath->hasTagNameIgnoringNamespace ("clipPath"))
         {
-            ScopedPointer<DrawableComposite> drawableClipPath (new DrawableComposite());
+            std::unique_ptr<DrawableComposite> drawableClipPath (new DrawableComposite());
 
             parseSubElements (xmlPath, *drawableClipPath, false);
 
             if (drawableClipPath->getNumChildComponents() > 0)
             {
                 setCommonAttributes (*drawableClipPath, xmlPath);
-                target.setClipPath (drawableClipPath.release());
+                target.setClipPath (std::move (drawableClipPath));
                 return true;
             }
         }
@@ -937,8 +944,7 @@ private:
 
         FillType type (gradient);
 
-        auto gradientTransform = parseTransform (fillXml->getStringAttribute ("gradientTransform"))
-                                   .followedBy (transform);
+        auto gradientTransform = parseTransform (fillXml->getStringAttribute ("gradientTransform"));
 
         if (gradient.isRadial)
         {
@@ -1163,7 +1169,7 @@ private:
 
         auto link = xml->getStringAttribute ("xlink:href");
 
-        ScopedPointer<InputStream> inputStream;
+        std::unique_ptr<InputStream> inputStream;
         MemoryOutputStream imageStream;
 
         if (link.startsWith ("data:"))
@@ -1202,12 +1208,18 @@ private:
                 auto* di = new DrawableImage();
 
                 setCommonAttributes (*di, xml);
-                di->setImage (image);
+
+                Rectangle<float> imageBounds ((float) xml->getDoubleAttribute ("x", 0.0),                  (float) xml->getDoubleAttribute ("y", 0.0),
+                                              (float) xml->getDoubleAttribute ("width", image.getWidth()), (float) xml->getDoubleAttribute ("height", image.getHeight()));
+
+                di->setImage (image.rescaled ((int) imageBounds.getWidth(), (int) imageBounds.getHeight()));
+
+                di->setTransformToFit (imageBounds, RectanglePlacement (parsePlacementFlags (xml->getStringAttribute ("preserveAspectRatio").trim())));
 
                 if (additionalTransform != nullptr)
-                    di->setTransform (transform.followedBy (*additionalTransform));
+                    di->setTransform (di->getTransform().followedBy (transform).followedBy (*additionalTransform));
                 else
-                    di->setTransform (transform);
+                    di->setTransform (di->getTransform().followedBy (transform));
 
                 return di;
             }
@@ -1691,32 +1703,21 @@ private:
 
 
 //==============================================================================
-Drawable* Drawable::createFromSVG (const XmlElement& svgDocument)
+std::unique_ptr<Drawable> Drawable::createFromSVG (const XmlElement& svgDocument)
 {
     if (! svgDocument.hasTagNameIgnoringNamespace ("svg"))
-        return nullptr;
+        return {};
 
     SVGState state (&svgDocument);
-    return state.parseSVGElement (SVGState::XmlPath (&svgDocument, nullptr));
+    return std::unique_ptr<Drawable> (state.parseSVGElement (SVGState::XmlPath (&svgDocument, {})));
 }
 
-Drawable* Drawable::createFromSVGFile (const File& svgFile)
+std::unique_ptr<Drawable> Drawable::createFromSVGFile (const File& svgFile)
 {
-    XmlDocument doc (svgFile);
-    ScopedPointer<XmlElement> outer (doc.getDocumentElement (true));
+    if (auto xml = parseXMLIfTagMatches (svgFile, "svg"))
+        return createFromSVG (*xml);
 
-    if (outer != nullptr && outer->hasTagName ("svg"))
-    {
-        ScopedPointer<XmlElement> svgDocument (doc.getDocumentElement());
-
-        if (svgDocument != nullptr)
-        {
-            SVGState state (svgDocument.get(), svgFile);
-            return state.parseSVGElement (SVGState::XmlPath (svgDocument.get(), nullptr));
-        }
-    }
-
-    return nullptr;
+    return {};
 }
 
 Path Drawable::parseSVGPath (const String& svgPath)

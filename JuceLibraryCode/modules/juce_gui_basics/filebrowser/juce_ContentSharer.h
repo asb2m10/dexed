@@ -32,6 +32,8 @@ namespace juce
 /** A singleton class responsible for sharing content between apps and devices.
 
     You can share text, images, files or an arbitrary data block.
+
+    @tags{GUI}
 */
 class JUCE_API ContentSharer
 {
@@ -51,7 +53,7 @@ public:
         succeeded. Also, the optional error message is always empty on Android.
     */
     void shareFiles (const Array<URL>& files,
-                     std::function<void (bool /*success*/, const String& /*error*/)> callback);
+                     std::function<void(bool /*success*/, const String& /*error*/)> callback);
 
     /** Shares the given text.
 
@@ -61,7 +63,7 @@ public:
         succeeded. Also, the optional error message is always empty on Android.
     */
     void shareText (const String& text,
-                    std::function<void (bool /*success*/, const String& /*error*/)> callback);
+                    std::function<void(bool /*success*/, const String& /*error*/)> callback);
 
     /** A convenience function to share an image. This is useful when you have images
         loaded in memory. The images will be written to temporary files first, so if
@@ -85,7 +87,7 @@ public:
         succeeded. Also, the optional error message is always empty on Android.
     */
     void shareImages (const Array<Image>& images,
-                      std::function<void (bool /*success*/, const String& /*error*/)> callback,
+                      std::function<void(bool /*success*/, const String& /*error*/)> callback,
                       ImageFileFormat* imageFileFormatToUse = nullptr);
 
     /** A convenience function to share arbitrary data. The data will be written
@@ -98,7 +100,7 @@ public:
         succeeded. Also, the optional error message is always empty on Android.
     */
     void shareData (const MemoryBlock& mb,
-                    std::function<void (bool /*success*/, const String& /*error*/)> callback);
+                    std::function<void(bool /*success*/, const String& /*error*/)> callback);
 
 private:
     ContentSharer();
@@ -106,7 +108,7 @@ private:
 
     Array<File> temporaryFiles;
 
-    std::function<void (bool, String)> callback;
+    std::function<void(bool, String)> callback;
 
   #if JUCE_IOS || JUCE_ANDROID
     struct Pimpl
@@ -116,34 +118,27 @@ private:
         virtual void shareText (const String& text) = 0;
     };
 
-    ScopedPointer<Pimpl> pimpl;
+    std::unique_ptr<Pimpl> pimpl;
     Pimpl* createPimpl();
 
-    void startNewShare (std::function<void (bool, const String&)>);
+    void startNewShare (std::function<void(bool, const String&)>);
 
     class ContentSharerNativeImpl;
     friend class ContentSharerNativeImpl;
 
     class PrepareImagesThread;
     friend class PrepareImagesThread;
-    ScopedPointer<PrepareImagesThread> prepareImagesThread;
+    std::unique_ptr<PrepareImagesThread> prepareImagesThread;
 
     class PrepareDataThread;
     friend class PrepareDataThread;
-    ScopedPointer<PrepareDataThread> prepareDataThread;
+    std::unique_ptr<PrepareDataThread> prepareDataThread;
 
     void filesToSharePrepared();
   #endif
 
     void deleteTemporaryFiles();
     void sharingFinished (bool, const String&);
-
-  #if JUCE_ANDROID
-    friend void* juce_contentSharerOpenFile (void*, void*, void*);
-    friend void* juce_contentSharerQuery (void*, void*, void*, void*, void*, void*);
-    friend void* juce_contentSharerGetStreamTypes (void*, void*);
-    friend void  juce_contentSharingCompleted (int);
-  #endif
 };
 
 } // namespace juce

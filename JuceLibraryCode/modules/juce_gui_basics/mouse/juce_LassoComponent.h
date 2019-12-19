@@ -35,13 +35,15 @@ namespace juce
     and to change the list of selected items.
 
     @see LassoComponent, SelectedItemSet
+
+    @tags{GUI}
 */
 template <class SelectableItemType>
 class LassoSource
 {
 public:
     /** Destructor. */
-    virtual ~LassoSource() {}
+    virtual ~LassoSource() = default;
 
     /** Returns the set of items that lie within a given lassoable region.
 
@@ -92,6 +94,8 @@ public:
     xor'ed with any previously selected items.
 
     @see LassoSource, SelectedItemSet
+
+    @tags{GUI}
 */
 template <class SelectableItemType>
 class LassoComponent  : public Component
@@ -99,7 +103,7 @@ class LassoComponent  : public Component
 public:
     //==============================================================================
     /** Creates a Lasso component. */
-    LassoComponent() {}
+    LassoComponent() = default;
 
     //==============================================================================
     /** Call this in your mouseDown event, to initialise a drag.

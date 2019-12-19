@@ -44,9 +44,15 @@ namespace OggVorbisNamespace
   #pragma clang diagnostic ignored "-Wconversion"
   #pragma clang diagnostic ignored "-Wshadow"
   #pragma clang diagnostic ignored "-Wdeprecated-register"
+  #if __has_warning("-Wzero-as-null-pointer-constant")
+   #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+  #endif
  #elif JUCE_GCC
   #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wconversion"
   #pragma GCC diagnostic ignored "-Wshadow"
+  #pragma GCC diagnostic ignored "-Wsign-conversion"
+  #pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
  #endif
 
  #include "oggvorbis/vorbisenc.h"
@@ -121,7 +127,7 @@ public:
         callbacks.close_func = &oggCloseCallback;
         callbacks.tell_func  = &oggTellCallback;
 
-        auto err = ov_open_callbacks (input, &ovFile, 0, 0, callbacks);
+        auto err = ov_open_callbacks (input, &ovFile, nullptr, 0, callbacks);
 
         if (err == 0)
         {
@@ -146,7 +152,7 @@ public:
         }
     }
 
-    ~OggReader()
+    ~OggReader() override
     {
         ov_clear (&ovFile);
     }
@@ -175,7 +181,7 @@ public:
                     if (destSamples[i] != nullptr)
                         memcpy (destSamples[i] + startOffsetInDestBuffer,
                                 reservoir.getReadPointer (i, (int) (startSampleInFile - reservoirStart)),
-                                sizeof (float) * (size_t) numToUse);
+                                (size_t) numToUse * sizeof (float));
 
                 startSampleInFile += numToUse;
                 numSamples -= numToUse;
@@ -210,7 +216,7 @@ public:
                     jassert (samps <= numToRead);
 
                     for (int i = jmin ((int) numChannels, reservoir.getNumChannels()); --i >= 0;)
-                        memcpy (reservoir.getWritePointer (i, offset), dataIn[i], sizeof (float) * (size_t) samps);
+                        memcpy (reservoir.getWritePointer (i, offset), dataIn[i], (size_t) samps * sizeof (float));
 
                     numToRead -= samps;
                     offset += samps;
@@ -225,7 +231,7 @@ public:
         {
             for (int i = numDestChannels; --i >= 0;)
                 if (destSamples[i] != nullptr)
-                    zeromem (destSamples[i] + startOffsetInDestBuffer, sizeof (int) * (size_t) numSamples);
+                    zeromem (destSamples[i] + startOffsetInDestBuffer, (size_t) numSamples * sizeof (int));
         }
 
         return true;
@@ -319,7 +325,7 @@ public:
         }
     }
 
-    ~OggWriter()
+    ~OggWriter() override
     {
         if (ok)
         {
@@ -377,7 +383,7 @@ public:
 
         while (vorbis_analysis_blockout (&vd, &vb) == 1)
         {
-            vorbis_analysis (&vb, 0);
+            vorbis_analysis (&vb, nullptr);
             vorbis_bitrate_addblock (&vb);
 
             while (vorbis_bitrate_flushpacket (&vd, &op))
@@ -448,7 +454,7 @@ bool OggVorbisAudioFormat::isCompressed()   { return true; }
 
 AudioFormatReader* OggVorbisAudioFormat::createReaderFor (InputStream* in, bool deleteStreamIfOpeningFails)
 {
-    ScopedPointer<OggReader> r (new OggReader (in));
+    std::unique_ptr<OggReader> r (new OggReader (in));
 
     if (r->sampleRate > 0)
         return r.release();
@@ -469,9 +475,9 @@ AudioFormatWriter* OggVorbisAudioFormat::createWriterFor (OutputStream* out,
     if (out == nullptr)
         return nullptr;
 
-    ScopedPointer<OggWriter> w (new OggWriter (out, sampleRate, numChannels,
-                                               (unsigned int) bitsPerSample,
-                                               qualityOptionIndex, metadataValues));
+    std::unique_ptr<OggWriter> w (new OggWriter (out, sampleRate, numChannels,
+                                                 (unsigned int) bitsPerSample,
+                                                 qualityOptionIndex, metadataValues));
 
     return w->ok ? w.release() : nullptr;
 }
@@ -486,9 +492,7 @@ int OggVorbisAudioFormat::estimateOggFileQuality (const File& source)
 {
     if (auto* in = source.createInputStream())
     {
-        ScopedPointer<AudioFormatReader> r (createReaderFor (in, true));
-
-        if (r != nullptr)
+        if (auto r = std::unique_ptr<AudioFormatReader> (createReaderFor (in, true)))
         {
             auto lengthSecs = r->lengthInSamples / r->sampleRate;
             auto approxBitsPerSecond = (int) (source.getSize() * 8 / lengthSecs);

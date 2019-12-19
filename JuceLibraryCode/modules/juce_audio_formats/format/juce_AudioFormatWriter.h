@@ -38,6 +38,8 @@ namespace juce
     you can call its write() method to store the samples, and then delete it.
 
     @see AudioFormat, AudioFormatReader
+
+    @tags{Audio}
 */
 class JUCE_API  AudioFormatWriter
 {
@@ -210,11 +212,12 @@ public:
         */
         bool write (const float* const* data, int numSamples);
 
+        /** Receiver for incoming data. */
         class JUCE_API  IncomingDataReceiver
         {
         public:
-            IncomingDataReceiver() {}
-            virtual ~IncomingDataReceiver() {}
+            IncomingDataReceiver() = default;
+            virtual ~IncomingDataReceiver() = default;
 
             virtual void reset (int numChannels, double sampleRate, int64 totalSamplesInSource) = 0;
             virtual void addBlock (int64 sampleNumberInSource, const AudioBuffer<float>& newData,
@@ -223,8 +226,8 @@ public:
 
         /** Allows you to specify a callback that this writer should update with the
             incoming data.
-            The receiver will be cleared and will the writer will begin adding data to
-            it as the data arrives. Pass a null pointer to remove the current receiver.
+            The receiver will be cleared and the writer will begin adding data to it
+            as the data arrives. Pass a null pointer to remove the current receiver.
 
             The object passed-in must not be deleted while this writer is still using it.
         */
@@ -237,8 +240,7 @@ public:
 
     private:
         class Buffer;
-        friend struct ContainerDeletePolicy<Buffer>;
-        ScopedPointer<Buffer> buffer;
+        std::unique_ptr<Buffer> buffer;
     };
 
 protected:
@@ -265,8 +267,8 @@ protected:
     template <class DestSampleType, class SourceSampleType, class DestEndianness>
     struct WriteHelper
     {
-        typedef AudioData::Pointer <DestSampleType, DestEndianness, AudioData::Interleaved, AudioData::NonConst>                DestType;
-        typedef AudioData::Pointer <SourceSampleType, AudioData::NativeEndian, AudioData::NonInterleaved, AudioData::Const>     SourceType;
+        using DestType   = AudioData::Pointer <DestSampleType,   DestEndianness,          AudioData::Interleaved,    AudioData::NonConst>;
+        using SourceType = AudioData::Pointer <SourceSampleType, AudioData::NativeEndian, AudioData::NonInterleaved, AudioData::Const>;
 
         static void write (void* destData, int numDestChannels, const int* const* source,
                            int numSamples, const int sourceOffset = 0) noexcept

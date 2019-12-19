@@ -35,15 +35,17 @@ namespace juce
     table cells, and reacting to events.
 
     @see TableListBox
+
+    @tags{GUI}
 */
 class JUCE_API  TableListBoxModel
 {
 public:
     //==============================================================================
-    TableListBoxModel()  {}
+    TableListBoxModel() = default;
 
     /** Destructor. */
-    virtual ~TableListBoxModel()  {}
+    virtual ~TableListBoxModel() = default;
 
     //==============================================================================
     /** This must return the number of rows currently in the table.
@@ -203,6 +205,8 @@ private:
 
 
     @see TableListBoxModel, TableHeaderComponent
+
+    @tags{GUI}
 */
 class JUCE_API  TableListBox   : public ListBox,
                                  private ListBoxModel,
@@ -221,7 +225,7 @@ public:
                   TableListBoxModel* model = nullptr);
 
     /** Destructor. */
-    ~TableListBox();
+    ~TableListBox() override;
 
     //==============================================================================
     /** Changes the TableListBoxModel that is being used for this table.

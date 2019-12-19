@@ -600,17 +600,17 @@ public:
     }
 
     template <typename Endianness>
-    static void copySampleData (unsigned int bitsPerSample, bool usesFloatingPointData,
+    static void copySampleData (unsigned int numBitsPerSample, bool floatingPointData,
                                 int* const* destSamples, int startOffsetInDestBuffer, int numDestChannels,
-                                const void* sourceData, int numChannels, int numSamples) noexcept
+                                const void* sourceData, int numberOfChannels, int numSamples) noexcept
     {
-        switch (bitsPerSample)
+        switch (numBitsPerSample)
         {
-            case 8:     ReadHelper<AudioData::Int32, AudioData::Int8,  Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples); break;
-            case 16:    ReadHelper<AudioData::Int32, AudioData::Int16, Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples); break;
-            case 24:    ReadHelper<AudioData::Int32, AudioData::Int24, Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples); break;
-            case 32:    if (usesFloatingPointData) ReadHelper<AudioData::Float32, AudioData::Float32, Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples);
-                        else                       ReadHelper<AudioData::Int32,   AudioData::Int32,   Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numChannels, numSamples);
+            case 8:     ReadHelper<AudioData::Int32, AudioData::Int8,  Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples); break;
+            case 16:    ReadHelper<AudioData::Int32, AudioData::Int16, Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples); break;
+            case 24:    ReadHelper<AudioData::Int32, AudioData::Int24, Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples); break;
+            case 32:    if (floatingPointData) ReadHelper<AudioData::Float32, AudioData::Float32, Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples);
+                        else                   ReadHelper<AudioData::Int32,   AudioData::Int32,   Endianness>::read (destSamples, startOffsetInDestBuffer, numDestChannels, sourceData, numberOfChannels, numSamples);
                         break;
             default:    jassertfalse; break;
         }
@@ -651,7 +651,7 @@ public:
         writeHeader();
     }
 
-    ~AiffAudioFormatWriter()
+    ~AiffAudioFormatWriter() override
     {
         if ((bytesWritten & 1) != 0)
             output->writeByte (0);
@@ -846,7 +846,7 @@ public:
         {
             jassertfalse; // you must make sure that the window contains all the samples you're going to attempt to read.
 
-            zeromem (result, sizeof (float) * (size_t) num);
+            zeromem (result, (size_t) num * sizeof (float));
             return;
         }
 
@@ -907,6 +907,8 @@ public:
         }
     }
 
+    using AudioFormatReader::readMaxLevels;
+
 private:
     const bool littleEndian;
 
@@ -960,7 +962,7 @@ bool AiffAudioFormat::canHandleFile (const File& f)
 
 AudioFormatReader* AiffAudioFormat::createReaderFor (InputStream* sourceStream, bool deleteStreamIfOpeningFails)
 {
-    ScopedPointer<AiffAudioFormatReader> w (new AiffAudioFormatReader (sourceStream));
+    std::unique_ptr<AiffAudioFormatReader> w (new AiffAudioFormatReader (sourceStream));
 
     if (w->sampleRate > 0 && w->numChannels > 0)
         return w.release();

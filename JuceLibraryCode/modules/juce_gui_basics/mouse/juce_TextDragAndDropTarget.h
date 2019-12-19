@@ -32,12 +32,14 @@ namespace juce
     Components derived from this class can have text dropped onto them by an external application.
 
     @see DragAndDropContainer
+
+    @tags{GUI}
 */
 class JUCE_API  TextDragAndDropTarget
 {
 public:
     /** Destructor. */
-    virtual ~TextDragAndDropTarget()  {}
+    virtual ~TextDragAndDropTarget() = default;
 
     /** Callback to check whether this target is interested in the set of text being offered.
 

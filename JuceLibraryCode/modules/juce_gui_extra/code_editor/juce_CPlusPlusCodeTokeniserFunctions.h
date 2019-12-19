@@ -29,6 +29,8 @@ namespace juce
 
 //==============================================================================
 /** Class containing some basic functions for simple tokenising of C++ code.
+
+    @tags{GUI}
 */
 struct CppTokeniserFunctions
 {
@@ -99,7 +101,7 @@ struct CppTokeniserFunctions
                 break;
         }
 
-        for (int i = 0; k[i] != 0; ++i)
+        for (int i = 0; k[i] != nullptr; ++i)
             if (token.compare (CharPointer_ASCII (k[i])) == 0)
                 return true;
 

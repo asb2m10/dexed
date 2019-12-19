@@ -44,6 +44,8 @@ namespace juce
 
 /**
     The standard JUCE splash screen component.
+
+    @tags{GUI}
 */
 class JUCE_API  JUCESplashScreen  : public Component,
                                     private Timer,
@@ -51,9 +53,9 @@ class JUCE_API  JUCESplashScreen  : public Component,
 {
 public:
     JUCESplashScreen (Component& parentToAddTo);
-    ~JUCESplashScreen();
+    ~JUCESplashScreen() override;
 
-    static Drawable* getSplashScreenLogo();
+    static std::unique_ptr<Drawable> getSplashScreenLogo();
 
 private:
     void paint (Graphics&) override;
@@ -63,10 +65,9 @@ private:
     bool hitTest (int, int) override;
     void mouseUp (const MouseEvent&) override;
 
-    ScopedPointer<Drawable> content;
+    std::unique_ptr<Drawable> content;
     CriticalSection appUsageReporting;
     ComponentAnimator fader;
-    bool hasStartedFading = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (JUCESplashScreen)
 };

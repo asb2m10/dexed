@@ -28,21 +28,20 @@ namespace juce
     Wraps a pointer to a null-terminated UTF-8 character string, and provides
     various methods to operate on the data.
     @see CharPointer_UTF16, CharPointer_UTF32
+
+    @tags{Core}
 */
 class CharPointer_UTF8  final
 {
 public:
-    typedef char CharType;
+    using CharType = char;
 
     inline explicit CharPointer_UTF8 (const CharType* rawPointer) noexcept
         : data (const_cast<CharType*> (rawPointer))
     {
     }
 
-    inline CharPointer_UTF8 (const CharPointer_UTF8& other) noexcept
-        : data (other.data)
-    {
-    }
+    inline CharPointer_UTF8 (const CharPointer_UTF8& other) = default;
 
     inline CharPointer_UTF8 operator= (CharPointer_UTF8 other) noexcept
     {
@@ -120,9 +119,9 @@ public:
 
         if (n < 0)
         {
-            juce_wchar bit = 0x40;
+            uint8 bit = 0x40;
 
-            while ((static_cast<juce_wchar> (n) & bit) != 0 && bit > 0x8)
+            while ((static_cast<uint8> (n) & bit) != 0 && bit > 0x8)
             {
                 ++data;
                 bit >>= 1;

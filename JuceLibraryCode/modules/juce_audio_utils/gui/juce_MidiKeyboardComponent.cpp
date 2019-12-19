@@ -50,10 +50,12 @@ struct MidiKeyboardComponent::UpDownButton  : public Button
         owner.setLowestVisibleKey (note * 12);
     }
 
-    void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) override
+    using Button::clicked;
+
+    void paintButton (Graphics& g, bool shouldDrawButtonAsHighlighted, bool shouldDrawButtonAsDown) override
     {
         owner.drawUpDownButton (g, getWidth(), getHeight(),
-                                isMouseOverButton, isButtonDown,
+                                shouldDrawButtonAsHighlighted, shouldDrawButtonAsDown,
                                 delta > 0);
     }
 
@@ -104,6 +106,17 @@ void MidiKeyboardComponent::setKeyWidth (float widthInPixels)
     if (keyWidth != widthInPixels) // Prevent infinite recursion if the width is being computed in a 'resized()' call-back
     {
         keyWidth = widthInPixels;
+        resized();
+    }
+}
+
+void MidiKeyboardComponent::setScrollButtonWidth (int widthInPixels)
+{
+    jassert (widthInPixels > 0);
+
+    if (scrollButtonWidth != widthInPixels)
+    {
+        scrollButtonWidth = widthInPixels;
         resized();
     }
 }
@@ -307,7 +320,7 @@ int MidiKeyboardComponent::remappedXYToNote (Point<float> pos, float& mousePosit
                 {
                     if (getKeyPos (note).contains (pos.x - xOffset))
                     {
-                        mousePositionVelocity = pos.y / blackNoteLength;
+                        mousePositionVelocity = jmax (0.0f, pos.y / blackNoteLength);
                         return note;
                     }
                 }
@@ -326,7 +339,7 @@ int MidiKeyboardComponent::remappedXYToNote (Point<float> pos, float& mousePosit
                 if (getKeyPos (note).contains (pos.x - xOffset))
                 {
                     auto whiteNoteLength = (orientation == horizontalKeyboard) ? getHeight() : getWidth();
-                    mousePositionVelocity = pos.y / (float) whiteNoteLength;
+                    mousePositionVelocity = jmax (0.0f, pos.y / (float) whiteNoteLength);
                     return note;
                 }
             }
@@ -610,7 +623,7 @@ void MidiKeyboardComponent::resized()
 
         if (canScroll)
         {
-            auto scrollButtonW = jmin (12, w / 2);
+            auto scrollButtonW = jmin (scrollButtonWidth, w / 2);
             auto r = getLocalBounds();
 
             if (orientation == horizontalKeyboard)
@@ -701,7 +714,7 @@ void MidiKeyboardComponent::updateNoteUnderMouse (Point<float> pos, bool isDown,
     auto newNote = xyToNote (pos, mousePositionVelocity);
     auto oldNote = mouseOverNotes.getUnchecked (fingerNum);
     auto oldNoteDown = mouseDownNotes.getUnchecked (fingerNum);
-    auto eventVelocity = useMousePositionForVelocity ? mousePositionVelocity * velocity : 1.0f;
+    auto eventVelocity = useMousePositionForVelocity ? mousePositionVelocity * velocity : velocity;
 
     if (oldNote != newNote)
     {
@@ -741,7 +754,6 @@ void MidiKeyboardComponent::updateNoteUnderMouse (Point<float> pos, bool isDown,
 void MidiKeyboardComponent::mouseMove (const MouseEvent& e)
 {
     updateNoteUnderMouse (e, false);
-    shouldCheckMousePos = false;
 }
 
 void MidiKeyboardComponent::mouseDrag (const MouseEvent& e)
@@ -749,14 +761,12 @@ void MidiKeyboardComponent::mouseDrag (const MouseEvent& e)
     float mousePositionVelocity;
     auto newNote = xyToNote (e.position, mousePositionVelocity);
 
-    if (newNote >= 0)
-        mouseDraggedToKey (newNote, e);
-
-    updateNoteUnderMouse (e, true);
+    if (newNote >= 0 && mouseDraggedToKey (newNote, e))
+        updateNoteUnderMouse (e, true);
 }
 
 bool MidiKeyboardComponent::mouseDownOnKey    (int, const MouseEvent&)  { return true; }
-void MidiKeyboardComponent::mouseDraggedToKey (int, const MouseEvent&)  {}
+bool MidiKeyboardComponent::mouseDraggedToKey (int, const MouseEvent&)  { return true; }
 void MidiKeyboardComponent::mouseUpOnKey      (int, const MouseEvent&)  {}
 
 void MidiKeyboardComponent::mouseDown (const MouseEvent& e)
@@ -765,16 +775,12 @@ void MidiKeyboardComponent::mouseDown (const MouseEvent& e)
     auto newNote = xyToNote (e.position, mousePositionVelocity);
 
     if (newNote >= 0 && mouseDownOnKey (newNote, e))
-    {
         updateNoteUnderMouse (e, true);
-        shouldCheckMousePos = true;
-    }
 }
 
 void MidiKeyboardComponent::mouseUp (const MouseEvent& e)
 {
     updateNoteUnderMouse (e, false);
-    shouldCheckMousePos = false;
 
     float mousePositionVelocity;
     auto note = xyToNote (e.position, mousePositionVelocity);
@@ -818,13 +824,6 @@ void MidiKeyboardComponent::timerCallback()
                 repaintNote (i);
             }
         }
-    }
-
-    if (shouldCheckMousePos)
-    {
-        for (auto& ms : Desktop::getInstance().getMouseSources())
-            if (ms.getComponentUnderMouse() == this || isParentOf (ms.getComponentUnderMouse()))
-                updateNoteUnderMouse (getLocalPoint (nullptr, ms.getScreenPosition()), ms.isDragging(), ms.getIndex());
     }
 }
 

@@ -48,7 +48,8 @@ namespace juce
 }
 
 @property (strong, nonatomic) UIWindow *window;
-- (id)init;
+- (id) init;
+- (void) dealloc;
 - (void) applicationDidFinishLaunching: (UIApplication*) application;
 - (void) applicationWillTerminate: (UIApplication*) application;
 - (void) applicationDidEnterBackground: (UIApplication*) application;
@@ -88,7 +89,7 @@ namespace juce
 
     NSObject* _pushNotificationsDelegate;
 
-- (id)init
+- (id) init
 {
     self = [super init];
     appSuspendTask = UIBackgroundTaskInvalid;
@@ -98,6 +99,11 @@ namespace juce
    #endif
 
     return self;
+}
+
+- (void) dealloc
+{
+    [super dealloc];
 }
 
 - (void) applicationDidFinishLaunching: (UIApplication*) application
@@ -135,7 +141,7 @@ namespace juce
             }
         }];
 
-        MessageManager::callAsync ([self,application,app]  { app->suspended(); });
+        MessageManager::callAsync ([app] { app->suspended(); });
        #else
         ignoreUnused (application);
         app->suspended();
@@ -536,7 +542,7 @@ public:
 private:
     int result;
     bool resultReceived;
-    ScopedPointer<ModalComponentManager::Callback> callback;
+    std::unique_ptr<ModalComponentManager::Callback> callback;
     const bool isAsync;
 
    #if JUCE_USE_NEW_IOS_ALERTWINDOW
@@ -601,8 +607,8 @@ bool JUCE_CALLTYPE NativeMessageBox::showOkCancelBox (AlertWindow::AlertIconType
                                                       Component* /*associatedComponent*/,
                                                       ModalComponentManager::Callback* callback)
 {
-    ScopedPointer<iOSMessageBox> mb (new iOSMessageBox (title, message, @"Cancel", @"OK",
-                                                        nil, callback, callback != nullptr));
+    std::unique_ptr<iOSMessageBox> mb (new iOSMessageBox (title, message, @"Cancel", @"OK",
+                                                          nil, callback, callback != nullptr));
 
     if (callback == nullptr)
         return mb->getResult() == 1;
@@ -616,7 +622,7 @@ int JUCE_CALLTYPE NativeMessageBox::showYesNoCancelBox (AlertWindow::AlertIconTy
                                                         Component* /*associatedComponent*/,
                                                         ModalComponentManager::Callback* callback)
 {
-    ScopedPointer<iOSMessageBox> mb (new iOSMessageBox (title, message, @"Cancel", @"Yes", @"No", callback, callback != nullptr));
+    std::unique_ptr<iOSMessageBox> mb (new iOSMessageBox (title, message, @"Cancel", @"Yes", @"No", callback, callback != nullptr));
 
     if (callback == nullptr)
         return mb->getResult();
@@ -630,7 +636,7 @@ int JUCE_CALLTYPE NativeMessageBox::showYesNoBox (AlertWindow::AlertIconType /*i
                                                   Component* /*associatedComponent*/,
                                                   ModalComponentManager::Callback* callback)
 {
-    ScopedPointer<iOSMessageBox> mb (new iOSMessageBox (title, message, @"No", @"Yes", nil, callback, callback != nullptr));
+    std::unique_ptr<iOSMessageBox> mb (new iOSMessageBox (title, message, @"No", @"Yes", nil, callback, callback != nullptr));
 
     if (callback == nullptr)
         return mb->getResult();
@@ -640,13 +646,13 @@ int JUCE_CALLTYPE NativeMessageBox::showYesNoBox (AlertWindow::AlertIconType /*i
 }
 
 //==============================================================================
-bool DragAndDropContainer::performExternalDragDropOfFiles (const StringArray&, bool, Component*)
+bool DragAndDropContainer::performExternalDragDropOfFiles (const StringArray&, bool, Component*, std::function<void()>)
 {
     jassertfalse;    // no such thing on iOS!
     return false;
 }
 
-bool DragAndDropContainer::performExternalDragDropOfText (const String&, Component*)
+bool DragAndDropContainer::performExternalDragDropOfText (const String&, Component*, std::function<void()>)
 {
     jassertfalse;    // no such thing on iOS!
     return false;
@@ -730,7 +736,7 @@ Desktop::DisplayOrientation Desktop::getCurrentOrientation() const
     return Orientations::convertToJuce (orientation);
 }
 
-void Desktop::Displays::findDisplays (float masterScale)
+void Displays::findDisplays (float masterScale)
 {
     JUCE_AUTORELEASEPOOL
     {

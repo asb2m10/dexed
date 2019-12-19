@@ -37,6 +37,8 @@ class MessageListener;
     deleted automatically after the message has been delivered.
 
     @see MessageListener, MessageManager, ActionListener, ChangeListener
+
+    @tags{Events}
 */
 class JUCE_API  Message  : public MessageManager::MessageBase
 {
@@ -44,9 +46,9 @@ public:
     //==============================================================================
     /** Creates an uninitialised message. */
     Message() noexcept;
-    ~Message();
+    ~Message() override;
 
-    typedef ReferenceCountedObjectPtr<Message> Ptr;
+    using Ptr = ReferenceCountedObjectPtr<Message>;
 
     //==============================================================================
 private:

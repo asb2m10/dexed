@@ -37,6 +37,8 @@ namespace juce
     Drawable objects.
 
     @see Drawable
+
+    @tags{GUI}
 */
 class JUCE_API  DrawableComposite  : public Drawable
 {
@@ -49,7 +51,7 @@ public:
     DrawableComposite (const DrawableComposite&);
 
     /** Destructor. */
-    ~DrawableComposite();
+    ~DrawableComposite() override;
 
     //==============================================================================
     /** Sets the parallelogram that defines the target position of the content rectangle when the drawable is rendered.
@@ -89,7 +91,7 @@ public:
 
     //==============================================================================
     /** @internal */
-    Drawable* createCopy() const override;
+    std::unique_ptr<Drawable> createCopy() const override;
     /** @internal */
     Rectangle<float> getDrawableBounds() const override;
     /** @internal */

@@ -48,6 +48,8 @@ namespace juce
     they can pitch their output correctly.
 
     @see MPESynthesiserBase, MPESynthesiserVoice, MPENote, MPEInstrument
+
+    @tags{Audio}
 */
 class JUCE_API  MPESynthesiser   : public MPESynthesiserBase
 {
@@ -67,10 +69,10 @@ public:
 
         @see MPESynthesiserBase, MPEInstrument
     */
-    MPESynthesiser (MPEInstrument* instrument);
+    MPESynthesiser (MPEInstrument* instrumentToUse);
 
     /** Destructor. */
-    ~MPESynthesiser();
+    ~MPESynthesiser() override;
 
     //==============================================================================
     /** Deletes all voices. */
@@ -186,7 +188,7 @@ protected:
         renderNextBlock(). Do not call it yourself, otherwise the internal MPE note state
         will become inconsistent.
     */
-    virtual void noteAdded (MPENote newNote) override;
+    void noteAdded (MPENote newNote) override;
 
     /** Stops playing a note.
 
@@ -201,7 +203,7 @@ protected:
         renderNextBlock(). Do not call it yourself, otherwise the internal MPE note state
         will become inconsistent.
     */
-    virtual void noteReleased (MPENote finishedNote) override;
+    void noteReleased (MPENote finishedNote) override;
 
     /** Will find any voice that is currently playing changedNote, update its
         currently playing note, and call its notePressureChanged method.
@@ -209,7 +211,7 @@ protected:
         This method will be called automatically according to the midi data passed into
         renderNextBlock(). Do not call it yourself.
     */
-    virtual void notePressureChanged (MPENote changedNote) override;
+    void notePressureChanged (MPENote changedNote) override;
 
     /** Will find any voice that is currently playing changedNote, update its
         currently playing note, and call its notePitchbendChanged method.
@@ -217,7 +219,7 @@ protected:
         This method will be called automatically according to the midi data passed into
         renderNextBlock(). Do not call it yourself.
     */
-    virtual void notePitchbendChanged (MPENote changedNote) override;
+    void notePitchbendChanged (MPENote changedNote) override;
 
     /** Will find any voice that is currently playing changedNote, update its
         currently playing note, and call its noteTimbreChanged method.
@@ -225,7 +227,7 @@ protected:
         This method will be called automatically according to the midi data passed into
         renderNextBlock(). Do not call it yourself.
     */
-    virtual void noteTimbreChanged (MPENote changedNote) override;
+    void noteTimbreChanged (MPENote changedNote) override;
 
     /** Will find any voice that is currently playing changedNote, update its
         currently playing note, and call its noteKeyStateChanged method.
@@ -233,24 +235,24 @@ protected:
         This method will be called automatically according to the midi data passed into
         renderNextBlock(). Do not call it yourself.
      */
-    virtual void noteKeyStateChanged (MPENote changedNote) override;
+    void noteKeyStateChanged (MPENote changedNote) override;
 
     //==============================================================================
     /** This will simply call renderNextBlock for each currently active
         voice and fill the buffer with the sum.
         Override this method if you need to do more work to render your audio.
     */
-    virtual void renderNextSubBlock (AudioBuffer<float>& outputAudio,
-                                     int startSample,
-                                     int numSamples) override;
+    void renderNextSubBlock (AudioBuffer<float>& outputAudio,
+                             int startSample,
+                             int numSamples) override;
 
     /** This will simply call renderNextBlock for each currently active
         voice and fill the buffer with the sum. (souble-precision version)
         Override this method if you need to do more work to render your audio.
     */
-    virtual void renderNextSubBlock (AudioBuffer<double>& outputAudio,
-                                     int startSample,
-                                     int numSamples) override;
+    void renderNextSubBlock (AudioBuffer<double>& outputAudio,
+                             int startSample,
+                             int numSamples) override;
 
     //==============================================================================
     /** Searches through the voices to find one that's not currently playing, and
@@ -302,6 +304,7 @@ protected:
 private:
     //==============================================================================
     bool shouldStealVoices = false;
+    uint32 lastNoteOnCounter = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MPESynthesiser)
 };

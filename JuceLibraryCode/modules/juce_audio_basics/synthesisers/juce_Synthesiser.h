@@ -35,6 +35,8 @@ namespace juce
     more than one SynthesiserVoice to play the same sound at the same time.
 
     @see Synthesiser, SynthesiserVoice
+
+    @tags{Audio}
 */
 class JUCE_API  SynthesiserSound    : public ReferenceCountedObject
 {
@@ -44,7 +46,7 @@ protected:
 
 public:
     /** Destructor. */
-    virtual ~SynthesiserSound();
+    ~SynthesiserSound() override;
 
     //==============================================================================
     /** Returns true if this sound should be played when a given midi note is pressed.
@@ -62,7 +64,7 @@ public:
     virtual bool appliesToChannel (int midiChannel) = 0;
 
     /** The class is reference-counted, so this is a handy pointer class for it. */
-    typedef ReferenceCountedObjectPtr<SynthesiserSound> Ptr;
+    using Ptr = ReferenceCountedObjectPtr<SynthesiserSound>;
 
 
 private:
@@ -79,6 +81,8 @@ private:
     voices so that it can play polyphonically.
 
     @see Synthesiser, SynthesiserSound
+
+    @tags{Audio}
 */
 class JUCE_API  SynthesiserVoice
 {
@@ -270,11 +274,6 @@ private:
 
     AudioBuffer<float> tempBuffer;
 
-   #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
-    // Note the new parameters for this method.
-    virtual int stopNote (bool) { return 0; }
-   #endif
-
     JUCE_LEAK_DETECTOR (SynthesiserVoice)
 };
 
@@ -302,6 +301,8 @@ private:
     Before rendering, be sure to call the setCurrentPlaybackSampleRate() to tell it
     what the target playback rate is. This value is passed on to the voices so that
     they can pitch their output correctly.
+
+    @tags{Audio}
 */
 class JUCE_API  Synthesiser
 {
@@ -346,7 +347,7 @@ public:
     int getNumSounds() const noexcept                               { return sounds.size(); }
 
     /** Returns one of the sounds. */
-    SynthesiserSound* getSound (int index) const noexcept           { return sounds [index]; }
+    SynthesiserSound::Ptr getSound (int index) const noexcept       { return sounds[index]; }
 
     /** Adds a new sound to the synthesiser.
 
@@ -519,21 +520,15 @@ public:
         both to the audio output buffer and the midi input buffer, so any midi events
         with timestamps outside the specified region will be ignored.
     */
-    inline void renderNextBlock (AudioBuffer<float>& outputAudio,
-                                 const MidiBuffer& inputMidi,
-                                 int startSample,
-                                 int numSamples)
-    {
-        processNextBlock (outputAudio, inputMidi, startSample, numSamples);
-    }
+    void renderNextBlock (AudioBuffer<float>& outputAudio,
+                          const MidiBuffer& inputMidi,
+                          int startSample,
+                          int numSamples);
 
-    inline void renderNextBlock (AudioBuffer<double>& outputAudio,
-                                 const MidiBuffer& inputMidi,
-                                 int startSample,
-                                 int numSamples)
-    {
-        processNextBlock (outputAudio, inputMidi, startSample, numSamples);
-    }
+    void renderNextBlock (AudioBuffer<double>& outputAudio,
+                          const MidiBuffer& inputMidi,
+                          int startSample,
+                          int numSamples);
 
     /** Returns the current target sample rate at which rendering is being done.
         Subclasses may need to know this so that they can pitch things correctly.
@@ -626,18 +621,15 @@ protected:
 
 private:
     //==============================================================================
-    template <typename floatType>
-    void processNextBlock (AudioBuffer<floatType>& outputAudio,
-                           const MidiBuffer& inputMidi,
-                           int startSample,
-                           int numSamples);
-    //==============================================================================
     double sampleRate = 0;
     uint32 lastNoteOnCounter = 0;
     int minimumSubBlockSize = 32;
     bool subBlockSubdivisionIsStrict = false;
     bool shouldStealNotes = true;
     BigInteger sustainPedalsDown;
+
+    template <typename floatType>
+    void processNextBlock (AudioBuffer<floatType>&, const MidiBuffer&, int startSample, int numSamples);
 
    #if JUCE_CATCH_DEPRECATED_CODE_MISUSE
     // Note the new parameters for these methods.

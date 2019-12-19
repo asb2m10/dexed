@@ -52,7 +52,7 @@ struct CurrentThreadHolder   : public ReferenceCountedObject
 {
     CurrentThreadHolder() noexcept {}
 
-    typedef ReferenceCountedObjectPtr<CurrentThreadHolder> Ptr;
+    using Ptr = ReferenceCountedObjectPtr<CurrentThreadHolder>;
     ThreadLocalValue<Thread*> value;
 
     JUCE_DECLARE_NON_COPYABLE (CurrentThreadHolder)
@@ -195,7 +195,7 @@ bool Thread::currentThreadShouldExit()
 bool Thread::waitForThreadToExit (const int timeOutMilliseconds) const
 {
     // Doh! So how exactly do you expect this thread to wait for itself to stop??
-    jassert (getThreadId() != getCurrentThreadId() || getCurrentThreadId() == 0);
+    jassert (getThreadId() != getCurrentThreadId() || getCurrentThreadId() == ThreadID());
 
     auto timeoutEnd = Time::getMillisecondCounter() + (uint32) timeOutMilliseconds;
 
@@ -236,7 +236,7 @@ bool Thread::stopThread (const int timeOutMilliseconds)
             killThread();
 
             threadHandle = nullptr;
-            threadId = 0;
+            threadId = {};
             return false;
         }
     }
@@ -288,7 +288,7 @@ bool Thread::setPriority (int newPriority)
 
 bool Thread::setCurrentThreadPriority (const int newPriority)
 {
-    return setThreadPriority (0, newPriority);
+    return setThreadPriority ({}, newPriority);
 }
 
 void Thread::setAffinityMask (const uint32 newAffinityMask)
@@ -315,7 +315,7 @@ struct LambdaThread  : public Thread
     void run() override
     {
         fn();
-        fn = {}; // free any objects that the lambda might contain while the thread is still active
+        fn = nullptr; // free any objects that the lambda might contain while the thread is still active
     }
 
     std::function<void()> fn;
@@ -350,13 +350,17 @@ bool JUCE_CALLTYPE Process::isRunningUnderDebugger() noexcept
     return juce_isRunningUnderDebugger();
 }
 
-#if JUCE_UNIT_TESTS
 
 //==============================================================================
+//==============================================================================
+#if JUCE_UNIT_TESTS
+
 class AtomicTests  : public UnitTest
 {
 public:
-    AtomicTests() : UnitTest ("Atomics", "Threads") {}
+    AtomicTests()
+        : UnitTest ("Atomics", UnitTestCategories::threads)
+    {}
 
     void runTest() override
     {
@@ -480,7 +484,7 @@ class ThreadLocalValueUnitTest  : public UnitTest,
 {
 public:
     ThreadLocalValueUnitTest()
-        : UnitTest ("ThreadLocalValue", "Threads"),
+        : UnitTest ("ThreadLocalValue", UnitTestCategories::threads),
           Thread ("ThreadLocalValue Thread")
     {}
 

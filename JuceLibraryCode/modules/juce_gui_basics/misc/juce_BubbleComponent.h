@@ -41,6 +41,8 @@ namespace juce
     resize and position it, then make it visible.
 
     @see BubbleMessageComponent
+
+    @tags{GUI}
 */
 class JUCE_API  BubbleComponent  : public Component
 {
@@ -55,7 +57,7 @@ protected:
 
 public:
     /** Destructor. */
-    ~BubbleComponent();
+    ~BubbleComponent() override;
 
     //==============================================================================
     /** A list of permitted placements for the bubble, relative to the coordinates
@@ -148,7 +150,7 @@ public:
     */
     struct JUCE_API  LookAndFeelMethods
     {
-        virtual ~LookAndFeelMethods() {}
+        virtual ~LookAndFeelMethods() = default;
 
         virtual void drawBubble (Graphics&, BubbleComponent&,
                                  const Point<float>& positionOfTip,

@@ -27,10 +27,6 @@
 namespace juce
 {
 
-//==============================================================================
-template <> struct ContainerDeletePolicy<UIDocumentPickerViewController>     { static void destroy (NSObject* o) { [o release]; } };
-template <> struct ContainerDeletePolicy<NSObject<UIDocumentPickerDelegate>> { static void destroy (NSObject* o) { [o release]; } };
-
 class FileChooser::Native    : private Component,
                                public FileChooser::Pimpl
 {
@@ -41,8 +37,8 @@ public:
         String firstFileExtension;
 
         static FileChooserDelegateClass cls;
-        delegate = [cls.createInstance() init];
-        FileChooserDelegateClass::setOwner (delegate, this);
+        delegate.reset ([cls.createInstance() init]);
+        FileChooserDelegateClass::setOwner (delegate.get(), this);
 
         auto utTypeArray = createNSArrayFromStringArray (getUTTypesForWildcards (owner.filters, firstFileExtension));
 
@@ -74,29 +70,52 @@ public:
             }
 
             auto url = [[NSURL alloc] initFileURLWithPath: juceStringToNS (currentFileOrDirectory.getFullPathName())];
-            controller = [[UIDocumentPickerViewController alloc] initWithURL: url
-                                                                      inMode: pickerMode];
+            controller.reset ([[UIDocumentPickerViewController alloc] initWithURL: url
+                                                                           inMode: pickerMode]);
             [url release];
         }
         else
         {
-            controller = [[UIDocumentPickerViewController alloc] initWithDocumentTypes: utTypeArray
-                                                                                inMode: UIDocumentPickerModeOpen];
+            controller.reset ([[UIDocumentPickerViewController alloc] initWithDocumentTypes: utTypeArray
+                                                                                      inMode: UIDocumentPickerModeOpen]);
         }
 
-        [controller setDelegate: delegate];
-        [controller setModalTransitionStyle: UIModalTransitionStyleCrossDissolve];
+        [controller.get() setDelegate: delegate.get()];
+        [controller.get() setModalTransitionStyle: UIModalTransitionStyleCrossDissolve];
 
         setOpaque (false);
 
-        auto chooserBounds = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
-        setBounds (chooserBounds);
+        if (SystemStats::isRunningInAppExtensionSandbox())
+        {
+            if (fileChooser.parent != nullptr)
+            {
+                [controller.get() setModalPresentationStyle:UIModalPresentationFullScreen];
 
-        setAlwaysOnTop (true);
-        addToDesktop (0);
+                auto chooserBounds = fileChooser.parent->getBounds();
+                setBounds (chooserBounds);
+
+                setAlwaysOnTop (true);
+                fileChooser.parent->addAndMakeVisible (this);
+            }
+            else
+            {
+                // Opening a native top-level window in an AUv3 is not allowed (sandboxing). You need to specify a
+                // parent component (for example your editor) to parent the native file chooser window. To do this
+                // specify a parent component in the FileChooser's constructor!
+                jassert (fileChooser.parent != nullptr);
+            }
+        }
+        else
+        {
+            auto chooserBounds = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
+            setBounds (chooserBounds);
+
+            setAlwaysOnTop (true);
+            addToDesktop (0);
+        }
     }
 
-    ~Native()
+    ~Native() override
     {
         exitModalState (0);
     }
@@ -124,7 +143,7 @@ private:
             peer = newPeer;
 
             if (auto* parentController = peer->controller)
-                [parentController showViewController: controller sender: parentController];
+                [parentController showViewController: controller.get() sender: parentController];
 
             if (peer->view.window != nil)
                 peer->view.window.autoresizesSubviews = YES;
@@ -143,6 +162,9 @@ private:
         {
             for (auto filter : filters)
             {
+                if (filter.isEmpty())
+                    continue;
+
                 // iOS only supports file extension wild cards
                 jassert (filter.upToLastOccurrenceOf (".", true, false) == "*.");
 
@@ -200,7 +222,7 @@ private:
 
         NSArray<NSFileAccessIntent*>* intents = @[fileAccessIntent];
 
-        auto* fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter: nil];
+        auto fileCoordinator = [[NSFileCoordinator alloc] initWithFilePresenter: nil];
 
         [fileCoordinator coordinateAccessWithIntents: intents queue: [NSOperationQueue mainQueue] byAccessor: ^(NSError* err)
         {
@@ -229,7 +251,7 @@ private:
                 }
                 else
                 {
-                    auto* desc = [error localizedDescription];
+                    auto desc = [error localizedDescription];
                     ignoreUnused (desc);
                     jassertfalse;
                 }
@@ -238,7 +260,7 @@ private:
             }
             else
             {
-                auto* desc = [err localizedDescription];
+                auto desc = [err localizedDescription];
                 ignoreUnused (desc);
                 jassertfalse;
             }
@@ -293,8 +315,8 @@ private:
 
     //==============================================================================
     FileChooser& owner;
-    ScopedPointer<NSObject<UIDocumentPickerDelegate>> delegate;
-    ScopedPointer<UIDocumentPickerViewController> controller;
+    std::unique_ptr<NSObject<UIDocumentPickerDelegate>, NSObjectDeleter> delegate;
+    std::unique_ptr<UIDocumentPickerViewController,     NSObjectDeleter> controller;
     UIViewComponentPeer* peer = nullptr;
 
     static FileChooserDelegateClass fileChooserDelegateClass;
@@ -309,7 +331,7 @@ bool FileChooser::isPlatformDialogAvailable()
    #if JUCE_DISABLE_NATIVE_FILECHOOSERS
     return false;
    #else
-    return [[NSFileManager defaultManager] ubiquityIdentityToken] != nil;
+    return true;
    #endif
 }
 

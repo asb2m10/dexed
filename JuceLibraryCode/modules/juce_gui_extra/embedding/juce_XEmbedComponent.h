@@ -60,6 +60,8 @@ unsigned long juce_getCurrentFocusWindow (ComponentPeer*);
 
     Other toolkits or raw X11 widgets should follow the X11 embed protocol:
     https://specifications.freedesktop.org/xembed-spec/xembed-spec-latest.html
+
+    @tags{GUI}
 */
 class XEmbedComponent : public Component
 {
@@ -85,7 +87,7 @@ public:
 
 
     /** Destructor. */
-    ~XEmbedComponent();
+    ~XEmbedComponent() override;
 
     /** Use this method to retrieve the host's window id when using the
         host initiated version of the XEmbedProtocol
@@ -105,8 +107,7 @@ private:
     friend unsigned long juce_getCurrentFocusWindow (ComponentPeer*);
 
     class Pimpl;
-    friend struct ContainerDeletePolicy<Pimpl>;
-    ScopedPointer<Pimpl> pimpl;
+    std::unique_ptr<Pimpl> pimpl;
 };
 
 #endif

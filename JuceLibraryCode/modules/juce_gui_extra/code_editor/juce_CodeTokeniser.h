@@ -33,12 +33,14 @@ namespace juce
     code editor.
 
     @see CodeDocument, CodeEditorComponent
+
+    @tags{GUI}
 */
 class JUCE_API  CodeTokeniser
 {
 public:
-    CodeTokeniser()                 {}
-    virtual ~CodeTokeniser()        {}
+    CodeTokeniser() = default;
+    virtual ~CodeTokeniser() = default;
 
     //==============================================================================
     /** Reads the next token from the source and returns its token type.

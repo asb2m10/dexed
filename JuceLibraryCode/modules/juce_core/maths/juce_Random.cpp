@@ -38,6 +38,16 @@ Random::~Random() noexcept
 
 void Random::setSeed (const int64 newSeed) noexcept
 {
+    if (this == &getSystemRandom())
+    {
+        // Resetting the system Random risks messing up
+        // JUCE's internal state. If you need a predictable
+        // stream of random numbers you should use a local
+        // Random object.
+        jassertfalse;
+        return;
+    }
+
     seed = newSeed;
 }
 
@@ -48,7 +58,7 @@ void Random::combineSeed (const int64 seedValue) noexcept
 
 void Random::setSeedRandomly()
 {
-    static int64 globalSeed = 0;
+    static std::atomic<int64> globalSeed { 0 };
 
     combineSeed (globalSeed ^ (int64) (pointer_sized_int) this);
     combineSeed (Time::getMillisecondCounter());
@@ -151,13 +161,17 @@ void Random::fillBitsRandomly (BigInteger& arrayToChange, int startBit, int numB
         arrayToChange.setBit (startBit + numBits, nextBool());
 }
 
+
+//==============================================================================
 //==============================================================================
 #if JUCE_UNIT_TESTS
 
 class RandomTests  : public UnitTest
 {
 public:
-    RandomTests() : UnitTest ("Random", "Maths") {}
+    RandomTests()
+        : UnitTest ("Random", UnitTestCategories::maths)
+    {}
 
     void runTest() override
     {

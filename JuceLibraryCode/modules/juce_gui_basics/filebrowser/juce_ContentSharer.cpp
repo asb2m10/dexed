@@ -44,7 +44,7 @@ public:
         startThread();
     }
 
-    ~PrepareImagesThread()
+    ~PrepareImagesThread() override
     {
         signalThreadShouldExit();
         waitForThreadToExit (10000);
@@ -63,7 +63,7 @@ private:
             if (! tempFile.create().wasOk())
                 break;
 
-            ScopedPointer<FileOutputStream> outputStream = tempFile.createOutputStream();
+            std::unique_ptr<FileOutputStream> outputStream (tempFile.createOutputStream());
 
             if (outputStream == nullptr)
                 break;
@@ -82,7 +82,7 @@ private:
 
     ContentSharer& owner;
     const Array<Image> images;
-    ScopedPointer<ImageFileFormat> imageFileFormat;
+    std::unique_ptr<ImageFileFormat> imageFileFormat;
     String extension;
 };
 
@@ -98,7 +98,7 @@ public:
         startThread();
     }
 
-    ~PrepareDataThread()
+    ~PrepareDataThread() override
     {
         signalThreadShouldExit();
         waitForThreadToExit (10000);
@@ -111,9 +111,7 @@ private:
 
         if (tempFile.create().wasOk())
         {
-            ScopedPointer<FileOutputStream> outputStream = tempFile.createOutputStream();
-
-            if (outputStream != nullptr)
+            if (auto outputStream = std::unique_ptr<FileOutputStream> (tempFile.createOutputStream()))
             {
                 size_t pos = 0;
                 size_t totalSize = data.getSize();
@@ -154,7 +152,7 @@ ContentSharer::ContentSharer() {}
 ContentSharer::~ContentSharer() { clearSingletonInstance(); }
 
 void ContentSharer::shareFiles (const Array<URL>& files,
-                                std::function<void (bool, const String&)> callbackToUse)
+                                std::function<void(bool, const String&)> callbackToUse)
 {
   #if JUCE_IOS || JUCE_ANDROID
     startNewShare (callbackToUse);
@@ -171,7 +169,7 @@ void ContentSharer::shareFiles (const Array<URL>& files,
 }
 
 #if JUCE_IOS || JUCE_ANDROID
-void ContentSharer::startNewShare (std::function<void (bool, const String&)> callbackToUse)
+void ContentSharer::startNewShare (std::function<void(bool, const String&)> callbackToUse)
 {
     // You should not start another sharing operation before the previous one is finished.
     // Forcibly stopping a previous sharing operation is rarely a good idea!
@@ -185,14 +183,14 @@ void ContentSharer::startNewShare (std::function<void (bool, const String&)> cal
 
     // You need to pass a valid callback.
     jassert (callbackToUse);
-    callback = static_cast<std::function<void (bool, const String&)>&&> (callbackToUse);
+    callback = std::move (callbackToUse);
 
     pimpl.reset (createPimpl());
 }
 #endif
 
 void ContentSharer::shareText (const String& text,
-                               std::function<void (bool, const String&)> callbackToUse)
+                               std::function<void(bool, const String&)> callbackToUse)
 {
   #if JUCE_IOS || JUCE_ANDROID
     startNewShare (callbackToUse);
@@ -209,12 +207,12 @@ void ContentSharer::shareText (const String& text,
 }
 
 void ContentSharer::shareImages (const Array<Image>& images,
-                                 std::function<void (bool, const String&)> callbackToUse,
+                                 std::function<void(bool, const String&)> callbackToUse,
                                  ImageFileFormat* imageFileFormatToUse)
 {
   #if JUCE_IOS || JUCE_ANDROID
     startNewShare (callbackToUse);
-    prepareImagesThread = new PrepareImagesThread (*this, images, imageFileFormatToUse);
+    prepareImagesThread.reset (new PrepareImagesThread (*this, images, imageFileFormatToUse));
   #else
     ignoreUnused (images, imageFileFormatToUse);
 
@@ -242,11 +240,11 @@ void ContentSharer::filesToSharePrepared()
 #endif
 
 void ContentSharer::shareData (const MemoryBlock& mb,
-                               std::function<void (bool, const String&)> callbackToUse)
+                               std::function<void(bool, const String&)> callbackToUse)
 {
   #if JUCE_IOS || JUCE_ANDROID
     startNewShare (callbackToUse);
-    prepareDataThread = new PrepareDataThread (*this, mb);
+    prepareDataThread.reset (new PrepareDataThread (*this, mb));
   #else
     ignoreUnused (mb);
 
@@ -259,15 +257,17 @@ void ContentSharer::sharingFinished (bool succeeded, const String& errorDescript
 {
     deleteTemporaryFiles();
 
-    std::function<void (bool, String)> cb;
+    std::function<void(bool, String)> cb;
     std::swap (cb, callback);
+
+    String error (errorDescription);
 
   #if JUCE_IOS || JUCE_ANDROID
     pimpl.reset();
   #endif
 
     if (cb)
-        cb (succeeded, errorDescription);
+        cb (succeeded, error);
 }
 
 void ContentSharer::deleteTemporaryFiles()

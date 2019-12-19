@@ -30,9 +30,9 @@ namespace juce
 // This is an AudioTransportSource which will own it's assigned source
 struct AudioSourceOwningTransportSource  : public AudioTransportSource
 {
-    AudioSourceOwningTransportSource (PositionableAudioSource* s, double sampleRate)  : source (s)
+    AudioSourceOwningTransportSource (PositionableAudioSource* s, double sr)  : source (s)
     {
-        AudioTransportSource::setSource (s, 0, nullptr, sampleRate);
+        AudioTransportSource::setSource (s, 0, nullptr, sr);
     }
 
     ~AudioSourceOwningTransportSource()
@@ -41,7 +41,7 @@ struct AudioSourceOwningTransportSource  : public AudioTransportSource
     }
 
 private:
-    ScopedPointer<PositionableAudioSource> source;
+    std::unique_ptr<PositionableAudioSource> source;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioSourceOwningTransportSource)
 };
@@ -67,7 +67,7 @@ struct AutoRemovingTransportSource  : public AudioTransportSource,
         startTimerHz (10);
     }
 
-    ~AutoRemovingTransportSource()
+    ~AutoRemovingTransportSource() override
     {
         setSource (nullptr);
     }
