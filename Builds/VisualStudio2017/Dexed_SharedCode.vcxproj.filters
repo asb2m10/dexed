@@ -26,9 +26,6 @@
     <Filter Include="JUCE Modules\juce_audio_basics\buffers">
       <UniqueIdentifier>{5FCF559E-451A-CB1E-B177-A5DC5A0005BB}</UniqueIdentifier>
     </Filter>
-    <Filter Include="JUCE Modules\juce_audio_basics\effects">
-      <UniqueIdentifier>{31054003-EA72-6A9D-D650-56451D9820E6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="JUCE Modules\juce_audio_basics\midi">
       <UniqueIdentifier>{D78296AF-218E-B17E-7F8B-9D148601188D}</UniqueIdentifier>
     </Filter>
@@ -511,15 +508,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_FloatVectorOperations.cpp">
       <Filter>JUCE Modules\juce_audio_basics\buffers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_CatmullRomInterpolator.cpp">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_IIRFilter.cpp">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_LagrangeInterpolator.cpp">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\midi\juce_MidiBuffer.cpp">
       <Filter>JUCE Modules\juce_audio_basics\midi</Filter>
     </ClCompile>
@@ -560,9 +548,6 @@
       <Filter>JUCE Modules\juce_audio_basics\mpe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\mpe\juce_MPEValue.cpp">
-      <Filter>JUCE Modules\juce_audio_basics\mpe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\mpe\juce_MPEZone.cpp">
       <Filter>JUCE Modules\juce_audio_basics\mpe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_basics\mpe\juce_MPEZoneLayout.cpp">
@@ -626,9 +611,6 @@
       <Filter>JUCE Modules\juce_audio_devices\midi_io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_devices\midi_io\juce_MidiMessageCollector.cpp">
-      <Filter>JUCE Modules\juce_audio_devices\midi_io</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_devices\midi_io\juce_MidiOutput.cpp">
       <Filter>JUCE Modules\juce_audio_devices\midi_io</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_devices\native\juce_android_Audio.cpp">
@@ -1067,9 +1049,6 @@
       <Filter>JUCE Modules\juce_audio_processors\utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_processors\utilities\juce_AudioParameterInt.cpp">
-      <Filter>JUCE Modules\juce_audio_processors\utilities</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_processors\utilities\juce_AudioProcessorParameters.cpp">
       <Filter>JUCE Modules\juce_audio_processors\utilities</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_audio_processors\utilities\juce_AudioProcessorParameterWithID.cpp">
@@ -1927,9 +1906,6 @@
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\components\juce_ComponentListener.cpp">
       <Filter>JUCE Modules\juce_gui_basics\components</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\components\juce_Desktop.cpp">
-      <Filter>JUCE Modules\juce_gui_basics\components</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\components\juce_ModalComponentManager.cpp">
       <Filter>JUCE Modules\juce_gui_basics\components</Filter>
     </ClCompile>
@@ -2033,9 +2009,6 @@
       <Filter>JUCE Modules\juce_gui_basics\layout</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_GridItem.cpp">
-      <Filter>JUCE Modules\juce_gui_basics\layout</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_GridUnitTests.cpp">
       <Filter>JUCE Modules\juce_gui_basics\layout</Filter>
     </ClCompile>
     <ClCompile Include="..\..\JuceLibraryCode\modules\juce_gui_basics\layout\juce_GroupComponent.cpp">
@@ -2562,24 +2535,6 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\buffers\juce_FloatVectorOperations.h">
       <Filter>JUCE Modules\juce_audio_basics\buffers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_CatmullRomInterpolator.h">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_Decibels.h">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_IIRFilter.h">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_LagrangeInterpolator.h">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_LinearSmoothedValue.h">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\effects\juce_Reverb.h">
-      <Filter>JUCE Modules\juce_audio_basics\effects</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\midi\juce_MidiBuffer.h">
       <Filter>JUCE Modules\juce_audio_basics\midi</Filter>
     </ClInclude>
@@ -2620,9 +2575,6 @@
       <Filter>JUCE Modules\juce_audio_basics\mpe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\mpe\juce_MPEValue.h">
-      <Filter>JUCE Modules\juce_audio_basics\mpe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\mpe\juce_MPEZone.h">
       <Filter>JUCE Modules\juce_audio_basics\mpe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_basics\mpe\juce_MPEZoneLayout.h">
@@ -2703,13 +2655,7 @@
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_devices\midi_io\juce_MidiDevices.h">
       <Filter>JUCE Modules\juce_audio_devices\midi_io</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_devices\midi_io\juce_MidiInput.h">
-      <Filter>JUCE Modules\juce_audio_devices\midi_io</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_devices\midi_io\juce_MidiMessageCollector.h">
-      <Filter>JUCE Modules\juce_audio_devices\midi_io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_devices\midi_io\juce_MidiOutput.h">
       <Filter>JUCE Modules\juce_audio_devices\midi_io</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_devices\native\juce_ios_Audio.h">
@@ -3376,9 +3322,6 @@
       <Filter>JUCE Modules\juce_audio_processors\format_types</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_VSTCommon.h">
-      <Filter>JUCE Modules\juce_audio_processors\format_types</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_VSTInterface.h">
       <Filter>JUCE Modules\juce_audio_processors\format_types</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_audio_processors\format_types\juce_VSTMidiEventList.h">
@@ -4231,9 +4174,6 @@
       <Filter>JUCE Modules\juce_gui_basics\components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\components\juce_ComponentListener.h">
-      <Filter>JUCE Modules\juce_gui_basics\components</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\components\juce_Desktop.h">
       <Filter>JUCE Modules\juce_gui_basics\components</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\modules\juce_gui_basics\components\juce_ModalComponentManager.h">

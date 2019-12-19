@@ -2,17 +2,17 @@
 
 <JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="1.0.0"
               bundleIdentifier="com.digitalsuburban.Dexed" includeBinaryInAppConfig="1"
-              buildVST="1" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
+              buildVST="0" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
               pluginManufacturer="Digital Suburban" pluginManufacturerCode="DGSB"
               pluginCode="Dexd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
               pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
               aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="2" jucerVersion="5.4.5"
-              companyName="Digital Suburban" buildVST3="0" buildRTAS="0" buildAAX="0"
+              companyName="Digital Suburban" buildVST3="1" buildRTAS="0" buildAAX="0"
               pluginManufacturerEmail="support@yourcompany.com" buildAUv3="0"
               pluginIsMidiEffectPlugin="0" displaySplashScreen="0" reportAppUsage="0"
               splashScreenColour="Dark" buildStandalone="1" enableIAA="0" cppLanguageStandard="latest"
-              companyCopyright="Digital Suburban" pluginFormats="buildVST,buildAU,buildStandalone"
+              companyCopyright="Digital Suburban" pluginFormats="buildAU,buildStandalone,buildVST3"
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn,pluginProducesMidiOut">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
@@ -209,7 +209,7 @@
                JUCE_USE_MP3AUDIOFORMAT="0" JUCE_USE_LAME_AUDIO_FORMAT="0" JUCE_USE_WINDOWS_MEDIA_FORMAT="0"
                JUCE_WEB_BROWSER="0" JUCE_ASIO="0" JUCE_WASAPI="1" JUCE_WASAPI_EXCLUSIVE="0"
                JUCE_DIRECTSOUND="0" JUCE_ALSA="1" JUCE_JACK="0" JUCE_USE_ANDROID_OPENSLES="0"
-               JUCE_PLUGINHOST_VST="1" JUCE_PLUGINHOST_VST3="0" JUCE_PLUGINHOST_AU="1"
+               JUCE_PLUGINHOST_VST="0" JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="1"
                JUCE_USE_CDREADER="0" JUCE_USE_CDBURNER="0" JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES="1"/>
   <LIVE_SETTINGS>
     <OSX/>
