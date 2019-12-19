@@ -20,7 +20,7 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Changelog
 ---------
 #### Version 0.9.5
-Added VST3 support
+* Added VST3 support
 
 #### Version 0.9.4HF1
 * Fixed sysex messages with unwanted pitch bend
