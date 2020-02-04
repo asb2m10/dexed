@@ -125,45 +125,47 @@
                        targetName="Dexed"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="SpSpb4" bigIcon="SpSpb4">
+    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="SpSpb4" bigIcon="SpSpb4"
+               vst3Folder="libs/vst3sdk">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
                        osxCompatibility="10.10 SDK" osxArchitecture="64BitIntel" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Dexed"
-                       osxSDK="10.10 SDK" osxCompatibility="10.7 SDK" osxArchitecture="64BitUniversal"
+                       osxSDK="10.10 SDK" osxCompatibility="10.7 SDK" osxArchitecture="64BitIntel"
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.1/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"
-            IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4">
+            IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4"
+            vst3Folder="libs/vst3sdk">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
@@ -175,42 +177,43 @@
                        useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.0/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
       </MODULEPATHS>
     </VS2017>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"
             useGlobalPath="1"/>
-    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_USE_FLAC="0" JUCE_USE_OGGVORBIS="0"
                JUCE_USE_MP3AUDIOFORMAT="0" JUCE_USE_LAME_AUDIO_FORMAT="0" JUCE_USE_WINDOWS_MEDIA_FORMAT="0"
                JUCE_WEB_BROWSER="0" JUCE_ASIO="0" JUCE_WASAPI="1" JUCE_WASAPI_EXCLUSIVE="0"
                JUCE_DIRECTSOUND="0" JUCE_ALSA="1" JUCE_JACK="0" JUCE_USE_ANDROID_OPENSLES="0"
                JUCE_PLUGINHOST_VST="0" JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="1"
-               JUCE_USE_CDREADER="0" JUCE_USE_CDBURNER="0" JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES="1"/>
+               JUCE_VST3_CAN_REPLACE_VST2="0" JUCE_USE_CDREADER="0" JUCE_USE_CDBURNER="0"
+               JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES="1"/>
   <LIVE_SETTINGS>
     <OSX/>
     <LINUX/>

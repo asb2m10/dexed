@@ -7,3 +7,8 @@ Builds/VisualStudio2017/Dexed.vcxproj.filters
 Builds/VisualStudio2017/
 .vs/
 *.exe
+
+JuceLibraryCode/
+Builds/
+assets/
+products/
