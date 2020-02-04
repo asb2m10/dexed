@@ -318,7 +318,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 368, y = 96, width = 276, height = 23;
+        int x = 368, y = 56, width = 276, height = 23;
         String text (TRANS("Foot"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -330,7 +330,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 368, y = 56, width = 276, height = 23;
+        int x = 368, y = 96, width = 276, height = 23;
         String text (TRANS("Breath"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -343,7 +343,7 @@ void ParamDialog::paint (Graphics& g)
 
     {
         int x = 368, y = 136, width = 276, height = 23;
-        String text (TRANS("After Touch"));
+        String text (TRANS("Aftertouch"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
