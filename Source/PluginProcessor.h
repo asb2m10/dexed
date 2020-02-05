@@ -240,6 +240,8 @@ public :
 
     std::shared_ptr<TuningState> synthTuningState;
     void applySCLTuning();
+    void retuneToStandard();
+    void resetTuning(std::shared_ptr<TuningState> t);
     
 private:
     //==============================================================================

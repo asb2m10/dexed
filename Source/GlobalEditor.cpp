@@ -658,6 +658,9 @@ void GlobalEditor::mouseDown(const MouseEvent &e) {
         case 2:
             processor->applySCLTuning();
             break;
+        case 4:
+            processor->retuneToStandard();
+            break;
         default:
             break;
         }

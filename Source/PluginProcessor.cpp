@@ -701,6 +701,19 @@ void dexed_trace(const char *source, const char *fmt, ...) {
     Logger::writeToLog(dest);
 }
 
+void DexedAudioProcessor::resetTuning(std::shared_ptr<TuningState> t)
+{
+    synthTuningState = t;
+    for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+        if( voices[i].dx7_note != nullptr )
+            voices[i].dx7_note->tuning_state_ = synthTuningState;
+}
+
+void DexedAudioProcessor::retuneToStandard()
+{
+    resetTuning(createStandardTuning());
+}
+
 void DexedAudioProcessor::applySCLTuning() {
     FileChooser fc( "Please select an SCL File", File(), "*.scl" );
     if( fc.browseForFileToOpen() )
@@ -709,10 +722,6 @@ void DexedAudioProcessor::applySCLTuning() {
         std::string sclcontents = s.loadFileAsString().toStdString();
 
         auto t = createTuningFromSCLData( sclcontents );
-        synthTuningState = t;
-        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
-            if( voices[i].dx7_note != nullptr )
-                voices[i].dx7_note->tuning_state_ = synthTuningState;
-        
+        resetTuning(t);
     }
 }
