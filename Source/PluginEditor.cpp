@@ -369,3 +369,28 @@ void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
     ccListener.runModalLoop();
 }
 
+bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)
+{
+    if( files.size() != 1 ) return false;
+    
+    for( auto i = files.begin(); i != files.end(); ++i )
+    {
+        if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) )
+            return true;
+    }
+    return false;
+}
+
+void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, int y )
+{
+    if( files.size() != 1 ) return;
+    auto fn = files[0];
+    if( fn.endsWithIgnoreCase( ".scl" ) )
+    {
+        processor->applySCLTuning( File( fn ) );
+    }
+    if( fn.endsWithIgnoreCase( ".kbm" ) )
+    {
+        processor->applyKBMMapping( File( fn ) );
+    }
+}

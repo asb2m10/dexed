@@ -721,19 +721,23 @@ void DexedAudioProcessor::applySCLTuning() {
     if( fc.browseForFileToOpen() )
     {
         auto s = fc.getResult();
-        std::string sclcontents = s.loadFileAsString().toStdString();
-        currentSCLData = sclcontents;
-        
-        if( currentKBMData.size() < 1 )
-        {
-            auto t = createTuningFromSCLData( sclcontents );
-            resetTuning(t);
-        }
-        else
-        {
-            auto t = createTuningFromSCLAndKBMData( sclcontents, currentKBMData );
-            resetTuning(t);
-        }
+        applySCLTuning(s);
+    }
+}
+
+void DexedAudioProcessor::applySCLTuning(File s) {
+    std::string sclcontents = s.loadFileAsString().toStdString();
+    currentSCLData = sclcontents;
+    
+    if( currentKBMData.size() < 1 )
+    {
+        auto t = createTuningFromSCLData( sclcontents );
+        resetTuning(t);
+    }
+    else
+    {
+        auto t = createTuningFromSCLAndKBMData( sclcontents, currentKBMData );
+        resetTuning(t);
     }
 }
 
@@ -742,18 +746,23 @@ void DexedAudioProcessor::applyKBMMapping() {
     if( fc.browseForFileToOpen() )
     {
         auto s = fc.getResult();
-        std::string kbmcontents = s.loadFileAsString().toStdString();
-        currentKBMData = kbmcontents;
-        
-        if( currentSCLData.size() < 1 )
-        {
-            auto t = createTuningFromKBMData( currentKBMData );
-            resetTuning(t);
-        }
-        else
-        {
-            auto t = createTuningFromSCLAndKBMData( currentSCLData, currentKBMData );
-            resetTuning(t);
-        }
+        applyKBMMapping(s);
+    }
+}
+
+void DexedAudioProcessor::applyKBMMapping( File s )
+{
+    std::string kbmcontents = s.loadFileAsString().toStdString();
+    currentKBMData = kbmcontents;
+    
+    if( currentSCLData.size() < 1 )
+    {
+        auto t = createTuningFromKBMData( currentKBMData );
+        resetTuning(t);
+    }
+    else
+    {
+        auto t = createTuningFromSCLAndKBMData( currentSCLData, currentKBMData );
+        resetTuning(t);
     }
 }

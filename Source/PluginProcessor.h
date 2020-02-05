@@ -241,6 +241,8 @@ public :
     std::shared_ptr<TuningState> synthTuningState;
     void applySCLTuning();
     void applyKBMMapping();
+    void applySCLTuning(File sclf);
+    void applyKBMMapping(File kbmf);
     void retuneToStandard();
     void resetTuning(std::shared_ptr<TuningState> t);
 

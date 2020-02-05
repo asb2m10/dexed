@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.4.5
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -33,39 +33,55 @@ ParamDialog::ParamDialog ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (pitchRange = new Slider ("pitchRange"));
+    pitchRange.reset (new Slider ("pitchRange"));
+    addAndMakeVisible (pitchRange.get());
     pitchRange->setRange (0, 12, 1);
     pitchRange->setSliderStyle (Slider::RotaryVerticalDrag);
     pitchRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     pitchRange->addListener (this);
 
-    addAndMakeVisible (pitchStep = new Slider ("pitchStep"));
+    pitchRange->setBounds (264, 16, 72, 24);
+
+    pitchStep.reset (new Slider ("pitchStep"));
+    addAndMakeVisible (pitchStep.get());
     pitchStep->setRange (0, 12, 1);
     pitchStep->setSliderStyle (Slider::RotaryVerticalDrag);
     pitchStep->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     pitchStep->addListener (this);
 
-    addAndMakeVisible (sysexIn = new ComboBox ("sysexIn"));
+    pitchStep->setBounds (264, 56, 72, 24);
+
+    sysexIn.reset (new ComboBox ("sysexIn"));
+    addAndMakeVisible (sysexIn.get());
     sysexIn->setEditableText (false);
     sysexIn->setJustificationType (Justification::centredLeft);
     sysexIn->setTextWhenNothingSelected (String());
     sysexIn->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexIn->addListener (this);
 
-    addAndMakeVisible (sysexOut = new ComboBox ("sysexOut"));
+    sysexIn->setBounds (104, 224, 224, 24);
+
+    sysexOut.reset (new ComboBox ("sysexOut"));
+    addAndMakeVisible (sysexOut.get());
     sysexOut->setEditableText (false);
     sysexOut->setJustificationType (Justification::centredLeft);
     sysexOut->setTextWhenNothingSelected (String());
     sysexOut->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexOut->addListener (this);
 
-    addAndMakeVisible (sysexChl = new Slider ("sysexChl"));
+    sysexOut->setBounds (104, 264, 224, 24);
+
+    sysexChl.reset (new Slider ("sysexChl"));
+    addAndMakeVisible (sysexChl.get());
     sysexChl->setRange (1, 16, 1);
     sysexChl->setSliderStyle (Slider::RotaryVerticalDrag);
     sysexChl->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     sysexChl->addListener (this);
 
-    addAndMakeVisible (engineReso = new ComboBox ("new combo box"));
+    sysexChl->setBounds (264, 304, 72, 24);
+
+    engineReso.reset (new ComboBox ("new combo box"));
+    addAndMakeVisible (engineReso.get());
     engineReso->setEditableText (false);
     engineReso->setJustificationType (Justification::centredLeft);
     engineReso->setTextWhenNothingSelected (String());
@@ -75,80 +91,154 @@ ParamDialog::ParamDialog ()
     engineReso->addItem (TRANS("OPL Series"), 3);
     engineReso->addListener (this);
 
-    addAndMakeVisible (showKeyboard = new ToggleButton ("showKeyboard"));
+    engineReso->setBounds (160, 156, 168, 24);
+
+    showKeyboard.reset (new ToggleButton ("showKeyboard"));
+    addAndMakeVisible (showKeyboard.get());
     showKeyboard->setButtonText (String());
 
-    addAndMakeVisible (whlRange = new Slider ("whlRange"));
+    showKeyboard->setBounds (264, 96, 56, 24);
+
+    whlRange.reset (new Slider ("whlRange"));
+    addAndMakeVisible (whlRange.get());
     whlRange->setRange (0, 99, 1);
     whlRange->setSliderStyle (Slider::RotaryVerticalDrag);
     whlRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     whlRange->addListener (this);
 
-    addAndMakeVisible (ftRange = new Slider ("ftRange"));
+    whlRange->setBounds (448, 16, 72, 24);
+
+    ftRange.reset (new Slider ("ftRange"));
+    addAndMakeVisible (ftRange.get());
     ftRange->setRange (0, 99, 1);
     ftRange->setSliderStyle (Slider::RotaryVerticalDrag);
     ftRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     ftRange->addListener (this);
 
-    addAndMakeVisible (brRange = new Slider ("brRange"));
+    ftRange->setBounds (448, 56, 72, 24);
+
+    brRange.reset (new Slider ("brRange"));
+    addAndMakeVisible (brRange.get());
     brRange->setRange (0, 99, 1);
     brRange->setSliderStyle (Slider::RotaryVerticalDrag);
     brRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     brRange->addListener (this);
 
-    addAndMakeVisible (atRange = new Slider ("atRange"));
+    brRange->setBounds (448, 96, 72, 24);
+
+    atRange.reset (new Slider ("atRange"));
+    addAndMakeVisible (atRange.get());
     atRange->setRange (0, 99, 1);
     atRange->setSliderStyle (Slider::RotaryVerticalDrag);
     atRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     atRange->addListener (this);
 
-    addAndMakeVisible (whlEg = new ToggleButton ("whlEg"));
+    atRange->setBounds (448, 136, 72, 24);
+
+    whlEg.reset (new ToggleButton ("whlEg"));
+    addAndMakeVisible (whlEg.get());
     whlEg->setButtonText (String());
     whlEg->addListener (this);
 
-    addAndMakeVisible (ftEg = new ToggleButton ("ftEg"));
+    whlEg->setBounds (640, 16, 56, 24);
+
+    ftEg.reset (new ToggleButton ("ftEg"));
+    addAndMakeVisible (ftEg.get());
     ftEg->setButtonText (String());
     ftEg->addListener (this);
 
-    addAndMakeVisible (brEg = new ToggleButton ("brEg"));
+    ftEg->setBounds (640, 56, 56, 24);
+
+    brEg.reset (new ToggleButton ("brEg"));
+    addAndMakeVisible (brEg.get());
     brEg->setButtonText (String());
     brEg->addListener (this);
 
-    addAndMakeVisible (atEg = new ToggleButton ("atEg"));
+    brEg->setBounds (640, 96, 56, 24);
+
+    atEg.reset (new ToggleButton ("atEg"));
+    addAndMakeVisible (atEg.get());
     atEg->setButtonText (String());
     atEg->addListener (this);
 
-    addAndMakeVisible (whlAmp = new ToggleButton ("whlAmp"));
+    atEg->setBounds (640, 136, 56, 24);
+
+    whlAmp.reset (new ToggleButton ("whlAmp"));
+    addAndMakeVisible (whlAmp.get());
     whlAmp->setButtonText (String());
     whlAmp->addListener (this);
 
-    addAndMakeVisible (ftAmp = new ToggleButton ("ftAmp"));
+    whlAmp->setBounds (584, 16, 56, 24);
+
+    ftAmp.reset (new ToggleButton ("ftAmp"));
+    addAndMakeVisible (ftAmp.get());
     ftAmp->setButtonText (String());
     ftAmp->addListener (this);
 
-    addAndMakeVisible (brAmp = new ToggleButton ("brAmp"));
+    ftAmp->setBounds (584, 56, 56, 24);
+
+    brAmp.reset (new ToggleButton ("brAmp"));
+    addAndMakeVisible (brAmp.get());
     brAmp->setButtonText (String());
     brAmp->addListener (this);
 
-    addAndMakeVisible (atAmp = new ToggleButton ("atAmp"));
+    brAmp->setBounds (584, 96, 56, 24);
+
+    atAmp.reset (new ToggleButton ("atAmp"));
+    addAndMakeVisible (atAmp.get());
     atAmp->setButtonText (String());
     atAmp->addListener (this);
 
-    addAndMakeVisible (whlPitch = new ToggleButton ("whlPitch"));
+    atAmp->setBounds (584, 136, 56, 24);
+
+    whlPitch.reset (new ToggleButton ("whlPitch"));
+    addAndMakeVisible (whlPitch.get());
     whlPitch->setButtonText (String());
     whlPitch->addListener (this);
 
-    addAndMakeVisible (ftPitch = new ToggleButton ("ftPitch"));
+    whlPitch->setBounds (528, 16, 56, 24);
+
+    ftPitch.reset (new ToggleButton ("ftPitch"));
+    addAndMakeVisible (ftPitch.get());
     ftPitch->setButtonText (String());
     ftPitch->addListener (this);
 
-    addAndMakeVisible (brPitch = new ToggleButton ("brPitch"));
+    ftPitch->setBounds (528, 56, 56, 24);
+
+    brPitch.reset (new ToggleButton ("brPitch"));
+    addAndMakeVisible (brPitch.get());
     brPitch->setButtonText (String());
     brPitch->addListener (this);
 
-    addAndMakeVisible (atPitch = new ToggleButton ("atPitch"));
+    brPitch->setBounds (528, 96, 56, 24);
+
+    atPitch.reset (new ToggleButton ("atPitch"));
+    addAndMakeVisible (atPitch.get());
     atPitch->setButtonText (String());
     atPitch->addListener (this);
+
+    atPitch->setBounds (528, 136, 56, 24);
+
+    sclButton.reset (new TextButton ("scl button"));
+    addAndMakeVisible (sclButton.get());
+    sclButton->setButtonText (TRANS("Load SCL"));
+    sclButton->addListener (this);
+
+    sclButton->setBounds (456, 208, 72, 24);
+
+    kbmButton.reset (new TextButton ("kbm button"));
+    addAndMakeVisible (kbmButton.get());
+    kbmButton->setButtonText (TRANS("Load KBM"));
+    kbmButton->addListener (this);
+
+    kbmButton->setBounds (536, 208, 72, 24);
+
+    showTunButton.reset (new TextButton ("show tuning button"));
+    addAndMakeVisible (showTunButton.get());
+    showTunButton->setButtonText (TRANS("Show Tun"));
+    showTunButton->addListener (this);
+
+    showTunButton->setBounds (616, 208, 72, 24);
 
 
     //[UserPreSize]
@@ -204,6 +294,9 @@ ParamDialog::~ParamDialog()
     ftPitch = nullptr;
     brPitch = nullptr;
     atPitch = nullptr;
+    sclButton = nullptr;
+    kbmButton = nullptr;
+    showTunButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -389,6 +482,27 @@ void ParamDialog::paint (Graphics& g)
                     Justification::centredLeft, true);
     }
 
+    {
+        int x = 371, y = 194, width = 325, height = 1;
+        Colour fillColour = Colours::black;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.fillRect (x, y, width, height);
+    }
+
+    {
+        int x = 371, y = 210, width = 276, height = 25;
+        String text (TRANS("Tuning"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
     //[UserPaint] Add your own custom painting code here..
     if ( ! JUCEApplication::isStandaloneApp() ) {
         g.setColour (Colours::white);
@@ -411,29 +525,6 @@ void ParamDialog::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    pitchRange->setBounds (264, 16, 72, 24);
-    pitchStep->setBounds (264, 56, 72, 24);
-    sysexIn->setBounds (104, 224, 224, 24);
-    sysexOut->setBounds (104, 264, 224, 24);
-    sysexChl->setBounds (264, 304, 72, 24);
-    engineReso->setBounds (160, 156, 168, 24);
-    showKeyboard->setBounds (264, 96, 56, 24);
-    whlRange->setBounds (448, 16, 72, 24);
-    ftRange->setBounds (448, 56, 72, 24);
-    brRange->setBounds (448, 96, 72, 24);
-    atRange->setBounds (448, 136, 72, 24);
-    whlEg->setBounds (640, 16, 56, 24);
-    ftEg->setBounds (640, 56, 56, 24);
-    brEg->setBounds (640, 96, 56, 24);
-    atEg->setBounds (640, 136, 56, 24);
-    whlAmp->setBounds (584, 16, 56, 24);
-    ftAmp->setBounds (584, 56, 56, 24);
-    brAmp->setBounds (584, 96, 56, 24);
-    atAmp->setBounds (584, 136, 56, 24);
-    whlPitch->setBounds (528, 16, 56, 24);
-    ftPitch->setBounds (528, 56, 56, 24);
-    brPitch->setBounds (528, 96, 56, 24);
-    atPitch->setBounds (528, 136, 56, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -443,38 +534,38 @@ void ParamDialog::sliderValueChanged (Slider* sliderThatWasMoved)
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == pitchRange)
+    if (sliderThatWasMoved == pitchRange.get())
     {
         //[UserSliderCode_pitchRange] -- add your slider handling code here..
         //[/UserSliderCode_pitchRange]
     }
-    else if (sliderThatWasMoved == pitchStep)
+    else if (sliderThatWasMoved == pitchStep.get())
     {
         //[UserSliderCode_pitchStep] -- add your slider handling code here..
         pitchRange->setEnabled(pitchStep->getValue() == 0);
         //[/UserSliderCode_pitchStep]
     }
-    else if (sliderThatWasMoved == sysexChl)
+    else if (sliderThatWasMoved == sysexChl.get())
     {
         //[UserSliderCode_sysexChl] -- add your slider handling code here..
         //[/UserSliderCode_sysexChl]
     }
-    else if (sliderThatWasMoved == whlRange)
+    else if (sliderThatWasMoved == whlRange.get())
     {
         //[UserSliderCode_whlRange] -- add your slider handling code here..
         //[/UserSliderCode_whlRange]
     }
-    else if (sliderThatWasMoved == ftRange)
+    else if (sliderThatWasMoved == ftRange.get())
     {
         //[UserSliderCode_ftRange] -- add your slider handling code here..
         //[/UserSliderCode_ftRange]
     }
-    else if (sliderThatWasMoved == brRange)
+    else if (sliderThatWasMoved == brRange.get())
     {
         //[UserSliderCode_brRange] -- add your slider handling code here..
         //[/UserSliderCode_brRange]
     }
-    else if (sliderThatWasMoved == atRange)
+    else if (sliderThatWasMoved == atRange.get())
     {
         //[UserSliderCode_atRange] -- add your slider handling code here..
         //[/UserSliderCode_atRange]
@@ -489,17 +580,17 @@ void ParamDialog::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == sysexIn)
+    if (comboBoxThatHasChanged == sysexIn.get())
     {
         //[UserComboBoxCode_sysexIn] -- add your combo box handling code here..
         //[/UserComboBoxCode_sysexIn]
     }
-    else if (comboBoxThatHasChanged == sysexOut)
+    else if (comboBoxThatHasChanged == sysexOut.get())
     {
         //[UserComboBoxCode_sysexOut] -- add your combo box handling code here..
         //[/UserComboBoxCode_sysexOut]
     }
-    else if (comboBoxThatHasChanged == engineReso)
+    else if (comboBoxThatHasChanged == engineReso.get())
     {
         //[UserComboBoxCode_engineReso] -- add your combo box handling code here..
         //[/UserComboBoxCode_engineReso]
@@ -514,65 +605,80 @@ void ParamDialog::buttonClicked (Button* buttonThatWasClicked)
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == whlEg)
+    if (buttonThatWasClicked == whlEg.get())
     {
         //[UserButtonCode_whlEg] -- add your button handler code here..
         //[/UserButtonCode_whlEg]
     }
-    else if (buttonThatWasClicked == ftEg)
+    else if (buttonThatWasClicked == ftEg.get())
     {
         //[UserButtonCode_ftEg] -- add your button handler code here..
         //[/UserButtonCode_ftEg]
     }
-    else if (buttonThatWasClicked == brEg)
+    else if (buttonThatWasClicked == brEg.get())
     {
         //[UserButtonCode_brEg] -- add your button handler code here..
         //[/UserButtonCode_brEg]
     }
-    else if (buttonThatWasClicked == atEg)
+    else if (buttonThatWasClicked == atEg.get())
     {
         //[UserButtonCode_atEg] -- add your button handler code here..
         //[/UserButtonCode_atEg]
     }
-    else if (buttonThatWasClicked == whlAmp)
+    else if (buttonThatWasClicked == whlAmp.get())
     {
         //[UserButtonCode_whlAmp] -- add your button handler code here..
         //[/UserButtonCode_whlAmp]
     }
-    else if (buttonThatWasClicked == ftAmp)
+    else if (buttonThatWasClicked == ftAmp.get())
     {
         //[UserButtonCode_ftAmp] -- add your button handler code here..
         //[/UserButtonCode_ftAmp]
     }
-    else if (buttonThatWasClicked == brAmp)
+    else if (buttonThatWasClicked == brAmp.get())
     {
         //[UserButtonCode_brAmp] -- add your button handler code here..
         //[/UserButtonCode_brAmp]
     }
-    else if (buttonThatWasClicked == atAmp)
+    else if (buttonThatWasClicked == atAmp.get())
     {
         //[UserButtonCode_atAmp] -- add your button handler code here..
         //[/UserButtonCode_atAmp]
     }
-    else if (buttonThatWasClicked == whlPitch)
+    else if (buttonThatWasClicked == whlPitch.get())
     {
         //[UserButtonCode_whlPitch] -- add your button handler code here..
         //[/UserButtonCode_whlPitch]
     }
-    else if (buttonThatWasClicked == ftPitch)
+    else if (buttonThatWasClicked == ftPitch.get())
     {
         //[UserButtonCode_ftPitch] -- add your button handler code here..
         //[/UserButtonCode_ftPitch]
     }
-    else if (buttonThatWasClicked == brPitch)
+    else if (buttonThatWasClicked == brPitch.get())
     {
         //[UserButtonCode_brPitch] -- add your button handler code here..
         //[/UserButtonCode_brPitch]
     }
-    else if (buttonThatWasClicked == atPitch)
+    else if (buttonThatWasClicked == atPitch.get())
     {
         //[UserButtonCode_atPitch] -- add your button handler code here..
         //[/UserButtonCode_atPitch]
+    }
+    else if (buttonThatWasClicked == sclButton.get())
+    {
+        //[UserButtonCode_sclButton] -- add your button handler code here..
+        //[/UserButtonCode_sclButton]
+    }
+    else if (buttonThatWasClicked == kbmButton.get())
+    {
+        //[UserButtonCode_kbmButton] -- add your button handler code here..
+        //[/UserButtonCode_kbmButton]
+    }
+    else if (buttonThatWasClicked == showTunButton.get())
+    {
+        //[UserButtonCode_showTunButton] -- add your button handler code here..
+        //[/UserButtonCode_showTunButton]
     }
 
     //[UserbuttonClicked_Post]
@@ -680,54 +786,58 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="710" initialHeight="350">
   <BACKGROUND backgroundColour="ff3c322f">
     <TEXT pos="20 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="20 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="20 304 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="20 156 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <RECT pos="22 138 306 1" fill="solid: ff000000" hasStroke="0"/>
     <RECT pos="22 195 306 1" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="20 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <RECT pos="352 11 1 325" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="368 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Wheel"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="368 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Foot"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="368 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Breath"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="368 136 276 23" fill="solid: ffffffff" hasStroke="0" text="After Touch"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="533 163 48 23" fill="solid: ffffffff" hasStroke="0" text="PITCH"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="589 163 48 23" fill="solid: ffffffff" hasStroke="0" text="AMP"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
     <TEXT pos="645 163 48 23" fill="solid: ffffffff" hasStroke="0" text="EG BIAS"
-          fontname="Default font" fontsize="15" kerning="0" bold="0" italic="0"
-          justification="33"/>
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <RECT pos="371 194 325 1" fill="solid: ff000000" hasStroke="0"/>
+    <TEXT pos="371 210 276 25" fill="solid: ffffffff" hasStroke="0" text="Tuning"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
-          virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0"
-          max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0.0"
+          max="12.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchStep" id="b86af4b792e768ca" memberName="pitchStep"
-          virtualName="" explicitFocusOrder="0" pos="264 56 72 24" min="0"
-          max="12" int="1" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="264 56 72 24" min="0.0"
+          max="12.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
             explicitFocusOrder="0" pos="104 224 224 24" editable="0" layout="33"
@@ -736,9 +846,10 @@ BEGIN_JUCER_METADATA
             explicitFocusOrder="0" pos="104 264 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
-          explicitFocusOrder="0" pos="264 304 72 24" min="1" max="16" int="1"
-          style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="264 304 72 24" min="1.0" max="16.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
   <COMBOBOX name="new combo box" id="4087ff978c3d9e8d" memberName="engineReso"
             virtualName="" explicitFocusOrder="0" pos="160 156 168 24" editable="0"
             layout="33" items="Modern (24-bit)&#10;Mark I&#10;OPL Series"
@@ -747,21 +858,25 @@ BEGIN_JUCER_METADATA
                 virtualName="" explicitFocusOrder="0" pos="264 96 56 24" buttonText=""
                 connectedEdges="0" needsCallback="0" radioGroupId="0" state="0"/>
   <SLIDER name="whlRange" id="3d6522f5f581e580" memberName="whlRange" virtualName=""
-          explicitFocusOrder="0" pos="448 16 72 24" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="448 16 72 24" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
   <SLIDER name="ftRange" id="cf553f74c3fb0d12" memberName="ftRange" virtualName=""
-          explicitFocusOrder="0" pos="448 56 72 24" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="448 56 72 24" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
   <SLIDER name="brRange" id="c4aa6814f75016a7" memberName="brRange" virtualName=""
-          explicitFocusOrder="0" pos="448 96 72 24" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="448 96 72 24" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
   <SLIDER name="atRange" id="d0aa1ebb24284577" memberName="atRange" virtualName=""
-          explicitFocusOrder="0" pos="448 136 72 24" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="TextBoxLeft" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="448 136 72 24" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
   <TOGGLEBUTTON name="whlEg" id="d8242ae592c912a" memberName="whlEg" virtualName=""
                 explicitFocusOrder="0" pos="640 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
@@ -798,6 +913,15 @@ BEGIN_JUCER_METADATA
   <TOGGLEBUTTON name="atPitch" id="43805c6a4673e291" memberName="atPitch" virtualName=""
                 explicitFocusOrder="0" pos="528 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
+  <TEXTBUTTON name="scl button" id="7a6b689f406ae37d" memberName="sclButton"
+              virtualName="" explicitFocusOrder="0" pos="456 208 72 24" buttonText="Load SCL"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="kbm button" id="181d5b67bc897076" memberName="kbmButton"
+              virtualName="" explicitFocusOrder="0" pos="536 208 72 24" buttonText="Load KBM"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="show tuning button" id="565d5c630087f71" memberName="showTunButton"
+              virtualName="" explicitFocusOrder="0" pos="616 208 72 24" buttonText="Show Tun"
+              connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
@@ -807,3 +931,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+
