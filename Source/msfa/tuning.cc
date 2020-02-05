@@ -510,9 +510,31 @@ struct SCLAndKBMTuningState : public TuningState {
 
 std::shared_ptr<TuningState> createTuningFromSCLData( const std::string &scl )
 {
+    std::cout << "SCL ONly" << std::endl;
+
     auto k = parseSCLData(scl);
-    
     auto res = std::make_shared<SCLAndKBMTuningState>();
     res->retuneTo(k);
+    return res;
+}
+
+std::shared_ptr<TuningState> createTuningFromKBMData( const std::string &kbm )
+{
+    std::cout << "KBM Only" << std::endl;
+
+    auto k = parseKBMData(kbm);
+    auto res = std::make_shared<SCLAndKBMTuningState>();
+    res->retuneTo(Scale::evenTemperament12NoteScale(), k);
+    return res;
+}
+
+std::shared_ptr<TuningState> createTuningFromSCLAndKBMData( const std::string &sclData, const std::string &kbmData )
+{
+    std::cout << "SCL and KBM" << std::endl;
+
+    auto s = parseSCLData(sclData);
+    auto k = parseKBMData(kbmData);
+    auto res = std::make_shared<SCLAndKBMTuningState>();
+    res->retuneTo(s,k);
     return res;
 }

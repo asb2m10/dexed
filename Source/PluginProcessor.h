@@ -240,8 +240,12 @@ public :
 
     std::shared_ptr<TuningState> synthTuningState;
     void applySCLTuning();
+    void applyKBMMapping();
     void retuneToStandard();
     void resetTuning(std::shared_ptr<TuningState> t);
+
+    std::string currentSCLData = "";
+    std::string currentKBMData = "";
     
 private:
     //==============================================================================

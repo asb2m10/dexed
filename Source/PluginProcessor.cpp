@@ -711,6 +711,8 @@ void DexedAudioProcessor::resetTuning(std::shared_ptr<TuningState> t)
 
 void DexedAudioProcessor::retuneToStandard()
 {
+    currentSCLData = "";
+    currentKBMData = "";
     resetTuning(createStandardTuning());
 }
 
@@ -720,8 +722,38 @@ void DexedAudioProcessor::applySCLTuning() {
     {
         auto s = fc.getResult();
         std::string sclcontents = s.loadFileAsString().toStdString();
+        currentSCLData = sclcontents;
+        
+        if( currentKBMData.size() < 1 )
+        {
+            auto t = createTuningFromSCLData( sclcontents );
+            resetTuning(t);
+        }
+        else
+        {
+            auto t = createTuningFromSCLAndKBMData( sclcontents, currentKBMData );
+            resetTuning(t);
+        }
+    }
+}
 
-        auto t = createTuningFromSCLData( sclcontents );
-        resetTuning(t);
+void DexedAudioProcessor::applyKBMMapping() {
+    FileChooser fc( "Please select an KBM File", File(), "*.kbm" );
+    if( fc.browseForFileToOpen() )
+    {
+        auto s = fc.getResult();
+        std::string kbmcontents = s.loadFileAsString().toStdString();
+        currentKBMData = kbmcontents;
+        
+        if( currentSCLData.size() < 1 )
+        {
+            auto t = createTuningFromKBMData( currentKBMData );
+            resetTuning(t);
+        }
+        else
+        {
+            auto t = createTuningFromSCLAndKBMData( currentSCLData, currentKBMData );
+            resetTuning(t);
+        }
     }
 }

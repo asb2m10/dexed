@@ -15,7 +15,7 @@ public:
 std::shared_ptr<TuningState> createStandardTuning();
 
 std::shared_ptr<TuningState> createTuningFromSCLData( const std::string &sclData );
-// std::shared_ptr<TuningState> createTuningFromKBMData( const std::string &kbmData )
-// std::shared_ptr<TuningState> createTuningFromSCLAndKBMData( const std::string &sclData, const std::string &kbmData )
+std::shared_ptr<TuningState> createTuningFromKBMData( const std::string &kbmData );
+std::shared_ptr<TuningState> createTuningFromSCLAndKBMData( const std::string &sclData, const std::string &kbmData );
 
 #endif
