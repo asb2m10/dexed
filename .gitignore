@@ -12,3 +12,5 @@ JuceLibraryCode/
 Builds/
 assets/
 products/
+
+.DS_Store

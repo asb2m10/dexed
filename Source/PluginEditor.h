@@ -31,7 +31,8 @@
 //==============================================================================
 /**
 */
-class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer {
+class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer,
+                                   public FileDragAndDropTarget {
     MidiKeyboardComponent midiKeyboard;
     OperatorEditor operators[6];
     Colour background;
@@ -44,10 +45,10 @@ public:
     
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
-    void timerCallback();
+    virtual void timerCallback() override;
 
-    void paint (Graphics& g);
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged);
+    virtual void paint (Graphics& g) override;
+    virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void updateUI();
     void rebuildProgramCombobox();
     void loadCart(File file);
@@ -56,7 +57,11 @@ public:
     void storeProgram();
     void cartShow();
     void parmShow();
+    void tuningShow();
     void discoverMidiCC(Ctrl *ctrl);
+
+    virtual bool isInterestedInFileDrag (const StringArray &files) override;
+    virtual void filesDropped (const StringArray &files, int x, int y ) override;
 };
 
 

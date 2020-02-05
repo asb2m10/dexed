@@ -79,6 +79,8 @@
         <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
       </GROUP>
       <GROUP id="{CEBA9AF6-1C73-85F6-A187-56A246098441}" name="msfa">
+        <FILE id="xa8v2Z" name="tuning.cc" compile="1" resource="0" file="Source/msfa/tuning.cc"/>
+        <FILE id="hP1Glc" name="tuning.h" compile="0" resource="0" file="Source/msfa/tuning.h"/>
         <FILE id="wvG22S" name="freqlut.cc" compile="1" resource="0" file="Source/msfa/freqlut.cc"/>
         <FILE id="dulZMd" name="freqlut.h" compile="0" resource="0" file="Source/msfa/freqlut.h"/>
         <FILE id="BfOVi6" name="lfo.cc" compile="1" resource="0" file="Source/msfa/lfo.cc"/>
@@ -140,7 +142,7 @@
       </MODULEPATHS>
     </LINUX_MAKE>
     <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="SpSpb4" bigIcon="SpSpb4"
-               vst3Folder="libs/vst3sdk">
+               vst3Folder="libs/vst3sdk" extraCompilerFlags="-Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
                        osxCompatibility="10.10 SDK" osxArchitecture="64BitIntel" enablePluginBinaryCopyStep="1"/>

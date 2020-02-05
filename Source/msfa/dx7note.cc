@@ -22,14 +22,9 @@
 #include "exp2.h"
 #include "controllers.h"
 #include "dx7note.h"
+#include <iostream>
 
 const int FEEDBACK_BITDEPTH = 8;
-
-int32_t midinote_to_logfreq(int midinote) {
-    const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
-    const int step = (1 << 24) / 12;
-    return base + step * midinote;
-}
 
 const int32_t coarsemul[] = {
     -16777216, 0, 16777216, 26591258, 33554432, 38955489, 43368474, 47099600,
@@ -39,11 +34,11 @@ const int32_t coarsemul[] = {
     81503396, 82323963, 83117622
 };
 
-int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
+int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
     // TODO: pitch randomization
     int32_t logfreq;
     if (mode == 0) {
-        logfreq = midinote_to_logfreq(midinote);
+        logfreq = tuning_state_->midinote_to_logfreq(midinote);
         
         // could use more precision, closer enough for now. those numbers comes from my DX7
         double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
@@ -137,7 +132,7 @@ static const uint32_t ampmodsenstab[] = {
     0, 4342338, 7171437, 16777216
 };
 
-Dx7Note::Dx7Note() {
+Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts) : tuning_state_(ts) {
     for(int op=0;op<6;op++) {
         params_[op].phase = 0;
         params_[op].gain_out = 0;

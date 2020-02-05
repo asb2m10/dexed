@@ -90,6 +90,8 @@ public:
     int modwheel_cc;
     
     int masterTune;
+
+    bool transpose12AsScale = true;
     
     FmMod wheel;
     FmMod foot;

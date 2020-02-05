@@ -80,6 +80,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     Tanh::init();
     Sin::init();
 
+    synthTuningState = createStandardTuning();
+    
     lastStateSave = 0;
     currentNote = -1;
     engineType = -1;
@@ -132,7 +134,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     fx.init(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        voices[note].dx7_note = new Dx7Note;
+        voices[note].dx7_note = new Dx7Note(synthTuningState);
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
@@ -395,7 +397,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
         return;
     }
 
-    pitch += data[144] - 24;
+    pitch += tuningTranspositionShift();
     
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
@@ -442,7 +444,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
 }
 
 void DexedAudioProcessor::keyup(uint8_t pitch) {
-    pitch += data[144] - 24;
+    pitch += tuningTranspositionShift();
 
     int note;
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
@@ -480,6 +482,24 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
         voices[note].sustained = true;
     } else {
         voices[note].dx7_note->keyup();
+    }
+}
+
+int DexedAudioProcessor::tuningTranspositionShift()
+{
+    if( synthTuningState->is_standard_tuning() || ! controllers.transpose12AsScale )
+        return data[144] - 24;
+    else
+    {
+        int d144 = data[144];
+        if( d144 % 12 == 0 )
+        {
+            int oct = (d144 - 24) / 12;
+            int res = oct * synthTuningState->scale_length();
+            return res;
+        }
+        else
+            return data[144] - 24;
     }
 }
 
@@ -697,4 +717,78 @@ void dexed_trace(const char *source, const char *fmt, ...) {
     String dest;
     dest << source << " " << output;
     Logger::writeToLog(dest);
+}
+
+void DexedAudioProcessor::resetTuning(std::shared_ptr<TuningState> t)
+{
+    synthTuningState = t;
+    for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+        if( voices[i].dx7_note != nullptr )
+            voices[i].dx7_note->tuning_state_ = synthTuningState;
+}
+
+void DexedAudioProcessor::retuneToStandard()
+{
+    currentSCLData = "";
+    currentKBMData = "";
+    resetTuning(createStandardTuning());
+}
+
+void DexedAudioProcessor::applySCLTuning() {
+    FileChooser fc( "Please select an SCL File", File(), "*.scl" );
+    if( fc.browseForFileToOpen() )
+    {
+        auto s = fc.getResult();
+        applySCLTuning(s);
+    }
+}
+
+void DexedAudioProcessor::applySCLTuning(File s) {
+    std::string sclcontents = s.loadFileAsString().toStdString();
+    applySCLTuning(sclcontents);
+}
+
+void DexedAudioProcessor::applySCLTuning(std::string sclcontents) {
+    currentSCLData = sclcontents;
+    
+    if( currentKBMData.size() < 1 )
+    {
+        auto t = createTuningFromSCLData( sclcontents );
+        resetTuning(t);
+    }
+    else
+    {
+        auto t = createTuningFromSCLAndKBMData( sclcontents, currentKBMData );
+        resetTuning(t);
+    }
+}
+
+void DexedAudioProcessor::applyKBMMapping() {
+    FileChooser fc( "Please select an KBM File", File(), "*.kbm" );
+    if( fc.browseForFileToOpen() )
+    {
+        auto s = fc.getResult();
+        applyKBMMapping(s);
+    }
+}
+
+void DexedAudioProcessor::applyKBMMapping( File s )
+{
+    std::string kbmcontents = s.loadFileAsString().toStdString();
+    applyKBMMapping(kbmcontents);
+}
+
+void DexedAudioProcessor::applyKBMMapping(std::string kbmcontents) {
+    currentKBMData = kbmcontents;
+    
+    if( currentSCLData.size() < 1 )
+    {
+        auto t = createTuningFromKBMData( currentKBMData );
+        resetTuning(t);
+    }
+    else
+    {
+        auto t = createTuningFromSCLAndKBMData( currentSCLData, currentKBMData );
+        resetTuning(t);
+    }
 }

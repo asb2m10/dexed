@@ -644,8 +644,16 @@ void GlobalEditor::mouseDown(const MouseEvent &e) {
     if ( e.mods.isPopupMenu()) {
         PopupMenu popup;
         popup.addItem(1, "Send current program to DX7");
-        if ( popup.show() == 1 )
+
+        auto p = popup.show();
+        switch( p )
+        {
+        case 1:
            processor->sendCurrentSysexProgram();
+           break;
+        default:
+            break;
+        }
     }
 }
 //[/MiscUserCode]

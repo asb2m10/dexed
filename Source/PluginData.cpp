@@ -320,6 +320,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("masterTune", controllers.masterTune);
     //TRACE("saving opswitch %s", controllers.opSwitch);
     dexedState.setAttribute("opSwitch", controllers.opSwitch);
+    dexedState.setAttribute("transpose12AsScale", controllers.transpose12AsScale ? 1 : 0 );
     
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
@@ -330,6 +331,15 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("breathMod", mod_cfg);
     controllers.at.setConfig(mod_cfg);
     dexedState.setAttribute("aftertouchMod", mod_cfg);
+
+    if( currentSCLData.size() > 1 || currentKBMData.size() > 1 )
+    {
+        auto tuningx = dexedState.createNewChildElement("dexedTuning" );
+        auto sclx = tuningx->createNewChildElement("scl");
+        sclx->addTextElement(currentSCLData);
+        auto kbmx = tuningx->createNewChildElement("kbm");
+        kbmx->addTextElement(currentKBMData);
+    }
     
     if ( activeFileCartridge.exists() )
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
@@ -358,7 +368,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
 
     // used to LOAD plugin state
     std::unique_ptr<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
-    
+
     if (root == nullptr) {
         TRACE("unknown state format");
         return;
@@ -387,10 +397,33 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     setEngineType(root->getIntAttribute("engineType", 1));
     monoMode = root->getIntAttribute("monoMode", 0);
     controllers.masterTune = root->getIntAttribute("masterTune", 0);
+    controllers.transpose12AsScale = ( root->getIntAttribute("transpose12AsScale", 1) != 0 );
     
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
     if ( possibleCartridge.exists() )
         activeFileCartridge = possibleCartridge;
+
+    auto tuningParent = root->getChildByName( "dexedTuning" );
+    if( tuningParent )
+    {
+        auto sclx = tuningParent->getChildByName( "scl" );
+        auto kbmx = tuningParent->getChildByName( "kbm" );
+        std::string s = "";
+        if( sclx && sclx->getFirstChildElement() && sclx->getFirstChildElement()->isTextElement() )
+        {
+            s = sclx->getFirstChildElement()->getText().toStdString();
+            if( s.size() > 1 )
+                applySCLTuning(s);
+        }
+
+        std::string k = "";
+        if( kbmx && kbmx->getFirstChildElement() && kbmx->getFirstChildElement()->isTextElement() )
+        {
+            k = kbmx->getFirstChildElement()->getText().toStdString();
+            if( k.size() > 1 )
+                applyKBMMapping(k);
+        }
+    }
     
     XmlElement *dexedBlob = root->getChildByName("dexedBlob");
     if ( dexedBlob == NULL ) {
