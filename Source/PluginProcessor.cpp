@@ -80,6 +80,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     Tanh::init();
     Sin::init();
 
+    synthTuningState = createStandardTuning();
+    
     lastStateSave = 0;
     currentNote = -1;
     engineType = -1;
@@ -132,7 +134,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     fx.init(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        voices[note].dx7_note = new Dx7Note;
+        voices[note].dx7_note = new Dx7Note(synthTuningState);
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
@@ -697,4 +699,20 @@ void dexed_trace(const char *source, const char *fmt, ...) {
     String dest;
     dest << source << " " << output;
     Logger::writeToLog(dest);
+}
+
+void DexedAudioProcessor::applySCLTuning() {
+    FileChooser fc( "Please select an SCL File", File(), "*.scl" );
+    if( fc.browseForFileToOpen() )
+    {
+        auto s = fc.getResult();
+        std::string sclcontents = s.loadFileAsString().toStdString();
+
+        auto t = createTuningFromSCLData( sclcontents );
+        synthTuningState = t;
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+            if( voices[i].dx7_note != nullptr )
+                voices[i].dx7_note->tuning_state_ = synthTuningState;
+        
+    }
 }

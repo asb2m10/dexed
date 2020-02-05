@@ -28,6 +28,7 @@
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
+#include "msfa/tuning.h"
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
@@ -236,6 +237,10 @@ public :
     static File dexedCartDir;
     
     Value lastCCUsed;
+
+    std::shared_ptr<TuningState> synthTuningState;
+    void applySCLTuning();
+    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

@@ -644,8 +644,23 @@ void GlobalEditor::mouseDown(const MouseEvent &e) {
     if ( e.mods.isPopupMenu()) {
         PopupMenu popup;
         popup.addItem(1, "Send current program to DX7");
-        if ( popup.show() == 1 )
+        popup.addSeparator();
+        popup.addItem(2, "Apply SCL tuning" );
+        popup.addItem(3, "Apply KBM mapping" );
+        popup.addItem(4, "Return to standard tuning and mapping" );
+
+        auto p = popup.show();
+        switch( p )
+        {
+        case 1:
            processor->sendCurrentSysexProgram();
+           break;
+        case 2:
+            processor->applySCLTuning();
+            break;
+        default:
+            break;
+        }
     }
 }
 //[/MiscUserCode]
