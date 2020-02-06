@@ -330,6 +330,15 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("breathMod", mod_cfg);
     controllers.at.setConfig(mod_cfg);
     dexedState.setAttribute("aftertouchMod", mod_cfg);
+
+    if( currentSCLData.size() > 1 || currentKBMData.size() > 1 )
+    {
+        auto tuningx = dexedState.createNewChildElement("dexedTuning" );
+        auto sclx = tuningx->createNewChildElement("scl");
+        sclx->addTextElement(currentSCLData);
+        auto kbmx = tuningx->createNewChildElement("kbm");
+        kbmx->addTextElement(currentKBMData);
+    }
     
     if ( activeFileCartridge.exists() )
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
@@ -358,6 +367,8 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
 
     // used to LOAD plugin state
     std::unique_ptr<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
+
+    std::cout << "setStateInformation with XML\n" << root->toString() << std::endl;
     
     if (root == nullptr) {
         TRACE("unknown state format");
