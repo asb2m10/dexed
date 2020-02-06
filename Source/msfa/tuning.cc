@@ -11,7 +11,6 @@
 
 struct StandardTuning : public TuningState {
     StandardTuning() {
-        std::cout << "Initializing table" << std::endl;
         const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12) 
         const int step = (1 << 24) / 12;
         for( int mn = 0; mn < 128; ++mn )
@@ -341,7 +340,6 @@ KeyboardMapping KeyboardMapping::tuneA69To(double freq)
 ! Scale Degree
 0
 ! Mapping)KBM";
-   std::cout << oss.str() << std::endl;;
    return parseKBMData( oss.str() );
 }
 
@@ -510,8 +508,6 @@ struct SCLAndKBMTuningState : public TuningState {
 
 std::shared_ptr<TuningState> createTuningFromSCLData( const std::string &scl )
 {
-    std::cout << "SCL ONly" << std::endl;
-
     auto k = parseSCLData(scl);
     auto res = std::make_shared<SCLAndKBMTuningState>();
     res->retuneTo(k);
@@ -520,8 +516,6 @@ std::shared_ptr<TuningState> createTuningFromSCLData( const std::string &scl )
 
 std::shared_ptr<TuningState> createTuningFromKBMData( const std::string &kbm )
 {
-    std::cout << "KBM Only" << std::endl;
-
     auto k = parseKBMData(kbm);
     auto res = std::make_shared<SCLAndKBMTuningState>();
     res->retuneTo(Scale::evenTemperament12NoteScale(), k);
@@ -530,8 +524,6 @@ std::shared_ptr<TuningState> createTuningFromKBMData( const std::string &kbm )
 
 std::shared_ptr<TuningState> createTuningFromSCLAndKBMData( const std::string &sclData, const std::string &kbmData )
 {
-    std::cout << "SCL and KBM" << std::endl;
-
     auto s = parseSCLData(sclData);
     auto k = parseKBMData(kbmData);
     auto res = std::make_shared<SCLAndKBMTuningState>();

@@ -368,8 +368,6 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     // used to LOAD plugin state
     std::unique_ptr<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
 
-    std::cout << "setStateInformation with XML\n" << root->toString() << std::endl;
-    
     if (root == nullptr) {
         TRACE("unknown state format");
         return;
@@ -402,6 +400,28 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
     if ( possibleCartridge.exists() )
         activeFileCartridge = possibleCartridge;
+
+    auto tuningParent = root->getChildByName( "dexedTuning" );
+    if( tuningParent )
+    {
+        auto sclx = tuningParent->getChildByName( "scl" );
+        auto kbmx = tuningParent->getChildByName( "kbm" );
+        std::string s = "";
+        if( sclx && sclx->getFirstChildElement() && sclx->getFirstChildElement()->isTextElement() )
+        {
+            s = sclx->getFirstChildElement()->getText().toStdString();
+            if( s.size() > 1 )
+                applySCLTuning(s);
+        }
+
+        std::string k = "";
+        if( kbmx && kbmx->getFirstChildElement() && kbmx->getFirstChildElement()->isTextElement() )
+        {
+            k = kbmx->getFirstChildElement()->getText().toStdString();
+            if( k.size() > 1 )
+                applyKBMMapping(k);
+        }
+    }
     
     XmlElement *dexedBlob = root->getChildByName("dexedBlob");
     if ( dexedBlob == NULL ) {

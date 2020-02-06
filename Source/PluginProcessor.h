@@ -239,10 +239,18 @@ public :
     Value lastCCUsed;
 
     std::shared_ptr<TuningState> synthTuningState;
+    // Prompt for a file
     void applySCLTuning();
     void applyKBMMapping();
+
+    // Load a file
     void applySCLTuning(File sclf);
     void applyKBMMapping(File kbmf);
+
+    // Load from text
+    void applySCLTuning(std::string scld);
+    void applyKBMMapping(std::string kbmd);
+    
     void retuneToStandard();
     void resetTuning(std::shared_ptr<TuningState> t);
 

@@ -727,6 +727,10 @@ void DexedAudioProcessor::applySCLTuning() {
 
 void DexedAudioProcessor::applySCLTuning(File s) {
     std::string sclcontents = s.loadFileAsString().toStdString();
+    applySCLTuning(sclcontents);
+}
+
+void DexedAudioProcessor::applySCLTuning(std::string sclcontents) {
     currentSCLData = sclcontents;
     
     if( currentKBMData.size() < 1 )
@@ -753,6 +757,10 @@ void DexedAudioProcessor::applyKBMMapping() {
 void DexedAudioProcessor::applyKBMMapping( File s )
 {
     std::string kbmcontents = s.loadFileAsString().toStdString();
+    applyKBMMapping(kbmcontents);
+}
+
+void DexedAudioProcessor::applyKBMMapping(std::string kbmcontents) {
     currentKBMData = kbmcontents;
     
     if( currentSCLData.size() < 1 )
