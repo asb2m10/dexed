@@ -21,6 +21,7 @@
 #include "../Dexed.h"
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -88,6 +89,8 @@ public:
     int breath_cc;
     int foot_cc;
     int modwheel_cc;
+    bool portamento_enable_cc;
+    int portamento_cc;
     
     int masterTune;
     
@@ -118,7 +121,7 @@ public:
         
         TRACE("controllers refresh>>> amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
-    
+
     FmCore *core;
 };
 

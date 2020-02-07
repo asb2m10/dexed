@@ -31,6 +31,7 @@
 #include "msfa/exp2.h"
 #include "msfa/env.h"
 #include "msfa/pitchenv.h"
+#include "msfa/porta.h"
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
@@ -87,6 +88,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     vuSignal = 0;
     monoMode = 0;
     
+    lastKeyDown = -1;
+
     resolvAppDir();
     
     initCtrl();
@@ -129,6 +132,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     Lfo::init(sampleRate);
     PitchEnv::init(sampleRate);
     Env::init_sr(sampleRate);
+    Porta::init_sr(sampleRate);
     fx.init(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
@@ -144,7 +148,9 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
-	controllers.refresh(); 
+    controllers.portamento_enable_cc = false;
+    controllers.portamento_cc = 0;
+    controllers.refresh();
 
     sustain = false;
     extra_buf_size = 0;
@@ -335,6 +341,12 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     controllers.foot_cc = value;
                     controllers.refresh();
                     break;
+                case 5:
+                    controllers.portamento_cc = value;
+                    break;
+                case 65:
+                    controllers.portamento_enable_cc = value >= 64;
+                    break;
                 case 64:
                     sustain = value > 63;
                     if (!sustain) {
@@ -396,7 +408,14 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
     }
 
     pitch += data[144] - 24;
-    
+
+    int previousKeyDown = lastKeyDown;
+    lastKeyDown = pitch;
+
+    int porta = -1;
+    if ( controllers.portamento_enable_cc && previousKeyDown >= 0 )
+        porta = controllers.portamento_cc;
+
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
@@ -410,7 +429,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo);
+            voices[note].dx7_note->init(data, pitch, velo, previousKeyDown, porta);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;
@@ -436,7 +455,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
             }
         }
     }
- 
+
     voices[note].live = true;
 	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }

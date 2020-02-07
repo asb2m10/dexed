@@ -37,7 +37,7 @@ struct VoiceStatus {
 class Dx7Note {
 public:
     Dx7Note();
-    void init(const uint8_t patch[156], int midinote, int velocity);
+    void init(const uint8_t patch[156], int midinote, int velocity, int srcnote, int porta);
     
     // Note: this _adds_ to the buffer. Interesting question whether it's
     // worth it...
@@ -72,6 +72,9 @@ private:
     int algorithm_;
     int pitchmoddepth_;
     int pitchmodsens_;
+
+    int porta_rateindex_;
+    int32_t porta_curpitch_[6];
 };
 
 #endif  // SYNTH_DX7NOTE_H_
