@@ -2,12 +2,15 @@
 
 The surge synth team has a branch of dexed to do a few things
 
-- upgrade and make builds regulalry availble
+- upgrade and make builds regualry availble
 - add tuning
 - potentially add mpe
 - just generally work on dexed
+- curious? [You can join our slack via this link](https://raw.githubusercontent.com/surge-synthesizer/surge-synthesizer.github.io/master/_includes/slack_invite_link)
 
 At this time this is a work in progress. Probably best to not pay too much attention...
+
+
 
 
 Dexed - FM Plugin Synth
