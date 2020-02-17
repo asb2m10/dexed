@@ -79,9 +79,12 @@ public:
     void paint(Graphics &g) {
         g.drawImage (about_png, 0, 0, about_png.getWidth(), about_png.getHeight(),
                      0, 0, about_png.getWidth(), about_png.getHeight());
-        g.setColour(Colour(0xFF000000));
-        String ver("Version " DEXED_VERSION " ; build date " __DATE__ );
+        g.setColour(Colour(0xFFFFFFFF));
+        String ver("Version " DEXED_VERSION );
         g.drawSingleLineText(ver, 18, 130);
+        String bldd("Build Date " __DATE__ );
+        g.drawSingleLineText(bldd, 18, 143);
+
     }
 };
 //[/MiscUserDefs]
