@@ -2,18 +2,16 @@
 
 trigger:
 - master
-- bp-master
 
 pr:
 - master
-- bp-master
 
 jobs:
 - job: Build
   strategy:
     matrix:
       mac:
-        imageName: 'macos-10.13'
+        imageName: 'macos-10.14'
         isMac: True
       win:
         imageName: 'vs2017-win2016'
