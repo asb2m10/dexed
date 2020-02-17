@@ -102,8 +102,8 @@ jobs:
   - task: GitHubRelease@0
     displayName: "Update Github Release"
     inputs:
-      gitHubConnection: baconpaul
-      repositoryName: baconpaul/dexed
+      gitHubConnection: surge-rackupdater
+      repositoryName: surge-synthesizer/dexed
       action: edit
       tag: Nightly
       target: '$(Build.SourceVersion)'

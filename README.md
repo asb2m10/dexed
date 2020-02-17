@@ -1,7 +1,18 @@
+# Surge-Synth-Team Dexed Branch
+
+The surge synth team has a branch of dexed to do a few things
+
+- upgrade and make builds regulalry availble
+- add tuning
+- potentially add mpe
+- just generally work on dexed
+
+At this time this is a work in progress. Probably best to not pay too much attention...
+
+
 Dexed - FM Plugin Synth
 =======================
 
-[![Build Status](https://travis-ci.org/asb2m10/dexed.svg?branch=master)](https://travis-ci.org/asb2m10/dexed)
 
 Please see [Dexed User Website](https://asb2m10.github.io/dexed) for user and download information.
 
