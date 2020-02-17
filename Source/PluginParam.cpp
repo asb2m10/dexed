@@ -61,9 +61,10 @@ public:
     };
     
     String getValueDisplay() {
-        String ret;
+        String ret ;
         int value = getValue();
-        
+        return ret << (value - 24);
+#if 0        
         switch(value % 12) {
             case 0: ret << "C"; break;
             case 1: ret << "C#"; break;
@@ -79,6 +80,7 @@ public:
             case 11: ret << "B"; break;
         }
         return ret << (value/12+1);
+#endif        
     }
 };
 
@@ -493,7 +495,7 @@ void DexedAudioProcessor::initCtrl() {
     lfoWaveform = new CtrlDXLabel("LFO WAVE", 5, 142, lbl);
     ctrl.add(lfoWaveform);
     
-    transpose = new CtrlDXTranspose("MIDDLE C", 48, 144);
+    transpose = new CtrlDXTranspose("TRANSPOSE", 48, 144);
     ctrl.add(transpose);
     
     pitchModSens = new CtrlDX("P MODE SENS.", 7, 143);
