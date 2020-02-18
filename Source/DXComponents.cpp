@@ -429,6 +429,30 @@ void ProgramSelector::mouseDown(const MouseEvent &event) {
     setSelectedItemIndex(cur);
 }
 
+void ProgramSelector::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
+    accum_wheel += wheel.deltaY;
+
+    float wheelFactor = 5.0; // higher is slower
+    
+    if( accum_wheel * wheelFactor > 1 )
+    {
+        accum_wheel -= 1.f / wheelFactor;
+        int c = getSelectedItemIndex();
+        if( c == 31 ) c = 0;
+        else c++;
+        setSelectedItemIndex(c);
+    }
+    else if( accum_wheel * wheelFactor < -1 )
+    {
+        accum_wheel += 1.f / wheelFactor;
+        int c = getSelectedItemIndex();
+        if( c == 0 ) c = 31;
+        else c--;
+        setSelectedItemIndex(c);
+    }
+}
+
+
 void ProgramSelector::paint(Graphics &g) {
     int x = getWidth();
     int y = getHeight();
