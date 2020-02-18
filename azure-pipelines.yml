@@ -7,7 +7,40 @@ pr:
 - master
 
 jobs:
+# We projuce on mac and share the assets so we don't have to run projucer on linux
+- job: Projuce
+  pool:
+    vmImage: 'macos-10.14'
+
+  steps:
+  - checkout: self
+    fetchDepth: 1
+
+  - bash: |
+      set -e
+      set -o xtrace
+      echo "Uname -s output"
+      uname -s
+     
+      git submodule update --init --recursive
+
+      ./scripts/get-juce.sh osx
+      ./scripts/projuce-mac.sh
+
+      mkdir pipeline
+      tar czf pipeline/juced.tgz Builds/ JuceLibraryCode/
+    displayName: Make Projuce Output
+    
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'JUCE_OUTPUTS'
+      targetPath: 'pipeline/'
+    displayName: Publish JUCE Artifacts 
+  
+
 - job: Build
+  dependsOn: Projuce
+  condition: succeeded()
   strategy:
     matrix:
       mac:
@@ -16,6 +49,9 @@ jobs:
       win:
         imageName: 'vs2017-win2016'
         isWindows: True
+      lin:
+        imageName: 'ubuntu-18.04'
+        isLinux: True
 
   pool:
     vmImage: $(imageName)
@@ -25,19 +61,30 @@ jobs:
     fetchDepth: 1
     # submodules: recursive # can't do submodules here b'cuz depth=1 fails with Github
 
+  - bash: |
+      mkdir pipeline
+    displayName: Setup Pipeline Dir
+
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: 'JUCE_OUTPUTS'
+      targetPath: 'pipeline/'
 
   - bash: |
-      git submodule update --init --recursive
       ./scripts/get-juce.sh
-      ./scripts/set-version.sh
+      ls -l pipeline
+      tar xvzf pipeline/juced.tgz
+      
+      git submodule update --init --recursive
+
     displayName: Setup for Building
 
   - bash: |
-      ./scripts/projuce-mac.sh
       ./scripts/build-mac.sh
       ./scripts/package-mac.sh
     displayName: Build Mac Plugins
     condition: variables.isMac
+
 
   - task: PublishPipelineArtifact@0
     inputs:
@@ -46,11 +93,6 @@ jobs:
     displayName: Publish Mac DMG
     condition: variables.isMac
 
-  - bash: |
-      assets/JUCE/Projucer.exe --resave Dexed.jucer   
-    displayName: Build Windows sln file
-    condition: variables.isWindows
-    
   - task: MSBuild@1
     inputs:
       solution: 'Builds\VisualStudio2017\Dexed.sln'
@@ -76,6 +118,28 @@ jobs:
     displayName: Publish Windows Zip
     condition: variables.isWindows
 
+  - bash: |
+      sudo apt-get install -y libwebkit2gtk-4.0
+      sudo apt-get install -y libcurl4-openssl-dev
+      sudo apt-get install -y alsa-base
+      sudo apt-get install -y libasound2-dev
+      sudo apt-get install -y jack
+      sudo apt-get install -y libjack-dev
+      sudo apt-get install -y libfreetype6-dev
+      sudo apt-get install -y libgl1-mesa-dev
+
+      ./scripts/build-lin.sh
+      ./scripts/package-lin.sh
+    displayName: Build Linux Plugins
+    condition: variables.isLinux
+
+  - task: PublishPipelineArtifact@0
+    inputs:
+      artifactName: 'LINUX_BUILD'
+      targetPath: 'products/'
+    displayName: Publish Linux Tar
+    condition: variables.isLinux
+
 
 - job: UpdateGithubRelease
   dependsOn: Build
@@ -90,6 +154,11 @@ jobs:
   - task: DownloadPipelineArtifact@0
     inputs:
       artifactName: 'WINDOWS_BUILD'
+      targetPath: $(Build.ArtifactStagingDirectory)
+
+  - task: DownloadPipelineArtifact@0
+    inputs:
+      artifactName: 'LINUX_BUILD'
       targetPath: $(Build.ArtifactStagingDirectory)
 
   - bash: |
