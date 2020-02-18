@@ -14,6 +14,5 @@ cp Dexed Dexed.a ../Dexed-Nightly
 cd ..
 
 pwd
-echo tar cvzf ../../products/Dexed_${VERSION}.tgz Dexed-Nightly
-tar cvzf ../../products/Dexed_${VERSION}.tgz Dexed-Nightly
+tar cvzf ../../products/Dexed_ubuntu_linux_${VERSION}.tgz Dexed-Nightly
 
