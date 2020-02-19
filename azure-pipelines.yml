@@ -77,6 +77,8 @@ jobs:
       
       git submodule update --init --recursive
 
+      ./scripts/set-version.sh
+
     displayName: Setup for Building
 
   - bash: |
@@ -164,17 +166,19 @@ jobs:
   - bash: |
      scripts/release-notes.sh > $(Build.ArtifactStagingDirectory)/ReleaseNotes.md
      ls $(Build.ArtifactStagingDirectory)
-    displayName: Fake up release notes
+     
+    displayName: Fake up release notes and tag release
 
   - task: GitHubRelease@0
-    displayName: "Update Github Release"
+    displayName: "Create New Github Release"
     inputs:
       gitHubConnection: surge-rackupdater
       repositoryName: surge-synthesizer/dexed
-      action: edit
+      action: 'edit'
       tag: Nightly
       target: '$(Build.SourceVersion)'
       addChangeLog: false
+      assetUploadMode: 'delete'
       releaseNotesFile: $(Build.ArtifactStagingDirectory)/ReleaseNotes.md
       assets: $(Build.ArtifactStagingDirectory)/*.*
 

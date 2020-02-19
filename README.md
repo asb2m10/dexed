@@ -10,7 +10,8 @@ The surge synth team has a branch of dexed to do a few things
 
 At this time this is a work in progress. Probably best to not pay too much attention...
 
-
+If you want to build this, you may notice the JUCER files are gone. THat's OK! We build them as needed now using a set of
+scripts. Your easiest path is to run 'scripts/build.sh' but this documentation will improve shortly.
 
 
 Dexed - FM Plugin Synth

@@ -2,7 +2,7 @@
 
 GIT_TAG=`git rev-parse --short HEAD`
 BUILDDATE=`date +%Y%m%d`
-VERSION="bp-${GIT_TAG}-${BUILDDATE}"
+VERSION="${GIT_TAG}-${BUILDDATE}"
 
 rm -rf Builds/MacOSX/Dexed-Nightly
 rm -rf *dmg
