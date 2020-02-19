@@ -109,7 +109,10 @@ jobs:
       mkdir assets
       mv Release/Standalone\ Plugin/Dexed.exe assets/
       mv Release/VST3/Dexed.vst3 assets/
-      7z.exe a ../../../products/dexed-windows-64bit-nightly.zip assets 
+      GIT_TAG=`git rev-parse --short HEAD`
+      BUILDDATE=`date +%Y%m%d`
+      ZIPV="${GIT_TAG}-${BUILDDATE}"
+      7z.exe a ../../../products/Dexed-Win64bit-${ZIPV}.zip assets 
     displayName: Build Windows Zip
     condition: variables.isWindows
 

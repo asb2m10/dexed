@@ -118,8 +118,8 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="~/src/vstsdk2.4" smallIcon="SpSpb4"
-                bigIcon="SpSpb4">
+    <LINUX_MAKE targetFolder="Builds/Linux" vstLegacyFolder="VST2SDK_DIR" smallIcon="SpSpb4"
+                bigIcon="SpSpb4" extraLinkerFlags="-fPIC">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="Dexed"/>

@@ -13,6 +13,19 @@ At this time this is a work in progress. Probably best to not pay too much atten
 If you want to build this, you may notice the JUCER files are gone. THat's OK! We build them as needed now using a set of
 scripts. Your easiest path is to run 'scripts/build.sh' but this documentation will improve shortly.
 
+Since Steinberg has discontinued the VST2 API we no longer distribute it. On Mac and Windows we strongly recommend you
+use the provided VST3. On Linux, the situation is a little trickier, with VST3 support in hosts being uneven. If you
+are a licensee to the VST2SDK, though, you can build a VST2 version of DEXED yourself with these commands
+
+```
+./scripts/get-juce.sh
+export VST2SDK_DIR=~/path/to/vst2/sdk/dir
+./scripts/projuce-lin-vst2.sh
+./scripts/build-lin.sh
+```
+
+and you will get a VST2 and Standalone as opposed to just a Standalone.
+
 
 Dexed - FM Plugin Synth
 =======================
