@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.5
+  Created with Projucer version: 5.4.7
 
   ------------------------------------------------------------------------------
 
@@ -93,7 +93,7 @@ ParamDialog::ParamDialog ()
 
     engineReso->setBounds (160, 156, 168, 24);
 
-    showKeyboard.reset (new ToggleButton ("showKeyboard"));
+    showKeyboard.reset (new LightedToggleButton ("showKeyboard"));
     addAndMakeVisible (showKeyboard.get());
     showKeyboard->setButtonText (String());
     showKeyboard->addListener (this);
@@ -136,84 +136,84 @@ ParamDialog::ParamDialog ()
 
     atRange->setBounds (448, 136, 72, 24);
 
-    whlEg.reset (new ToggleButton ("whlEg"));
+    whlEg.reset (new LightedToggleButton ("whlEg"));
     addAndMakeVisible (whlEg.get());
     whlEg->setButtonText (String());
     whlEg->addListener (this);
 
     whlEg->setBounds (640, 16, 56, 24);
 
-    ftEg.reset (new ToggleButton ("ftEg"));
+    ftEg.reset (new LightedToggleButton ("ftEg"));
     addAndMakeVisible (ftEg.get());
     ftEg->setButtonText (String());
     ftEg->addListener (this);
 
     ftEg->setBounds (640, 56, 56, 24);
 
-    brEg.reset (new ToggleButton ("brEg"));
+    brEg.reset (new LightedToggleButton ("brEg"));
     addAndMakeVisible (brEg.get());
     brEg->setButtonText (String());
     brEg->addListener (this);
 
     brEg->setBounds (640, 96, 56, 24);
 
-    atEg.reset (new ToggleButton ("atEg"));
+    atEg.reset (new LightedToggleButton ("atEg"));
     addAndMakeVisible (atEg.get());
     atEg->setButtonText (String());
     atEg->addListener (this);
 
     atEg->setBounds (640, 136, 56, 24);
 
-    whlAmp.reset (new ToggleButton ("whlAmp"));
+    whlAmp.reset (new LightedToggleButton ("whlAmp"));
     addAndMakeVisible (whlAmp.get());
     whlAmp->setButtonText (String());
     whlAmp->addListener (this);
 
     whlAmp->setBounds (584, 16, 56, 24);
 
-    ftAmp.reset (new ToggleButton ("ftAmp"));
+    ftAmp.reset (new LightedToggleButton ("ftAmp"));
     addAndMakeVisible (ftAmp.get());
     ftAmp->setButtonText (String());
     ftAmp->addListener (this);
 
     ftAmp->setBounds (584, 56, 56, 24);
 
-    brAmp.reset (new ToggleButton ("brAmp"));
+    brAmp.reset (new LightedToggleButton ("brAmp"));
     addAndMakeVisible (brAmp.get());
     brAmp->setButtonText (String());
     brAmp->addListener (this);
 
     brAmp->setBounds (584, 96, 56, 24);
 
-    atAmp.reset (new ToggleButton ("atAmp"));
+    atAmp.reset (new LightedToggleButton ("atAmp"));
     addAndMakeVisible (atAmp.get());
     atAmp->setButtonText (String());
     atAmp->addListener (this);
 
     atAmp->setBounds (584, 136, 56, 24);
 
-    whlPitch.reset (new ToggleButton ("whlPitch"));
+    whlPitch.reset (new LightedToggleButton ("whlPitch"));
     addAndMakeVisible (whlPitch.get());
     whlPitch->setButtonText (String());
     whlPitch->addListener (this);
 
     whlPitch->setBounds (528, 16, 56, 24);
 
-    ftPitch.reset (new ToggleButton ("ftPitch"));
+    ftPitch.reset (new LightedToggleButton ("ftPitch"));
     addAndMakeVisible (ftPitch.get());
     ftPitch->setButtonText (String());
     ftPitch->addListener (this);
 
     ftPitch->setBounds (528, 56, 56, 24);
 
-    brPitch.reset (new ToggleButton ("brPitch"));
+    brPitch.reset (new LightedToggleButton ("brPitch"));
     addAndMakeVisible (brPitch.get());
     brPitch->setButtonText (String());
     brPitch->addListener (this);
 
     brPitch->setBounds (528, 96, 56, 24);
 
-    atPitch.reset (new ToggleButton ("atPitch"));
+    atPitch.reset (new LightedToggleButton ("atPitch"));
     addAndMakeVisible (atPitch.get());
     atPitch->setButtonText (String());
     atPitch->addListener (this);
@@ -248,7 +248,7 @@ ParamDialog::ParamDialog ()
 
     resetTuningButton->setBounds (632, 208, 48, 24);
 
-    transposeScale.reset (new ToggleButton ("transposeScale"));
+    transposeScale.reset (new LightedToggleButton ("transposeScale"));
     addAndMakeVisible (transposeScale.get());
     transposeScale->setButtonText (String());
     transposeScale->addListener (this);
@@ -949,8 +949,9 @@ BEGIN_JUCER_METADATA
             layout="33" items="Modern (24-bit)&#10;Mark I&#10;OPL Series"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <TOGGLEBUTTON name="showKeyboard" id="c963d2cb8e49ffd7" memberName="showKeyboard"
-                virtualName="" explicitFocusOrder="0" pos="264 96 56 24" buttonText=""
-                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="264 96 56 24"
+                buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
+                state="0"/>
   <SLIDER name="whlRange" id="3d6522f5f581e580" memberName="whlRange" virtualName=""
           explicitFocusOrder="0" pos="448 16 72 24" min="0.0" max="99.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
@@ -971,40 +972,40 @@ BEGIN_JUCER_METADATA
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
-  <TOGGLEBUTTON name="whlEg" id="d8242ae592c912a" memberName="whlEg" virtualName=""
+  <TOGGLEBUTTON name="whlEg" id="d8242ae592c912a" memberName="whlEg" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="640 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="ftEg" id="69d816607bd71cb0" memberName="ftEg" virtualName=""
+  <TOGGLEBUTTON name="ftEg" id="69d816607bd71cb0" memberName="ftEg" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="640 56 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="brEg" id="ba89ae54d676983f" memberName="brEg" virtualName=""
+  <TOGGLEBUTTON name="brEg" id="ba89ae54d676983f" memberName="brEg" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="640 96 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="atEg" id="371934a58ce5f1bc" memberName="atEg" virtualName=""
+  <TOGGLEBUTTON name="atEg" id="371934a58ce5f1bc" memberName="atEg" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="640 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="whlAmp" id="3d4e46e63c3ddd86" memberName="whlAmp" virtualName=""
+  <TOGGLEBUTTON name="whlAmp" id="3d4e46e63c3ddd86" memberName="whlAmp" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="584 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="ftAmp" id="f631892e209b094a" memberName="ftAmp" virtualName=""
+  <TOGGLEBUTTON name="ftAmp" id="f631892e209b094a" memberName="ftAmp" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="584 56 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="brAmp" id="d0a68d37220638f1" memberName="brAmp" virtualName=""
+  <TOGGLEBUTTON name="brAmp" id="d0a68d37220638f1" memberName="brAmp" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="584 96 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="atAmp" id="4220c7b22e7845ea" memberName="atAmp" virtualName=""
+  <TOGGLEBUTTON name="atAmp" id="4220c7b22e7845ea" memberName="atAmp" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="584 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="whlPitch" id="b7a626ec1e45af16" memberName="whlPitch" virtualName=""
+  <TOGGLEBUTTON name="whlPitch" id="b7a626ec1e45af16" memberName="whlPitch" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="528 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="ftPitch" id="1acedf6f16a5a3" memberName="ftPitch" virtualName=""
+  <TOGGLEBUTTON name="ftPitch" id="1acedf6f16a5a3" memberName="ftPitch" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="528 56 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="brPitch" id="23fa82533e004b96" memberName="brPitch" virtualName=""
+  <TOGGLEBUTTON name="brPitch" id="23fa82533e004b96" memberName="brPitch" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="528 96 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
-  <TOGGLEBUTTON name="atPitch" id="43805c6a4673e291" memberName="atPitch" virtualName=""
+  <TOGGLEBUTTON name="atPitch" id="43805c6a4673e291" memberName="atPitch" virtualName="LightedToggleButton"
                 explicitFocusOrder="0" pos="528 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TEXTBUTTON name="scl button" id="7a6b689f406ae37d" memberName="sclButton"
@@ -1020,8 +1021,9 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="632 208 48 24" buttonText="Reset"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="transposeScale" id="9d4dd65775ed9e38" memberName="transposeScale"
-                virtualName="" explicitFocusOrder="0" pos="576 240 56 24" buttonText=""
-                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
+                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="576 240 56 24"
+                buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
+                state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

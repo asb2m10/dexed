@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.5
+  Created with Projucer version: 5.4.7
 
   ------------------------------------------------------------------------------
 
@@ -24,6 +24,7 @@
 #include "msfa/controllers.h"
 #include "SysexComm.h"
 #include <functional>
+#include "DXLookNFeel.h"
 //[/Headers]
 
 
@@ -44,7 +45,7 @@ class ParamDialog  : public Component,
 public:
     //==============================================================================
     ParamDialog ();
-    ~ParamDialog();
+    ~ParamDialog() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -86,28 +87,28 @@ private:
     std::unique_ptr<ComboBox> sysexOut;
     std::unique_ptr<Slider> sysexChl;
     std::unique_ptr<ComboBox> engineReso;
-    std::unique_ptr<ToggleButton> showKeyboard;
+    std::unique_ptr<LightedToggleButton> showKeyboard;
     std::unique_ptr<Slider> whlRange;
     std::unique_ptr<Slider> ftRange;
     std::unique_ptr<Slider> brRange;
     std::unique_ptr<Slider> atRange;
-    std::unique_ptr<ToggleButton> whlEg;
-    std::unique_ptr<ToggleButton> ftEg;
-    std::unique_ptr<ToggleButton> brEg;
-    std::unique_ptr<ToggleButton> atEg;
-    std::unique_ptr<ToggleButton> whlAmp;
-    std::unique_ptr<ToggleButton> ftAmp;
-    std::unique_ptr<ToggleButton> brAmp;
-    std::unique_ptr<ToggleButton> atAmp;
-    std::unique_ptr<ToggleButton> whlPitch;
-    std::unique_ptr<ToggleButton> ftPitch;
-    std::unique_ptr<ToggleButton> brPitch;
-    std::unique_ptr<ToggleButton> atPitch;
+    std::unique_ptr<LightedToggleButton> whlEg;
+    std::unique_ptr<LightedToggleButton> ftEg;
+    std::unique_ptr<LightedToggleButton> brEg;
+    std::unique_ptr<LightedToggleButton> atEg;
+    std::unique_ptr<LightedToggleButton> whlAmp;
+    std::unique_ptr<LightedToggleButton> ftAmp;
+    std::unique_ptr<LightedToggleButton> brAmp;
+    std::unique_ptr<LightedToggleButton> atAmp;
+    std::unique_ptr<LightedToggleButton> whlPitch;
+    std::unique_ptr<LightedToggleButton> ftPitch;
+    std::unique_ptr<LightedToggleButton> brPitch;
+    std::unique_ptr<LightedToggleButton> atPitch;
     std::unique_ptr<TextButton> sclButton;
     std::unique_ptr<TextButton> kbmButton;
     std::unique_ptr<TextButton> showTunButton;
     std::unique_ptr<TextButton> resetTuningButton;
-    std::unique_ptr<ToggleButton> transposeScale;
+    std::unique_ptr<LightedToggleButton> transposeScale;
 
 
     //==============================================================================

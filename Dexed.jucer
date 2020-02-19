@@ -16,6 +16,8 @@
               pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn,pluginProducesMidiOut">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
+      <FILE id="pKwZj2" name="SwitchLighted_48x26.png" compile="0" resource="1"
+            file="Resources/ui/SwitchLighted_48x26.png"/>
       <FILE id="SpSpb4" name="dexedIcon.png" compile="0" resource="1" file="Resources/ui/dexedIcon.png"/>
       <FILE id="CD5ehh" name="Switch_32x32.png" compile="0" resource="1"
             file="Resources/ui/Switch_32x32.png"/>

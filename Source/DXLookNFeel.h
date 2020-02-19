@@ -23,19 +23,26 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+class LightedToggleButton : public ToggleButton {
+public:
+    LightedToggleButton(const char*l) : ToggleButton(l) { }
+};
+
+
 class DXLookNFeel : public LookAndFeel_V3 {
     HashMap<String, int> colourMap;
 
 public:
     DXLookNFeel();
     
-    Image imageKnob, imageSwitch, imageButton, imageSlider, imageScaling, imageLight, imageLFO;
+    Image imageKnob, imageSwitch, imageSwitchLighted, imageButton, imageSlider, imageScaling, imageLight, imageLFO;
     Image imageSwitchOperator;
     Image imageOperator, imageGlobal;
 
     /* overridden methods */
     virtual void drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,  Slider &slider ) override;
     virtual void drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown) override;
+    
     virtual void drawLinearSliderBackground (Graphics&, int x, int y, int width, int height,
                                      float sliderPos, float minSliderPos, float maxSliderPos,
                                      const Slider::SliderStyle, Slider&) override;

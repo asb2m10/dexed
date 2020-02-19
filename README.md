@@ -2,7 +2,7 @@
 
 The surge synth team has a branch of dexed to do a few things
 
-- upgrade and make builds regualry availble
+- upgrade and make builds regularly availble
 - add tuning
 - potentially add mpe
 - just generally work on dexed
