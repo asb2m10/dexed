@@ -131,11 +131,32 @@ jobs:
       sudo apt-get install -y jack
       sudo apt-get install -y libjack-dev
       sudo apt-get install -y libfreetype6-dev
+      sudo apt-get install -y libxinerama-dev
+      sudo apt-get install -y libxcb-xinerama0
+      sudo apt-get install -y libxinerama1
+      sudo apt-get install -y x11proto-xinerama-dev
+      sudo apt-get install -y libxrandr-dev
       sudo apt-get install -y libgl1-mesa-dev
+      sudo apt-get install -y libxcursor-dev 
+      sudo apt-get install -y libxcursor1 
+      sudo apt-get install -y libxcb-cursor-dev 
+      sudo apt-get install -y libxcb-cursor0
+    displayName: Prepare Linux Host
+    condition: variables.isLinux
 
+  - bash: |
       ./scripts/build-lin.sh
-      ./scripts/package-lin.sh
     displayName: Build Linux Plugins
+    condition: variables.isLinux
+
+  - bash: |
+      rm -rf products
+      mkdir products
+      ./scripts/package-lin.sh
+
+      md5sum products/*
+      ls -lt products/*
+    displayName: Package Linux Plugins
     condition: variables.isLinux
 
   - task: PublishPipelineArtifact@0
@@ -148,7 +169,7 @@ jobs:
 
 - job: UpdateGithubRelease
   dependsOn: Build
-  condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/bp-master')))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 
   steps:
   - task: DownloadPipelineArtifact@0
@@ -169,7 +190,8 @@ jobs:
   - bash: |
      scripts/release-notes.sh > $(Build.ArtifactStagingDirectory)/ReleaseNotes.md
      ls $(Build.ArtifactStagingDirectory)
-     
+     md5sum $(Build.ArtifactStagingDirectory)/*
+
     displayName: Fake up release notes and tag release
 
   - task: GitHubRelease@0
