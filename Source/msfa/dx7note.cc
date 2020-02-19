@@ -180,6 +180,11 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
+
+    // MPE default valeus
+    mpePitchBend = 8192;
+    mpeTimbre = 0;
+    mpePressure = 0;
 }
 
 void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Controllers *ctrls) {
@@ -205,6 +210,13 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             pb = (pb * (8191 / stp)) << 11;
         }
     }
+
+    if( ctrls->mpeEnabled )
+    {
+        int d = ((float)( (mpePitchBend-0x2000) << 11 )) * ctrls->mpePitchBendRange / 12.0; 
+        pb += d;
+    }
+    
     int32_t pitch_base = pb + ctrls->masterTune;
     pitch_mod += pitch_base;
     

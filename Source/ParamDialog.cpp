@@ -255,6 +255,22 @@ ParamDialog::ParamDialog ()
 
     transposeScale->setBounds (576, 240, 56, 24);
 
+    mpePBRange.reset (new Slider ("mpePBRange"));
+    addAndMakeVisible (mpePBRange.get());
+    mpePBRange->setRange (0, 99, 1);
+    mpePBRange->setSliderStyle (Slider::RotaryVerticalDrag);
+    mpePBRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    mpePBRange->addListener (this);
+
+    mpePBRange->setBounds (616, 288, 72, 24);
+
+    mpeEnabled.reset (new LightedToggleButton ("mpeEnabled"));
+    addAndMakeVisible (mpeEnabled.get());
+    mpeEnabled->setButtonText (String());
+    mpeEnabled->addListener (this);
+
+    mpeEnabled->setBounds (448, 288, 56, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -314,6 +330,8 @@ ParamDialog::~ParamDialog()
     showTunButton = nullptr;
     resetTuningButton = nullptr;
     transposeScale = nullptr;
+    mpePBRange = nullptr;
+    mpeEnabled = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -544,6 +562,39 @@ void ParamDialog::paint (Graphics& g)
                     Justification::centredLeft, true);
     }
 
+    {
+        int x = 368, y = 280, width = 328, height = 1;
+        Colour fillColour = Colours::black;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.fillRect (x, y, width, height);
+    }
+
+    {
+        int x = 371, y = 288, width = 276, height = 27;
+        String text (TRANS("MPE"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
+    {
+        int x = 528, y = 288, width = 119, height = 27;
+        String text (TRANS("Bend Range"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
     //[UserPaint] Add your own custom painting code here..
     if ( ! JUCEApplication::isStandaloneApp() ) {
         g.setColour (Colours::white);
@@ -611,6 +662,11 @@ void ParamDialog::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_atRange] -- add your slider handling code here..
         //[/UserSliderCode_atRange]
+    }
+    else if (sliderThatWasMoved == mpePBRange.get())
+    {
+        //[UserSliderCode_mpePBRange] -- add your slider handling code here..
+        //[/UserSliderCode_mpePBRange]
     }
 
     //[UsersliderValueChanged_Post]
@@ -751,6 +807,11 @@ void ParamDialog::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_transposeScale] -- add your button handler code here..
         //[/UserButtonCode_transposeScale]
     }
+    else if (buttonThatWasClicked == mpeEnabled.get())
+    {
+        //[UserButtonCode_mpeEnabled] -- add your button handler code here..
+        //[/UserButtonCode_mpeEnabled]
+    }
 
     //[UserbuttonClicked_Post]
     if( ! handled )
@@ -792,6 +853,9 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 
     transposeScale->setToggleState(c.transpose12AsScale ? 0 : 1, dontSendNotification );
 
+    mpeEnabled->setToggleState(c.mpeEnabled, dontSendNotification);
+    mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
+    
     StringArray inputs = MidiInput::getDevices();
     int idx = inputs.indexOf(mgr.getInput());
     idx = idx == -1 ? 0 : idx + 1;
@@ -834,6 +898,9 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
     c.transpose12AsScale = ! transposeScale->getToggleState();
 
+    c.mpeEnabled = mpeEnabled->getToggleState();
+    c.mpePitchBendRange = mpePBRange->getValue();
+    
     c.refresh();
 
     if ( ! JUCEApplication::isStandaloneApp() ) {
@@ -920,6 +987,13 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <TEXT pos="643 242 45 25" fill="solid: ffffffff" hasStroke="0" text="Value"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <RECT pos="368 280 328 1" fill="solid: ff000000" hasStroke="0"/>
+    <TEXT pos="371 288 276 27" fill="solid: ffffffff" hasStroke="0" text="MPE"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <TEXT pos="528 288 119 27" fill="solid: ffffffff" hasStroke="0" text="Bend Range"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
   </BACKGROUND>
@@ -1022,6 +1096,15 @@ BEGIN_JUCER_METADATA
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="transposeScale" id="9d4dd65775ed9e38" memberName="transposeScale"
                 virtualName="LightedToggleButton" explicitFocusOrder="0" pos="576 240 56 24"
+                buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
+                state="0"/>
+  <SLIDER name="mpePBRange" id="a13948d1cc74a51a" memberName="mpePBRange"
+          virtualName="" explicitFocusOrder="0" pos="616 288 72 24" min="0.0"
+          max="96.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
+  <TOGGLEBUTTON name="mpeEnabled" id="e1a11d0372879dd8" memberName="mpeEnabled"
+                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="448 288 56 24"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
 </JUCER_COMPONENT>

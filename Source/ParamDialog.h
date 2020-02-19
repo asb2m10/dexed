@@ -109,6 +109,8 @@ private:
     std::unique_ptr<TextButton> showTunButton;
     std::unique_ptr<TextButton> resetTuningButton;
     std::unique_ptr<LightedToggleButton> transposeScale;
+    std::unique_ptr<Slider> mpePBRange;
+    std::unique_ptr<LightedToggleButton> mpeEnabled;
 
 
     //==============================================================================

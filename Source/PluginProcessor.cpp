@@ -302,29 +302,73 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 	return false;
 }
 
+#define _D(x) " " << (#x) << "=" << x
+
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     if ( msg->isSysEx() ) {
         handleIncomingMidiMessage(NULL, *msg);
         return;
     }
-    
+
     const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];
-
-    switch(cmd & 0xf0) {
+    uint8_t cf0 = cmd & 0xf0;
+    auto channel = msg->getChannel();
+    
+    if( controllers.mpeEnabled && channel != 0 &&
+        (
+            (cf0 == 0xb0 && buf[1] == 74 ) || //timbre
+            (cf0 == 0xd0 ) || // aftertouch
+            (cf0 == 0xe0 ) // pb
+            )
+        )
+    {
+        // OK so find my voice index
+        int voiceIndex = -1;
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+        {
+            if( voices[i].keydown && voices[i].channel == channel )
+            {
+                voiceIndex = i;
+                break;
+            }
+        }
+        if( voiceIndex >= 0 )
+        {
+            int i = voiceIndex;
+            switch(cf0) {
+            case 0xb0:
+                voices[i].mpeTimbre = (int)buf[2];
+                voices[i].dx7_note->mpeTimbre = (int)buf[2];
+                break;
+            case 0xd0:
+                voices[i].mpePressure = (int)buf[1];
+                voices[i].dx7_note->mpePressure = (int)buf[1];
+                break;
+            case 0xe0:
+                voices[i].mpePitchBend = (int)( buf[1] | (buf[2] << 7) );
+                voices[i].dx7_note->mpePitchBend = (int)( buf[1] | ( buf[2] << 7 ) );
+                break;
+            }
+        }
+    }
+    else
+    {
+        switch(cmd & 0xf0) {
         case 0x80 :
-            keyup(buf[1]);
+            keyup(channel, buf[1], buf[2]);
         return;
 
         case 0x90 :
-            keydown(buf[1], buf[2]);
+            keydown(channel, buf[1], buf[2]);
         return;
             
         case 0xb0 : {
             int ctrl = buf[1];
             int value = buf[2];
-            
-            switch(ctrl) {
+
+
+                switch(ctrl) {
                 case 1:
                     controllers.modwheel_cc = value;
                     controllers.refresh();
@@ -354,7 +398,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                 case 123:
                     for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
                         if (voices[note].keydown)
-                            keyup(voices[note].midi_note);
+                            keyup(channel, voices[note].midi_note, 0);
                     }
                     break;
                 default:
@@ -369,31 +413,30 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     // this is used to notify the dialog that a CC value was received.
                     lastCCUsed.setValue(ctrl);
                 }
-        }
-        return;
-
+            }
+            return;
+            
         case 0xc0 :
             setCurrentProgram(buf[1]);
-        return;
+            return;
             
-        // aftertouch
         case 0xd0 :
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
-        return;
+            return;
         
-		// pitchbend
 		case 0xe0 :
 			controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-		return;
+            return;
+        }
     }
 }
 
 #define ACT(v) (v.keydown ? v.midi_note : -1)
 
-void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
+void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
-        keyup(pitch);
+        keyup(channel, pitch, velo);
         return;
     }
 
@@ -408,6 +451,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
         if (!voices[note].keydown) {
             currentNote = (note + 1) % MAX_ACTIVE_NOTES;
             lfo.keydown();  // TODO: should only do this if # keys down was 0
+            voices[note].channel = channel;
             voices[note].midi_note = pitch;
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
@@ -443,12 +487,15 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
 	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }
 
-void DexedAudioProcessor::keyup(uint8_t pitch) {
+void DexedAudioProcessor::keyup(uint8_t chan, uint8_t pitch, uint8_t velo) {
     pitch += tuningTranspositionShift();
 
     int note;
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
-        if ( voices[note].midi_note == pitch && voices[note].keydown ) {
+        if ( ( ( controllers.mpeEnabled && voices[note].channel == chan ) || // MPE node - find voice by channel
+               (!controllers.mpeEnabled && voices[note].midi_note == pitch ) ) && // regular mode find voice by pitch
+             voices[note].keydown ) // but still only grab the one which is keydown
+        {
             voices[note].keydown = false;
 			//TRACE("deactivate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
             break;

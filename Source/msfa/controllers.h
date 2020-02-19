@@ -92,6 +92,10 @@ public:
     int masterTune;
 
     bool transpose12AsScale = true;
+
+    // MPE configuration. FIXME - make this switchable
+    bool mpeEnabled = true;
+    int mpePitchBendRange = 24;
     
     FmMod wheel;
     FmMod foot;
@@ -118,7 +122,6 @@ public:
         if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
             eg_mod = 127;
         
-        TRACE("controllers refresh>>> amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
     
     FmCore *core;

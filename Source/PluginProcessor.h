@@ -37,11 +37,17 @@
 #include "EngineOpl.h"
 
 struct ProcessorVoice {
+    int channel;
     int midi_note;
     int velocity;
     bool keydown;
     bool sustained;
     bool live;
+
+    int mpePitchBend;
+    int mpePressure;
+    int mpeTimbre;
+    
     Dx7Note *dx7_note;
 };
 
@@ -91,8 +97,8 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     bool sendSysexChange;
     
     void processMidiMessage(const MidiMessage *msg);
-    void keydown(uint8_t pitch, uint8_t velo);
-    void keyup(uint8_t pitch);
+    void keydown(uint8_t chan, uint8_t pitch, uint8_t velo);
+    void keyup(uint8_t, uint8_t pitch, uint8_t velo);
     
     /**
      * this is called from the Audio thread to tell

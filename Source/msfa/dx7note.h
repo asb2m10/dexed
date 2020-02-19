@@ -64,6 +64,10 @@ public:
 
     std::shared_ptr<TuningState> tuning_state_;
 
+    int mpePitchBend = 8192;
+    int mpePressure = 0;
+    int mpeTimbre = 0;
+    
 private:
     Env env_[6];
     FmOpParams params_[6];
