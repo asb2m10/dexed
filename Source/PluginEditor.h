@@ -38,6 +38,10 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     CartManager cartManager;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
+
+    static const uint8_t HIGH_DPI_THRESHOLD = 128;
+    float dpiScaleFactor;
+
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
