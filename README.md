@@ -1,6 +1,6 @@
 # Surge-Synth-Team Dexed Branch
 
-The surge synth team has a branch of dexed to do a few things
+The surge synth team has a branch of dexed to do a few things:
 
 - upgrade and make builds regularly availble
 - add tuning
