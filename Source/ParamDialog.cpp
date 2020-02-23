@@ -257,7 +257,7 @@ ParamDialog::ParamDialog ()
 
     mpePBRange.reset (new Slider ("mpePBRange"));
     addAndMakeVisible (mpePBRange.get());
-    mpePBRange->setRange (0, 99, 1);
+    mpePBRange->setRange (0, 96, 1);
     mpePBRange->setSliderStyle (Slider::RotaryVerticalDrag);
     mpePBRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     mpePBRange->addListener (this);
@@ -855,7 +855,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 
     mpeEnabled->setToggleState(c.mpeEnabled, dontSendNotification);
     mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
-    
+
     StringArray inputs = MidiInput::getDevices();
     int idx = inputs.indexOf(mgr.getInput());
     idx = idx == -1 ? 0 : idx + 1;
@@ -900,7 +900,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
     c.mpeEnabled = mpeEnabled->getToggleState();
     c.mpePitchBendRange = mpePBRange->getValue();
-    
+
     c.refresh();
 
     if ( ! JUCEApplication::isStandaloneApp() ) {
