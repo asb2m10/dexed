@@ -4,6 +4,7 @@
 #include "synth.h"
 #include <memory>
 #include <string>
+#include "Tunings.h"
 
 class TuningState {
 public:
@@ -13,6 +14,11 @@ public:
     virtual bool is_standard_tuning() { return true; }
     virtual int scale_length() { return 12; }
     virtual std::string display_tuning_str() { return "Standard Tuning"; }
+
+    virtual Tunings::Tuning &getTuning() {
+        static Tunings::Tuning t;
+        return t;
+    }
 };
 
 std::shared_ptr<TuningState> createStandardTuning();

@@ -79,6 +79,8 @@
         <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
               file="Source/GlobalEditor.cpp"/>
         <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
+        <FILE id="aLakSq" name="TuningShow.cpp" compile="1" resource="0" file="Source/TuningShow.cpp"/>
+        <FILE id="OH8qjM" name="TuningShow.h" compile="0" resource="0" file="Source/TuningShow.h"/>
       </GROUP>
       <GROUP id="{CEBA9AF6-1C73-85F6-A187-56A246098441}" name="msfa">
         <FILE id="xa8v2Z" name="tuning.cc" compile="1" resource="0" file="Source/msfa/tuning.cc"/>
@@ -121,7 +123,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/Linux" vstLegacyFolder="VST2SDK_DIR" smallIcon="SpSpb4"
-                bigIcon="SpSpb4" extraLinkerFlags="-fPIC">
+                bigIcon="SpSpb4" extraLinkerFlags="-fPIC" extraCompilerFlags="-I../../libs/tuning-library/include">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="Dexed"/>
@@ -139,10 +141,11 @@
         <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
         <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="surgesynthteam_tuningui" path="./libs"/>
       </MODULEPATHS>
     </LINUX_MAKE>
     <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="SpSpb4" bigIcon="SpSpb4"
-               vst3Folder="libs/vst3sdk" extraCompilerFlags="-Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32">
+               vst3Folder="libs/vst3sdk" extraCompilerFlags="-I../../libs/tuning-library/include -Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
                        osxCompatibility="10.10 SDK" osxArchitecture="64BitIntel" enablePluginBinaryCopyStep="1"/>
@@ -163,11 +166,12 @@
         <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="surgesynthteam_tuningui" path="./libs"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"
             IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4"
-            vst3Folder="libs/vst3sdk">
+            vst3Folder="libs/vst3sdk" extraCompilerFlags="/I../../libs/tuning-library/include">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
@@ -191,6 +195,7 @@
         <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
         <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
         <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="surgesynthteam_tuningui" path="./libs"/>
       </MODULEPATHS>
     </VS2017>
   </EXPORTFORMATS>
@@ -208,6 +213,8 @@
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="surgesynthteam_tuningui" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_USE_FLAC="0" JUCE_USE_OGGVORBIS="0"
                JUCE_USE_MP3AUDIOFORMAT="0" JUCE_USE_LAME_AUDIO_FORMAT="0" JUCE_USE_WINDOWS_MEDIA_FORMAT="0"

@@ -23,6 +23,7 @@
 #include "GlobalEditor.h"
 #include "ParamDialog.h"
 #include "SysexComm.h"
+#include "TuningShow.h"
 #include "Dexed.h"
 #include "math.h"
 #include <fstream>
@@ -154,13 +155,9 @@ void DexedAudioProcessorEditor::saveCart() {
 }
 
 void DexedAudioProcessorEditor::tuningShow() {
-    auto te = new TextEditor();
-    te->setMultiLine(true);
-    te->setReadOnly(true);
-
-    te->setText( processor->synthTuningState->display_tuning_str().c_str() );
-    te->setSize( 500, 700 );
-
+    auto te = new TuningShow();
+    te->setTuning( processor->synthTuningState->getTuning() );
+    
     DialogWindow::LaunchOptions options;
     options.content.setOwned(te);
     options.dialogTitle = "Current Tuning";
