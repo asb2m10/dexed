@@ -161,7 +161,7 @@ void DexedAudioProcessorEditor::tuningShow() {
     DialogWindow::LaunchOptions options;
     options.content.setOwned(te);
     options.dialogTitle = "Current Tuning";
-    options.dialogBackgroundColour = Colour(0x32FFFFFF);
+    options.dialogBackgroundColour = Colour(0xFF323E44);
     options.escapeKeyTriggersCloseButton = true;
     options.useNativeTitleBar = false;
     options.resizable = false;
@@ -175,7 +175,7 @@ void DexedAudioProcessorEditor::parmShow() {
     DialogWindow::LaunchOptions options;
     
     auto param = new ParamDialog();
-    param->setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
+    param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
     param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
     param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
@@ -200,7 +200,7 @@ void DexedAudioProcessorEditor::parmShow() {
 
     options.content.setOwned(param);
     options.dialogTitle = "dexed Parameters";
-    options.dialogBackgroundColour = Colour(0x32FFFFFF);
+    options.dialogBackgroundColour = Colour(0xFF323E44);
     options.escapeKeyTriggersCloseButton = true;
     options.useNativeTitleBar = false;
     options.resizable = false;
