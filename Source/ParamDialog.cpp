@@ -225,35 +225,36 @@ ParamDialog::ParamDialog ()
     sclButton->setButtonText (TRANS("SCL"));
     sclButton->addListener (this);
 
-    sclButton->setBounds (448, 208, 56, 24);
+    sclButton->setBounds (448, 205, 56, 30);
 
     kbmButton.reset (new TextButton ("kbm button"));
     addAndMakeVisible (kbmButton.get());
     kbmButton->setButtonText (TRANS("KBM"));
     kbmButton->addListener (this);
 
-    kbmButton->setBounds (512, 208, 56, 24);
+    kbmButton->setBounds (512, 205, 56, 30);
 
     showTunButton.reset (new TextButton ("show tuning button"));
     addAndMakeVisible (showTunButton.get());
     showTunButton->setButtonText (TRANS("Show"));
     showTunButton->addListener (this);
 
-    showTunButton->setBounds (576, 208, 48, 24);
+    showTunButton->setBounds (576, 205, 48, 30);
 
     resetTuningButton.reset (new TextButton ("reset tuning button"));
     addAndMakeVisible (resetTuningButton.get());
     resetTuningButton->setButtonText (TRANS("Reset"));
     resetTuningButton->addListener (this);
 
-    resetTuningButton->setBounds (632, 208, 48, 24);
+    resetTuningButton->setBounds (632, 205, 48, 30);
 
     transposeScale.reset (new LightedToggleButton ("transposeScale"));
     addAndMakeVisible (transposeScale.get());
     transposeScale->setButtonText (String());
     transposeScale->addListener (this);
+    transposeScale->setToggleState (true, dontSendNotification);
 
-    transposeScale->setBounds (576, 240, 56, 24);
+    transposeScale->setBounds (624, 240, 56, 30);
 
     mpePBRange.reset (new Slider ("mpePBRange"));
     addAndMakeVisible (mpePBRange.get());
@@ -262,14 +263,14 @@ ParamDialog::ParamDialog ()
     mpePBRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     mpePBRange->addListener (this);
 
-    mpePBRange->setBounds (616, 288, 72, 24);
+    mpePBRange->setBounds (616, 291, 72, 24);
 
     mpeEnabled.reset (new LightedToggleButton ("mpeEnabled"));
     addAndMakeVisible (mpeEnabled.get());
     mpeEnabled->setButtonText (String());
     mpeEnabled->addListener (this);
 
-    mpeEnabled->setBounds (448, 288, 56, 24);
+    mpeEnabled->setBounds (448, 288, 56, 30);
 
 
     //[UserPreSize]
@@ -482,7 +483,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 533, y = 163, width = 48, height = 23;
+        int x = 528, y = 163, width = 48, height = 23;
         String text (TRANS("PITCH"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -490,11 +491,11 @@ void ParamDialog::paint (Graphics& g)
         g.setColour (fillColour);
         g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
         g.drawText (text, x, y, width, height,
-                    Justification::centredLeft, true);
+                    Justification::centred, true);
     }
 
     {
-        int x = 589, y = 163, width = 48, height = 23;
+        int x = 584, y = 163, width = 48, height = 23;
         String text (TRANS("AMP"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -502,11 +503,11 @@ void ParamDialog::paint (Graphics& g)
         g.setColour (fillColour);
         g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
         g.drawText (text, x, y, width, height,
-                    Justification::centredLeft, true);
+                    Justification::centred, true);
     }
 
     {
-        int x = 645, y = 163, width = 48, height = 23;
+        int x = 640, y = 163, width = 48, height = 23;
         String text (TRANS("EG BIAS"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -514,7 +515,7 @@ void ParamDialog::paint (Graphics& g)
         g.setColour (fillColour);
         g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
         g.drawText (text, x, y, width, height,
-                    Justification::centredLeft, true);
+                    Justification::centred, true);
     }
 
     {
@@ -527,7 +528,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 371, y = 210, width = 276, height = 25;
+        int x = 371, y = 208, width = 276, height = 25;
         String text (TRANS("Tuning"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -539,20 +540,8 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 459, y = 242, width = 125, height = 25;
-        String text (TRANS("Transp 12 as Scale"));
-        Colour fillColour = Colours::white;
-        //[UserPaintCustomArguments] Customize the painting arguments here..
-        //[/UserPaintCustomArguments]
-        g.setColour (fillColour);
-        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-        g.drawText (text, x, y, width, height,
-                    Justification::centredLeft, true);
-    }
-
-    {
-        int x = 643, y = 242, width = 45, height = 25;
-        String text (TRANS("Value"));
+        int x = 371, y = 242, width = 269, height = 25;
+        String text (TRANS("Replace transpose by 12s with scale length"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -572,7 +561,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 371, y = 288, width = 276, height = 27;
+        int x = 371, y = 290, width = 276, height = 27;
         String text (TRANS("MPE"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -584,7 +573,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 528, y = 288, width = 119, height = 27;
+        int x = 528, y = 290, width = 119, height = 27;
         String text (TRANS("Bend Range"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -851,7 +840,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     atAmp->setToggleState(c.at.amp, dontSendNotification);
     atEg->setToggleState(c.at.eg, dontSendNotification);
 
-    transposeScale->setToggleState(c.transpose12AsScale ? 0 : 1, dontSendNotification );
+    transposeScale->setToggleState(c.transpose12AsScale ? 1 : 0, dontSendNotification );
 
     mpeEnabled->setToggleState(c.mpeEnabled, dontSendNotification);
     mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
@@ -896,7 +885,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     c.at.amp = atAmp->getToggleState();
     c.at.eg = atEg->getToggleState();
 
-    c.transpose12AsScale = ! transposeScale->getToggleState();
+    c.transpose12AsScale = transposeScale->getToggleState();
 
     c.mpeEnabled = mpeEnabled->getToggleState();
     c.mpePitchBendRange = mpePBRange->getValue();
@@ -970,30 +959,27 @@ BEGIN_JUCER_METADATA
     <TEXT pos="368 136 276 23" fill="solid: ffffffff" hasStroke="0" text="After Touch"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="533 163 48 23" fill="solid: ffffffff" hasStroke="0" text="PITCH"
+    <TEXT pos="528 163 48 23" fill="solid: ffffffff" hasStroke="0" text="PITCH"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-          italic="0" justification="33"/>
-    <TEXT pos="589 163 48 23" fill="solid: ffffffff" hasStroke="0" text="AMP"
+          italic="0" justification="36"/>
+    <TEXT pos="584 163 48 23" fill="solid: ffffffff" hasStroke="0" text="AMP"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-          italic="0" justification="33"/>
-    <TEXT pos="645 163 48 23" fill="solid: ffffffff" hasStroke="0" text="EG BIAS"
+          italic="0" justification="36"/>
+    <TEXT pos="640 163 48 23" fill="solid: ffffffff" hasStroke="0" text="EG BIAS"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-          italic="0" justification="33"/>
+          italic="0" justification="36"/>
     <RECT pos="371 194 325 1" fill="solid: ff000000" hasStroke="0"/>
-    <TEXT pos="371 210 276 25" fill="solid: ffffffff" hasStroke="0" text="Tuning"
+    <TEXT pos="371 208 276 25" fill="solid: ffffffff" hasStroke="0" text="Tuning"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="459 242 125 25" fill="solid: ffffffff" hasStroke="0" text="Transp 12 as Scale"
-          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-          italic="0" justification="33"/>
-    <TEXT pos="643 242 45 25" fill="solid: ffffffff" hasStroke="0" text="Value"
+    <TEXT pos="371 242 269 25" fill="solid: ffffffff" hasStroke="0" text="Replace transpose by 12s with scale length"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <RECT pos="368 280 328 1" fill="solid: ff000000" hasStroke="0"/>
-    <TEXT pos="371 288 276 27" fill="solid: ffffffff" hasStroke="0" text="MPE"
+    <TEXT pos="371 290 276 27" fill="solid: ffffffff" hasStroke="0" text="MPE"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="528 288 119 27" fill="solid: ffffffff" hasStroke="0" text="Bend Range"
+    <TEXT pos="528 290 119 27" fill="solid: ffffffff" hasStroke="0" text="Bend Range"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
   </BACKGROUND>
@@ -1083,28 +1069,28 @@ BEGIN_JUCER_METADATA
                 explicitFocusOrder="0" pos="528 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TEXTBUTTON name="scl button" id="7a6b689f406ae37d" memberName="sclButton"
-              virtualName="" explicitFocusOrder="0" pos="448 208 56 24" buttonText="SCL"
+              virtualName="" explicitFocusOrder="0" pos="448 205 56 30" buttonText="SCL"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="kbm button" id="181d5b67bc897076" memberName="kbmButton"
-              virtualName="" explicitFocusOrder="0" pos="512 208 56 24" buttonText="KBM"
+              virtualName="" explicitFocusOrder="0" pos="512 205 56 30" buttonText="KBM"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="show tuning button" id="565d5c630087f71" memberName="showTunButton"
-              virtualName="" explicitFocusOrder="0" pos="576 208 48 24" buttonText="Show"
+              virtualName="" explicitFocusOrder="0" pos="576 205 48 30" buttonText="Show"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="reset tuning button" id="44a4ec0c1d200987" memberName="resetTuningButton"
-              virtualName="" explicitFocusOrder="0" pos="632 208 48 24" buttonText="Reset"
+              virtualName="" explicitFocusOrder="0" pos="632 205 48 30" buttonText="Reset"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="transposeScale" id="9d4dd65775ed9e38" memberName="transposeScale"
-                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="576 240 56 24"
+                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="624 240 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
-                state="0"/>
+                state="1"/>
   <SLIDER name="mpePBRange" id="a13948d1cc74a51a" memberName="mpePBRange"
-          virtualName="" explicitFocusOrder="0" pos="616 288 72 24" min="0.0"
+          virtualName="" explicitFocusOrder="0" pos="616 291 72 24" min="0.0"
           max="96.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="mpeEnabled" id="e1a11d0372879dd8" memberName="mpeEnabled"
-                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="448 288 56 24"
+                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="448 288 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
 </JUCER_COMPONENT>
