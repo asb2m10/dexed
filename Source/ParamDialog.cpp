@@ -254,7 +254,7 @@ ParamDialog::ParamDialog ()
     transposeScale->addListener (this);
     transposeScale->setToggleState (true, dontSendNotification);
 
-    transposeScale->setBounds (624, 240, 56, 30);
+    transposeScale->setBounds (592, 240, 56, 30);
 
     mpePBRange.reset (new Slider ("mpePBRange"));
     addAndMakeVisible (mpePBRange.get());
@@ -271,6 +271,16 @@ ParamDialog::ParamDialog ()
     mpeEnabled->addListener (this);
 
     mpeEnabled->setBounds (448, 288, 56, 30);
+
+    transposeHelp.reset (new ImageButton ("new button"));
+    addAndMakeVisible (transposeHelp.get());
+    transposeHelp->addListener (this);
+
+    transposeHelp->setImages (false, true, true,
+                              ImageCache::getFromMemory (BinaryData::HelpButton_png, BinaryData::HelpButton_pngSize), 1.000f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000),
+                              Image(), 1.000f, Colour (0x00000000));
+    transposeHelp->setBounds (500, 245, 20, 20);
 
 
     //[UserPreSize]
@@ -333,6 +343,7 @@ ParamDialog::~ParamDialog()
     transposeScale = nullptr;
     mpePBRange = nullptr;
     mpeEnabled = nullptr;
+    transposeHelp = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -540,8 +551,8 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 371, y = 242, width = 269, height = 25;
-        String text (TRANS("Replace transpose by 12s with scale length"));
+        int x = 371, y = 242, width = 157, height = 25;
+        String text (TRANS("Transposition 12 as:"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -575,6 +586,30 @@ void ParamDialog::paint (Graphics& g)
     {
         int x = 528, y = 290, width = 119, height = 27;
         String text (TRANS("Bend Range"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
+    {
+        int x = 555, y = 242, width = 37, height = 25;
+        String text (TRANS("12"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
+    {
+        int x = 659, y = 242, width = 45, height = 25;
+        String text (TRANS("SCL"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -801,6 +836,39 @@ void ParamDialog::buttonClicked (Button* buttonThatWasClicked)
         //[UserButtonCode_mpeEnabled] -- add your button handler code here..
         //[/UserButtonCode_mpeEnabled]
     }
+    else if (buttonThatWasClicked == transposeHelp.get())
+    {
+        //[UserButtonCode_transposeHelp] -- add your button handler code here..
+        auto te = new TextEditor();
+        te->setReadOnly(true);
+        te->setMultiLine(true);
+        te->setBounds( 0, 0, 250, 200 );
+        te->setText( R"TUNINGHELP(
+Help on Tuning Transposition
+
+Many DX7 cartridges use a transposition of -12 or -24 to acheive a bass sound. The DX7 transposes in key space, and so this transposition remaps C4 to C3 and so on, leading to an octave drop.
+
+When applying non-12-note scales, though, this transposition results in an irregular retuning. If you have a 15 note scale, a transposition of -12 will move you to the  third note of the scale, not the root.
+
+To allow existing patches to work, we have added a feature which replaces transpositions of -24, -12, 12, and 24 with the length of the scale. This behavior is controlled by the switch here.
+
+With the switch in the SCL (lighted) position, a transposition of -24 is replaced with  -2 scale length, -12 by - scale length, and so on. This results in octave transpositions being scale aware, but has the strange effect that the jump from -11 to -12 to -13 in  transposition space is no longer continuous in frequency space. With an 18 note octave transpose -11 will play note 7, -12 note 0, and -13 note 5.
+
+With the switch in the 12 (unlighted) position, transposition stays with the keyboard. In this case transposition through 11, 12 and 13 is continous, but transposition by 12 is no a single scale length drop.
+)TUNINGHELP" );
+
+        DialogWindow::LaunchOptions options;
+        options.content.setOwned(te);
+        options.dialogTitle = "Transposition Help";
+        options.dialogBackgroundColour = Colour(0xFF323E44);
+        options.escapeKeyTriggersCloseButton = true;
+        options.useNativeTitleBar = false;
+        options.resizable = false;
+
+        auto dialogwindow = options.launchAsync();
+
+        //[/UserButtonCode_transposeHelp]
+    }
 
     //[UserbuttonClicked_Post]
     if( ! handled )
@@ -972,7 +1040,7 @@ BEGIN_JUCER_METADATA
     <TEXT pos="371 208 276 25" fill="solid: ffffffff" hasStroke="0" text="Tuning"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="371 242 269 25" fill="solid: ffffffff" hasStroke="0" text="Replace transpose by 12s with scale length"
+    <TEXT pos="371 242 157 25" fill="solid: ffffffff" hasStroke="0" text="Transposition 12 as:"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <RECT pos="368 280 328 1" fill="solid: ff000000" hasStroke="0"/>
@@ -980,6 +1048,12 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <TEXT pos="528 290 119 27" fill="solid: ffffffff" hasStroke="0" text="Bend Range"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <TEXT pos="555 242 37 25" fill="solid: ffffffff" hasStroke="0" text="12"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <TEXT pos="659 242 45 25" fill="solid: ffffffff" hasStroke="0" text="SCL"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
   </BACKGROUND>
@@ -1081,7 +1155,7 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="632 205 48 30" buttonText="Reset"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="transposeScale" id="9d4dd65775ed9e38" memberName="transposeScale"
-                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="624 240 56 30"
+                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="592 240 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="1"/>
   <SLIDER name="mpePBRange" id="a13948d1cc74a51a" memberName="mpePBRange"
@@ -1093,6 +1167,12 @@ BEGIN_JUCER_METADATA
                 virtualName="LightedToggleButton" explicitFocusOrder="0" pos="448 288 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
+  <IMAGEBUTTON name="new button" id="1c9edab9992cbeef" memberName="transposeHelp"
+               virtualName="" explicitFocusOrder="0" pos="500 245 20 20" buttonText="new button"
+               connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
+               resourceNormal="BinaryData::HelpButton_png" opacityNormal="1.0"
+               colourNormal="0" resourceOver="" opacityOver="1.0" colourOver="0"
+               resourceDown="" opacityDown="1.0" colourDown="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

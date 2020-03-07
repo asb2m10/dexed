@@ -111,6 +111,7 @@ private:
     std::unique_ptr<LightedToggleButton> transposeScale;
     std::unique_ptr<Slider> mpePBRange;
     std::unique_ptr<LightedToggleButton> mpeEnabled;
+    std::unique_ptr<ImageButton> transposeHelp;
 
 
     //==============================================================================
