@@ -23,6 +23,7 @@
 #include "controllers.h"
 #include "dx7note.h"
 #include <iostream>
+#include <cmath>
 
 const int FEEDBACK_BITDEPTH = 8;
 
@@ -142,6 +143,7 @@ Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts) : tuning_state_(ts) {
 void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
     int rates[4];
     int levels[4];
+    playingMidiNote = midinote;
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         for (int i = 0; i < 4; i++) {
@@ -216,6 +218,20 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
         int d = ((float)( (mpePitchBend-0x2000) << 11 )) * ctrls->mpePitchBendRange / 12.0; 
         pb += d;
     }
+
+    if( ! tuning_state_->is_standard_tuning() && pb != 0 )
+    {
+        // If we have a scale we want PB to be in scale space so we sort of need to
+        // unwind the combinations above and re-interpolate
+        
+        float notesTuned = ( pb >> 11 ) * 12.0 / 8192; // How many steps you tuned
+        int floorNote = std::floor(notesTuned);
+        float frac = notesTuned - floorNote;
+        float targetLog = tuning_state_->midinote_to_logfreq(playingMidiNote + floorNote) * ( 1.0 - frac ) +
+            tuning_state_->midinote_to_logfreq(playingMidiNote + floorNote + 1) * frac; // the interpolated log freq
+        float newpb = targetLog - tuning_state_->midinote_to_logfreq(playingMidiNote); // and the resulting bend
+        pb = newpb;
+    }
     
     int32_t pitch_base = pb + ctrls->masterTune;
     pitch_mod += pitch_base;
@@ -269,6 +285,7 @@ void Dx7Note::keyup() {
 void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
     int rates[4];
     int levels[4];
+    playingMidiNote = midinote;
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];

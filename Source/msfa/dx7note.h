@@ -78,6 +78,8 @@ private:
     int32_t ampmodsens_[6];
     int32_t opMode[6];
 
+    uint8_t playingMidiNote; // We need this for scale aware pitch bend
+    
     int ampmoddepth_;
     int algorithm_;
     int pitchmoddepth_;
