@@ -104,7 +104,7 @@ void TuningShow::setTuning( const Tunings::Tuning &t )
     if( kbmt )
         kbmt->setText( tuning.keyboardMapping.rawText, false );
 
-    mod = std::make_unique<surgesynthteam_TuningTableListBoxModel>();
+    mod = std::make_unique<surgesynthteam::TuningTableListBoxModel>();
     mod->setTableListBox( table );
     mod->setupDefaultHeaders( table );
     mod->tuningUpdated( tuning );

@@ -81,7 +81,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<Slider> pitchRange;
+    std::unique_ptr<Slider> pitchRangeDn;
     std::unique_ptr<Slider> pitchStep;
     std::unique_ptr<ComboBox> sysexIn;
     std::unique_ptr<ComboBox> sysexOut;
@@ -112,6 +112,7 @@ private:
     std::unique_ptr<Slider> mpePBRange;
     std::unique_ptr<LightedToggleButton> mpeEnabled;
     std::unique_ptr<ImageButton> transposeHelp;
+    std::unique_ptr<Slider> pitchRangeUp;
 
 
     //==============================================================================

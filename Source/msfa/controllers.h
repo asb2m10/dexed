@@ -28,8 +28,9 @@
 
 // State of MIDI controllers
 const int kControllerPitch = 128;
-const int kControllerPitchRange = 129;
+const int kControllerPitchRangeUp = 129;
 const int kControllerPitchStep = 130;
+const int kControllerPitchRangeDn = 131;
 
 class FmCore;
 
@@ -76,7 +77,7 @@ class Controllers {
     }
     
 public:
-    int values_[131];
+    int values_[132];
     
     char opSwitch[7];
     

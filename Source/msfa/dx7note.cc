@@ -205,7 +205,10 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     int32_t pb = (pitchbend - 0x2000);
     if (pb != 0) {
         if (ctrls->values_[kControllerPitchStep] == 0) {
-            pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRange]) / 12.0;
+            if( pb >= 0 )
+                pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRangeUp]) / 12.0;
+            else
+                pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRangeDn]) / 12.0;
         } else {
             int stp = 12 / ctrls->values_[kControllerPitchStep];
             pb = pb * stp / 8191;
@@ -216,6 +219,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     if( ctrls->mpeEnabled )
     {
         int d = ((float)( (mpePitchBend-0x2000) << 11 )) * ctrls->mpePitchBendRange / 12.0; 
+        // std::cout << mpePitchBend << " " << 0x2000 << " " << d << std::endl;
         pb += d;
     }
 

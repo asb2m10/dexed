@@ -56,7 +56,7 @@ private:
     Tunings::Tuning tuning;
     TextEditor *sclt, *kbmt;
     TableListBox *table;
-    std::unique_ptr<surgesynthteam_TuningTableListBoxModel> mod;
+    std::unique_ptr<surgesynthteam::TuningTableListBoxModel> mod;
     //[/UserVariables]
 
     //==============================================================================

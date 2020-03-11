@@ -100,7 +100,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
     setEngineType(DEXED_ENGINE_MARKI);
     
-    controllers.values_[kControllerPitchRange] = 3;
+    controllers.values_[kControllerPitchRangeUp] = 3;
+    controllers.values_[kControllerPitchRangeDn] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     controllers.masterTune = 0;
     
@@ -314,8 +315,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     uint8_t cmd = buf[0];
     uint8_t cf0 = cmd & 0xf0;
     auto channel = msg->getChannel();
-    
-    if( controllers.mpeEnabled && channel != 0 &&
+
+
+    if( controllers.mpeEnabled && channel != 1 &&
         (
             (cf0 == 0xb0 && buf[1] == 74 ) || //timbre
             (cf0 == 0xd0 ) || // aftertouch

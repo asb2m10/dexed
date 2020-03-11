@@ -33,14 +33,14 @@ ParamDialog::ParamDialog ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    pitchRange.reset (new Slider ("pitchRange"));
-    addAndMakeVisible (pitchRange.get());
-    pitchRange->setRange (0, 12, 1);
-    pitchRange->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchRange->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
-    pitchRange->addListener (this);
+    pitchRangeDn.reset (new Slider ("pitchRangeDn"));
+    addAndMakeVisible (pitchRangeDn.get());
+    pitchRangeDn->setRange (0, 48, 1);
+    pitchRangeDn->setSliderStyle (Slider::RotaryVerticalDrag);
+    pitchRangeDn->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    pitchRangeDn->addListener (this);
 
-    pitchRange->setBounds (264, 16, 72, 24);
+    pitchRangeDn->setBounds (264, 16, 72, 24);
 
     pitchStep.reset (new Slider ("pitchStep"));
     addAndMakeVisible (pitchStep.get());
@@ -282,6 +282,15 @@ ParamDialog::ParamDialog ()
                               Image(), 1.000f, Colour (0x00000000));
     transposeHelp->setBounds (500, 245, 20, 20);
 
+    pitchRangeUp.reset (new Slider ("pitchRangeUp"));
+    addAndMakeVisible (pitchRangeUp.get());
+    pitchRangeUp->setRange (0, 48, 1);
+    pitchRangeUp->setSliderStyle (Slider::RotaryVerticalDrag);
+    pitchRangeUp->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
+    pitchRangeUp->addListener (this);
+
+    pitchRangeUp->setBounds (168, 16, 72, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -290,7 +299,8 @@ ParamDialog::ParamDialog ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    pitchRange->setEnabled(pitchStep->getValue() == 0);
+    pitchRangeUp->setEnabled(pitchStep->getValue() == 0);
+    pitchRangeDn->setEnabled(pitchStep->getValue() == 0);
 
     StringArray input;
     input.add("None");
@@ -313,7 +323,7 @@ ParamDialog::~ParamDialog()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    pitchRange = nullptr;
+    pitchRangeDn = nullptr;
     pitchStep = nullptr;
     sysexIn = nullptr;
     sysexOut = nullptr;
@@ -344,6 +354,7 @@ ParamDialog::~ParamDialog()
     mpePBRange = nullptr;
     mpeEnabled = nullptr;
     transposeHelp = nullptr;
+    pitchRangeUp = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -619,6 +630,30 @@ void ParamDialog::paint (Graphics& g)
                     Justification::centredLeft, true);
     }
 
+    {
+        int x = 147, y = 16, width = 20, height = 23;
+        String text (TRANS("up"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
+    {
+        int x = 240, y = 16, width = 20, height = 23;
+        String text (TRANS("dn"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
     //[UserPaint] Add your own custom painting code here..
     if ( ! JUCEApplication::isStandaloneApp() ) {
         g.setColour (Colours::white);
@@ -651,15 +686,16 @@ void ParamDialog::sliderValueChanged (Slider* sliderThatWasMoved)
     bool handled = false;
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == pitchRange.get())
+    if (sliderThatWasMoved == pitchRangeDn.get())
     {
-        //[UserSliderCode_pitchRange] -- add your slider handling code here..
-        //[/UserSliderCode_pitchRange]
+        //[UserSliderCode_pitchRangeDn] -- add your slider handling code here..
+        //[/UserSliderCode_pitchRangeDn]
     }
     else if (sliderThatWasMoved == pitchStep.get())
     {
         //[UserSliderCode_pitchStep] -- add your slider handling code here..
-        pitchRange->setEnabled(pitchStep->getValue() == 0);
+        pitchRangeUp->setEnabled(pitchStep->getValue() == 0);
+        pitchRangeDn->setEnabled(pitchStep->getValue() == 0);
         //[/UserSliderCode_pitchStep]
     }
     else if (sliderThatWasMoved == sysexChl.get())
@@ -691,6 +727,11 @@ void ParamDialog::sliderValueChanged (Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_mpePBRange] -- add your slider handling code here..
         //[/UserSliderCode_mpePBRange]
+    }
+    else if (sliderThatWasMoved == pitchRangeUp.get())
+    {
+        //[UserSliderCode_pitchRangeUp] -- add your slider handling code here..
+        //[/UserSliderCode_pitchRangeUp]
     }
 
     //[UsersliderValueChanged_Post]
@@ -883,7 +924,8 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey) {
-    pitchRange->setValue(c.values_[kControllerPitchRange]);
+    pitchRangeUp->setValue(c.values_[kControllerPitchRangeUp]);
+    pitchRangeDn->setValue(c.values_[kControllerPitchRangeDn]);
     pitchStep->setValue(c.values_[kControllerPitchStep]);
     sysexChl->setValue(mgr.getChl() + 1);
 
@@ -930,7 +972,8 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey) {
     bool ret = true;
 
-    c.values_[kControllerPitchRange] = pitchRange->getValue();
+    c.values_[kControllerPitchRangeUp] = pitchRangeUp->getValue();
+    c.values_[kControllerPitchRangeDn] = pitchRangeDn->getValue();
     c.values_[kControllerPitchStep] = pitchStep->getValue();
 
     c.wheel.range = whlRange->getValue();
@@ -1056,10 +1099,16 @@ BEGIN_JUCER_METADATA
     <TEXT pos="659 242 45 25" fill="solid: ffffffff" hasStroke="0" text="SCL"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
+    <TEXT pos="147 16 20 23" fill="solid: ffffffff" hasStroke="0" text="up"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <TEXT pos="240 16 20 23" fill="solid: ffffffff" hasStroke="0" text="dn"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
   </BACKGROUND>
-  <SLIDER name="pitchRange" id="7409be5a8dfaa91" memberName="pitchRange"
+  <SLIDER name="pitchRangeDn" id="7409be5a8dfaa91" memberName="pitchRangeDn"
           virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0.0"
-          max="12.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchStep" id="b86af4b792e768ca" memberName="pitchStep"
@@ -1173,6 +1222,11 @@ BEGIN_JUCER_METADATA
                resourceNormal="BinaryData::HelpButton_png" opacityNormal="1.0"
                colourNormal="0" resourceOver="" opacityOver="1.0" colourOver="0"
                resourceDown="" opacityDown="1.0" colourDown="0"/>
+  <SLIDER name="pitchRangeUp" id="56a2aeddd2444bea" memberName="pitchRangeUp"
+          virtualName="" explicitFocusOrder="0" pos="168 16 72 24" min="0.0"
+          max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
