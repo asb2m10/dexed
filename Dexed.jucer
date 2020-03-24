@@ -7,7 +7,7 @@
               pluginCode="Dexd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
               pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
-              aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="2" jucerVersion="5.4.5"
+              aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="2" jucerVersion="5.4.7"
               companyName="Digital Suburban" buildVST3="1" buildRTAS="0" buildAAX="0"
               pluginManufacturerEmail="support@yourcompany.com" buildAUv3="0"
               pluginIsMidiEffectPlugin="0" displaySplashScreen="0" reportAppUsage="0"
@@ -120,9 +120,9 @@
                 bigIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
-                       targetName="Dexed"/>
+                       targetName="Dexed" linuxArchitecture="-march=native"/>
         <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="2"
-                       targetName="Dexed"/>
+                       targetName="Dexed" linuxArchitecture="-march=native"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.0/modules"/>

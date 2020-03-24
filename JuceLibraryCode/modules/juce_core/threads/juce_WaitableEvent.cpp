@@ -23,30 +23,48 @@
 namespace juce
 {
 
-Message::Message() noexcept {}
-Message::~Message() {}
-
-void Message::messageCallback()
+WaitableEvent::WaitableEvent (bool manualReset) noexcept
+    : useManualReset (manualReset)
 {
-    if (auto* r = recipient.get())
-        r->handleMessage (*this);
 }
 
-MessageListener::MessageListener() noexcept
+bool WaitableEvent::wait (int timeOutMilliseconds) const
 {
-    // Are you trying to create a messagelistener before or after juce has been initialised??
-    JUCE_ASSERT_MESSAGE_MANAGER_EXISTS
+    std::unique_lock<std::mutex> lock (mutex);
+
+    if (! triggered)
+    {
+        if (timeOutMilliseconds < 0)
+        {
+            condition.wait (lock, [this] { return triggered == true; });
+        }
+        else
+        {
+            if (! condition.wait_for (lock, std::chrono::milliseconds (timeOutMilliseconds),
+                                      [this] { return triggered == true; }))
+            {
+                return false;
+            }
+        }
+    }
+
+    if (! useManualReset)
+        reset();
+
+    return true;
 }
 
-MessageListener::~MessageListener()
+void WaitableEvent::signal() const
 {
-    masterReference.clear();
+    std::unique_lock<std::mutex> lock (mutex);
+
+    triggered = true;
+    condition.notify_all();
 }
 
-void MessageListener::postMessage (Message* const message) const
+void WaitableEvent::reset() const
 {
-    message->recipient = const_cast<MessageListener*> (this);
-    message->post();
+    triggered = false;
 }
 
 } // namespace juce
