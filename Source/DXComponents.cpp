@@ -432,19 +432,32 @@ void ProgramSelector::mouseDown(const MouseEvent &event) {
 void ProgramSelector::mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) {
     accum_wheel += wheel.deltaY;
 
-    float wheelFactor = 5.0; // higher is slower
+    float wheelFactor = 0.2; // higher is slower
+#if JUCE_WINDOWS
+    wheelFactor = 0.4;
+#endif    
     
-    if( accum_wheel * wheelFactor > 1 )
+    bool up = (accum_wheel > wheelFactor);
+    bool dn = (accum_wheel < -wheelFactor);
+    int sn = 1;
+#if ! JUCE_MAC
+    auto t = up;
+    up = dn;
+    dn = t;
+    sn = -1;
+#endif    
+    
+    if( up )
     {
-        accum_wheel -= 1.f / wheelFactor;
+        accum_wheel -= sn * wheelFactor;
         int c = getSelectedItemIndex();
         if( c == 31 ) c = 0;
         else c++;
         setSelectedItemIndex(c);
     }
-    else if( accum_wheel * wheelFactor < -1 )
+    else if( dn )
     {
-        accum_wheel += 1.f / wheelFactor;
+        accum_wheel += sn * wheelFactor;
         int c = getSelectedItemIndex();
         if( c == 0 ) c = 31;
         else c--;
