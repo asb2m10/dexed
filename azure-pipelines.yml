@@ -49,9 +49,9 @@ jobs:
       win:
         imageName: 'vs2017-win2016'
         isWindows: True
-      lin:
-        imageName: 'ubuntu-18.04'
-        isLinux: True
+      #lin:
+      #  imageName: 'ubuntu-18.04'
+      #  isLinux: True
 
   pool:
     vmImage: $(imageName)
@@ -182,10 +182,10 @@ jobs:
       artifactName: 'WINDOWS_BUILD'
       targetPath: $(Build.ArtifactStagingDirectory)
 
-  - task: DownloadPipelineArtifact@0
-    inputs:
-      artifactName: 'LINUX_BUILD'
-      targetPath: $(Build.ArtifactStagingDirectory)
+  #- task: DownloadPipelineArtifact@0
+  #  inputs:
+  #    artifactName: 'LINUX_BUILD'
+  #    targetPath: $(Build.ArtifactStagingDirectory)
 
   - bash: |
      scripts/release-notes.sh > $(Build.ArtifactStagingDirectory)/ReleaseNotes.md
