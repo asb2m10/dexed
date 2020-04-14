@@ -13,8 +13,9 @@ extern "C" {
 // Opaque datatype for MTSClient.
 typedef struct MTSClient MTSClient;
     
-// Filter out notes which are unmapped in the MTSMaster.
-extern bool MTS_ShouldFilterNote(MTSClient* c,char midinote);
+// Returns true if note should not be played, either because it is not mapped to a scale step or it is assigned to control a parameter in the Master.
+// MIDI channel argument is optional but should be included if possible, as some note parameter assignments in the Master may be specific to a single channel.
+extern bool MTS_ShouldFilterNote(MTSClient* c,char midinote,char midichannel=-1);
 
 // Retuning a midi note. Pick the version that makes your life easiest!
 extern double MTS_NoteToFrequency(MTSClient *client,char midinote);
