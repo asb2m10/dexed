@@ -447,6 +447,20 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
+
+    if( controllers.mpeEnabled )
+    {
+        int note = currentNote;
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+        {
+            if( voices[note].keydown && voices[note].channel == channel )
+            {
+                // If we get two keydowns on the same channel we are getting information from a non-mpe device
+                controllers.mpeEnabled = false;
+            }
+            note = (note + 1) % MAX_ACTIVE_NOTES;
+        }
+    }
     
     int note = currentNote;
     for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
