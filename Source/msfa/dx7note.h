@@ -27,6 +27,8 @@
 #include "env.h"
 #include "pitchenv.h"
 #include "fm_core.h"
+#include "tuning.h"
+#include <memory>
 
 struct VoiceStatus {
     uint32_t amp[6];
@@ -36,7 +38,7 @@ struct VoiceStatus {
 
 class Dx7Note {
 public:
-    Dx7Note();
+    Dx7Note(std::shared_ptr<TuningState> ts);
     void init(const uint8_t patch[156], int midinote, int velocity);
     
     // Note: this _adds_ to the buffer. Interesting question whether it's
@@ -57,6 +59,14 @@ public:
     void transferState(Dx7Note& src);
     void transferSignal(Dx7Note &src);
     void oscSync();
+
+    int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune);
+
+    std::shared_ptr<TuningState> tuning_state_;
+
+    int mpePitchBend = 8192;
+    int mpePressure = 0;
+    int mpeTimbre = 0;
     
 private:
     Env env_[6];
@@ -67,11 +77,14 @@ private:
     int32_t fb_shift_;
     int32_t ampmodsens_[6];
     int32_t opMode[6];
+
+    uint8_t playingMidiNote; // We need this for scale aware pitch bend
     
     int ampmoddepth_;
     int algorithm_;
     int pitchmoddepth_;
     int pitchmodsens_;
+
 };
 
 #endif  // SYNTH_DX7NOTE_H_

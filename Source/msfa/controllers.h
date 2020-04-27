@@ -28,8 +28,9 @@
 
 // State of MIDI controllers
 const int kControllerPitch = 128;
-const int kControllerPitchRange = 129;
+const int kControllerPitchRangeUp = 129;
 const int kControllerPitchStep = 130;
+const int kControllerPitchRangeDn = 131;
 
 class FmCore;
 
@@ -76,7 +77,7 @@ class Controllers {
     }
     
 public:
-    int values_[131];
+    int values_[132];
     
     char opSwitch[7];
     
@@ -90,6 +91,12 @@ public:
     int modwheel_cc;
     
     int masterTune;
+
+    bool transpose12AsScale = true;
+
+    // MPE configuration. FIXME - make this switchable
+    bool mpeEnabled = true;
+    int mpePitchBendRange = 24;
     
     FmMod wheel;
     FmMod foot;
@@ -116,7 +123,6 @@ public:
         if ( ! ((wheel.eg || foot.eg) || (breath.eg || at.eg)) )
             eg_mod = 127;
         
-        TRACE("controllers refresh>>> amp_mod %d pitch_mod %d", amp_mod, pitch_mod);
     }
     
     FmCore *core;

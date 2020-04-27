@@ -22,14 +22,10 @@
 #include "exp2.h"
 #include "controllers.h"
 #include "dx7note.h"
+#include <iostream>
+#include <cmath>
 
 const int FEEDBACK_BITDEPTH = 8;
-
-int32_t midinote_to_logfreq(int midinote) {
-    const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
-    const int step = (1 << 24) / 12;
-    return base + step * midinote;
-}
 
 const int32_t coarsemul[] = {
     -16777216, 0, 16777216, 26591258, 33554432, 38955489, 43368474, 47099600,
@@ -39,11 +35,11 @@ const int32_t coarsemul[] = {
     81503396, 82323963, 83117622
 };
 
-int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
+int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
     // TODO: pitch randomization
     int32_t logfreq;
     if (mode == 0) {
-        logfreq = midinote_to_logfreq(midinote);
+        logfreq = tuning_state_->midinote_to_logfreq(midinote);
         
         // could use more precision, closer enough for now. those numbers comes from my DX7
         double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
@@ -137,7 +133,7 @@ static const uint32_t ampmodsenstab[] = {
     0, 4342338, 7171437, 16777216
 };
 
-Dx7Note::Dx7Note() {
+Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts) : tuning_state_(ts) {
     for(int op=0;op<6;op++) {
         params_[op].phase = 0;
         params_[op].gain_out = 0;
@@ -147,6 +143,7 @@ Dx7Note::Dx7Note() {
 void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
     int rates[4];
     int levels[4];
+    playingMidiNote = midinote;
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         for (int i = 0; i < 4; i++) {
@@ -185,6 +182,11 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
+
+    // MPE default valeus
+    mpePitchBend = 8192;
+    mpeTimbre = 0;
+    mpePressure = 0;
 }
 
 void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Controllers *ctrls) {
@@ -203,13 +205,38 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     int32_t pb = (pitchbend - 0x2000);
     if (pb != 0) {
         if (ctrls->values_[kControllerPitchStep] == 0) {
-            pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRange]) / 12.0;
+            if( pb >= 0 )
+                pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRangeUp]) / 12.0;
+            else
+                pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRangeDn]) / 12.0;
         } else {
             int stp = 12 / ctrls->values_[kControllerPitchStep];
             pb = pb * stp / 8191;
             pb = (pb * (8191 / stp)) << 11;
         }
     }
+
+    if( ctrls->mpeEnabled )
+    {
+        int d = ((float)( (mpePitchBend-0x2000) << 11 )) * ctrls->mpePitchBendRange / 12.0; 
+        // std::cout << mpePitchBend << " " << 0x2000 << " " << d << std::endl;
+        pb += d;
+    }
+
+    if( ! tuning_state_->is_standard_tuning() && pb != 0 )
+    {
+        // If we have a scale we want PB to be in scale space so we sort of need to
+        // unwind the combinations above and re-interpolate
+        
+        float notesTuned = ( pb >> 11 ) * 12.0 / 8192; // How many steps you tuned
+        int floorNote = std::floor(notesTuned);
+        float frac = notesTuned - floorNote;
+        float targetLog = tuning_state_->midinote_to_logfreq(playingMidiNote + floorNote) * ( 1.0 - frac ) +
+            tuning_state_->midinote_to_logfreq(playingMidiNote + floorNote + 1) * frac; // the interpolated log freq
+        float newpb = targetLog - tuning_state_->midinote_to_logfreq(playingMidiNote); // and the resulting bend
+        pb = newpb;
+    }
+    
     int32_t pitch_base = pb + ctrls->masterTune;
     pitch_mod += pitch_base;
     
@@ -262,6 +289,7 @@ void Dx7Note::keyup() {
 void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
     int rates[4];
     int levels[4];
+    playingMidiNote = midinote;
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];

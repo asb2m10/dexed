@@ -1,7 +1,6 @@
 Dexed - FM Plugin Synth
 =======================
 
-[![Build Status](https://travis-ci.org/asb2m10/dexed.svg?branch=master)](https://travis-ci.org/asb2m10/dexed)
 
 Please see [Dexed User Website](https://asb2m10.github.io/dexed) for user and download information.
 
@@ -19,6 +18,13 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+### (this version)
+* Added support for SCL/KBM microtuning
+* Added initial support for MPE performance
+* Upgraded build system to use JUCE 4.5.7 and build from locally acquired JUCE
+* A Collection of small UI changes, including higher contrast GUI assets, better sub-window management,
+  and mouse whee support
+
 #### Version 0.9.5
 * Added VST3 support
 
@@ -98,3 +104,64 @@ TODO - msfa
 * Better Amplitude Modulation
 * Accurate live operator level envelope updates
 
+# How to build DEXED
+
+You will notice that DEXED no longer ships with built makefiles. Rather it has a collection of scripts to 
+get a version of JUCE and build them for you. With juce6 this will change even more, but for now to build you
+will want to get and run juce and the projucer yourself. Luckily this is fairly easy
+
+## All OSes
+
+DEXED has several submodules it now depends on, including VST3 and a library to support non standard tuning.
+After you clone your first step is
+
+```
+git submodule update --init --recursive
+```
+
+which will expand the submodules. Then follow platform specific directions below
+
+## macOS
+
+```
+./scripts/get-juce.sh
+./scripts/projuce-mac.sh
+./scripts/build-mac.sh
+```
+
+This will build a VST3, and AU and a Standalone in Build/MacOSX/Release for your
+
+## windows
+
+```
+./scripts/get-juce.sh
+./assets/JUCE/Projucer.exe --resave dexed.jucer
+```
+
+then open and build the resulting Visual Studio Solution file.
+
+## Linux
+
+```
+./scripts/get-juce.sh
+./scripts/projuce-lin.sh
+./scripts/build-lin.sh
+```
+
+and you will get a JACK enabled standalone version of JUCE. 
+
+Since Steinberg has discontinued the VST2 API we no longer distribute a VST2. On Mac and Windows we strongly recommend you
+use the provided VST3 or AU. On Linux, the situation is a little trickier, with VST3 support in hosts being uneven and juce5
+doesn't create a VST3 (although this will change in juce6). 
+
+If you
+are a licensee to the VST2SDK, though, you can build a VST2 version of DEXED yourself with these commands
+
+```
+./scripts/get-juce.sh
+export VST2SDK_DIR=~/path/to/vst2/sdk/dir
+./scripts/projuce-lin-vst2.sh
+./scripts/build-lin.sh
+```
+
+and you will get a VST2 and Standalone as opposed to just a Standalone.

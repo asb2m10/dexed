@@ -64,6 +64,7 @@ DXLookNFeel::DXLookNFeel() {
     
     imageKnob = ImageCache::getFromMemory(BinaryData::Knob_34x34_png, BinaryData::Knob_34x34_pngSize);
     imageSwitch = ImageCache::getFromMemory(BinaryData::Switch_48x26_png, BinaryData::Switch_48x26_pngSize);
+    imageSwitchLighted = ImageCache::getFromMemory(BinaryData::SwitchLighted_48x26_png, BinaryData::SwitchLighted_48x26_pngSize);
     imageSwitchOperator = ImageCache::getFromMemory(BinaryData::Switch_32x32_png, BinaryData::Switch_32x32_pngSize);
     imageButton = ImageCache::getFromMemory(BinaryData::ButtonUnlabeled_50x30_png, BinaryData::ButtonUnlabeled_50x30_pngSize);
     imageSlider = ImageCache::getFromMemory(BinaryData::Slider_26x26_png, BinaryData::Slider_26x26_pngSize);
@@ -115,6 +116,10 @@ DXLookNFeel::DXLookNFeel() {
         }
         if ( name == "Switch_48x26.png" ) {
             imageSwitch = findImage(path);
+            continue;
+        }
+        if ( name == "SwitchLighted_48x26.png" ) {
+            imageSwitchLighted = findImage(path);
             continue;
         }
         if ( name == "Switch_32x64.png" ) {
@@ -182,7 +187,19 @@ void DXLookNFeel::drawToggleButton(Graphics& g, ToggleButton& button, bool isMou
         return;
     }
 
-    g.drawImage(imageSwitch, 0, 0, 48, 26, 0, button.getToggleState() ? 0 : 26, 48, 26);
+    // One would think there is a better way...
+    auto lb = dynamic_cast<LightedToggleButton *>( &button );
+    if( lb )
+    {
+        if( imageSwitchLighted.isNull() ) {
+            LookAndFeel_V3::drawToggleButton(g, button, isMouseOverButton, isButtonDown);
+            return;
+        }
+        g.drawImage(imageSwitchLighted, 0, 0, 48, 26, 0, button.getToggleState() ? 0 : 26, 48, 26);
+    }
+    else
+        g.drawImage(imageSwitch, 0, 0, 48, 26, 0, button.getToggleState() ? 0 : 26, 48, 26);
+    
 }
 
 void DXLookNFeel::drawButtonBackground(Graphics &g, Button &button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) {

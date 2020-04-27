@@ -80,6 +80,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     Tanh::init();
     Sin::init();
 
+    synthTuningState = createStandardTuning();
+    
     lastStateSave = 0;
     currentNote = -1;
     engineType = -1;
@@ -98,7 +100,8 @@ DexedAudioProcessor::DexedAudioProcessor() {
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
     setEngineType(DEXED_ENGINE_MARKI);
     
-    controllers.values_[kControllerPitchRange] = 3;
+    controllers.values_[kControllerPitchRangeUp] = 3;
+    controllers.values_[kControllerPitchRangeDn] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     controllers.masterTune = 0;
     
@@ -132,7 +135,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     fx.init(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        voices[note].dx7_note = new Dx7Note;
+        voices[note].dx7_note = new Dx7Note(synthTuningState);
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
@@ -300,29 +303,74 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 	return false;
 }
 
+#define _D(x) " " << (#x) << "=" << x
+
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     if ( msg->isSysEx() ) {
         handleIncomingMidiMessage(NULL, *msg);
         return;
     }
-    
+
     const uint8 *buf  = msg->getRawData();
     uint8_t cmd = buf[0];
+    uint8_t cf0 = cmd & 0xf0;
+    auto channel = msg->getChannel();
 
-    switch(cmd & 0xf0) {
+
+    if( controllers.mpeEnabled && channel != 1 &&
+        (
+            (cf0 == 0xb0 && buf[1] == 74 ) || //timbre
+            (cf0 == 0xd0 ) || // aftertouch
+            (cf0 == 0xe0 ) // pb
+            )
+        )
+    {
+        // OK so find my voice index
+        int voiceIndex = -1;
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+        {
+            if( voices[i].keydown && voices[i].channel == channel )
+            {
+                voiceIndex = i;
+                break;
+            }
+        }
+        if( voiceIndex >= 0 )
+        {
+            int i = voiceIndex;
+            switch(cf0) {
+            case 0xb0:
+                voices[i].mpeTimbre = (int)buf[2];
+                voices[i].dx7_note->mpeTimbre = (int)buf[2];
+                break;
+            case 0xd0:
+                voices[i].mpePressure = (int)buf[1];
+                voices[i].dx7_note->mpePressure = (int)buf[1];
+                break;
+            case 0xe0:
+                voices[i].mpePitchBend = (int)( buf[1] | (buf[2] << 7) );
+                voices[i].dx7_note->mpePitchBend = (int)( buf[1] | ( buf[2] << 7 ) );
+                break;
+            }
+        }
+    }
+    else
+    {
+        switch(cmd & 0xf0) {
         case 0x80 :
-            keyup(buf[1]);
+            keyup(channel, buf[1], buf[2]);
         return;
 
         case 0x90 :
-            keydown(buf[1], buf[2]);
+            keydown(channel, buf[1], buf[2]);
         return;
             
         case 0xb0 : {
             int ctrl = buf[1];
             int value = buf[2];
-            
-            switch(ctrl) {
+
+
+                switch(ctrl) {
                 case 1:
                     controllers.modwheel_cc = value;
                     controllers.refresh();
@@ -352,7 +400,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                 case 123:
                     for (int note = 0; note < MAX_ACTIVE_NOTES; note++) {
                         if (voices[note].keydown)
-                            keyup(voices[note].midi_note);
+                            keyup(channel, voices[note].midi_note, 0);
                     }
                     break;
                 default:
@@ -367,38 +415,51 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     // this is used to notify the dialog that a CC value was received.
                     lastCCUsed.setValue(ctrl);
                 }
-        }
-        return;
-
+            }
+            return;
+            
         case 0xc0 :
             setCurrentProgram(buf[1]);
-        return;
+            return;
             
-        // aftertouch
         case 0xd0 :
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
-        return;
+            return;
         
-		// pitchbend
 		case 0xe0 :
 			controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
-		return;
+            return;
+        }
     }
 }
 
 #define ACT(v) (v.keydown ? v.midi_note : -1)
 
-void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
+void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
-        keyup(pitch);
+        keyup(channel, pitch, velo);
         return;
     }
 
-    pitch += data[144] - 24;
+    pitch += tuningTranspositionShift();
     
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
+    }
+
+    if( controllers.mpeEnabled )
+    {
+        int note = currentNote;
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+        {
+            if( voices[note].keydown && voices[note].channel == channel )
+            {
+                // If we get two keydowns on the same channel we are getting information from a non-mpe device
+                controllers.mpeEnabled = false;
+            }
+            note = (note + 1) % MAX_ACTIVE_NOTES;
+        }
     }
     
     int note = currentNote;
@@ -406,6 +467,7 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
         if (!voices[note].keydown) {
             currentNote = (note + 1) % MAX_ACTIVE_NOTES;
             lfo.keydown();  // TODO: should only do this if # keys down was 0
+            voices[note].channel = channel;
             voices[note].midi_note = pitch;
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
@@ -441,12 +503,15 @@ void DexedAudioProcessor::keydown(uint8_t pitch, uint8_t velo) {
 	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }
 
-void DexedAudioProcessor::keyup(uint8_t pitch) {
-    pitch += data[144] - 24;
+void DexedAudioProcessor::keyup(uint8_t chan, uint8_t pitch, uint8_t velo) {
+    pitch += tuningTranspositionShift();
 
     int note;
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
-        if ( voices[note].midi_note == pitch && voices[note].keydown ) {
+        if ( ( ( controllers.mpeEnabled && voices[note].channel == chan ) || // MPE node - find voice by channel
+               (!controllers.mpeEnabled && voices[note].midi_note == pitch ) ) && // regular mode find voice by pitch
+             voices[note].keydown ) // but still only grab the one which is keydown
+        {
             voices[note].keydown = false;
 			//TRACE("deactivate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
             break;
@@ -480,6 +545,24 @@ void DexedAudioProcessor::keyup(uint8_t pitch) {
         voices[note].sustained = true;
     } else {
         voices[note].dx7_note->keyup();
+    }
+}
+
+int DexedAudioProcessor::tuningTranspositionShift()
+{
+    if( synthTuningState->is_standard_tuning() || ! controllers.transpose12AsScale )
+        return data[144] - 24;
+    else
+    {
+        int d144 = data[144];
+        if( d144 % 12 == 0 )
+        {
+            int oct = (d144 - 24) / 12;
+            int res = oct * synthTuningState->scale_length();
+            return res;
+        }
+        else
+            return data[144] - 24;
     }
 }
 
@@ -697,4 +780,78 @@ void dexed_trace(const char *source, const char *fmt, ...) {
     String dest;
     dest << source << " " << output;
     Logger::writeToLog(dest);
+}
+
+void DexedAudioProcessor::resetTuning(std::shared_ptr<TuningState> t)
+{
+    synthTuningState = t;
+    for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
+        if( voices[i].dx7_note != nullptr )
+            voices[i].dx7_note->tuning_state_ = synthTuningState;
+}
+
+void DexedAudioProcessor::retuneToStandard()
+{
+    currentSCLData = "";
+    currentKBMData = "";
+    resetTuning(createStandardTuning());
+}
+
+void DexedAudioProcessor::applySCLTuning() {
+    FileChooser fc( "Please select an SCL File", File(), "*.scl" );
+    if( fc.browseForFileToOpen() )
+    {
+        auto s = fc.getResult();
+        applySCLTuning(s);
+    }
+}
+
+void DexedAudioProcessor::applySCLTuning(File s) {
+    std::string sclcontents = s.loadFileAsString().toStdString();
+    applySCLTuning(sclcontents);
+}
+
+void DexedAudioProcessor::applySCLTuning(std::string sclcontents) {
+    currentSCLData = sclcontents;
+    
+    if( currentKBMData.size() < 1 )
+    {
+        auto t = createTuningFromSCLData( sclcontents );
+        resetTuning(t);
+    }
+    else
+    {
+        auto t = createTuningFromSCLAndKBMData( sclcontents, currentKBMData );
+        resetTuning(t);
+    }
+}
+
+void DexedAudioProcessor::applyKBMMapping() {
+    FileChooser fc( "Please select an KBM File", File(), "*.kbm" );
+    if( fc.browseForFileToOpen() )
+    {
+        auto s = fc.getResult();
+        applyKBMMapping(s);
+    }
+}
+
+void DexedAudioProcessor::applyKBMMapping( File s )
+{
+    std::string kbmcontents = s.loadFileAsString().toStdString();
+    applyKBMMapping(kbmcontents);
+}
+
+void DexedAudioProcessor::applyKBMMapping(std::string kbmcontents) {
+    currentKBMData = kbmcontents;
+    
+    if( currentSCLData.size() < 1 )
+    {
+        auto t = createTuningFromKBMData( currentKBMData );
+        resetTuning(t);
+    }
+    else
+    {
+        auto t = createTuningFromSCLAndKBMData( currentSCLData, currentKBMData );
+        resetTuning(t);
+    }
 }

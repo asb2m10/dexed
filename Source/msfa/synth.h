@@ -26,8 +26,8 @@ typedef unsigned __int32 uint32_t;
 typedef __int16 SInt16;
 #endif
 
-#define LG_N 6
-#define N (1 << LG_N)
+const static int LG_N = 6;
+const static int N = (1 << LG_N);
 
 #if defined(__APPLE__)
 #include <libkern/OSAtomic.h>

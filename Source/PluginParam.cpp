@@ -61,9 +61,10 @@ public:
     };
     
     String getValueDisplay() {
-        String ret;
+        String ret ;
         int value = getValue();
-        
+        return ret << (value - 24);
+#if 0        
         switch(value % 12) {
             case 0: ret << "C"; break;
             case 1: ret << "C#"; break;
@@ -79,6 +80,7 @@ public:
             case 11: ret << "B"; break;
         }
         return ret << (value/12+1);
+#endif        
     }
 };
 
@@ -493,7 +495,7 @@ void DexedAudioProcessor::initCtrl() {
     lfoWaveform = new CtrlDXLabel("LFO WAVE", 5, 142, lbl);
     ctrl.add(lfoWaveform);
     
-    transpose = new CtrlDXTranspose("MIDDLE C", 48, 144);
+    transpose = new CtrlDXTranspose("TRANSPOSE", 48, 144);
     ctrl.add(transpose);
     
     pitchModSens = new CtrlDX("P MODE SENS.", 7, 143);
@@ -740,7 +742,14 @@ void DexedAudioProcessor::loadPreference() {
     }
     
     if ( prop.containsKey( String("pitchRange") ) ) {
-        controllers.values_[kControllerPitchRange] = prop.getIntValue( String("pitchRange") );
+        controllers.values_[kControllerPitchRangeUp] = prop.getIntValue( String("pitchRange") );
+    }
+    if ( prop.containsKey( String("pitchRangeDn") ) ) {
+        controllers.values_[kControllerPitchRangeDn] = prop.getIntValue( String("pitchRangeDn") );
+    }
+    else
+    {
+        controllers.values_[kControllerPitchRangeDn] = controllers.values_[kControllerPitchRangeUp];
     }
     
     if ( prop.containsKey( String("pitchStep") ) ) {
@@ -792,7 +801,9 @@ void DexedAudioProcessor::savePreference() {
     PropertiesFile prop(propFile, prefOptions);
     
     prop.setValue(String("normalizeDxVelocity"), normalizeDxVelocity);
-    prop.setValue(String("pitchRange"), controllers.values_[kControllerPitchRange]);
+    prop.setValue(String("pitchRange"), controllers.values_[kControllerPitchRangeUp]); // for backwards compat
+    prop.setValue(String("pitchRangeUp"), controllers.values_[kControllerPitchRangeUp]);
+    prop.setValue(String("pitchRangeDn"), controllers.values_[kControllerPitchRangeDn]);
     prop.setValue(String("pitchStep"), controllers.values_[kControllerPitchStep]);
     
     prop.setValue(String("sysexIn"), sysexComm.getInput());

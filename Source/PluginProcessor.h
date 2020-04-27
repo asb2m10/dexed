@@ -28,6 +28,7 @@
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
+#include "msfa/tuning.h"
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
@@ -36,11 +37,17 @@
 #include "EngineOpl.h"
 
 struct ProcessorVoice {
+    int channel;
     int midi_note;
     int velocity;
     bool keydown;
     bool sustained;
     bool live;
+
+    int mpePitchBend;
+    int mpePressure;
+    int mpeTimbre;
+    
     Dx7Note *dx7_note;
 };
 
@@ -90,8 +97,8 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     bool sendSysexChange;
     
     void processMidiMessage(const MidiMessage *msg);
-    void keydown(uint8_t pitch, uint8_t velo);
-    void keyup(uint8_t pitch);
+    void keydown(uint8_t chan, uint8_t pitch, uint8_t velo);
+    void keyup(uint8_t, uint8_t pitch, uint8_t velo);
     
     /**
      * this is called from the Audio thread to tell
@@ -236,6 +243,27 @@ public :
     static File dexedCartDir;
     
     Value lastCCUsed;
+
+    std::shared_ptr<TuningState> synthTuningState;
+    // Prompt for a file
+    void applySCLTuning();
+    void applyKBMMapping();
+
+    // Load a file
+    void applySCLTuning(File sclf);
+    void applyKBMMapping(File kbmf);
+
+    // Load from text
+    void applySCLTuning(std::string scld);
+    void applyKBMMapping(std::string kbmd);
+    
+    void retuneToStandard();
+    void resetTuning(std::shared_ptr<TuningState> t);
+    int tuningTranspositionShift();
+    
+    std::string currentSCLData = "";
+    std::string currentKBMData = "";
+    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

@@ -23,7 +23,7 @@
 
 void dexed_trace(const char *source, const char *fmt, ...);
 
-#define DEXED_ID "0.9.5a"
+#define DEXED_ID "DEVBUILD"
 
 #ifdef DEBUG
     #define DEXED_VERSION DEXED_ID " DEBUG"
