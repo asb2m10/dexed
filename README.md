@@ -18,14 +18,12 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
-### (this version)
+#### Version 0.9.5 (in development)
 * Added support for SCL/KBM microtuning
 * Added initial support for MPE performance
 * Upgraded build system to use JUCE 4.5.7 and build from locally acquired JUCE
-* A Collection of small UI changes, including higher contrast GUI assets, better sub-window management,
-  and mouse whee support
-
-#### Version 0.9.5
+* A Collection of small UI changes, including higher contrast GUI assets, better sub-window management, 
+  and mouse wheel support
 * Added VST3 support
 
 #### Version 0.9.4HF1
@@ -83,7 +81,8 @@ Changelog
 
 Credits & thanks
 ----------------
-* DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
+* DX Synth engine : Raph Levien and the [msfa](https://github.com/google/music-synthesizer-for-android) team 
+* [Surge Synth Team](https://surge-synth-team.org/) for substantial contributions like microtuning and MPE support.
 * Graphical design : AZur Studio
 * [Sentinel77](https://github.com/Sentinel77) for numerous engine fixes
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project

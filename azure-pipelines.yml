@@ -197,8 +197,8 @@ jobs:
   - task: GitHubRelease@0
     displayName: "Create New Github Release"
     inputs:
-      gitHubConnection: surge-rackupdater
-      repositoryName: surge-synthesizer/dexed
+      gitHubConnection: asb2m10
+      repositoryName: asb2m10/dexed
       action: 'edit'
       tag: Nightly
       target: '$(Build.SourceVersion)'
