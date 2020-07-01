@@ -33,10 +33,15 @@
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
-    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-    cartManager(this)
+      midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+      cartManager(this),
+      dpiScaleFactor(1.0)
 {
-    setSize(866, ownerFilter->showKeyboard ? 674 : 581);
+    if(Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD) {
+        dpiScaleFactor = 1.5;
+    }
+    setScaleFactor(dpiScaleFactor);
+    setSize(866 * dpiScaleFactor, dpiScaleFactor * (ownerFilter->showKeyboard ? 674 : 581));
 
     processor = ownerFilter;
     
@@ -171,9 +176,8 @@ void DexedAudioProcessorEditor::tuningShow() {
 
 void DexedAudioProcessorEditor::parmShow() {
     int tp = processor->getEngineType();
-    
     DialogWindow::LaunchOptions options;
-    
+
     auto param = new ParamDialog();
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
     param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
@@ -212,7 +216,7 @@ void DexedAudioProcessorEditor::parmShow() {
                                    this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
                                    
-                                   this->setSize(866, this->processor->showKeyboard ? 674 : 581);
+                                   this->setSize(866 * dpiScaleFactor, (processor->showKeyboard ? 674 : 581) * dpiScaleFactor);
                                    this->midiKeyboard.repaint();
                                    
                                    if ( ret == false ) {
