@@ -14,6 +14,7 @@ fi
 
 echo Downloading for $JOS
 
+cd ..
 mkdir -p assets
 curl -o assets/juce-${JUCE_VERSION}-${JOS}.zip https://d30pueezughrda.cloudfront.net/juce/juce-${JUCE_VERSION}-${JOS}.zip
 cd assets && unzip juce-${JUCE_VERSION}-${JOS}.zip
