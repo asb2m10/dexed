@@ -273,7 +273,7 @@ void DexedAudioProcessor::sendSysexCartridge(File cart) {
     if ( ! sysexComm.isOutputActive() )
         return;
     
-    FileInputStream *fis = cart.createInputStream();
+    std::unique_ptr<juce::FileInputStream> fis = cart.createInputStream();
     if ( fis == NULL ) {
         String f = cart.getFullPathName();
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
@@ -283,7 +283,6 @@ void DexedAudioProcessor::sendSysexCartridge(File cart) {
     
     uint8 syx_data[65535];
     int sz = fis->read(syx_data, 65535);
-    delete fis;
     
     if (syx_data[0] != 0xF0) {
         String f = cart.getFullPathName();

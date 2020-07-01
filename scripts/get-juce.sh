@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JUCE_VERSION=5.4.7
+JUCE_VERSION=6.0.0
 OS=`uname -s`
 JOS=windows
 
@@ -16,5 +16,5 @@ echo Downloading for $JOS
 
 cd ..
 mkdir -p assets
-curl -o assets/juce-${JUCE_VERSION}-${JOS}.zip https://d30pueezughrda.cloudfront.net/juce/juce-${JUCE_VERSION}-${JOS}.zip
+curl -L -o assets/juce-${JUCE_VERSION}-${JOS}.zip https://github.com/juce-framework/JUCE/releases/download/${JUCE_VERSION}/juce-${JUCE_VERSION}-${JOS}.zip
 cd assets && unzip juce-${JUCE_VERSION}-${JOS}.zip

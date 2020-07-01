@@ -21,7 +21,7 @@ Changelog
 #### Version 0.9.5 (in development)
 * Added support for SCL/KBM microtuning
 * Added initial support for MPE performance
-* Upgraded build system to use JUCE 4.5.7 and build from locally acquired JUCE
+* Upgraded build system to use JUCE 6.0 and build from locally acquired JUCE
 * A Collection of small UI changes, including higher contrast GUI assets, better sub-window management, 
   and mouse wheel support
 * Added VST3 support
