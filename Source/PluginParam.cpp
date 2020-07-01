@@ -199,7 +199,6 @@ public :
             return;
         }
         editor->global.setParamMessage(getValueDisplay());
-        editor->global.repaint();
     }
 };
 
@@ -397,7 +396,6 @@ void CtrlDX::updateDisplayName() {
     String msg;
     msg << label << " = " << getValueDisplay();
     editor->global.setParamMessage(msg);
-    editor->global.repaint();
 }
 
 
@@ -673,7 +671,6 @@ float DexedAudioProcessor::getParameter(int index) {
 
 void DexedAudioProcessor::setParameter(int index, float newValue) {
     ctrl[index]->setValueHost(newValue);
-    forceRefreshUI = true;
 }
 
 int DexedAudioProcessor::getNumPrograms() {

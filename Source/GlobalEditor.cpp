@@ -496,6 +496,7 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == algo)
     {
         //[UserSliderCode_algo] -- add your slider handling code here..
+        algoDisplay->repaint();
         //[/UserSliderCode_algo]
     }
     else if (sliderThatWasMoved == output)
@@ -622,6 +623,7 @@ void GlobalEditor::setSystemMessage(String msg) {
 
 void GlobalEditor::setParamMessage(String msg) {
     lcdDisplay->paramMsg = msg;
+    lcdDisplay->repaint();
 }
 
 void GlobalEditor::updateDisplay() {
