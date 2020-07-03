@@ -37,11 +37,20 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       cartManager(this),
       dpiScaleFactor(1.0)
 {
-    if(Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD) {
-        dpiScaleFactor = 1.5;
+    
+    if ( ownerFilter->targetUIScaling == -1 ) {
+        if ( Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD ) {
+            dpiScaleFactor = 1.5;
+        } else {
+            dpiScaleFactor = 1.0;
+        }
+        ownerFilter->targetUIScaling = dpiScaleFactor;
+    } else {
+        dpiScaleFactor = ownerFilter->targetUIScaling;
     }
+    
     setScaleFactor(dpiScaleFactor);
-    setSize(866 * dpiScaleFactor, dpiScaleFactor * (ownerFilter->showKeyboard ? 674 : 581));
+    setSize(866, (ownerFilter->showKeyboard ? 674 : 581));
 
     processor = ownerFilter;
     

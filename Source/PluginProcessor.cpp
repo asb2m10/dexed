@@ -303,8 +303,6 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 	return false;
 }
 
-#define _D(x) " " << (#x) << "=" << x
-
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     if ( msg->isSysEx() ) {
         handleIncomingMidiMessage(NULL, *msg);

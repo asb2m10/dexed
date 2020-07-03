@@ -264,6 +264,8 @@ public :
     std::string currentSCLData = "";
     std::string currentKBMData = "";
     
+    float targetUIScaling;
+    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
