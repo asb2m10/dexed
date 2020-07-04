@@ -34,22 +34,8 @@
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-      cartManager(this),
-      dpiScaleFactor(1.0)
+      cartManager(this)
 {
-    
-    if ( ownerFilter->targetUIScaling == -1 ) {
-        if ( Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD ) {
-            dpiScaleFactor = 1.5;
-        } else {
-            dpiScaleFactor = 1.0;
-        }
-        ownerFilter->targetUIScaling = dpiScaleFactor;
-    } else {
-        dpiScaleFactor = ownerFilter->targetUIScaling;
-    }
-    
-    setScaleFactor(dpiScaleFactor);
     setSize(866, (ownerFilter->showKeyboard ? 674 : 581));
 
     processor = ownerFilter;
@@ -189,7 +175,7 @@ void DexedAudioProcessorEditor::parmShow() {
 
     auto param = new ParamDialog();
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
-    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
+    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->dpiScaleFactor);
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
     param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
                                 switch(which)
@@ -221,11 +207,12 @@ void DexedAudioProcessorEditor::parmShow() {
     auto generalCallback = [this](ParamDialog *param)
                                {
                                    int tpo;
-                                   bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard);
+                                   bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &this->processor->dpiScaleFactor);
                                    this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
                                    
-                                   this->setSize(866 * dpiScaleFactor, (processor->showKeyboard ? 674 : 581) * dpiScaleFactor);
+                                   this->setScaleFactor(this->processor->dpiScaleFactor);
+                                   this->setSize(866, (processor->showKeyboard ? 674 : 581));
                                    this->midiKeyboard.repaint();
                                    
                                    if ( ret == false ) {

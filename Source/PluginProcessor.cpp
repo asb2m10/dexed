@@ -761,7 +761,22 @@ void DexedAudioProcessor::updateUI() {
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
-    return new DexedAudioProcessorEditor (this);
+    static const uint8_t HIGH_DPI_THRESHOLD = 128;
+    
+    AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
+
+    if ( dpiScaleFactor == -1 ) {
+        if ( Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD ) {
+            dpiScaleFactor = 1.5;
+        } else {
+            dpiScaleFactor = 1.0;
+        }
+    }
+    // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
+    // plugin window.
+    editor->setScaleFactor(dpiScaleFactor);
+    
+    return editor;
 }
 
 void DexedAudioProcessor::handleAsyncUpdate() {

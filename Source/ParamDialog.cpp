@@ -59,7 +59,7 @@ ParamDialog::ParamDialog ()
     sysexIn->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexIn->addListener (this);
 
-    sysexIn->setBounds (104, 224, 224, 24);
+    sysexIn->setBounds (104, 244, 224, 24);
 
     sysexOut.reset (new ComboBox ("sysexOut"));
     addAndMakeVisible (sysexOut.get());
@@ -69,7 +69,7 @@ ParamDialog::ParamDialog ()
     sysexOut->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
     sysexOut->addListener (this);
 
-    sysexOut->setBounds (104, 264, 224, 24);
+    sysexOut->setBounds (104, 280, 224, 24);
 
     sysexChl.reset (new Slider ("sysexChl"));
     addAndMakeVisible (sysexChl.get());
@@ -78,7 +78,7 @@ ParamDialog::ParamDialog ()
     sysexChl->setTextBoxStyle (Slider::TextBoxLeft, false, 80, 20);
     sysexChl->addListener (this);
 
-    sysexChl->setBounds (264, 304, 72, 24);
+    sysexChl->setBounds (264, 316, 72, 24);
 
     engineReso.reset (new ComboBox ("new combo box"));
     addAndMakeVisible (engineReso.get());
@@ -91,7 +91,7 @@ ParamDialog::ParamDialog ()
     engineReso->addItem (TRANS("OPL Series"), 3);
     engineReso->addListener (this);
 
-    engineReso->setBounds (160, 156, 168, 24);
+    engineReso->setBounds (160, 188, 168, 24);
 
     showKeyboard.reset (new LightedToggleButton ("showKeyboard"));
     addAndMakeVisible (showKeyboard.get());
@@ -291,11 +291,23 @@ ParamDialog::ParamDialog ()
 
     pitchRangeUp->setBounds (168, 16, 72, 24);
 
+    scalingFactor.reset (new ComboBox ("scalingFactor"));
+    addAndMakeVisible (scalingFactor.get());
+    scalingFactor->setEditableText (false);
+    scalingFactor->setJustificationType (Justification::centredLeft);
+    scalingFactor->setTextWhenNothingSelected (String());
+    scalingFactor->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    scalingFactor->addItem (TRANS("100 %"), 1);
+    scalingFactor->addItem (TRANS("150 %"), 2);
+    scalingFactor->addListener (this);
+
+    scalingFactor->setBounds (236, 136, 90, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (710, 350);
+    setSize (710, 355);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -355,6 +367,7 @@ ParamDialog::~ParamDialog()
     mpeEnabled = nullptr;
     transposeHelp = nullptr;
     pitchRangeUp = nullptr;
+    scalingFactor = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -394,7 +407,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 20, y = 304, width = 245, height = 23;
+        int x = 20, y = 318, width = 245, height = 23;
         String text (TRANS("DX7 Channel"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -406,7 +419,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 20, y = 156, width = 276, height = 23;
+        int x = 20, y = 190, width = 276, height = 23;
         String text (TRANS("Engine Resolution"));
         Colour fillColour = Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -418,7 +431,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 22, y = 138, width = 306, height = 1;
+        int x = 22, y = 174, width = 306, height = 1;
         Colour fillColour = Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -427,7 +440,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 22, y = 195, width = 306, height = 1;
+        int x = 22, y = 227, width = 306, height = 1;
         Colour fillColour = Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -448,7 +461,7 @@ void ParamDialog::paint (Graphics& g)
     }
 
     {
-        int x = 352, y = 11, width = 1, height = 325;
+        int x = 352, y = 11, width = 1, height = 330;
         Colour fillColour = Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -654,19 +667,31 @@ void ParamDialog::paint (Graphics& g)
                     Justification::centredLeft, true);
     }
 
+    {
+        int x = 20, y = 136, width = 276, height = 23;
+        String text (TRANS("UI Scaling"));
+        Colour fillColour = Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    Justification::centredLeft, true);
+    }
+
     //[UserPaint] Add your own custom painting code here..
     if ( ! JUCEApplication::isStandaloneApp() ) {
         g.setColour (Colours::white);
         g.setFont (Font (15.00f, Font::plain));
         g.drawText (TRANS("DX7 In"),
-                    20, 224, 131, 23,
+                    20, 245, 131, 23,
                     Justification::centredLeft, true);
 
     }
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
     g.drawText (TRANS("DX7 Out"),
-                20, 264, 131, 23,
+                20, 280, 131, 23,
                 Justification::centredLeft, true);
     //[/UserPaint]
 }
@@ -760,6 +785,11 @@ void ParamDialog::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     {
         //[UserComboBoxCode_engineReso] -- add your combo box handling code here..
         //[/UserComboBoxCode_engineReso]
+    }
+    else if (comboBoxThatHasChanged == scalingFactor.get())
+    {
+        //[UserComboBoxCode_scalingFactor] -- add your combo box handling code here..
+        //[/UserComboBoxCode_scalingFactor]
     }
 
     //[UsercomboBoxChanged_Post]
@@ -923,7 +953,7 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey) {
+void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey, float dpiScaleFactor) {
     pitchRangeUp->setValue(c.values_[kControllerPitchRangeUp]);
     pitchRangeDn->setValue(c.values_[kControllerPitchRangeDn]);
     pitchStep->setValue(c.values_[kControllerPitchStep]);
@@ -967,9 +997,14 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 
     engineReso->setSelectedItemIndex(reso);
     showKeyboard->setToggleState(showKey, NotificationType::dontSendNotification);
+
+    if ( dpiScaleFactor == 1.5 )
+        scalingFactor->setSelectedItemIndex(1);
+    else
+        scalingFactor->setSelectedItemIndex(0);
 }
 
-bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey) {
+bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey, float *dpiScaleFactor) {
     bool ret = true;
 
     c.values_[kControllerPitchRangeUp] = pitchRangeUp->getValue();
@@ -1011,6 +1046,14 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
     *reso = engineReso->getSelectedItemIndex();
     *showKey = showKeyboard->getToggleState();
+
+    switch(scalingFactor->getSelectedItemIndex()) {
+        case 1 :
+            *dpiScaleFactor = 1.5;
+            break;
+        default:
+            *dpiScaleFactor = 1.0;
+    }
     return ret;
 }
 
@@ -1037,8 +1080,8 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="ParamDialog" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="710" initialHeight="350">
+                 snapPixels="4" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 fixedSize="1" initialWidth="710" initialHeight="355">
   <BACKGROUND backgroundColour="ff3c322f">
     <TEXT pos="20 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
@@ -1046,18 +1089,18 @@ BEGIN_JUCER_METADATA
     <TEXT pos="20 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="20 304 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
+    <TEXT pos="20 318 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="20 156 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
+    <TEXT pos="20 190 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <RECT pos="22 138 306 1" fill="solid: ff000000" hasStroke="0"/>
-    <RECT pos="22 195 306 1" fill="solid: ff000000" hasStroke="0"/>
+    <RECT pos="22 174 306 1" fill="solid: ff000000" hasStroke="0"/>
+    <RECT pos="22 227 306 1" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="20 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <RECT pos="352 11 1 325" fill="solid: ff000000" hasStroke="0"/>
+    <RECT pos="352 11 1 330" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="368 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Wheel"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
@@ -1105,6 +1148,9 @@ BEGIN_JUCER_METADATA
     <TEXT pos="240 16 20 23" fill="solid: ffffffff" hasStroke="0" text="dn"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
+    <TEXT pos="20 136 276 23" fill="solid: ffffffff" hasStroke="0" text="UI Scaling"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRangeDn" id="7409be5a8dfaa91" memberName="pitchRangeDn"
           virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0.0"
@@ -1117,18 +1163,18 @@ BEGIN_JUCER_METADATA
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
-            explicitFocusOrder="0" pos="104 224 224 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="104 244 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="sysexOut" id="44730115841c2214" memberName="sysexOut" virtualName=""
-            explicitFocusOrder="0" pos="104 264 224 24" editable="0" layout="33"
+            explicitFocusOrder="0" pos="104 280 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
-          explicitFocusOrder="0" pos="264 304 72 24" min="1.0" max="16.0"
+          explicitFocusOrder="0" pos="264 316 72 24" min="1.0" max="16.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <COMBOBOX name="new combo box" id="4087ff978c3d9e8d" memberName="engineReso"
-            virtualName="" explicitFocusOrder="0" pos="160 156 168 24" editable="0"
+            virtualName="" explicitFocusOrder="0" pos="160 188 168 24" editable="0"
             layout="33" items="Modern (24-bit)&#10;Mark I&#10;OPL Series"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <TOGGLEBUTTON name="showKeyboard" id="c963d2cb8e49ffd7" memberName="showKeyboard"
@@ -1227,6 +1273,9 @@ BEGIN_JUCER_METADATA
           max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
+  <COMBOBOX name="scalingFactor" id="843af1bae988d4d6" memberName="scalingFactor"
+            virtualName="" explicitFocusOrder="0" pos="236 136 90 24" editable="0"
+            layout="33" items="100 %&#10;150 %" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

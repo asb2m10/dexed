@@ -264,7 +264,7 @@ public :
     std::string currentSCLData = "";
     std::string currentKBMData = "";
     
-    float targetUIScaling;
+    float dpiScaleFactor = -1;
     
 private:
     //==============================================================================

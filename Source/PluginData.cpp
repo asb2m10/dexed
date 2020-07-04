@@ -322,7 +322,6 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("transpose12AsScale", controllers.transpose12AsScale ? 1 : 0 );
     dexedState.setAttribute("mpeEnabled", controllers.mpeEnabled ? 1 : 0 );
     dexedState.setAttribute("mpePitchBendRange", controllers.mpePitchBendRange );
-    dexedState.setAttribute("targetScaling", targetUIScaling);
     
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
@@ -380,7 +379,6 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     fx.uiReso = root->getDoubleAttribute("reso");
     fx.uiGain = root->getDoubleAttribute("gain");
     currentProgram = root->getIntAttribute("currentProgram");
-    targetUIScaling = root->getDoubleAttribute("targetScaling", -1);
     
     String opSwitchValue = root->getStringAttribute("opSwitch");
     //TRACE("opSwitch value %s", opSwitchValue.toRawUTF8());

@@ -741,11 +741,10 @@ void DexedAudioProcessor::loadPreference() {
     if ( prop.containsKey( String("pitchRange") ) ) {
         controllers.values_[kControllerPitchRangeUp] = prop.getIntValue( String("pitchRange") );
     }
+    
     if ( prop.containsKey( String("pitchRangeDn") ) ) {
         controllers.values_[kControllerPitchRangeDn] = prop.getIntValue( String("pitchRangeDn") );
-    }
-    else
-    {
+    } else {
         controllers.values_[kControllerPitchRangeDn] = controllers.values_[kControllerPitchRangeUp];
     }
     
@@ -789,6 +788,10 @@ void DexedAudioProcessor::loadPreference() {
         controllers.at.parseConfig(prop.getValue(String("aftertouchMod")).toRawUTF8());
     }
     
+    if ( prop.containsKey( String("dpiScaleFactor") ) ) {
+        dpiScaleFactor = prop.getDoubleValue(String("dpiScaleFactor"));
+    }
+    
     controllers.refresh();
 }
 
@@ -820,6 +823,7 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("aftertouchMod"), mod_cfg);
     
     prop.setValue(String("engineType"), (int) engineType);
+    prop.setValue(String("dpiScaleFactor"), dpiScaleFactor);
     
     prop.save();
 }

@@ -49,8 +49,8 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard);
-    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard);
+    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard, float dpiScaleFactor);
+    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard, float *dpiScaleFactor);
 
     typedef enum {
         LOAD_SCL,
@@ -113,6 +113,7 @@ private:
     std::unique_ptr<LightedToggleButton> mpeEnabled;
     std::unique_ptr<ImageButton> transposeHelp;
     std::unique_ptr<Slider> pitchRangeUp;
+    std::unique_ptr<ComboBox> scalingFactor;
 
 
     //==============================================================================
