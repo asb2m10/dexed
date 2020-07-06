@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd ..
+
 if [ -z $VST2SDK_DIR ]; then
     echo "VST2SDK_DIR is not set. Please point it to a directory containing the VST2 SDK"
     exit 1

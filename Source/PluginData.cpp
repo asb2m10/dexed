@@ -198,8 +198,10 @@ int DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
 void DexedAudioProcessor::setupStartupCart() {
     File startup = dexedCartDir.getChildFile("Dexed_01.syx");
 
-    if ( currentCart.load(startup) != -1 )
+    if ( currentCart.load(startup) != -1 ) {
+        loadCartridge(currentCart);
         return;
+    }
     
     // The user deleted the file :/, load from the builtin zip file.
     MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
@@ -207,8 +209,9 @@ void DexedAudioProcessor::setupStartupCart() {
     InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
     Cartridge init;
     
-    if ( init.load(*is) != -1 )
+    if ( init.load(*is) != -1 ) {
         loadCartridge(init);
+    }
 
     delete is;
     delete builtin_pgm;
