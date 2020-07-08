@@ -1,6 +1,6 @@
 #!/bin/sh
 
 export CONFIG=Release
-cd ../Builds/Linux && make
+cd Builds/Linux && make
 
 
