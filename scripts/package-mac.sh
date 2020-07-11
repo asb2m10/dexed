@@ -4,6 +4,11 @@ GIT_TAG=`git rev-parse --short HEAD`
 BUILDDATE=`date +%Y%m%d`
 VERSION="${GIT_TAG}-${BUILDDATE}"
 
+SCRIPTS_PATH=`dirname $(readlink -f $0)`
+DEXED_PATH=${SCRIPTS_PATH%/scripts}
+
+cd $DEXED_PATH
+
 rm -rf Builds/MacOSX/Dexed-Nightly
 rm -rf *dmg
 mkdir -p Builds/MacOSX/Dexed-Nightly
@@ -17,4 +22,3 @@ tar cf - Dexed.app/* | ( cd ../../Dexed-nightly ; tar xf - )
 cd ../../../..
 
 hdiutil create products/Dexed_macOS_${VERSION}.dmg -ov -volname "Dexed_${VERSION}" -fs HFS+ -srcfolder Builds/MacOSX/Dexed-nightly/
-
