@@ -11,7 +11,7 @@ mkdir -p Builds/Linux/Dexed-Nightly
 mkdir -p products/
 
 cd Builds/Linux/build/
-cp Dexed Dexed.a ../Dexed-Nightly
+cp -R Dexed Dexed.vst3 ../Dexed-Nightly
 cd ..
 
 cat <<EOF > Dexed-Nightly/BuildInfo.txt
