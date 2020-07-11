@@ -1,9 +1,14 @@
 #!/bin/bash
 
+SCRIPTS_PATH=`dirname $(readlink -f $0)`
+DEXED_PATH=${SCRIPTS_PATH%/scripts}
+
 if [ -z $VST2SDK_DIR ]; then
     echo "VST2SDK_DIR is not set. Please point it to a directory containing the VST2 SDK"
     exit 1
 else
+   cd $DEXED_PATH
+
    sed -e 's/,buildVST3/,buildVST,buildVST3/' Dexed.jucer | \
 	sed -e "s@VST2SDK_DIR@${VST2SDK_DIR}@" | \
 	sed -e 's/PLUGINHOST_VST="0"/PLUGINHOST_VST="1"/' | \
@@ -13,4 +18,3 @@ else
    assets/JUCE/Projucer --resave Dexed.jucer
    mv Dexed-orig.jucer Dexed.jucer
 fi
-

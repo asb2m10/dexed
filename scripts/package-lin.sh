@@ -5,6 +5,11 @@ BUILDDATE=`date +%Y%m%d`
 VERSION="${GIT_TAG}-${BUILDDATE}"
 UN=`uname -a`
 
+SCRIPTS_PATH=`dirname $(readlink -f $0)`
+DEXED_PATH=${SCRIPTS_PATH%/scripts}
+
+cd $DEXED_PATH
+
 rm -rf Builds/Linux/Dexed-Nightly
 mkdir -p Builds/Linux/Dexed-Nightly
 
@@ -27,4 +32,3 @@ cat Dexed-Nightly/BuildInfo.txt
 
 pwd
 tar cvzf ../../products/Dexed_ubuntu_linux_${VERSION}.tgz Dexed-Nightly
-
