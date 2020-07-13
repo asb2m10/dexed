@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JUCE_VERSION=6.0.0
+JUCE_VERSION=6.0.1
 OS=`uname -s`
 JOS=windows
 
