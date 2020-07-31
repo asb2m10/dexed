@@ -1,19 +1,12 @@
 #!/bin/bash
 
 cat <<- EOH
-# Automated build of surge-synth-team dexed fork
+# Automated build of Dexed
 
-This is a build of our fork of dexed from the very top of our git repository.
-Currently available for Win and Mac as VST3/Standalone/AU (Mac). Linux standalone
-coming soon.
-
-This is beta software. If you want a production version of dexed you should find 
-the original. This may not work and may be generally bad for you and your system. But
-we are using it and moving towards a point where we think we could do something like
-a solid release.
-
-If you understand that, download below, if not, perhaps hop in our slack and
-chat with us? 
+This is an automated build of Dexed from the head of our github
+repository. This software is the absolute latest version of our
+source code and as such may still include work in progress features
+and other issues needing resolution. 
 
 EOH
 date
