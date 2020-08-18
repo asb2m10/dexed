@@ -76,41 +76,48 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;            
             
-    addAndMakeVisible(activeCart = new ProgramListBox("activepgm", 8));
+    activeCart.reset(new ProgramListBox("activepgm", 8));
+    addAndMakeVisible(activeCart.get());
     activeCart->setBounds(28, 441, 800, 96);
     activeCart->addListener(this);
             
-    addAndMakeVisible(browserCart = new ProgramListBox("browserpgm", 2));
+    browserCart.reset(new ProgramListBox("browserpgm", 2));
+    addAndMakeVisible(browserCart.get());
     browserCart->setBounds(635, 18, 200, 384);
     browserCart->addListener(this);
     
     // -------------------------
-    syxFileFilter = new SyxFileFilter();
-    timeSliceThread = new TimeSliceThread("Cartridge Directory Scanner");
+    syxFileFilter.reset(new SyxFileFilter());
+    timeSliceThread.reset(new TimeSliceThread("Cartridge Directory Scanner"));
     timeSliceThread->startThread();
-    cartBrowserList = new DirectoryContentsList(syxFileFilter, *timeSliceThread);
+    
+    cartBrowserList.reset(new DirectoryContentsList(syxFileFilter.get(), *timeSliceThread.get()));
     cartBrowserList->setDirectory(cartDir, true, true);
-    cartBrowser = new FileTreeDrop(*cartBrowserList);
+    cartBrowser.reset(new FileTreeDrop(*cartBrowserList));
     cartBrowser->addKeyListener(this);
-    addAndMakeVisible(cartBrowser);
+    addAndMakeVisible(cartBrowser.get());
     
     cartBrowser->setBounds(23, 18, 590, 384);
     cartBrowser->setDragAndDropDescription("Sysex Browser");
     cartBrowser->addListener(this);
-            
-    addAndMakeVisible(closeButton = new TextButton("CLOSE"));
+    
+    closeButton.reset(new TextButton("CLOSE"));
+    addAndMakeVisible(closeButton.get());
     closeButton->setBounds(4, 545, 50, 30);
     closeButton->addListener(this);
 
-    addAndMakeVisible(loadButton = new TextButton("LOAD"));
+    loadButton.reset(new TextButton("LOAD"));
+    addAndMakeVisible(loadButton.get());
     loadButton->setBounds(52, 545, 50, 30);
     loadButton->addListener(this);
     
-    addAndMakeVisible(saveButton = new TextButton("SAVE"));
+    saveButton.reset(new TextButton("SAVE"));
+    addAndMakeVisible(saveButton.get());
     saveButton->setBounds(100, 545, 50, 30);
     saveButton->addListener(this);
 
-    addAndMakeVisible(fileMgrButton = new TextButton("SHOW DIR"));
+    fileMgrButton.reset(new TextButton("SHOW DIR"));
+    addAndMakeVisible(fileMgrButton.get());
     fileMgrButton->setBounds(148, 545, 70, 30);
     fileMgrButton->addListener(this);
 /*
@@ -130,9 +137,6 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
 
 CartManager::~CartManager() {
     timeSliceThread->stopThread(500);
-    delete cartBrowser;
-    delete cartBrowserList;
-    delete timeSliceThread;
 }
 
 void CartManager::paint(Graphics &g) {
@@ -144,7 +148,7 @@ void CartManager::paint(Graphics &g) {
 }
 
 void CartManager::programSelected(ProgramListBox *source, int pos) {
-    if ( source == activeCart ) {
+    if ( source == activeCart.get() ) {
         browserCart->setSelected(-1);
         mainWindow->processor->setCurrentProgram(pos);
         mainWindow->processor->updateHostDisplay();
@@ -160,13 +164,13 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
 }
 
 void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
-    if ( buttonThatWasClicked == closeButton ) {
+    if ( buttonThatWasClicked == closeButton.get() ) {
         mainWindow->startTimer(100);
         setVisible(false);
         return;
     }
     
-    if ( buttonThatWasClicked == loadButton ) {
+    if ( buttonThatWasClicked == loadButton.get() ) {
         FileChooser fc ("Import original DX sysex...", File::getSpecialLocation(File::SpecialLocationType::userDocumentsDirectory), "*.syx;*.SYX;*.*", 1);
         
         if ( fc.browseForFileToOpen())
@@ -174,17 +178,17 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
         return;
     }
     
-    if ( buttonThatWasClicked == saveButton ) {
+    if ( buttonThatWasClicked == saveButton.get() ) {
         mainWindow->saveCart();
     }
     
-    if ( buttonThatWasClicked == fileMgrButton ) {
+    if ( buttonThatWasClicked == fileMgrButton.get() ) {
         cartDir.revealToUser();
         return;
     }
 
     // THIS IS NOT USED
-    if ( buttonThatWasClicked == getDXPgmButton ) {
+    if ( buttonThatWasClicked == getDXPgmButton.get() ) {
         if ( mainWindow->processor->sysexComm.isInputActive() && mainWindow->processor->sysexComm.isOutputActive() ) {
             unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x09, 0xF7 };
             mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
@@ -194,7 +198,7 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
         return;
     }
     
-    if ( buttonThatWasClicked == getDXCartButton ) {
+    if ( buttonThatWasClicked == getDXCartButton.get() ) {
         if ( mainWindow->processor->sysexComm.isInputActive() && mainWindow->processor->sysexComm.isOutputActive() ) {
             unsigned char msg[] = { 0xF0, 0x43, 0x20, 0x00, 0xF7 };
             mainWindow->processor->sysexComm.send(MidiMessage(msg, 5));
@@ -280,14 +284,14 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
     
     menu.addItem(1000, "Send program '" + source->programNames[pos] + "' to DX7");
     
-    if ( source == activeCart )
+    if ( source == activeCart.get() )
         menu.addItem(1010, "Send current sysex cartridge to DX7");
 
     switch(menu.show())  {
         case 1000:
             uint8_t unpackPgm[161];
             
-            if ( source == activeCart ) {
+            if ( source == activeCart.get() ) {
                 mainWindow->processor->currentCart.unpackProgram(unpackPgm, pos);
             } else {
                 source->getCurrentCart().unpackProgram(unpackPgm, pos);
@@ -308,7 +312,7 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
 }
 
 void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) {
-    if ( destListBox == activeCart ) {
+    if ( destListBox == activeCart.get() ) {
         char *sysex = mainWindow->processor->currentCart.getRawVoice();
         memcpy(sysex+(dest*128), packedPgm, 128);
         mainWindow->updateUI();

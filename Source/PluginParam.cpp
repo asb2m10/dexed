@@ -446,41 +446,41 @@ void DexedAudioProcessor::initCtrl() {
     setupStartupCart();
     currentProgram = 0;
     
-    fxCutoff = new CtrlFloat("Cutoff", &fx.uiCutoff);
-    ctrl.add(fxCutoff);
+    fxCutoff.reset(new CtrlFloat("Cutoff", &fx.uiCutoff));
+    ctrl.add(fxCutoff.get());
     
-    fxReso = new CtrlFloat("Resonance", &fx.uiReso);
-    ctrl.add(fxReso);
+    fxReso.reset(new CtrlFloat("Resonance", &fx.uiReso));
+    ctrl.add(fxReso.get());
     
-    output = new CtrlFloat("Output", &fx.uiGain);
-    ctrl.add(output);
+    output.reset(new CtrlFloat("Output", &fx.uiGain));
+    ctrl.add(output.get());
     
-    tune = new CtrlTune("MASTER TUNE ADJ", this);
-    ctrl.add(tune);
+    tune.reset(new CtrlTune("MASTER TUNE ADJ", this));
+    ctrl.add(tune.get());
     
-    algo = new CtrlDX("ALGORITHM", 31, 134, 1);
-    ctrl.add(algo);
+    algo.reset(new CtrlDX("ALGORITHM", 31, 134, 1));
+    ctrl.add(algo.get());
     
-    feedback = new CtrlDX("FEEDBACK", 7, 135);
-    ctrl.add(feedback);
+    feedback.reset(new CtrlDX("FEEDBACK", 7, 135));
+    ctrl.add(feedback.get());
     
-    oscSync = new CtrlDXSwitch("OSC KEY SYNC", 1, 136);
-    ctrl.add(oscSync);
+    oscSync.reset(new CtrlDXSwitch("OSC KEY SYNC", 1, 136));
+    ctrl.add(oscSync.get());
     
-    lfoRate = new CtrlDX("LFO SPEED", 99, 137);
-    ctrl.add(lfoRate);
+    lfoRate.reset(new CtrlDX("LFO SPEED", 99, 137));
+    ctrl.add(lfoRate.get());
     
-    lfoDelay = new CtrlDX("LFO DELAY", 99, 138);
-    ctrl.add(lfoDelay);
+    lfoDelay.reset(new CtrlDX("LFO DELAY", 99, 138));
+    ctrl.add(lfoDelay.get());
     
-    lfoPitchDepth = new CtrlDX("LFO PM DEPTH", 99, 139);
-    ctrl.add(lfoPitchDepth);
+    lfoPitchDepth.reset(new CtrlDX("LFO PM DEPTH", 99, 139));
+    ctrl.add(lfoPitchDepth.get());
     
-    lfoAmpDepth = new CtrlDX("LFO AM DEPTH", 99, 140);
-    ctrl.add(lfoAmpDepth);
+    lfoAmpDepth.reset(new CtrlDX("LFO AM DEPTH", 99, 140));
+    ctrl.add(lfoAmpDepth.get());
     
-    lfoSync = new CtrlDXSwitch("LFO KEY SYNC", 1, 141);
-    ctrl.add(lfoSync);
+    lfoSync.reset(new CtrlDXSwitch("LFO KEY SYNC", 1, 141));
+    ctrl.add(lfoSync.get());
     
     StringArray lbl;
     lbl.add("TRIANGE");
@@ -490,27 +490,27 @@ void DexedAudioProcessor::initCtrl() {
     lbl.add("SINE");
     lbl.add("S&HOLD");
     
-    lfoWaveform = new CtrlDXLabel("LFO WAVE", 5, 142, lbl);
-    ctrl.add(lfoWaveform);
+    lfoWaveform.reset(new CtrlDXLabel("LFO WAVE", 5, 142, lbl));
+    ctrl.add(lfoWaveform.get());
     
-    transpose = new CtrlDXTranspose("TRANSPOSE", 48, 144);
-    ctrl.add(transpose);
+    transpose.reset(new CtrlDXTranspose("TRANSPOSE", 48, 144));
+    ctrl.add(transpose.get());
     
-    pitchModSens = new CtrlDX("P MODE SENS.", 7, 143);
-    ctrl.add(pitchModSens);
+    pitchModSens.reset(new CtrlDX("P MODE SENS.", 7, 143));
+    ctrl.add(pitchModSens.get());
     
     for (int i=0;i<4;i++) {
         String rate;
         rate << "PITCH EG RATE " << (i+1);
-        pitchEgRate[i] = new CtrlDX(rate, 99, 126+i);
-        ctrl.add(pitchEgRate[i]);
+        pitchEgRate[i].reset(new CtrlDX(rate, 99, 126+i));
+        ctrl.add(pitchEgRate[i].get());
     }
 
     for (int i=0;i<4;i++) {
         String level;
         level << "PITCH EG LEVEL " << (i+1);
-        pitchEgLevel[i] = new CtrlDX(level, 99, 130+i);
-        ctrl.add(pitchEgLevel[i]);
+        pitchEgLevel[i].reset(new CtrlDX(level, 99, 130+i));
+        ctrl.add(pitchEgLevel[i].get());
     }
     
     StringArray keyScaleLabels;
@@ -530,86 +530,86 @@ void DexedAudioProcessor::initCtrl() {
         for (int j = 0; j < 4; j++) {     
             String opRate;
             opRate << opName << " EG RATE " << (j + 1);
-            opCtrl[opVal].egRate[j] = new CtrlDX(opRate, 99, opTarget + j);
-            ctrl.add(opCtrl[opVal].egRate[j]);
+            opCtrl[opVal].egRate[j].reset(new CtrlDX(opRate, 99, opTarget + j));
+            ctrl.add(opCtrl[opVal].egRate[j].get());
         }
     
         for (int j = 0; j < 4; j++) {        
             String opLevel;
             opLevel << opName << " EG LEVEL " << (j + 1);
-            opCtrl[opVal].egLevel[j] = new CtrlDX(opLevel, 99, opTarget + j + 4);
-            ctrl.add(opCtrl[opVal].egLevel[j]);
+            opCtrl[opVal].egLevel[j].reset(new CtrlDX(opLevel, 99, opTarget + j + 4));
+            ctrl.add(opCtrl[opVal].egLevel[j].get());
         }
     
         String opVol;
         opVol << opName << " OUTPUT LEVEL";
-        opCtrl[opVal].level = new CtrlDX(opVol, 99, opTarget + 16);
-        ctrl.add(opCtrl[opVal].level);
+        opCtrl[opVal].level.reset(new CtrlDX(opVol, 99, opTarget + 16));
+        ctrl.add(opCtrl[opVal].level.get());
 
         String opMode;
         opMode << opName << " MODE";
-        opCtrl[opVal].opMode = new CtrlDXOpMode(opMode, 1, opTarget + 17);
-        ctrl.add(opCtrl[opVal].opMode);
+        opCtrl[opVal].opMode.reset(new CtrlDXOpMode(opMode, 1, opTarget + 17));
+        ctrl.add(opCtrl[opVal].opMode.get());
 
         String coarse;
         coarse << opName << " F COARSE";
-        opCtrl[opVal].coarse = new CtrlDX(coarse, 31, opTarget + 18);
-        ctrl.add(opCtrl[opVal].coarse);
+        opCtrl[opVal].coarse.reset(new CtrlDX(coarse, 31, opTarget + 18));
+        ctrl.add(opCtrl[opVal].coarse.get());
 
         String fine;
         fine << opName << " F FINE";
-        opCtrl[opVal].fine = new CtrlDX(fine, 99, opTarget + 19);
-        ctrl.add(opCtrl[opVal].fine);
+        opCtrl[opVal].fine.reset(new CtrlDX(fine, 99, opTarget + 19));
+        ctrl.add(opCtrl[opVal].fine.get());
 
         String detune;
         detune << opName << " OSC DETUNE";
-        opCtrl[opVal].detune = new CtrlDX(detune, 14, opTarget + 20, -7);
-        ctrl.add(opCtrl[opVal].detune);
+        opCtrl[opVal].detune.reset(new CtrlDX(detune, 14, opTarget + 20, -7));
+        ctrl.add(opCtrl[opVal].detune.get());
 
         String sclBrkPt;
         sclBrkPt << opName << " BREAK POINT";
-        opCtrl[opVal].sclBrkPt = new CtrlDXBreakpoint(sclBrkPt, 99, opTarget + 8);
-        ctrl.add(opCtrl[opVal].sclBrkPt);
+        opCtrl[opVal].sclBrkPt.reset(new CtrlDXBreakpoint(sclBrkPt, 99, opTarget + 8));
+        ctrl.add(opCtrl[opVal].sclBrkPt.get());
 
         String sclLeftDepth;
         sclLeftDepth << opName << " L SCALE DEPTH";
-        opCtrl[opVal].sclLeftDepth = new CtrlDX(sclLeftDepth, 99, opTarget + 9);
-        ctrl.add(opCtrl[opVal].sclLeftDepth);
+        opCtrl[opVal].sclLeftDepth.reset(new CtrlDX(sclLeftDepth, 99, opTarget + 9));
+        ctrl.add(opCtrl[opVal].sclLeftDepth.get());
 
         String sclRightDepth;
         sclRightDepth << opName << " R SCALE DEPTH";
-        opCtrl[opVal].sclRightDepth = new CtrlDX(sclRightDepth, 99, opTarget + 10);
-        ctrl.add(opCtrl[opVal].sclRightDepth);
+        opCtrl[opVal].sclRightDepth.reset(new CtrlDX(sclRightDepth, 99, opTarget + 10));
+        ctrl.add(opCtrl[opVal].sclRightDepth.get());
 
         String sclLeftCurve;
         sclLeftCurve << opName << " L KEY SCALE";
-        opCtrl[opVal].sclLeftCurve = new CtrlDXLabel(sclLeftCurve, 3, opTarget + 11, keyScaleLabels);
-        ctrl.add(opCtrl[opVal].sclLeftCurve);
+        opCtrl[opVal].sclLeftCurve.reset(new CtrlDXLabel(sclLeftCurve, 3, opTarget + 11, keyScaleLabels));
+        ctrl.add(opCtrl[opVal].sclLeftCurve.get());
 
         String sclRightCurve;
         sclRightCurve << opName << " R KEY SCALE";
-        opCtrl[opVal].sclRightCurve = new CtrlDXLabel(sclRightCurve, 3, opTarget + 12, keyScaleLabels);
-        ctrl.add(opCtrl[opVal].sclRightCurve);
+        opCtrl[opVal].sclRightCurve.reset(new CtrlDXLabel(sclRightCurve, 3, opTarget + 12, keyScaleLabels));
+        ctrl.add(opCtrl[opVal].sclRightCurve.get());
 
         String sclRate;
         sclRate << opName << " RATE SCALING";
-        opCtrl[opVal].sclRate = new CtrlDX(sclRate, 7, opTarget + 13);
-        ctrl.add(opCtrl[opVal].sclRate);
+        opCtrl[opVal].sclRate.reset(new CtrlDX(sclRate, 7, opTarget + 13));
+        ctrl.add(opCtrl[opVal].sclRate.get());
 
         String ampModSens;
         ampModSens << opName << " A MOD SENS.";
-        opCtrl[opVal].ampModSens = new CtrlDX(ampModSens, 3, opTarget + 14);
-        ctrl.add(opCtrl[opVal].ampModSens);
+        opCtrl[opVal].ampModSens.reset(new CtrlDX(ampModSens, 3, opTarget + 14));
+        ctrl.add(opCtrl[opVal].ampModSens.get());
 
         String velModSens;
         velModSens << opName << " KEY VELOCITY";
-        opCtrl[opVal].velModSens = new CtrlDX(velModSens, 7, opTarget + 15);
-        ctrl.add(opCtrl[opVal].velModSens);
+        opCtrl[opVal].velModSens.reset(new CtrlDX(velModSens, 7, opTarget + 15));
+        ctrl.add(opCtrl[opVal].velModSens.get());
         
         String opSwitchLabel;
         opSwitchLabel << opName << " SWITCH";
-        opCtrl[opVal].opSwitch = new CtrlOpSwitch(opSwitchLabel, (char *)&(controllers.opSwitch)+(5-i), this);
-        ctrl.add(opCtrl[opVal].opSwitch);
+        opCtrl[opVal].opSwitch.reset(new CtrlOpSwitch(opSwitchLabel, (char *)&(controllers.opSwitch)+(5-i), this));
+        ctrl.add(opCtrl[opVal].opSwitch.get());
     }
     
     for (int i=0; i < ctrl.size(); i++) {

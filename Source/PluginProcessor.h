@@ -149,24 +149,24 @@ public :
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];
-    ScopedPointer<CtrlDX> pitchEgRate[4];
-    ScopedPointer<CtrlDX> pitchEgLevel[4];
-    ScopedPointer<CtrlDX> pitchModSens;
-    ScopedPointer<CtrlDX> algo;
-    ScopedPointer<CtrlDX> oscSync;
-    ScopedPointer<CtrlDX> feedback;
-    ScopedPointer<CtrlDX> lfoRate;
-    ScopedPointer<CtrlDX> lfoDelay;
-    ScopedPointer<CtrlDX> lfoAmpDepth;
-    ScopedPointer<CtrlDX> lfoPitchDepth;
-    ScopedPointer<CtrlDX> lfoWaveform;
-    ScopedPointer<CtrlDX> lfoSync;
-    ScopedPointer<CtrlDX> transpose;
+    std::unique_ptr<CtrlDX> pitchEgRate[4];
+    std::unique_ptr<CtrlDX> pitchEgLevel[4];
+    std::unique_ptr<CtrlDX> pitchModSens;
+    std::unique_ptr<CtrlDX> algo;
+    std::unique_ptr<CtrlDX> oscSync;
+    std::unique_ptr<CtrlDX> feedback;
+    std::unique_ptr<CtrlDX> lfoRate;
+    std::unique_ptr<CtrlDX> lfoDelay;
+    std::unique_ptr<CtrlDX> lfoAmpDepth;
+    std::unique_ptr<CtrlDX> lfoPitchDepth;
+    std::unique_ptr<CtrlDX> lfoWaveform;
+    std::unique_ptr<CtrlDX> lfoSync;
+    std::unique_ptr<CtrlDX> transpose;
 
-    ScopedPointer<CtrlFloat> fxCutoff;
-    ScopedPointer<CtrlFloat> fxReso;
-    ScopedPointer<CtrlFloat> output;
-    ScopedPointer<Ctrl> tune;
+    std::unique_ptr<CtrlFloat> fxCutoff;
+    std::unique_ptr<CtrlFloat> fxReso;
+    std::unique_ptr<CtrlFloat> output;
+    std::unique_ptr<Ctrl> tune;
 
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);

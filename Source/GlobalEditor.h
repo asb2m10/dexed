@@ -60,7 +60,7 @@ public:
 
     void setMonoState(bool state);
     ProgramSelector *programs;
-    ScopedPointer<Component> midiMonitor;
+    //std::unique_ptr<Component> midiMonitor;
 
     void mouseDown(const MouseEvent& e) override;
     //[/UserMethods]
