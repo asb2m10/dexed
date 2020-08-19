@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.1
+  Created with Projucer version: 6.0.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
@@ -95,179 +95,281 @@ GlobalEditor::GlobalEditor ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (lfoSpeed = new Slider ("lfoSpeed"));
+    lfoSpeed.reset (new juce::Slider ("lfoSpeed"));
+    addAndMakeVisible (lfoSpeed.get());
     lfoSpeed->setRange (0, 99, 1);
-    lfoSpeed->setSliderStyle (Slider::RotaryVerticalDrag);
-    lfoSpeed->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    lfoSpeed->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    lfoSpeed->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     lfoSpeed->addListener (this);
 
-    addAndMakeVisible (lfoAmDepth = new Slider ("lfoAmDepth"));
+    lfoSpeed->setBounds (564, 50, 34, 34);
+
+    lfoAmDepth.reset (new juce::Slider ("lfoAmDepth"));
+    addAndMakeVisible (lfoAmDepth.get());
     lfoAmDepth->setRange (0, 99, 1);
-    lfoAmDepth->setSliderStyle (Slider::RotaryVerticalDrag);
-    lfoAmDepth->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    lfoAmDepth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    lfoAmDepth->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     lfoAmDepth->addListener (this);
 
-    addAndMakeVisible (lfoPitchDepth = new Slider ("lfoPitchDepth"));
+    lfoAmDepth->setBounds (686, 50, 34, 34);
+
+    lfoPitchDepth.reset (new juce::Slider ("lfoPitchDepth"));
+    addAndMakeVisible (lfoPitchDepth.get());
     lfoPitchDepth->setRange (0, 99, 1);
-    lfoPitchDepth->setSliderStyle (Slider::RotaryVerticalDrag);
-    lfoPitchDepth->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    lfoPitchDepth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    lfoPitchDepth->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     lfoPitchDepth->addListener (this);
 
-    addAndMakeVisible (lfoDelay = new Slider ("lfoDelay"));
+    lfoPitchDepth->setBounds (646, 50, 34, 34);
+
+    lfoDelay.reset (new juce::Slider ("lfoDelay"));
+    addAndMakeVisible (lfoDelay.get());
     lfoDelay->setRange (0, 99, 1);
-    lfoDelay->setSliderStyle (Slider::RotaryVerticalDrag);
-    lfoDelay->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    lfoDelay->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    lfoDelay->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     lfoDelay->addListener (this);
 
-    addAndMakeVisible (cutoff = new Slider ("cutoff"));
+    lfoDelay->setBounds (603, 50, 34, 34);
+
+    cutoff.reset (new juce::Slider ("cutoff"));
+    addAndMakeVisible (cutoff.get());
     cutoff->setRange (0, 1, 0);
-    cutoff->setSliderStyle (Slider::RotaryVerticalDrag);
-    cutoff->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    cutoff->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    cutoff->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
     cutoff->addListener (this);
 
-    addAndMakeVisible (reso = new Slider ("reso"));
+    cutoff->setBounds (234, 9, 34, 34);
+
+    reso.reset (new juce::Slider ("reso"));
+    addAndMakeVisible (reso.get());
     reso->setRange (0, 1, 0);
-    reso->setSliderStyle (Slider::RotaryVerticalDrag);
-    reso->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    reso->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    reso->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
     reso->addListener (this);
 
-    addAndMakeVisible (pitchRate2 = new Slider ("pitchRate2"));
+    reso->setBounds (278, 9, 34, 34);
+
+    pitchRate2.reset (new juce::Slider ("pitchRate2"));
+    addAndMakeVisible (pitchRate2.get());
     pitchRate2->setRange (0, 99, 1);
-    pitchRate2->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchRate2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchRate2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchRate2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchRate2->addListener (this);
 
-    addAndMakeVisible (pitchRate3 = new Slider ("pitchRate3"));
+    pitchRate2->setBounds (767, 96, 34, 34);
+
+    pitchRate3.reset (new juce::Slider ("pitchRate3"));
+    addAndMakeVisible (pitchRate3.get());
     pitchRate3->setRange (0, 99, 1);
-    pitchRate3->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchRate3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchRate3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchRate3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchRate3->addListener (this);
 
-    addAndMakeVisible (pitchRate4 = new Slider ("pitchRate4"));
+    pitchRate3->setBounds (795, 96, 35, 34);
+
+    pitchRate4.reset (new juce::Slider ("pitchRate4"));
+    addAndMakeVisible (pitchRate4.get());
     pitchRate4->setRange (0, 99, 1);
-    pitchRate4->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchRate4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchRate4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchRate4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchRate4->addListener (this);
 
-    addAndMakeVisible (pitchRate1 = new Slider ("pitchRate1"));
+    pitchRate4->setBounds (823, 96, 34, 34);
+
+    pitchRate1.reset (new juce::Slider ("pitchRate1"));
+    addAndMakeVisible (pitchRate1.get());
     pitchRate1->setRange (0, 99, 1);
-    pitchRate1->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchRate1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchRate1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchRate1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchRate1->addListener (this);
 
-    addAndMakeVisible (pitchLevel2 = new Slider ("pitchLevel2"));
+    pitchRate1->setBounds (739, 96, 34, 34);
+
+    pitchLevel2.reset (new juce::Slider ("pitchLevel2"));
+    addAndMakeVisible (pitchLevel2.get());
     pitchLevel2->setRange (0, 99, 1);
-    pitchLevel2->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchLevel2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchLevel2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchLevel2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchLevel2->addListener (this);
 
-    addAndMakeVisible (pitchLevel3 = new Slider ("pitchLevel3"));
+    pitchLevel2->setBounds (767, 57, 34, 34);
+
+    pitchLevel3.reset (new juce::Slider ("pitchLevel3"));
+    addAndMakeVisible (pitchLevel3.get());
     pitchLevel3->setRange (0, 99, 1);
-    pitchLevel3->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchLevel3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchLevel3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchLevel3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchLevel3->addListener (this);
 
-    addAndMakeVisible (pitchLevel4 = new Slider ("pitchLevel4"));
+    pitchLevel3->setBounds (795, 56, 34, 34);
+
+    pitchLevel4.reset (new juce::Slider ("pitchLevel4"));
+    addAndMakeVisible (pitchLevel4.get());
     pitchLevel4->setRange (0, 99, 1);
-    pitchLevel4->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchLevel4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchLevel4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchLevel4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchLevel4->addListener (this);
 
-    addAndMakeVisible (pitchLevel1 = new Slider ("pitchLevel1"));
+    pitchLevel4->setBounds (823, 56, 34, 34);
+
+    pitchLevel1.reset (new juce::Slider ("pitchLevel1"));
+    addAndMakeVisible (pitchLevel1.get());
     pitchLevel1->setRange (0, 99, 1);
-    pitchLevel1->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchLevel1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchLevel1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchLevel1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchLevel1->addListener (this);
 
-    addAndMakeVisible (transpose = new Slider ("transpose"));
+    pitchLevel1->setBounds (739, 57, 34, 34);
+
+    transpose.reset (new juce::Slider ("transpose"));
+    addAndMakeVisible (transpose.get());
     transpose->setRange (0, 48, 1);
-    transpose->setSliderStyle (Slider::RotaryVerticalDrag);
-    transpose->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    transpose->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    transpose->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
     transpose->addListener (this);
 
-    addAndMakeVisible (oscSync = new ToggleButton ("oscSync"));
-    oscSync->setButtonText (String());
+    transpose->setBounds (202, 60, 34, 34);
+
+    oscSync.reset (new juce::ToggleButton ("oscSync"));
+    addAndMakeVisible (oscSync.get());
+    oscSync->setButtonText (juce::String());
     oscSync->addListener (this);
 
-    addAndMakeVisible (pitchModSens = new Slider ("pitchModSens"));
+    oscSync->setBounds (650, 96, 48, 26);
+
+    pitchModSens.reset (new juce::Slider ("pitchModSens"));
+    addAndMakeVisible (pitchModSens.get());
     pitchModSens->setRange (0, 7, 1);
-    pitchModSens->setSliderStyle (Slider::RotaryVerticalDrag);
-    pitchModSens->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    pitchModSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchModSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     pitchModSens->addListener (this);
 
-    addAndMakeVisible (lfoSync = new ToggleButton ("lfoSync"));
-    lfoSync->setButtonText (String());
+    pitchModSens->setBounds (666, 5, 34, 34);
+
+    lfoSync.reset (new juce::ToggleButton ("lfoSync"));
+    addAndMakeVisible (lfoSync.get());
+    lfoSync->setButtonText (juce::String());
     lfoSync->addListener (this);
 
-    addAndMakeVisible (pitchEnvDisplay = new PitchEnvDisplay());
+    lfoSync->setBounds (565, 96, 48, 26);
+
+    pitchEnvDisplay.reset (new PitchEnvDisplay());
+    addAndMakeVisible (pitchEnvDisplay.get());
     pitchEnvDisplay->setName ("pitchEnvDisplay");
 
-    addAndMakeVisible (algoDisplay = new AlgoDisplay());
+    pitchEnvDisplay->setBounds (751, 10, 93, 30);
+
+    algoDisplay.reset (new AlgoDisplay());
+    addAndMakeVisible (algoDisplay.get());
     algoDisplay->setName ("algoDisplay");
 
-    addAndMakeVisible (feedback = new Slider ("feedback"));
+    algoDisplay->setBounds (335, 30, 152, 91);
+
+    feedback.reset (new juce::Slider ("feedback"));
+    addAndMakeVisible (feedback.get());
     feedback->setRange (0, 7, 1);
-    feedback->setSliderStyle (Slider::RotaryVerticalDrag);
-    feedback->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    feedback->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    feedback->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     feedback->addListener (this);
 
-    addAndMakeVisible (algo = new Slider ("algo"));
+    feedback->setBounds (501, 81, 34, 34);
+
+    algo.reset (new juce::Slider ("algo"));
+    addAndMakeVisible (algo.get());
     algo->setRange (1, 32, 1);
-    algo->setSliderStyle (Slider::RotaryVerticalDrag);
-    algo->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    algo->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    algo->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
     algo->addListener (this);
 
-    addAndMakeVisible (lcdDisplay = new LcdDisplay());
+    algo->setBounds (501, 22, 34, 34);
+
+    lcdDisplay.reset (new LcdDisplay());
+    addAndMakeVisible (lcdDisplay.get());
     lcdDisplay->setName ("lcdDisplay");
 
-    addAndMakeVisible (output = new Slider ("output"));
+    lcdDisplay->setBounds (6, 87, 140, 13);
+
+    output.reset (new juce::Slider ("output"));
+    addAndMakeVisible (output.get());
     output->setRange (0, 1, 0);
-    output->setSliderStyle (Slider::RotaryVerticalDrag);
-    output->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    output->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    output->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
     output->addListener (this);
 
-    addAndMakeVisible (vuOutput = new VuMeter());
+    output->setBounds (157, 60, 34, 34);
+
+    vuOutput.reset (new VuMeter());
+    addAndMakeVisible (vuOutput.get());
     vuOutput->setName ("vuOutput");
 
-    addAndMakeVisible (initButton = new TextButton ("initButton"));
+    vuOutput->setBounds (6, 103, 140, 8);
+
+    initButton.reset (new juce::TextButton ("initButton"));
+    addAndMakeVisible (initButton.get());
     initButton->setButtonText (TRANS("INIT"));
     initButton->addListener (this);
 
-    addAndMakeVisible (parmButton = new TextButton ("parmButton"));
+    initButton->setBounds (100, 111, 50, 30);
+
+    parmButton.reset (new juce::TextButton ("parmButton"));
+    addAndMakeVisible (parmButton.get());
     parmButton->setButtonText (TRANS("PARM"));
     parmButton->addListener (this);
 
-    addAndMakeVisible (cartButton = new TextButton ("cartButton"));
+    parmButton->setBounds (52, 111, 50, 30);
+
+    cartButton.reset (new juce::TextButton ("cartButton"));
+    addAndMakeVisible (cartButton.get());
     cartButton->setButtonText (TRANS("CART"));
     cartButton->addListener (this);
 
-    addAndMakeVisible (storeButton = new TextButton ("storeButton"));
+    cartButton->setBounds (3, 111, 50, 30);
+
+    storeButton.reset (new juce::TextButton ("storeButton"));
+    addAndMakeVisible (storeButton.get());
     storeButton->setButtonText (TRANS("STORE"));
     storeButton->addListener (this);
 
-    addAndMakeVisible (monoMode = new ToggleButton ("monoMode"));
-    monoMode->setButtonText (String());
+    storeButton->setBounds (270, 109, 50, 30);
+
+    monoMode.reset (new juce::ToggleButton ("monoMode"));
+    addAndMakeVisible (monoMode.get());
+    monoMode->setButtonText (juce::String());
     monoMode->addListener (this);
 
-    addAndMakeVisible (lfoType = new ComboBoxImage());
+    monoMode->setBounds (249, 65, 48, 26);
+
+    lfoType.reset (new ComboBoxImage());
+    addAndMakeVisible (lfoType.get());
     lfoType->setName ("lfoType");
 
-    addAndMakeVisible (programSelector = new ProgramSelector());
+    lfoType->setBounds (583, 8, 36, 26);
+
+    programSelector.reset (new ProgramSelector());
+    addAndMakeVisible (programSelector.get());
     programSelector->setName ("programSelector");
 
-    addAndMakeVisible (aboutButton = new ImageButton ("aboutButton"));
-    aboutButton->setButtonText (String());
+    programSelector->setBounds (153, 115, 112, 18);
+
+    aboutButton.reset (new juce::ImageButton ("aboutButton"));
+    addAndMakeVisible (aboutButton.get());
+    aboutButton->setButtonText (juce::String());
     aboutButton->addListener (this);
 
     aboutButton->setImages (false, true, false,
-                            Image(), 1.000f, Colour (0x00000000),
-                            Image(), 1.000f, Colour (0x00000000),
-                            Image(), 1.000f, Colour (0x00000000));
-    addAndMakeVisible (tune = new Slider ("tune"));
+                            juce::Image(), 1.000f, juce::Colour (0x00000000),
+                            juce::Image(), 1.000f, juce::Colour (0x00000000),
+                            juce::Image(), 1.000f, juce::Colour (0x00000000));
+    aboutButton->setBounds (8, 11, 135, 46);
+
+    tune.reset (new juce::Slider ("tune"));
+    addAndMakeVisible (tune.get());
     tune->setRange (0, 1, 0);
-    tune->setSliderStyle (Slider::RotaryVerticalDrag);
-    tune->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    tune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    tune->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
     tune->addListener (this);
+
+    tune->setBounds (190, 9, 34, 34);
 
 
     //[UserPreSize]
@@ -286,7 +388,7 @@ GlobalEditor::GlobalEditor ()
     lfoType->addItem("S&HOLD", 6);
     lfoType->setImage(lookAndFeel->imageLFO);
 
-    programs = programSelector;
+    programs = programSelector.get();
 
     background = lookAndFeel->imageGlobal;
     imageLight = lookAndFeel->imageLight;
@@ -339,7 +441,7 @@ GlobalEditor::~GlobalEditor()
 }
 
 //==============================================================================
-void GlobalEditor::paint (Graphics& g)
+void GlobalEditor::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     g.drawImage(background, 0, 0, 864, 144, 0, 0, 864, 144);
@@ -357,154 +459,120 @@ void GlobalEditor::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    lfoSpeed->setBounds (564, 50, 34, 34);
-    lfoAmDepth->setBounds (686, 50, 34, 34);
-    lfoPitchDepth->setBounds (646, 50, 34, 34);
-    lfoDelay->setBounds (603, 50, 34, 34);
-    cutoff->setBounds (234, 9, 34, 34);
-    reso->setBounds (278, 9, 34, 34);
-    pitchRate2->setBounds (767, 96, 34, 34);
-    pitchRate3->setBounds (795, 96, 35, 34);
-    pitchRate4->setBounds (823, 96, 34, 34);
-    pitchRate1->setBounds (739, 96, 34, 34);
-    pitchLevel2->setBounds (767, 57, 34, 34);
-    pitchLevel3->setBounds (795, 56, 34, 34);
-    pitchLevel4->setBounds (823, 56, 34, 34);
-    pitchLevel1->setBounds (739, 57, 34, 34);
-    transpose->setBounds (202, 60, 34, 34);
-    oscSync->setBounds (650, 96, 48, 26);
-    pitchModSens->setBounds (666, 5, 34, 34);
-    lfoSync->setBounds (565, 96, 48, 26);
-    pitchEnvDisplay->setBounds (751, 10, 93, 30);
-    algoDisplay->setBounds (335, 30, 152, 91);
-    feedback->setBounds (501, 81, 34, 34);
-    algo->setBounds (501, 22, 34, 34);
-    lcdDisplay->setBounds (6, 87, 140, 13);
-    output->setBounds (157, 60, 34, 34);
-    vuOutput->setBounds (6, 103, 140, 8);
-    initButton->setBounds (100, 111, 50, 30);
-    parmButton->setBounds (52, 111, 50, 30);
-    cartButton->setBounds (3, 111, 50, 30);
-    storeButton->setBounds (270, 109, 50, 30);
-    monoMode->setBounds (249, 65, 48, 26);
-    lfoType->setBounds (583, 8, 36, 26);
-    programSelector->setBounds (153, 115, 112, 18);
-    aboutButton->setBounds (8, 11, 135, 46);
-    tune->setBounds (190, 9, 34, 34);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
 
-void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
+void GlobalEditor::sliderValueChanged (juce::Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == lfoSpeed)
+    if (sliderThatWasMoved == lfoSpeed.get())
     {
         //[UserSliderCode_lfoSpeed] -- add your slider handling code here..
         //[/UserSliderCode_lfoSpeed]
     }
-    else if (sliderThatWasMoved == lfoAmDepth)
+    else if (sliderThatWasMoved == lfoAmDepth.get())
     {
         //[UserSliderCode_lfoAmDepth] -- add your slider handling code here..
         //[/UserSliderCode_lfoAmDepth]
     }
-    else if (sliderThatWasMoved == lfoPitchDepth)
+    else if (sliderThatWasMoved == lfoPitchDepth.get())
     {
         //[UserSliderCode_lfoPitchDepth] -- add your slider handling code here..
         //[/UserSliderCode_lfoPitchDepth]
     }
-    else if (sliderThatWasMoved == lfoDelay)
+    else if (sliderThatWasMoved == lfoDelay.get())
     {
         //[UserSliderCode_lfoDelay] -- add your slider handling code here..
         //[/UserSliderCode_lfoDelay]
     }
-    else if (sliderThatWasMoved == cutoff)
+    else if (sliderThatWasMoved == cutoff.get())
     {
         //[UserSliderCode_cutoff] -- add your slider handling code here..
         //[/UserSliderCode_cutoff]
     }
-    else if (sliderThatWasMoved == reso)
+    else if (sliderThatWasMoved == reso.get())
     {
         //[UserSliderCode_reso] -- add your slider handling code here..
         //[/UserSliderCode_reso]
     }
-    else if (sliderThatWasMoved == pitchRate2)
+    else if (sliderThatWasMoved == pitchRate2.get())
     {
         //[UserSliderCode_pitchRate2] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate2]
     }
-    else if (sliderThatWasMoved == pitchRate3)
+    else if (sliderThatWasMoved == pitchRate3.get())
     {
         //[UserSliderCode_pitchRate3] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate3]
     }
-    else if (sliderThatWasMoved == pitchRate4)
+    else if (sliderThatWasMoved == pitchRate4.get())
     {
         //[UserSliderCode_pitchRate4] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate4]
     }
-    else if (sliderThatWasMoved == pitchRate1)
+    else if (sliderThatWasMoved == pitchRate1.get())
     {
         //[UserSliderCode_pitchRate1] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchRate1]
     }
-    else if (sliderThatWasMoved == pitchLevel2)
+    else if (sliderThatWasMoved == pitchLevel2.get())
     {
         //[UserSliderCode_pitchLevel2] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel2]
     }
-    else if (sliderThatWasMoved == pitchLevel3)
+    else if (sliderThatWasMoved == pitchLevel3.get())
     {
         //[UserSliderCode_pitchLevel3] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel3]
     }
-    else if (sliderThatWasMoved == pitchLevel4)
+    else if (sliderThatWasMoved == pitchLevel4.get())
     {
         //[UserSliderCode_pitchLevel4] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel4]
     }
-    else if (sliderThatWasMoved == pitchLevel1)
+    else if (sliderThatWasMoved == pitchLevel1.get())
     {
         //[UserSliderCode_pitchLevel1] -- add your slider handling code here..
         pitchEnvDisplay->repaint();
         //[/UserSliderCode_pitchLevel1]
     }
-    else if (sliderThatWasMoved == transpose)
+    else if (sliderThatWasMoved == transpose.get())
     {
         //[UserSliderCode_transpose] -- add your slider handling code here..
         //[/UserSliderCode_transpose]
     }
-    else if (sliderThatWasMoved == pitchModSens)
+    else if (sliderThatWasMoved == pitchModSens.get())
     {
         //[UserSliderCode_pitchModSens] -- add your slider handling code here..
         //[/UserSliderCode_pitchModSens]
     }
-    else if (sliderThatWasMoved == feedback)
+    else if (sliderThatWasMoved == feedback.get())
     {
         //[UserSliderCode_feedback] -- add your slider handling code here..
         //[/UserSliderCode_feedback]
     }
-    else if (sliderThatWasMoved == algo)
+    else if (sliderThatWasMoved == algo.get())
     {
         //[UserSliderCode_algo] -- add your slider handling code here..
         algoDisplay->repaint();
         //[/UserSliderCode_algo]
     }
-    else if (sliderThatWasMoved == output)
+    else if (sliderThatWasMoved == output.get())
     {
         //[UserSliderCode_output] -- add your slider handling code here..
         //[/UserSliderCode_output]
     }
-    else if (sliderThatWasMoved == tune)
+    else if (sliderThatWasMoved == tune.get())
     {
         //[UserSliderCode_tune] -- add your slider handling code here..
         //[/UserSliderCode_tune]
@@ -514,55 +582,55 @@ void GlobalEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     //[/UsersliderValueChanged_Post]
 }
 
-void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
+void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == oscSync)
+    if (buttonThatWasClicked == oscSync.get())
     {
         //[UserButtonCode_oscSync] -- add your button handler code here..
         repaint();
         //[/UserButtonCode_oscSync]
     }
-    else if (buttonThatWasClicked == lfoSync)
+    else if (buttonThatWasClicked == lfoSync.get())
     {
         //[UserButtonCode_lfoSync] -- add your button handler code here..
         repaint();
         //[/UserButtonCode_lfoSync]
     }
-    else if (buttonThatWasClicked == initButton)
+    else if (buttonThatWasClicked == initButton.get())
     {
         //[UserButtonCode_initButton] -- add your button handler code here..
         editor->initProgram();
         //[/UserButtonCode_initButton]
     }
-    else if (buttonThatWasClicked == parmButton)
+    else if (buttonThatWasClicked == parmButton.get())
     {
         //[UserButtonCode_parmButton] -- add your button handler code here..
         editor->parmShow();
         //[/UserButtonCode_parmButton]
     }
-    else if (buttonThatWasClicked == cartButton)
+    else if (buttonThatWasClicked == cartButton.get())
     {
         //[UserButtonCode_cartButton] -- add your button handler code here..
         editor->cartShow();
         //[/UserButtonCode_cartButton]
     }
-    else if (buttonThatWasClicked == storeButton)
+    else if (buttonThatWasClicked == storeButton.get())
     {
         //[UserButtonCode_storeButton] -- add your button handler code here..
         editor->storeProgram();
         //[/UserButtonCode_storeButton]
     }
-    else if (buttonThatWasClicked == monoMode)
+    else if (buttonThatWasClicked == monoMode.get())
     {
         //[UserButtonCode_monoMode] -- add your button handler code here..
         editor->processor->setMonoMode(monoMode->getToggleState());
         repaint();
         //[/UserButtonCode_monoMode]
     }
-    else if (buttonThatWasClicked == aboutButton)
+    else if (buttonThatWasClicked == aboutButton.get())
     {
         //[UserButtonCode_aboutButton] -- add your button handler code here..
         AboutBox about(this->getParentComponent());
@@ -580,29 +648,29 @@ void GlobalEditor::buttonClicked (Button* buttonThatWasClicked)
 
 void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor = edit->processor;
-	processor->algo->bind(algo);
-	processor->lfoRate->bind(lfoSpeed);
-	processor->lfoDelay->bind(lfoDelay);
-	processor->lfoWaveform->bind(lfoType);
-	processor->lfoAmpDepth->bind(lfoAmDepth);
-	processor->lfoPitchDepth->bind(lfoPitchDepth);
-    processor->lfoSync->bind(lfoSync);
-    processor->oscSync->bind(oscSync);
-    processor->transpose->bind(transpose);
-    processor->feedback->bind(feedback);
-    processor->pitchModSens->bind(pitchModSens);
-    processor->pitchEgLevel[0]->bind(pitchLevel1);
-    processor->pitchEgLevel[1]->bind(pitchLevel2);
-    processor->pitchEgLevel[2]->bind(pitchLevel3);
-    processor->pitchEgLevel[3]->bind(pitchLevel4);
-    processor->pitchEgRate[0]->bind(pitchRate1);
-    processor->pitchEgRate[1]->bind(pitchRate2);
-    processor->pitchEgRate[2]->bind(pitchRate3);
-    processor->pitchEgRate[3]->bind(pitchRate4);
-    processor->fxCutoff->bind(cutoff);
-    processor->fxReso->bind(reso);
-    processor->output->bind(output);
-    processor->tune->bind(tune);
+	processor->algo->bind(algo.get());
+	processor->lfoRate->bind(lfoSpeed.get());
+	processor->lfoDelay->bind(lfoDelay.get());
+	processor->lfoWaveform->bind(lfoType.get());
+	processor->lfoAmpDepth->bind(lfoAmDepth.get());
+	processor->lfoPitchDepth->bind(lfoPitchDepth.get());
+    processor->lfoSync->bind(lfoSync.get());
+    processor->oscSync->bind(oscSync.get());
+    processor->transpose->bind(transpose.get());
+    processor->feedback->bind(feedback.get());
+    processor->pitchModSens->bind(pitchModSens.get());
+    processor->pitchEgLevel[0]->bind(pitchLevel1.get());
+    processor->pitchEgLevel[1]->bind(pitchLevel2.get());
+    processor->pitchEgLevel[2]->bind(pitchLevel3.get());
+    processor->pitchEgLevel[3]->bind(pitchLevel4.get());
+    processor->pitchEgRate[0]->bind(pitchRate1.get());
+    processor->pitchEgRate[1]->bind(pitchRate2.get());
+    processor->pitchEgRate[2]->bind(pitchRate3.get());
+    processor->pitchEgRate[3]->bind(pitchRate4.get());
+    processor->fxCutoff->bind(cutoff.get());
+    processor->fxReso->bind(reso.get());
+    processor->output->bind(output.get());
+    processor->tune->bind(tune.get());
     algoDisplay->algo = (char *) &(processor->data[134]);
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 
@@ -679,83 +747,83 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="864" initialHeight="144">
   <BACKGROUND backgroundColour="ffffff"/>
   <SLIDER name="lfoSpeed" id="b10eaf327ab3bff5" memberName="lfoSpeed" virtualName=""
-          explicitFocusOrder="0" pos="564 50 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="564 50 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="lfoAmDepth" id="3e95a6206fa4a891" memberName="lfoAmDepth"
-          virtualName="" explicitFocusOrder="0" pos="686 50 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="686 50 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="lfoPitchDepth" id="6ead769ca786c813" memberName="lfoPitchDepth"
-          virtualName="" explicitFocusOrder="0" pos="646 50 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="646 50 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="lfoDelay" id="1fce68dc81619ef5" memberName="lfoDelay" virtualName=""
-          explicitFocusOrder="0" pos="603 50 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="603 50 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="cutoff" id="40531f16bb0bd225" memberName="cutoff" virtualName=""
-          explicitFocusOrder="0" pos="234 9 34 34" min="0" max="1" int="0"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="234 9 34 34" min="0.0" max="1.0"
+          int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="reso" id="c8c13464e81a8d83" memberName="reso" virtualName=""
-          explicitFocusOrder="0" pos="278 9 34 34" min="0" max="1" int="0"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="278 9 34 34" min="0.0" max="1.0"
+          int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
-          virtualName="" explicitFocusOrder="0" pos="767 96 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="767 96 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchRate3" id="187c25b24413fccf" memberName="pitchRate3"
-          virtualName="" explicitFocusOrder="0" pos="795 96 35 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="795 96 35 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchRate4" id="1aeb2a8fbbcbeaab" memberName="pitchRate4"
-          virtualName="" explicitFocusOrder="0" pos="823 96 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="823 96 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchRate1" id="419d613b3fb9604e" memberName="pitchRate1"
-          virtualName="" explicitFocusOrder="0" pos="739 96 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="739 96 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel2" id="3a355ad2221887d9" memberName="pitchLevel2"
-          virtualName="" explicitFocusOrder="0" pos="767 57 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="767 57 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel3" id="5c5d782e8a7f3ad7" memberName="pitchLevel3"
-          virtualName="" explicitFocusOrder="0" pos="795 56 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="795 56 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel4" id="eb900b141fbad8ff" memberName="pitchLevel4"
-          virtualName="" explicitFocusOrder="0" pos="823 56 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="823 56 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel1" id="344cbe26ec9fa128" memberName="pitchLevel1"
-          virtualName="" explicitFocusOrder="0" pos="739 57 34 34" min="0"
-          max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="739 57 34 34" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
-          virtualName="" explicitFocusOrder="0" pos="202 60 34 34" min="0"
-          max="48" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="202 60 34 34" min="0.0"
+          max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="oscSync" id="8f3fe641537cd00" memberName="oscSync" virtualName=""
                 explicitFocusOrder="0" pos="650 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <SLIDER name="pitchModSens" id="904f73df85a9f886" memberName="pitchModSens"
-          virtualName="" explicitFocusOrder="0" pos="666 5 34 34" min="0"
-          max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="666 5 34 34" min="0.0"
+          max="7.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
                 explicitFocusOrder="0" pos="565 96 48 26" buttonText="" connectedEdges="0"
@@ -767,20 +835,20 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="335 30 152 91" class="AlgoDisplay"
                     params=""/>
   <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
-          explicitFocusOrder="0" pos="501 81 34 34" min="0" max="7" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="501 81 34 34" min="0.0" max="7.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="algo" id="8a226ddf9bbff752" memberName="algo" virtualName=""
-          explicitFocusOrder="0" pos="501 22 34 34" min="1" max="32" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="501 22 34 34" min="1.0" max="32.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <GENERICCOMPONENT name="lcdDisplay" id="30c7bb8f114cbbe3" memberName="lcdDisplay"
                     virtualName="" explicitFocusOrder="0" pos="6 87 140 13" class="LcdDisplay"
                     params=""/>
   <SLIDER name="output" id="7697fdd54fd1593e" memberName="output" virtualName=""
-          explicitFocusOrder="0" pos="157 60 34 34" min="0" max="1" int="0"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="157 60 34 34" min="0.0" max="1.0"
+          int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
                     explicitFocusOrder="0" pos="6 103 140 8" class="VuMeter" params=""/>
   <TEXTBUTTON name="initButton" id="92b278163c42e21d" memberName="initButton"
@@ -807,13 +875,13 @@ BEGIN_JUCER_METADATA
   <IMAGEBUTTON name="aboutButton" id="d195a60b29440aa1" memberName="aboutButton"
                virtualName="" explicitFocusOrder="0" pos="8 11 135 46" buttonText=""
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="0"
-               resourceNormal="" opacityNormal="1" colourNormal="0" resourceOver=""
-               opacityOver="1" colourOver="0" resourceDown="" opacityDown="1"
+               resourceNormal="" opacityNormal="1.0" colourNormal="0" resourceOver=""
+               opacityOver="1.0" colourOver="0" resourceDown="" opacityDown="1.0"
                colourDown="0"/>
   <SLIDER name="tune" id="d22c34aa3363a28a" memberName="tune" virtualName=""
-          explicitFocusOrder="0" pos="190 9 34 34" min="0" max="1" int="0"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="190 9 34 34" min="0.0" max="1.0"
+          int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
@@ -823,3 +891,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+
