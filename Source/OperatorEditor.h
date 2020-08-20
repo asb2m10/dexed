@@ -69,7 +69,7 @@ private:
     Image light;
     DexedAudioProcessor *processor;
     Image background;
-    ScopedPointer<ToggleButton> opSwitch;
+    std::unique_ptr<ToggleButton> opSwitch;
     //[/UserVariables]
 
     //==============================================================================

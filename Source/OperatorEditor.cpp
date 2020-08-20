@@ -263,7 +263,8 @@ OperatorEditor::OperatorEditor ()
 
 
     //[UserPreSize]
-    addAndMakeVisible(opSwitch = new OperatorSwitch());
+    opSwitch.reset(new OperatorSwitch());
+    addAndMakeVisible(opSwitch.get());
     //[/UserPreSize]
 
     setSize (287, 218);

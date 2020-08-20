@@ -225,6 +225,8 @@ void DXLookNFeel::drawLinearSliderBackground (Graphics&, int x, int y, int width
 void DXLookNFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int width, int height,
                                     float sliderPos, float minSliderPos, float maxSliderPos,
                                          const Slider::SliderStyle st, Slider& s) {
+    // TODO: find out why the V4 LookNFeel doesn't call this
+    // TRACE("draw slider"); 
     if ( imageSlider.isNull() ) {
         LookAndFeel_V3::drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, st, s);
         return;

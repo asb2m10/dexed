@@ -16,6 +16,7 @@
               jucerFormatVersion="1">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
+      <FILE id="kj2Ow6" name="dexed-logo.png" compile="0" resource="1" file="/var/home/asb2m10/src/dexed/Resources/ui/dexed-logo.png"/>
       <FILE id="h1sDac" name="HelpButton.png" compile="0" resource="1" file="Resources/ui/HelpButton.png"/>
       <FILE id="oVmTCw" name="HelpButton.svg" compile="0" resource="1" file="Resources/ui/HelpButton.svg"/>
       <FILE id="pKwZj2" name="SwitchLighted_48x26.png" compile="0" resource="1"
@@ -40,7 +41,6 @@
       <FILE id="A3xTGc" name="NotoSans-Bold.ttf" compile="0" resource="1"
             file="Resources/ui/NotoSans-Bold.ttf"/>
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
-      <FILE id="xxGEA4" name="about.png" compile="0" resource="1" file="Resources/about.png"/>
       <FILE id="YdXhxj" name="GlobalEditor_864x144.png" compile="0" resource="1"
             file="Resources/ui/GlobalEditor_864x144.png"/>
       <FILE id="GAIMQD" name="OperatorEditor_287x218.png" compile="0" resource="1"
