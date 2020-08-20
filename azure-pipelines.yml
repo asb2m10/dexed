@@ -124,6 +124,7 @@ jobs:
     condition: variables.isWindows
 
   - bash: |
+      sudo apt-get update
       sudo apt-get install -y libwebkit2gtk-4.0
       sudo apt-get install -y libcurl4-openssl-dev
       sudo apt-get install -y alsa-base
