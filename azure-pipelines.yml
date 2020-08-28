@@ -6,6 +6,9 @@ trigger:
 pr:
 - master
 
+variables:
+  version: BETA
+
 jobs:
 # We projuce on mac and share the assets so we don't have to run projucer on linux
 - job: Projuce
@@ -47,7 +50,7 @@ jobs:
         imageName: 'macos-10.14'
         isMac: True
       win:
-        imageName: 'vs2017-win2016'
+        imageName: 'windows-2019'
         isWindows: True
       lin:
         imageName: 'ubuntu-18.04'
@@ -77,7 +80,7 @@ jobs:
       
       git submodule update --init --recursive
 
-      ./scripts/set-version.sh
+      ./scripts/set-version.sh $(version)
 
     displayName: Setup for Building
 
@@ -97,7 +100,7 @@ jobs:
 
   - task: MSBuild@1
     inputs:
-      solution: 'Builds\VisualStudio2017\Dexed.sln'
+      solution: 'Builds\VisualStudio2019\Dexed.sln'
       maximumCpuCount: true
       platform: 'x64'
       configuration: 'Release'
@@ -105,7 +108,7 @@ jobs:
     displayName: Build Windows x64
 
   - bash: |
-      cd Builds/VisualStudio2017/x64
+      cd Builds/VisualStudio2019/x64
       mkdir assets
       mv Release/Standalone\ Plugin/Dexed.exe assets/
       mv Release/VST3/Dexed.vst3 assets/

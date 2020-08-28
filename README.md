@@ -131,6 +131,7 @@ which will expand the submodules. Then follow platform specific directions below
 This will build a VST3, and AU and a Standalone in Build/MacOSX/Release for your
 
 ## windows
+Run this in the bash shell that comes with the standard Git distribution.
 
 ```
 ./scripts/get-juce.sh
@@ -147,14 +148,10 @@ then open and build the resulting Visual Studio Solution file.
 ./scripts/build-lin.sh
 ```
 
-and you will get a JACK enabled standalone version of JUCE. 
+### VST2 Support
+Since Steinberg has discontinued the VST2 API we no longer distribute a VST2.
 
-Since Steinberg has discontinued the VST2 API we no longer distribute a VST2. On Mac and Windows we strongly recommend you
-use the provided VST3 or AU. On Linux, the situation is a little trickier, with VST3 support in hosts being uneven and juce5
-doesn't create a VST3 (although this will change in juce6). 
-
-If you
-are a licensee to the VST2SDK, though, you can build a VST2 version of DEXED yourself with these commands
+If you are a licensee to the VST2SDK, though, you can build a VST2 version of DEXED yourself with these commands
 
 ```
 ./scripts/get-juce.sh
@@ -162,5 +159,3 @@ export VST2SDK_DIR=~/path/to/vst2/sdk/dir
 ./scripts/projuce-lin-vst2.sh
 ./scripts/build-lin.sh
 ```
-
-and you will get a VST2 and Standalone as opposed to just a Standalone.
