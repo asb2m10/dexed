@@ -137,6 +137,8 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
 
 CartManager::~CartManager() {
     timeSliceThread->stopThread(500);
+    cartBrowserList.release();
+    timeSliceThread.release();
 }
 
 void CartManager::paint(Graphics &g) {
