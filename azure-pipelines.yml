@@ -170,7 +170,7 @@ jobs:
 
 - job: UpdateGithubRelease
   dependsOn: Build
-  condition: and(and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(variables['version'], 'Nightly')
+  condition: and(and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')), eq(variables['version'], 'Nightly'))
 
   steps:
   - task: DownloadPipelineArtifact@0
