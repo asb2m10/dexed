@@ -2,8 +2,8 @@
 
 GIT_TAG=`git rev-parse --short HEAD`
 BUILDDATE=`date +%Y%m%d`
-if [ $1 == "BETA" ]; then 
-    VERSION="${GIT_TAG}-BETA"
+if [ $1 = "Nightly" ]; then 
+    VERSION="${GIT_TAG}-Nightly"
 else
     VERSION=$1
 fi
