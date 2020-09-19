@@ -1,22 +1,14 @@
-//
-//  libMTSClient.cpp
-//  MTS
-//
-//  Created by Dave on 03/06/2017.
-//  Copyright © 2017 dmgaudio. All rights reserved.
-//
-
 #include "libMTSClient.h"
 #include <math.h>
-#include <string>
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <tchar.h>
 #else
 #include <dlfcn.h>
 #endif
 
-const static double ratioToSemitones=12.0/log(2.0);
+const static double ratioToSemitones=12./log(2.);
 typedef void (*mts_pv)(void*);
 typedef bool (*mts_bool)(void);
 typedef bool (*mts_bcc)(char,char);
@@ -29,7 +21,7 @@ struct mtsclientglobal
 {
     mtsclientglobal() : RegisterClient(0), DeregisterClient(0), HasMaster(0), ShouldFilterNote(0), ShouldFilterNoteMultiChannel(0), GetTuning(0), GetMultiChannelTuning(0), UseMultiChannelTuning(0), GetScaleName(0), esp_retuning(0)
     {
-        for (int i=0;i<128;i++) iet[i]=1.0/(440.0*pow(2.0,(i-69.0)/12.0));
+        for (int i=0;i<128;i++) iet[i]=1./(440.*pow(2.,(i-69.)/12.));
         load_lib();
         if (GetTuning) esp_retuning=GetTuning();
         for (int i=0;i<16;i++) multi_channel_esp_retuning[i]=GetMultiChannelTuning?GetMultiChannelTuning(i):0;
@@ -42,14 +34,10 @@ struct mtsclientglobal
 #ifdef _WIN32
     virtual void load_lib()
 	{
-		char buffer[8192];HKEY hkey;DWORD type,l=8192;
-		RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\OddSound\\MTS",0,KEY_QUERY_VALUE,&hkey);
-		if (!hkey) return;
-		DWORD ret=RegQueryValueEx(hkey,"Path",0,&type,(LPBYTE)buffer,&l);
-		RegCloseKey(hkey);
-		if (ret || (l<=1)) return;
-        if (buffer[strlen(buffer)-1]!='\\') strcat(buffer,"\\");
-		strcat(buffer,"LIBMTS.dll");
+		TCHAR buffer[MAX_PATH];
+		const TCHAR *libpath=TEXT("\\LIBMTS.dll");
+		GetSystemDirectory(buffer,MAX_PATH);
+        _tcscat(buffer,libpath);
 		if (!(handle=LoadLibraryA(buffer))) return;
         RegisterClient                  =(mts_pv)   GetProcAddress(handle,"MTS_RegisterClient");
         DeregisterClient                =(mts_pv)   GetProcAddress(handle,"MTS_DeregisterClient");
@@ -65,7 +53,7 @@ struct mtsclientglobal
     HINSTANCE handle;
 #else
     virtual void load_lib(){
-        if (!(handle=dlopen("/Library/Application Support/OddSound/MTS/libMTS.dylib",RTLD_NOW))) return;
+        if (!(handle=dlopen("/Library/Application Support/MTS-ESP/libMTS.dylib",RTLD_NOW))) return;
         RegisterClient                  =(mts_pv)   dlsym(handle,"MTS_RegisterClient");
         DeregisterClient                =(mts_pv)   dlsym(handle,"MTS_DeregisterClient");
         HasMaster                       =(mts_bool) dlsym(handle,"MTS_HasMaster");
@@ -85,9 +73,9 @@ static mtsclientglobal global;
 
 struct MTSClient
 {
-    MTSClient() : supportsMultiChannelNoteFiltering(false), supportsMultiChannelTuning(false), freqRequestReceived(false)
+    MTSClient() : supportsMultiChannelNoteFiltering(false), supportsMultiChannelTuning(false), freqRequestReceived(false), tuningName("12-TET")
     {
-        for (int i=0;i<128;i++) retuning[i]=440.0*pow(2.0,(i-69.0)/12.0);
+        for (int i=0;i<128;i++) retuning[i]=440.*pow(2.,(i-69.)/12.);
         if (global.RegisterClient) global.RegisterClient((void*)this);
     }
     ~MTSClient() {if (global.DeregisterClient) global.DeregisterClient((void*)this);}
@@ -167,11 +155,11 @@ struct MTSClient
                     break;
                 case eMatchingProg:
                     prog=b;
-                    if (format==eSingle) state=eNumTunings;else state=eTuningName,tuningName.clear();
+                    if (format==eSingle) state=eNumTunings;else state=eTuningName,tuningName[0]='\0';
                     break;
                 case eTuningName:
-                    tuningName.push_back(b);
-                    if (++sysex_ctr>=16) sysex_ctr=0,state=eTuningData;
+                    tuningName[sysex_ctr]=b;
+                    if (++sysex_ctr>=16) tuningName[16]='\0',sysex_ctr=0,state=eTuningData;
                     break;
                 case eNumTunings:
                     numTunings=b,sysex_ctr=0,state=eTuningData;
@@ -236,17 +224,13 @@ struct MTSClient
         if (note<0 || note>127 || retuneNote<0 || retuneNote>127) return;
         retuning[note]=440.*pow(2.,((retuneNote+detune)-69.)/12.);
     }
-    const char *getScaleName()
-    {
-        if (global.GetScaleName) return global.GetScaleName();
-        return tuningName.c_str();
-    }
+    const char *getScaleName() {return global.GetScaleName?global.GetScaleName():tuningName;}
     
     enum eSysexState {eIgnoring=0,eMatchingSysex,eSysexValid,eMatchingMTS,eMatchingBank,eMatchingProg,eMatchingChannel,eTuningName,eNumTunings,eTuningData,eCheckSum};
     enum eMTSFormat {eRequest=0,eBulk,eSingle,eScaleOctOneByte,eScaleOctTwoByte,eScaleOctOneByteExt,eScaleOctTwoByteExt};
 
     double retuning[128];
-    std::string tuningName;
+    char tuningName[17];
     bool supportsMultiChannelNoteFiltering,supportsMultiChannelTuning,freqRequestReceived;
 };
 
@@ -255,8 +239,8 @@ MTSClient* MTS_RegisterClient()                                             {ret
 void MTS_DeregisterClient(MTSClient* c)                                     {delete c;}
 bool MTS_HasMaster(MTSClient* c)                                            {return c?c->hasMaster():false;}
 bool MTS_ShouldFilterNote(MTSClient* c,char midinote,char midichannel)      {return c?c->shouldFilterNote(midinote&127,midichannel):false;}
-double MTS_NoteToFrequency(MTSClient* c,char midinote,char midichannel)     {return c?c->freq(midinote,midichannel):(1.0/global.iet[midinote&127]);}
-double MTS_RetuningAsRatio(MTSClient* c,char midinote,char midichannel)     {return c?c->freq(midinote,midichannel)*global.iet[midinote&127]:1.0;}
+double MTS_NoteToFrequency(MTSClient* c,char midinote,char midichannel)     {return c?c->freq(midinote,midichannel):(1./global.iet[midinote&127]);}
+double MTS_RetuningAsRatio(MTSClient* c,char midinote,char midichannel)     {return c?c->freq(midinote,midichannel)*global.iet[midinote&127]:1.;}
 double MTS_RetuningInSemitones(MTSClient* c,char midinote,char midichannel) {return ratioToSemitones*log(MTS_RetuningAsRatio(c,midinote,midichannel));}
 const char *MTS_GetScaleName(MTSClient *c)                                  {return c?c->getScaleName():"";}
 void MTS_ParseMIDIDataU(MTSClient *c,const unsigned char *buffer,int len)   {if (c) c->parseMIDIData(buffer,len);}
