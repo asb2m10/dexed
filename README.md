@@ -18,7 +18,7 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
-#### Version 0.9.5 (in development)
+#### Version 0.9.5
 * Added support for SCL/KBM microtuning
 * Added initial support for MPE performance
 * Upgraded build system to use JUCE 6.0 and build from locally acquired JUCE
