@@ -264,6 +264,7 @@ OperatorEditor::OperatorEditor ()
 
     //[UserPreSize]
     opSwitch.reset(new OperatorSwitch());
+    opSwitch->addListener(this);
     addAndMakeVisible(opSwitch.get());
     //[/UserPreSize]
 
@@ -491,6 +492,9 @@ void OperatorEditor::buttonClicked (juce::Button* buttonThatWasClicked)
     }
 
     //[UserbuttonClicked_Post]
+    if (buttonThatWasClicked == opSwitch.get()) {
+        this->processor->forceRefreshUI = true;
+    }
     //[/UserbuttonClicked_Post]
 }
 
