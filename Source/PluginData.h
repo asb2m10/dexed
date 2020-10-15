@@ -59,6 +59,7 @@ public:
         
         for (int j = 0; j < 10; j++) {
             char c = (unsigned char) buffer[j];
+            c &= 0x7F; // strip don't care most-significant bit from name
             switch (c) {
                 case 92:
                     c = 'Y';
