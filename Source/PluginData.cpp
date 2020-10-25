@@ -125,40 +125,49 @@ void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
         // eg rate and level, brk pt, depth, scaling
         
         for(int i=0; i<11; i++) {
-            unpackPgm[op * 21 + i] = normparm(bulk[op * 17 + i], 99, i);
+            uint8_t currparm = bulk[op * 17 + i] & 0x7F; // mask BIT7 (don't care per sysex spec) 
+            unpackPgm[op * 21 + i] = normparm(currparm, 99, i);
         }
         
         memcpy(unpackPgm + op * 21, bulk + op * 17, 11);
-        char leftrightcurves = bulk[op * 17 + 11];
+        char leftrightcurves = bulk[op * 17 + 11]&0xF; // bits 4-7 don't care per sysex spec
         unpackPgm[op * 21 + 11] = leftrightcurves & 3;
         unpackPgm[op * 21 + 12] = (leftrightcurves >> 2) & 3;
-        char detune_rs = bulk[op * 17 + 12];
+        char detune_rs = bulk[op * 17 + 12]&0x7F;
         unpackPgm[op * 21 + 13] = detune_rs & 7;
-        char kvs_ams = bulk[op * 17 + 13];
+        char kvs_ams = bulk[op * 17 + 13]&0x1F; // bits 5-7 don't care per sysex spec
         unpackPgm[op * 21 + 14] = kvs_ams & 3;
-        unpackPgm[op * 21 + 15] = kvs_ams >> 2;
-        unpackPgm[op * 21 + 16] = bulk[op * 17 + 14];  // output level
-        char fcoarse_mode = bulk[op * 17 + 15];
+        unpackPgm[op * 21 + 15] = (kvs_ams >> 2) & 7;
+        unpackPgm[op * 21 + 16] = bulk[op * 17 + 14]&0x7F;  // output level
+        char fcoarse_mode = bulk[op * 17 + 15]&0x3F; //bits 6-7 don't care per sysex spec
         unpackPgm[op * 21 + 17] = fcoarse_mode & 1;
-        unpackPgm[op * 21 + 18] = fcoarse_mode >> 1;
-        unpackPgm[op * 21 + 19] = bulk[op * 17 + 16];  // fine freq
-        unpackPgm[op * 21 + 20] = detune_rs >> 3;
+        unpackPgm[op * 21 + 18] = (fcoarse_mode >> 1)&0x1F;
+        unpackPgm[op * 21 + 19] = bulk[op * 17 + 16]&0x7F;  // fine freq
+        unpackPgm[op * 21 + 20] = (detune_rs >> 3) &0x7F;
     }
     
     for (int i=0; i<8; i++)  {
-        unpackPgm[126+i] = normparm(bulk[102+i], 99, 126+i);
+        uint8_t currparm = bulk[102 + i] & 0x7F; // mask BIT7 (don't care per sysex spec)
+        unpackPgm[126+i] = normparm(currparm, 99, 126+i);
     }
-    unpackPgm[134] = normparm(bulk[110], 31, 134);
+    unpackPgm[134] = normparm(bulk[110]&0x1F, 31, 134); // bits 5-7 are don't care per sysex spec
     
-    char oks_fb = bulk[111];
+    char oks_fb = bulk[111]&0xF;//bits 4-7 are don't care per spec
     unpackPgm[135] = oks_fb & 7;
     unpackPgm[136] = oks_fb >> 3;
-    memcpy(unpackPgm + 137, bulk + 112, 4);  // lfo
-    char lpms_lfw_lks = bulk[116];
+    unpackPgm[137] = bulk[112] & 0x7F; // lfs
+    unpackPgm[138] = bulk[113] & 0x7F; // lfd
+    unpackPgm[139] = bulk[114] & 0x7F; // lpmd
+    unpackPgm[140] = bulk[115] & 0x7F; // lamd
+    char lpms_lfw_lks = bulk[116] & 0x7F;
     unpackPgm[141] = lpms_lfw_lks & 1;
     unpackPgm[142] = (lpms_lfw_lks >> 1) & 7;
     unpackPgm[143] = lpms_lfw_lks >> 4;
-    memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
+    unpackPgm[144] = bulk[117] & 0x7F;
+    for (int name_idx = 0; name_idx < 10; name_idx++) {
+        unpackPgm[145 + name_idx] = bulk[118 + name_idx] & 0x7F;
+    } //name_idx
+//    memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
 }
 
 void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
