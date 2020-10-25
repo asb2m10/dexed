@@ -670,6 +670,7 @@ float DexedAudioProcessor::getParameter(int index) {
 }
 
 void DexedAudioProcessor::setParameter(int index, float newValue) {
+    forceRefreshUI = true;
     ctrl[index]->setValueHost(newValue);
 }
 
