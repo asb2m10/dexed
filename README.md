@@ -1,13 +1,12 @@
 Dexed - FM Plugin Synth
 =======================
 
-[![Build Status](https://travis-ci.org/asb2m10/dexed.svg?branch=master)](https://travis-ci.org/asb2m10/dexed)
 
-Please see [Dexed User Website](http://asb2m10.github.io/dexed) for user and download information.
+Please see [Dexed User Website](https://asb2m10.github.io/dexed) for user and download information.
 
 Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
 Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android) 
-for the synth engine and [JUCE](http://www.juce.com) as an application/plugin wrapper.
+for the synth engine and [JUCE](https://www.juce.com) as an application/plugin wrapper.
 
 The goal of this project is to be a tool/companion for the original DX7. Sound engine 
 with 'float' value parameters, different waveform à la TX81z would be great but anything that 
@@ -19,6 +18,14 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.5
+* Added support for SCL/KBM microtuning
+* Added initial support for MPE performance
+* Upgraded build system to use JUCE 6.0 and build from locally acquired JUCE
+* A Collection of small UI changes, including higher contrast GUI assets, better sub-window management, 
+  and mouse wheel support
+* Added VST3 support
+
 #### Version 0.9.4HF1
 * Fixed sysex messages with unwanted pitch bend
 
@@ -74,7 +81,8 @@ Changelog
 
 Credits & thanks
 ----------------
-* DX Synth engine : Raph Levien and the [msfa](https://code.google.com/p/music-synthesizer-for-android) team 
+* DX Synth engine : Raph Levien and the [msfa](https://github.com/google/music-synthesizer-for-android) team 
+* [Surge Synth Team](https://surge-synth-team.org/) for substantial contributions like microtuning and MPE support.
 * Graphical design : AZur Studio
 * [Sentinel77](https://github.com/Sentinel77) for numerous engine fixes
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
@@ -95,3 +103,59 @@ TODO - msfa
 * Better Amplitude Modulation
 * Accurate live operator level envelope updates
 
+# How to build DEXED
+
+You will notice that DEXED no longer ships with built makefiles. Rather it has a collection of scripts to 
+get a version of JUCE and build them for you. With juce6 this will change even more, but for now to build you
+will want to get and run juce and the projucer yourself. Luckily this is fairly easy
+
+## All OSes
+
+DEXED has several submodules it now depends on, including VST3 and a library to support non standard tuning.
+After you clone your first step is
+
+```
+git submodule update --init --recursive
+```
+
+which will expand the submodules. Then follow platform specific directions below
+
+## macOS
+
+```
+./scripts/get-juce.sh
+./scripts/projuce-mac.sh
+./scripts/build-mac.sh
+```
+
+This will build a VST3, and AU and a Standalone in Build/MacOSX/Release for your
+
+## windows
+Run this in the bash shell that comes with the standard Git distribution.
+
+```
+./scripts/get-juce.sh
+./assets/JUCE/Projucer.exe --resave dexed.jucer
+```
+
+then open and build the resulting Visual Studio Solution file.
+
+## Linux
+
+```
+./scripts/get-juce.sh
+./scripts/projuce-lin.sh
+./scripts/build-lin.sh
+```
+
+### VST2 Support
+Since Steinberg has discontinued the VST2 API we no longer distribute a VST2.
+
+If you are a licensee to the VST2SDK, though, you can build a VST2 version of DEXED yourself with these commands
+
+```
+./scripts/get-juce.sh
+export VST2SDK_DIR=~/path/to/vst2/sdk/dir
+./scripts/projuce-lin-vst2.sh
+./scripts/build-lin.sh
+```

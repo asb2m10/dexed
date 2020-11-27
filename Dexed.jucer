@@ -2,19 +2,25 @@
 
 <JUCERPROJECT id="ryFHHI" name="Dexed" projectType="audioplug" version="1.0.0"
               bundleIdentifier="com.digitalsuburban.Dexed" includeBinaryInAppConfig="1"
-              buildVST="1" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
+              buildVST="0" buildAU="1" pluginName="Dexed" pluginDesc="Dexed FM Synth"
               pluginManufacturer="Digital Suburban" pluginManufacturerCode="DGSB"
               pluginCode="Dexd" pluginChannelConfigs="{0, 2}" pluginIsSynth="1"
               pluginWantsMidiIn="1" pluginProducesMidiOut="1" pluginSilenceInIsSilenceOut="0"
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
-              aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="AAX_ePlugInCategory_Dynamics"
-              jucerVersion="5.2.1" companyName="Digital Suburban" buildVST3="0"
-              buildRTAS="0" buildAAX="0" pluginManufacturerEmail="support@yourcompany.com"
+              aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="2" companyName="Digital Suburban"
+              buildVST3="1" buildRTAS="0" buildAAX="0" pluginManufacturerEmail="support@yourcompany.com"
               buildAUv3="0" pluginIsMidiEffectPlugin="0" displaySplashScreen="0"
               reportAppUsage="0" splashScreenColour="Dark" buildStandalone="1"
-              enableIAA="0" cppLanguageStandard="latest" companyCopyright="Digital Suburban">
+              enableIAA="0" cppLanguageStandard="latest" companyCopyright="Digital Suburban"
+              pluginFormats="buildAU,buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn,pluginProducesMidiOut"
+              jucerFormatVersion="1">
   <MAINGROUP id="kHXTgw" name="Dexed">
     <GROUP id="{F12593AE-639A-6F59-5819-ACE25AF86F95}" name="Resources">
+      <FILE id="kj2Ow6" name="dexed-logo.png" compile="0" resource="1" file="Resources/ui/dexed-logo.png"/>
+      <FILE id="h1sDac" name="HelpButton.png" compile="0" resource="1" file="Resources/ui/HelpButton.png"/>
+      <FILE id="oVmTCw" name="HelpButton.svg" compile="0" resource="1" file="Resources/ui/HelpButton.svg"/>
+      <FILE id="pKwZj2" name="SwitchLighted_48x26.png" compile="0" resource="1"
+            file="Resources/ui/SwitchLighted_48x26.png"/>
       <FILE id="SpSpb4" name="dexedIcon.png" compile="0" resource="1" file="Resources/ui/dexedIcon.png"/>
       <FILE id="CD5ehh" name="Switch_32x32.png" compile="0" resource="1"
             file="Resources/ui/Switch_32x32.png"/>
@@ -35,7 +41,6 @@
       <FILE id="A3xTGc" name="NotoSans-Bold.ttf" compile="0" resource="1"
             file="Resources/ui/NotoSans-Bold.ttf"/>
       <FILE id="gfRTZ1" name="builtin_pgm.zip" compile="0" resource="1" file="Resources/builtin_pgm.zip"/>
-      <FILE id="xxGEA4" name="about.png" compile="0" resource="1" file="Resources/about.png"/>
       <FILE id="YdXhxj" name="GlobalEditor_864x144.png" compile="0" resource="1"
             file="Resources/ui/GlobalEditor_864x144.png"/>
       <FILE id="GAIMQD" name="OperatorEditor_287x218.png" compile="0" resource="1"
@@ -76,8 +81,12 @@
         <FILE id="thAIGQ" name="GlobalEditor.cpp" compile="1" resource="0"
               file="Source/GlobalEditor.cpp"/>
         <FILE id="CxMFcr" name="GlobalEditor.h" compile="0" resource="0" file="Source/GlobalEditor.h"/>
+        <FILE id="aLakSq" name="TuningShow.cpp" compile="1" resource="0" file="Source/TuningShow.cpp"/>
+        <FILE id="OH8qjM" name="TuningShow.h" compile="0" resource="0" file="Source/TuningShow.h"/>
       </GROUP>
       <GROUP id="{CEBA9AF6-1C73-85F6-A187-56A246098441}" name="msfa">
+        <FILE id="xa8v2Z" name="tuning.cc" compile="1" resource="0" file="Source/msfa/tuning.cc"/>
+        <FILE id="hP1Glc" name="tuning.h" compile="0" resource="0" file="Source/msfa/tuning.h"/>
         <FILE id="wvG22S" name="freqlut.cc" compile="1" resource="0" file="Source/msfa/freqlut.cc"/>
         <FILE id="dulZMd" name="freqlut.h" compile="0" resource="0" file="Source/msfa/freqlut.h"/>
         <FILE id="BfOVi6" name="lfo.cc" compile="1" resource="0" file="Source/msfa/lfo.cc"/>
@@ -115,55 +124,59 @@
     </GROUP>
   </MAINGROUP>
   <EXPORTFORMATS>
-    <LINUX_MAKE targetFolder="Builds/Linux" vstFolder="~/src/vstsdk2.4" smallIcon="SpSpb4"
-                bigIcon="SpSpb4">
+    <LINUX_MAKE targetFolder="Builds/Linux" vstLegacyFolder="VST2SDK_DIR" smallIcon="SpSpb4"
+                bigIcon="SpSpb4" extraLinkerFlags="-fPIC" extraCompilerFlags="-I../../libs/tuning-library/include"
+                extraDefs="JUCE_VST3_EMULATE_MIDI_CC_WITH_PARAMETERS=0">
       <CONFIGURATIONS>
-        <CONFIGURATION name="Debug" libraryPath="/usr/X11R6/lib/" isDebug="1" optimisation="1"
-                       targetName="Dexed"/>
-        <CONFIGURATION name="Release" libraryPath="/usr/X11R6/lib/" isDebug="0" optimisation="2"
-                       targetName="Dexed"/>
+        <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"/>
+        <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="Dexed"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.0/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="surgesynthteam_tuningui" path="./libs"/>
       </MODULEPATHS>
     </LINUX_MAKE>
-    <XCODE_MAC targetFolder="Builds/MacOSX" vst3Folder="" smallIcon="SpSpb4"
-               bigIcon="SpSpb4">
+    <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="SpSpb4" bigIcon="SpSpb4"
+               vst3Folder="libs/vst3sdk" extraCompilerFlags="-I../../libs/tuning-library/include -Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32"
+               extraDefs="JUCE_VST3_EMULATE_MIDI_CC_WITH_PARAMETERS=0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
                        osxCompatibility="10.10 SDK" osxArchitecture="64BitIntel" enablePluginBinaryCopyStep="1"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Dexed"
-                       osxSDK="10.10 SDK" osxCompatibility="10.7 SDK" osxArchitecture="64BitUniversal"
+                       osxSDK="10.10 SDK" osxCompatibility="10.7 SDK" osxArchitecture="64BitIntel"
                        enablePluginBinaryCopyStep="1"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE-5.2.1/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.1/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="surgesynthteam_tuningui" path="./libs"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"
-            IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4">
+            IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4"
+            vst3Folder="libs/vst3sdk" extraCompilerFlags="/I../../libs/tuning-library/include"
+            extraDefs="JUCE_VST3_EMULATE_MIDI_CC_WITH_PARAMETERS=0">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
@@ -175,43 +188,78 @@
                        useRuntimeLibDLL="0"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
-        <MODULEPATH id="juce_gui_extra" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_graphics" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_events" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_data_structures" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_core" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../JUCE-5.2.0/modules"/>
-        <MODULEPATH id="juce_audio_basics" path="../JUCE-5.2.0/modules"/>
+        <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="surgesynthteam_tuningui" path="./libs"/>
       </MODULEPATHS>
     </VS2017>
+    <VS2019 targetFolder="Builds/VisualStudio2019" IPPLibrary="Parallel_Static"
+            extraCompilerFlags="/I../../libs/tuning-library/include" smallIcon="SpSpb4"
+            bigIcon="SpSpb4" extraDefs="JUCE_VST3_EMULATE_MIDI_CC_WITH_PARAMETERS=0">
+      <CONFIGURATIONS>
+        <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="0" isDebug="1" optimisation="1" targetName="Dexed"
+                       useRuntimeLibDLL=""/>
+        <CONFIGURATION name="Release" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
+                       debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
+                       linkTimeOptimisation="1" isDebug="0" optimisation="3" targetName="Dexed"
+                       useRuntimeLibDLL="0"/>
+      </CONFIGURATIONS>
+      <MODULEPATHS>
+        <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_gui_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_graphics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_events" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_data_structures" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_core" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_utils" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_processors" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_plugin_client" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_formats" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_devices" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="juce_audio_basics" path="./assets/JUCE/modules"/>
+        <MODULEPATH id="surgesynthteam_tuningui" path="./libs"/>
+      </MODULEPATHS>
+    </VS2019>
   </EXPORTFORMATS>
   <MODULES>
-    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_devices" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_formats" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_audio_plugin_client" showAllCode="1" useLocalCopy="1"
             useGlobalPath="1"/>
-    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_core" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_events" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
-    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="1" useGlobalPath="1"/>
+    <MODULE id="juce_audio_processors" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_audio_utils" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="surgesynthteam_tuningui" showAllCode="1" useLocalCopy="0"
+            useGlobalPath="0"/>
   </MODULES>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_USE_FLAC="0" JUCE_USE_OGGVORBIS="0"
                JUCE_USE_MP3AUDIOFORMAT="0" JUCE_USE_LAME_AUDIO_FORMAT="0" JUCE_USE_WINDOWS_MEDIA_FORMAT="0"
                JUCE_WEB_BROWSER="0" JUCE_ASIO="0" JUCE_WASAPI="1" JUCE_WASAPI_EXCLUSIVE="0"
-               JUCE_DIRECTSOUND="0" JUCE_ALSA="1" JUCE_JACK="0" JUCE_USE_ANDROID_OPENSLES="0"
-               JUCE_PLUGINHOST_VST="1" JUCE_PLUGINHOST_VST3="0" JUCE_PLUGINHOST_AU="1"
-               JUCE_USE_CDREADER="0" JUCE_USE_CDBURNER="0" JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES="1"/>
+               JUCE_DIRECTSOUND="0" JUCE_ALSA="1" JUCE_JACK="1" JUCE_USE_ANDROID_OPENSLES="0"
+               JUCE_PLUGINHOST_VST="0" JUCE_PLUGINHOST_VST3="1" JUCE_PLUGINHOST_AU="1"
+               JUCE_VST3_CAN_REPLACE_VST2="0" JUCE_USE_CDREADER="0" JUCE_USE_CDBURNER="0"
+               JUCE_DONT_AUTOLINK_TO_WIN32_LIBRARIES="1"/>
   <LIVE_SETTINGS>
     <OSX/>
+    <LINUX/>
+    <WINDOWS/>
   </LIVE_SETTINGS>
 </JUCERPROJECT>

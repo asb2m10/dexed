@@ -28,22 +28,22 @@
 
 class CartManager  : public Component, public Button::Listener, public DragAndDropContainer, public FileBrowserListener
     , public ProgramListBoxListener, public KeyListener {
-    ScopedPointer<TextButton> newButton;
-    ScopedPointer<TextButton> loadButton;
-    ScopedPointer<TextButton> saveButton;
-    ScopedPointer<TextButton> closeButton;
-    ScopedPointer<TextButton> fileMgrButton;
-    ScopedPointer<TextButton> getDXPgmButton;
-    ScopedPointer<TextButton> getDXCartButton;
+    std::unique_ptr<TextButton> newButton;
+    std::unique_ptr<TextButton> loadButton;
+    std::unique_ptr<TextButton> saveButton;
+    std::unique_ptr<TextButton> closeButton;
+    std::unique_ptr<TextButton> fileMgrButton;
+    std::unique_ptr<TextButton> getDXPgmButton;
+    std::unique_ptr<TextButton> getDXCartButton;
     
-    ScopedPointer<ProgramListBox> activeCart;
-    ScopedPointer<ProgramListBox> browserCart;
+    std::unique_ptr<ProgramListBox> activeCart;
+    std::unique_ptr<ProgramListBox> browserCart;
     
-    ScopedPointer<FileFilter> syxFileFilter;
+    std::unique_ptr<FileFilter> syxFileFilter;
         
-    FileTreeComponent *cartBrowser;
-    TimeSliceThread *timeSliceThread;
-    DirectoryContentsList *cartBrowserList;
+    std::unique_ptr<FileTreeComponent> cartBrowser;
+    std::unique_ptr<TimeSliceThread> timeSliceThread;
+    std::unique_ptr<DirectoryContentsList> cartBrowserList;
         
     File cartDir;
     

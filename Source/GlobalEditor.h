@@ -7,18 +7,17 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.1
+  Created with Projucer version: 6.0.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
 
-#ifndef __JUCE_HEADER_10638A2B49B704D0__
-#define __JUCE_HEADER_10638A2B49B704D0__
+#pragma once
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
@@ -40,13 +39,13 @@ class DexedAudioProcessorEditor;
                                                                     //[/Comments]
 */
 class GlobalEditor  : public Component,
-                      public Slider::Listener,
-                      public Button::Listener
+                      public juce::Slider::Listener,
+                      public juce::Button::Listener
 {
 public:
     //==============================================================================
     GlobalEditor ();
-    ~GlobalEditor();
+    ~GlobalEditor() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -60,15 +59,15 @@ public:
 
     void setMonoState(bool state);
     ProgramSelector *programs;
-    ScopedPointer<Component> midiMonitor;
+    //std::unique_ptr<Component> midiMonitor;
 
     void mouseDown(const MouseEvent& e) override;
     //[/UserMethods]
 
-    void paint (Graphics& g) override;
+    void paint (juce::Graphics& g) override;
     void resized() override;
-    void sliderValueChanged (Slider* sliderThatWasMoved) override;
-    void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
+    void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
 
 
@@ -76,46 +75,46 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     DexedAudioProcessorEditor *editor;
     DexedAudioProcessor *processor;
-    
+
     Image background;
     Image imageLight;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Slider> lfoSpeed;
-    ScopedPointer<Slider> lfoAmDepth;
-    ScopedPointer<Slider> lfoPitchDepth;
-    ScopedPointer<Slider> lfoDelay;
-    ScopedPointer<Slider> cutoff;
-    ScopedPointer<Slider> reso;
-    ScopedPointer<Slider> pitchRate2;
-    ScopedPointer<Slider> pitchRate3;
-    ScopedPointer<Slider> pitchRate4;
-    ScopedPointer<Slider> pitchRate1;
-    ScopedPointer<Slider> pitchLevel2;
-    ScopedPointer<Slider> pitchLevel3;
-    ScopedPointer<Slider> pitchLevel4;
-    ScopedPointer<Slider> pitchLevel1;
-    ScopedPointer<Slider> transpose;
-    ScopedPointer<ToggleButton> oscSync;
-    ScopedPointer<Slider> pitchModSens;
-    ScopedPointer<ToggleButton> lfoSync;
-    ScopedPointer<PitchEnvDisplay> pitchEnvDisplay;
-    ScopedPointer<AlgoDisplay> algoDisplay;
-    ScopedPointer<Slider> feedback;
-    ScopedPointer<Slider> algo;
-    ScopedPointer<LcdDisplay> lcdDisplay;
-    ScopedPointer<Slider> output;
-    ScopedPointer<VuMeter> vuOutput;
-    ScopedPointer<TextButton> initButton;
-    ScopedPointer<TextButton> parmButton;
-    ScopedPointer<TextButton> cartButton;
-    ScopedPointer<TextButton> storeButton;
-    ScopedPointer<ToggleButton> monoMode;
-    ScopedPointer<ComboBoxImage> lfoType;
-    ScopedPointer<ProgramSelector> programSelector;
-    ScopedPointer<ImageButton> aboutButton;
-    ScopedPointer<Slider> tune;
+    std::unique_ptr<juce::Slider> lfoSpeed;
+    std::unique_ptr<juce::Slider> lfoAmDepth;
+    std::unique_ptr<juce::Slider> lfoPitchDepth;
+    std::unique_ptr<juce::Slider> lfoDelay;
+    std::unique_ptr<juce::Slider> cutoff;
+    std::unique_ptr<juce::Slider> reso;
+    std::unique_ptr<juce::Slider> pitchRate2;
+    std::unique_ptr<juce::Slider> pitchRate3;
+    std::unique_ptr<juce::Slider> pitchRate4;
+    std::unique_ptr<juce::Slider> pitchRate1;
+    std::unique_ptr<juce::Slider> pitchLevel2;
+    std::unique_ptr<juce::Slider> pitchLevel3;
+    std::unique_ptr<juce::Slider> pitchLevel4;
+    std::unique_ptr<juce::Slider> pitchLevel1;
+    std::unique_ptr<juce::Slider> transpose;
+    std::unique_ptr<juce::ToggleButton> oscSync;
+    std::unique_ptr<juce::Slider> pitchModSens;
+    std::unique_ptr<juce::ToggleButton> lfoSync;
+    std::unique_ptr<PitchEnvDisplay> pitchEnvDisplay;
+    std::unique_ptr<AlgoDisplay> algoDisplay;
+    std::unique_ptr<juce::Slider> feedback;
+    std::unique_ptr<juce::Slider> algo;
+    std::unique_ptr<LcdDisplay> lcdDisplay;
+    std::unique_ptr<juce::Slider> output;
+    std::unique_ptr<VuMeter> vuOutput;
+    std::unique_ptr<juce::TextButton> initButton;
+    std::unique_ptr<juce::TextButton> parmButton;
+    std::unique_ptr<juce::TextButton> cartButton;
+    std::unique_ptr<juce::TextButton> storeButton;
+    std::unique_ptr<juce::ToggleButton> monoMode;
+    std::unique_ptr<ComboBoxImage> lfoType;
+    std::unique_ptr<ProgramSelector> programSelector;
+    std::unique_ptr<juce::ImageButton> aboutButton;
+    std::unique_ptr<juce::Slider> tune;
 
 
     //==============================================================================
@@ -125,4 +124,3 @@ private:
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCE_HEADER_10638A2B49B704D0__

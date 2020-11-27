@@ -71,8 +71,13 @@ public:
 
 class ProgramSelector : public ComboBox {
 public:
-    void mouseDown(const MouseEvent &event) override;    
+    virtual void mouseDown(const MouseEvent &event) override;
+    virtual void mouseEnter(const MouseEvent &event) override { accum_wheel = 0; }
+    virtual void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;
     virtual void paint(Graphics &g) override;
+
+private:
+    float accum_wheel;
 };
 
 #endif  // DXCOMPONENTS_H_INCLUDED

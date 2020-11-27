@@ -11,3 +11,8 @@ Builds/MacOSX/build
 Dexed - AU.xcscheme
 Dexed - Standalone Plugin.xcscheme
 Dexed - VST.xcscheme
+JuceLibraryCode/
+Builds/
+assets/
+products/
+.DS_Store

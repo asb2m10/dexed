@@ -29,6 +29,7 @@
 #include "msfa/lfo.h"
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
+#include "msfa/tuning.h"
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
@@ -37,11 +38,17 @@
 #include "EngineOpl.h"
 
 struct ProcessorVoice {
+    int channel;
     int midi_note;
     int velocity;
     bool keydown;
     bool sustained;
     bool live;
+
+    int mpePitchBend;
+    int mpePressure;
+    int mpeTimbre;
+    
     Dx7Note *dx7_note;
 };
 
@@ -91,8 +98,8 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     bool sendSysexChange;
     
     void processMidiMessage(const MidiMessage *msg);
-    void keydown(uint8_t pitch, uint8_t velo);
-    void keyup(uint8_t pitch);
+    void keydown(uint8_t chan, uint8_t pitch, uint8_t velo);
+    void keyup(uint8_t, uint8_t pitch, uint8_t velo);
     
     /**
      * this is called from the Audio thread to tell
@@ -143,24 +150,24 @@ public :
     Array<Ctrl*> ctrl;
 
     OperatorCtrl opCtrl[6];
-    ScopedPointer<CtrlDX> pitchEgRate[4];
-    ScopedPointer<CtrlDX> pitchEgLevel[4];
-    ScopedPointer<CtrlDX> pitchModSens;
-    ScopedPointer<CtrlDX> algo;
-    ScopedPointer<CtrlDX> oscSync;
-    ScopedPointer<CtrlDX> feedback;
-    ScopedPointer<CtrlDX> lfoRate;
-    ScopedPointer<CtrlDX> lfoDelay;
-    ScopedPointer<CtrlDX> lfoAmpDepth;
-    ScopedPointer<CtrlDX> lfoPitchDepth;
-    ScopedPointer<CtrlDX> lfoWaveform;
-    ScopedPointer<CtrlDX> lfoSync;
-    ScopedPointer<CtrlDX> transpose;
+    std::unique_ptr<CtrlDX> pitchEgRate[4];
+    std::unique_ptr<CtrlDX> pitchEgLevel[4];
+    std::unique_ptr<CtrlDX> pitchModSens;
+    std::unique_ptr<CtrlDX> algo;
+    std::unique_ptr<CtrlDX> oscSync;
+    std::unique_ptr<CtrlDX> feedback;
+    std::unique_ptr<CtrlDX> lfoRate;
+    std::unique_ptr<CtrlDX> lfoDelay;
+    std::unique_ptr<CtrlDX> lfoAmpDepth;
+    std::unique_ptr<CtrlDX> lfoPitchDepth;
+    std::unique_ptr<CtrlDX> lfoWaveform;
+    std::unique_ptr<CtrlDX> lfoSync;
+    std::unique_ptr<CtrlDX> transpose;
 
-    ScopedPointer<CtrlFloat> fxCutoff;
-    ScopedPointer<CtrlFloat> fxReso;
-    ScopedPointer<CtrlFloat> output;
-    ScopedPointer<Ctrl> tune;
+    std::unique_ptr<CtrlFloat> fxCutoff;
+    std::unique_ptr<CtrlFloat> fxReso;
+    std::unique_ptr<CtrlFloat> output;
+    std::unique_ptr<Ctrl> tune;
 
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);
@@ -235,10 +242,33 @@ public :
     
     static File dexedAppDir;
     static File dexedCartDir;
-    
+
     Value lastCCUsed;
-    
+
     MTSClient *mtsClient;
+    std::shared_ptr<TuningState> synthTuningState;
+    // Prompt for a file
+    void applySCLTuning();
+    void applyKBMMapping();
+
+    // Load a file
+    void applySCLTuning(File sclf);
+    void applyKBMMapping(File kbmf);
+
+    // Load from text
+    void applySCLTuning(std::string scld);
+    void applyKBMMapping(std::string kbmd);
+    
+    void retuneToStandard();
+    void resetTuning(std::shared_ptr<TuningState> t);
+    int tuningTranspositionShift();
+    
+    std::string currentSCLData = "";
+    std::string currentKBMData = "";
+    
+    float dpiScaleFactor = -1;
+    
+>>>>>>> c1269566a6774fb5e0fe37426d8c9ca3ab736e97
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

@@ -101,7 +101,7 @@ void Cartridge::packProgram(uint8_t *src, int idx, String name, char *opSwitch) 
 
 /**
  * This function normalize data that comes from corrupted sysex.
- * It used to avoid engine crashing upon extrem values
+ * It used to avoid engine crashing upon extreme values
  */
 char normparm(char value, char max, int id) {
     if ( value <= max && value >= 0 )
@@ -125,40 +125,49 @@ void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
         // eg rate and level, brk pt, depth, scaling
         
         for(int i=0; i<11; i++) {
-            unpackPgm[op * 21 + i] = normparm(bulk[op * 17 + i], 99, i);
+            uint8_t currparm = bulk[op * 17 + i] & 0x7F; // mask BIT7 (don't care per sysex spec) 
+            unpackPgm[op * 21 + i] = normparm(currparm, 99, i);
         }
         
         memcpy(unpackPgm + op * 21, bulk + op * 17, 11);
-        char leftrightcurves = bulk[op * 17 + 11];
+        char leftrightcurves = bulk[op * 17 + 11]&0xF; // bits 4-7 don't care per sysex spec
         unpackPgm[op * 21 + 11] = leftrightcurves & 3;
         unpackPgm[op * 21 + 12] = (leftrightcurves >> 2) & 3;
-        char detune_rs = bulk[op * 17 + 12];
+        char detune_rs = bulk[op * 17 + 12]&0x7F;
         unpackPgm[op * 21 + 13] = detune_rs & 7;
-        char kvs_ams = bulk[op * 17 + 13];
+        char kvs_ams = bulk[op * 17 + 13]&0x1F; // bits 5-7 don't care per sysex spec
         unpackPgm[op * 21 + 14] = kvs_ams & 3;
-        unpackPgm[op * 21 + 15] = kvs_ams >> 2;
-        unpackPgm[op * 21 + 16] = bulk[op * 17 + 14];  // output level
-        char fcoarse_mode = bulk[op * 17 + 15];
+        unpackPgm[op * 21 + 15] = (kvs_ams >> 2) & 7;
+        unpackPgm[op * 21 + 16] = bulk[op * 17 + 14]&0x7F;  // output level
+        char fcoarse_mode = bulk[op * 17 + 15]&0x3F; //bits 6-7 don't care per sysex spec
         unpackPgm[op * 21 + 17] = fcoarse_mode & 1;
-        unpackPgm[op * 21 + 18] = fcoarse_mode >> 1;
-        unpackPgm[op * 21 + 19] = bulk[op * 17 + 16];  // fine freq
-        unpackPgm[op * 21 + 20] = detune_rs >> 3;
+        unpackPgm[op * 21 + 18] = (fcoarse_mode >> 1)&0x1F;
+        unpackPgm[op * 21 + 19] = bulk[op * 17 + 16]&0x7F;  // fine freq
+        unpackPgm[op * 21 + 20] = (detune_rs >> 3) &0x7F;
     }
     
     for (int i=0; i<8; i++)  {
-        unpackPgm[126+i] = normparm(bulk[102+i], 99, 126+i);
+        uint8_t currparm = bulk[102 + i] & 0x7F; // mask BIT7 (don't care per sysex spec)
+        unpackPgm[126+i] = normparm(currparm, 99, 126+i);
     }
-    unpackPgm[134] = normparm(bulk[110], 31, 134);
+    unpackPgm[134] = normparm(bulk[110]&0x1F, 31, 134); // bits 5-7 are don't care per sysex spec
     
-    char oks_fb = bulk[111];
+    char oks_fb = bulk[111]&0xF;//bits 4-7 are don't care per spec
     unpackPgm[135] = oks_fb & 7;
     unpackPgm[136] = oks_fb >> 3;
-    memcpy(unpackPgm + 137, bulk + 112, 4);  // lfo
-    char lpms_lfw_lks = bulk[116];
+    unpackPgm[137] = bulk[112] & 0x7F; // lfs
+    unpackPgm[138] = bulk[113] & 0x7F; // lfd
+    unpackPgm[139] = bulk[114] & 0x7F; // lpmd
+    unpackPgm[140] = bulk[115] & 0x7F; // lamd
+    char lpms_lfw_lks = bulk[116] & 0x7F;
     unpackPgm[141] = lpms_lfw_lks & 1;
     unpackPgm[142] = (lpms_lfw_lks >> 1) & 7;
     unpackPgm[143] = lpms_lfw_lks >> 4;
-    memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
+    unpackPgm[144] = bulk[117] & 0x7F;
+    for (int name_idx = 0; name_idx < 10; name_idx++) {
+        unpackPgm[145 + name_idx] = bulk[118 + name_idx] & 0x7F;
+    } //name_idx
+//    memcpy(unpackPgm + 144, bulk + 117, 11);  // transpose, name
 }
 
 void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
@@ -198,8 +207,10 @@ int DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
 void DexedAudioProcessor::setupStartupCart() {
     File startup = dexedCartDir.getChildFile("Dexed_01.syx");
 
-    if ( currentCart.load(startup) != -1 )
+    if ( currentCart.load(startup) != -1 ) {
+        loadCartridge(currentCart);
         return;
+    }
     
     // The user deleted the file :/, load from the builtin zip file.
     MemoryInputStream *mis = new MemoryInputStream(BinaryData::builtin_pgm_zip, BinaryData::builtin_pgm_zipSize, false);
@@ -207,8 +218,9 @@ void DexedAudioProcessor::setupStartupCart() {
     InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
     Cartridge init;
     
-    if ( init.load(*is) != -1 )
+    if ( init.load(*is) != -1 ) {
         loadCartridge(init);
+    }
 
     delete is;
     delete builtin_pgm;
@@ -273,7 +285,7 @@ void DexedAudioProcessor::sendSysexCartridge(File cart) {
     if ( ! sysexComm.isOutputActive() )
         return;
     
-    FileInputStream *fis = cart.createInputStream();
+    std::unique_ptr<juce::FileInputStream> fis = cart.createInputStream();
     if ( fis == NULL ) {
         String f = cart.getFullPathName();
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
@@ -283,7 +295,6 @@ void DexedAudioProcessor::sendSysexCartridge(File cart) {
     
     uint8 syx_data[65535];
     int sz = fis->read(syx_data, 65535);
-    delete fis;
     
     if (syx_data[0] != 0xF0) {
         String f = cart.getFullPathName();
@@ -320,6 +331,9 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("masterTune", controllers.masterTune);
     //TRACE("saving opswitch %s", controllers.opSwitch);
     dexedState.setAttribute("opSwitch", controllers.opSwitch);
+    dexedState.setAttribute("transpose12AsScale", controllers.transpose12AsScale ? 1 : 0 );
+    dexedState.setAttribute("mpeEnabled", controllers.mpeEnabled ? 1 : 0 );
+    dexedState.setAttribute("mpePitchBendRange", controllers.mpePitchBendRange );
     
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
@@ -330,6 +344,15 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("breathMod", mod_cfg);
     controllers.at.setConfig(mod_cfg);
     dexedState.setAttribute("aftertouchMod", mod_cfg);
+
+    if( currentSCLData.size() > 1 || currentKBMData.size() > 1 )
+    {
+        auto tuningx = dexedState.createNewChildElement("dexedTuning" );
+        auto sclx = tuningx->createNewChildElement("scl");
+        sclx->addTextElement(currentSCLData);
+        auto kbmx = tuningx->createNewChildElement("kbm");
+        kbmx->addTextElement(currentKBMData);
+    }
     
     if ( activeFileCartridge.exists() )
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
@@ -355,12 +378,12 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
 void DexedAudioProcessor::setStateInformation(const void* source, int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-    
+
     // used to LOAD plugin state
-    ScopedPointer<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
-    
+    std::unique_ptr<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
+
     if (root == nullptr) {
-        TRACE("unkown state format");
+        TRACE("unknown state format");
         return;
     }
     
@@ -387,10 +410,36 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     setEngineType(root->getIntAttribute("engineType", 1));
     monoMode = root->getIntAttribute("monoMode", 0);
     controllers.masterTune = root->getIntAttribute("masterTune", 0);
+    controllers.transpose12AsScale = ( root->getIntAttribute("transpose12AsScale", 1) != 0 );
+
+    controllers.mpePitchBendRange = ( root->getIntAttribute("mpePitchBendRange", 24) );
+    controllers.mpeEnabled = ( root->getIntAttribute("mpeEnabled", 0) != 0 );
     
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
     if ( possibleCartridge.exists() )
         activeFileCartridge = possibleCartridge;
+
+    auto tuningParent = root->getChildByName( "dexedTuning" );
+    if( tuningParent )
+    {
+        auto sclx = tuningParent->getChildByName( "scl" );
+        auto kbmx = tuningParent->getChildByName( "kbm" );
+        std::string s = "";
+        if( sclx && sclx->getFirstChildElement() && sclx->getFirstChildElement()->isTextElement() )
+        {
+            s = sclx->getFirstChildElement()->getText().toStdString();
+            if( s.size() > 1 )
+                applySCLTuning(s);
+        }
+
+        std::string k = "";
+        if( kbmx && kbmx->getFirstChildElement() && kbmx->getFirstChildElement()->isTextElement() )
+        {
+            k = kbmx->getFirstChildElement()->getText().toStdString();
+            if( k.size() > 1 )
+                applyKBMMapping(k);
+        }
+    }
     
     XmlElement *dexedBlob = root->getChildByName("dexedBlob");
     if ( dexedBlob == NULL ) {
@@ -405,7 +454,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     var program = blobSet["program"];
     
     if ( sysex_blob.isVoid() || program.isVoid() ) {
-        TRACE("unkown serialized blob data");
+        TRACE("unknown serialized blob data");
         return;
     }
     

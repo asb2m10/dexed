@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.1
+  Created with Projucer version: 6.0.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
@@ -50,148 +50,222 @@ OperatorEditor::OperatorEditor ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    addAndMakeVisible (s_egl1 = new Slider ("egl1"));
+    s_egl1.reset (new juce::Slider ("egl1"));
+    addAndMakeVisible (s_egl1.get());
     s_egl1->setRange (0, 99, 1);
-    s_egl1->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egl1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egl1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egl1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egl1->addListener (this);
 
-    addAndMakeVisible (s_egl2 = new Slider ("egl2"));
+    s_egl1->setBounds (5, 128, 34, 34);
+
+    s_egl2.reset (new juce::Slider ("egl2"));
+    addAndMakeVisible (s_egl2.get());
     s_egl2->setRange (0, 99, 1);
-    s_egl2->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egl2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egl2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egl2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egl2->addListener (this);
 
-    addAndMakeVisible (s_egl3 = new Slider ("egl3"));
+    s_egl2->setBounds (33, 129, 34, 34);
+
+    s_egl3.reset (new juce::Slider ("egl3"));
+    addAndMakeVisible (s_egl3.get());
     s_egl3->setRange (0, 99, 1);
-    s_egl3->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egl3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egl3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egl3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egl3->addListener (this);
 
-    addAndMakeVisible (s_egl4 = new Slider ("egl4"));
+    s_egl3->setBounds (61, 128, 34, 34);
+
+    s_egl4.reset (new juce::Slider ("egl4"));
+    addAndMakeVisible (s_egl4.get());
     s_egl4->setRange (0, 99, 1);
-    s_egl4->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egl4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egl4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egl4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egl4->addListener (this);
 
-    addAndMakeVisible (s_egv1 = new Slider ("egr1"));
+    s_egl4->setBounds (89, 128, 34, 34);
+
+    s_egv1.reset (new juce::Slider ("egr1"));
+    addAndMakeVisible (s_egv1.get());
     s_egv1->setRange (0, 99, 1);
-    s_egv1->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egv1->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egv1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egv1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egv1->addListener (this);
 
-    addAndMakeVisible (s_egv2 = new Slider ("egr3"));
+    s_egv1->setBounds (5, 169, 34, 34);
+
+    s_egv2.reset (new juce::Slider ("egr3"));
+    addAndMakeVisible (s_egv2.get());
     s_egv2->setRange (0, 99, 1);
-    s_egv2->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egv2->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egv2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egv2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egv2->addListener (this);
 
-    addAndMakeVisible (s_egv3 = new Slider ("egr3"));
+    s_egv2->setBounds (33, 169, 34, 34);
+
+    s_egv3.reset (new juce::Slider ("egr3"));
+    addAndMakeVisible (s_egv3.get());
     s_egv3->setRange (0, 99, 1);
-    s_egv3->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egv3->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egv3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egv3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egv3->addListener (this);
 
-    addAndMakeVisible (s_egv4 = new Slider ("egr4"));
+    s_egv3->setBounds (61, 169, 34, 34);
+
+    s_egv4.reset (new juce::Slider ("egr4"));
+    addAndMakeVisible (s_egv4.get());
     s_egv4->setRange (0, 99, 1);
-    s_egv4->setSliderStyle (Slider::RotaryVerticalDrag);
-    s_egv4->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    s_egv4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    s_egv4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     s_egv4->addListener (this);
 
-    addAndMakeVisible (opLevel = new Slider ("opLevel"));
+    s_egv4->setBounds (89, 169, 34, 34);
+
+    opLevel.reset (new juce::Slider ("opLevel"));
+    addAndMakeVisible (opLevel.get());
     opLevel->setRange (0, 99, 1);
-    opLevel->setSliderStyle (Slider::RotaryVerticalDrag);
-    opLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    opLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    opLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     opLevel->addListener (this);
 
-    addAndMakeVisible (opFine = new Slider ("opFine"));
+    opLevel->setBounds (245, 76, 34, 34);
+
+    opFine.reset (new juce::Slider ("opFine"));
+    addAndMakeVisible (opFine.get());
     opFine->setRange (0, 99, 1);
-    opFine->setSliderStyle (Slider::RotaryVerticalDrag);
-    opFine->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    opFine->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    opFine->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     opFine->addListener (this);
 
-    addAndMakeVisible (opCoarse = new Slider ("opCoarse"));
+    opFine->setBounds (78, 24, 34, 34);
+
+    opCoarse.reset (new juce::Slider ("opCoarse"));
+    addAndMakeVisible (opCoarse.get());
     opCoarse->setRange (0, 31, 1);
-    opCoarse->setSliderStyle (Slider::RotaryVerticalDrag);
-    opCoarse->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    opCoarse->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    opCoarse->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     opCoarse->addListener (this);
 
-    addAndMakeVisible (khzDisplay = new Label ("khz",
-                                               TRANS("1,000 kHz")));
-    khzDisplay->setFont (Font (12.60f, Font::plain));
-    khzDisplay->setJustificationType (Justification::centred);
-    khzDisplay->setEditable (false, false, false);
-    khzDisplay->setColour (Label::backgroundColourId, Colour (0x6a000000));
-    khzDisplay->setColour (Label::textColourId, Colours::white);
-    khzDisplay->setColour (Label::outlineColourId, Colour (0x00000000));
-    khzDisplay->setColour (TextEditor::textColourId, Colours::black);
-    khzDisplay->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    opCoarse->setBounds (43, 24, 34, 34);
 
-    addAndMakeVisible (detune = new Slider ("detune"));
+    khzDisplay.reset (new juce::Label ("khz",
+                                       TRANS("1,000 kHz")));
+    addAndMakeVisible (khzDisplay.get());
+    khzDisplay->setFont (juce::Font (12.60f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    khzDisplay->setJustificationType (juce::Justification::centred);
+    khzDisplay->setEditable (false, false, false);
+    khzDisplay->setColour (juce::Label::backgroundColourId, juce::Colour (0x6a000000));
+    khzDisplay->setColour (juce::Label::textColourId, juce::Colours::white);
+    khzDisplay->setColour (juce::Label::outlineColourId, juce::Colour (0x00000000));
+    khzDisplay->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    khzDisplay->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    khzDisplay->setBounds (15, 10, 95, 10);
+
+    detune.reset (new juce::Slider ("detune"));
+    addAndMakeVisible (detune.get());
     detune->setRange (-7, 7, 1);
-    detune->setSliderStyle (Slider::RotaryVerticalDrag);
-    detune->setTextBoxStyle (Slider::NoTextBox, true, 80, 20);
+    detune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    detune->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
     detune->addListener (this);
 
-    addAndMakeVisible (envDisplay = new EnvDisplay());
+    detune->setBounds (6, 24, 34, 34);
+
+    envDisplay.reset (new EnvDisplay());
+    addAndMakeVisible (envDisplay.get());
     envDisplay->setName ("envDisplay");
 
-    addAndMakeVisible (sclLeftLevel = new Slider ("sclLeftLevel"));
+    envDisplay->setBounds (16, 83, 94, 30);
+
+    sclLeftLevel.reset (new juce::Slider ("sclLeftLevel"));
+    addAndMakeVisible (sclLeftLevel.get());
     sclLeftLevel->setTooltip (TRANS("Keyboard Scale Level Left Depth "));
     sclLeftLevel->setRange (0, 99, 1);
-    sclLeftLevel->setSliderStyle (Slider::RotaryVerticalDrag);
-    sclLeftLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    sclLeftLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sclLeftLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     sclLeftLevel->addListener (this);
 
-    addAndMakeVisible (sclRightLevel = new Slider ("sclRightLevel"));
+    sclLeftLevel->setBounds (131, 115, 34, 34);
+
+    sclRightLevel.reset (new juce::Slider ("sclRightLevel"));
+    addAndMakeVisible (sclRightLevel.get());
     sclRightLevel->setTooltip (TRANS("Keyboard Scale Level Right Depth "));
     sclRightLevel->setRange (0, 99, 1);
-    sclRightLevel->setSliderStyle (Slider::RotaryVerticalDrag);
-    sclRightLevel->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    sclRightLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sclRightLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     sclRightLevel->addListener (this);
 
-    addAndMakeVisible (sclLvlBrkPt = new Slider ("sclLvlBrkPt"));
+    sclRightLevel->setBounds (241, 115, 34, 34);
+
+    sclLvlBrkPt.reset (new juce::Slider ("sclLvlBrkPt"));
+    addAndMakeVisible (sclLvlBrkPt.get());
     sclLvlBrkPt->setTooltip (TRANS("Scale Level Breakpoint"));
     sclLvlBrkPt->setRange (0, 99, 1);
-    sclLvlBrkPt->setSliderStyle (Slider::LinearHorizontal);
-    sclLvlBrkPt->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    sclLvlBrkPt->setSliderStyle (juce::Slider::LinearHorizontal);
+    sclLvlBrkPt->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     sclLvlBrkPt->addListener (this);
 
-    addAndMakeVisible (sclRateScaling = new Slider ("sclRateScaling"));
+    sclLvlBrkPt->setBounds (178, 130, 54, 24);
+
+    sclRateScaling.reset (new juce::Slider ("sclRateScaling"));
+    addAndMakeVisible (sclRateScaling.get());
     sclRateScaling->setTooltip (TRANS("Keyboard Rate Scaling"));
     sclRateScaling->setRange (0, 7, 1);
-    sclRateScaling->setSliderStyle (Slider::RotaryVerticalDrag);
-    sclRateScaling->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    sclRateScaling->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sclRateScaling->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     sclRateScaling->addListener (this);
 
-    addAndMakeVisible (keyVelSens = new Slider ("keyVelSens"));
+    sclRateScaling->setBounds (186, 179, 34, 34);
+
+    keyVelSens.reset (new juce::Slider ("keyVelSens"));
+    addAndMakeVisible (keyVelSens.get());
     keyVelSens->setRange (0, 7, 1);
-    keyVelSens->setSliderStyle (Slider::RotaryVerticalDrag);
-    keyVelSens->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    keyVelSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    keyVelSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     keyVelSens->addListener (this);
 
-    addAndMakeVisible (ampModSens = new Slider ("ampModSens"));
+    keyVelSens->setBounds (204, 76, 34, 34);
+
+    ampModSens.reset (new juce::Slider ("ampModSens"));
+    addAndMakeVisible (ampModSens.get());
     ampModSens->setRange (0, 3, 1);
-    ampModSens->setSliderStyle (Slider::RotaryVerticalDrag);
-    ampModSens->setTextBoxStyle (Slider::NoTextBox, false, 80, 20);
+    ampModSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    ampModSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
     ampModSens->addListener (this);
 
-    addAndMakeVisible (vu = new VuMeter());
+    ampModSens->setBounds (140, 76, 34, 34);
+
+    vu.reset (new VuMeter());
+    addAndMakeVisible (vu.get());
     vu->setName ("vu");
 
-    addAndMakeVisible (opMode = new ToggleButton ("opMode"));
-    opMode->setButtonText (String());
+    vu->setBounds (132, 52, 140, 8);
+
+    opMode.reset (new juce::ToggleButton ("opMode"));
+    addAndMakeVisible (opMode.get());
+    opMode->setButtonText (juce::String());
     opMode->addListener (this);
 
-    addAndMakeVisible (kbdLeftCurve = new ComboBoxImage());
+    opMode->setBounds (146, 19, 48, 26);
+
+    kbdLeftCurve.reset (new ComboBoxImage());
+    addAndMakeVisible (kbdLeftCurve.get());
     kbdLeftCurve->setName ("kbdLeftCurve");
 
-    addAndMakeVisible (kbdRightCurve = new ComboBoxImage());
+    kbdLeftCurve->setBounds (128, 170, 36, 26);
+
+    kbdRightCurve.reset (new ComboBoxImage());
+    addAndMakeVisible (kbdRightCurve.get());
     kbdRightCurve->setName ("kbdRightCurve");
+
+    kbdRightCurve->setBounds (240, 170, 36, 26);
 
 
     //[UserPreSize]
-    addAndMakeVisible(opSwitch = new OperatorSwitch());
+    opSwitch.reset(new OperatorSwitch());
+    opSwitch->addListener(this);
+    addAndMakeVisible(opSwitch.get());
     //[/UserPreSize]
 
     setSize (287, 218);
@@ -199,7 +273,7 @@ OperatorEditor::OperatorEditor ()
 
     //[Constructor] You can add your own custom stuff here..
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
-    
+
     light = lookAndFeel->imageLight;
     Image tmp = lookAndFeel->imageScaling;
 
@@ -259,7 +333,7 @@ OperatorEditor::~OperatorEditor()
 }
 
 //==============================================================================
-void OperatorEditor::paint (Graphics& g)
+void OperatorEditor::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     g.drawImage(background, 0, 0, 287, 218, 0, 0, 287, 218);
@@ -289,137 +363,113 @@ void OperatorEditor::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    s_egl1->setBounds (5, 128, 34, 34);
-    s_egl2->setBounds (33, 129, 34, 34);
-    s_egl3->setBounds (61, 128, 34, 34);
-    s_egl4->setBounds (89, 128, 34, 34);
-    s_egv1->setBounds (5, 169, 34, 34);
-    s_egv2->setBounds (33, 169, 34, 34);
-    s_egv3->setBounds (61, 169, 34, 34);
-    s_egv4->setBounds (89, 169, 34, 34);
-    opLevel->setBounds (245, 76, 34, 34);
-    opFine->setBounds (78, 24, 34, 34);
-    opCoarse->setBounds (43, 24, 34, 34);
-    khzDisplay->setBounds (15, 10, 95, 10);
-    detune->setBounds (6, 24, 34, 34);
-    envDisplay->setBounds (16, 83, 94, 30);
-    sclLeftLevel->setBounds (131, 115, 34, 34);
-    sclRightLevel->setBounds (241, 115, 34, 34);
-    sclLvlBrkPt->setBounds (178, 130, 54, 24);
-    sclRateScaling->setBounds (186, 179, 34, 34);
-    keyVelSens->setBounds (204, 76, 34, 34);
-    ampModSens->setBounds (140, 76, 34, 34);
-    vu->setBounds (132, 52, 140, 8);
-    opMode->setBounds (146, 19, 48, 26);
-    kbdLeftCurve->setBounds (128, 170, 36, 26);
-    kbdRightCurve->setBounds (240, 170, 36, 26);
     //[UserResized] Add your own custom resize handling here..
     opSwitch->setBounds(226, 13, 64, 32);
     //[/UserResized]
 }
 
-void OperatorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
+void OperatorEditor::sliderValueChanged (juce::Slider* sliderThatWasMoved)
 {
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == s_egl1)
+    if (sliderThatWasMoved == s_egl1.get())
     {
         //[UserSliderCode_s_egl1] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egl1]
     }
-    else if (sliderThatWasMoved == s_egl2)
+    else if (sliderThatWasMoved == s_egl2.get())
     {
         //[UserSliderCode_s_egl2] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egl2]
     }
-    else if (sliderThatWasMoved == s_egl3)
+    else if (sliderThatWasMoved == s_egl3.get())
     {
         //[UserSliderCode_s_egl3] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egl3]
     }
-    else if (sliderThatWasMoved == s_egl4)
+    else if (sliderThatWasMoved == s_egl4.get())
     {
         //[UserSliderCode_s_egl4] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egl4]
     }
-    else if (sliderThatWasMoved == s_egv1)
+    else if (sliderThatWasMoved == s_egv1.get())
     {
         //[UserSliderCode_s_egv1] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egv1]
     }
-    else if (sliderThatWasMoved == s_egv2)
+    else if (sliderThatWasMoved == s_egv2.get())
     {
         //[UserSliderCode_s_egv2] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egv2]
     }
-    else if (sliderThatWasMoved == s_egv3)
+    else if (sliderThatWasMoved == s_egv3.get())
     {
         //[UserSliderCode_s_egv3] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egv3]
     }
-    else if (sliderThatWasMoved == s_egv4)
+    else if (sliderThatWasMoved == s_egv4.get())
     {
         //[UserSliderCode_s_egv4] -- add your slider handling code here..
         envDisplay->repaint();
         //[/UserSliderCode_s_egv4]
     }
-    else if (sliderThatWasMoved == opLevel)
+    else if (sliderThatWasMoved == opLevel.get())
     {
         //[UserSliderCode_opLevel] -- add your slider handling code here..
         //[/UserSliderCode_opLevel]
     }
-    else if (sliderThatWasMoved == opFine)
+    else if (sliderThatWasMoved == opFine.get())
     {
         //[UserSliderCode_opFine] -- add your slider handling code here..
         updateDisplay();
         //[/UserSliderCode_opFine]
     }
-    else if (sliderThatWasMoved == opCoarse)
+    else if (sliderThatWasMoved == opCoarse.get())
     {
         //[UserSliderCode_opCoarse] -- add your slider handling code here..
         updateDisplay();
         //[/UserSliderCode_opCoarse]
     }
-    else if (sliderThatWasMoved == detune)
+    else if (sliderThatWasMoved == detune.get())
     {
         //[UserSliderCode_detune] -- add your slider handling code here..
         updateDisplay();
         //[/UserSliderCode_detune]
     }
-    else if (sliderThatWasMoved == sclLeftLevel)
+    else if (sliderThatWasMoved == sclLeftLevel.get())
     {
         //[UserSliderCode_sclLeftLevel] -- add your slider handling code here..
         //[/UserSliderCode_sclLeftLevel]
     }
-    else if (sliderThatWasMoved == sclRightLevel)
+    else if (sliderThatWasMoved == sclRightLevel.get())
     {
         //[UserSliderCode_sclRightLevel] -- add your slider handling code here..
         //[/UserSliderCode_sclRightLevel]
     }
-    else if (sliderThatWasMoved == sclLvlBrkPt)
+    else if (sliderThatWasMoved == sclLvlBrkPt.get())
     {
         //[UserSliderCode_sclLvlBrkPt] -- add your slider handling code here..
         //[/UserSliderCode_sclLvlBrkPt]
     }
-    else if (sliderThatWasMoved == sclRateScaling)
+    else if (sliderThatWasMoved == sclRateScaling.get())
     {
         //[UserSliderCode_sclRateScaling] -- add your slider handling code here..
         //[/UserSliderCode_sclRateScaling]
     }
-    else if (sliderThatWasMoved == keyVelSens)
+    else if (sliderThatWasMoved == keyVelSens.get())
     {
         //[UserSliderCode_keyVelSens] -- add your slider handling code here..
         //[/UserSliderCode_keyVelSens]
     }
-    else if (sliderThatWasMoved == ampModSens)
+    else if (sliderThatWasMoved == ampModSens.get())
     {
         //[UserSliderCode_ampModSens] -- add your slider handling code here..
         //[/UserSliderCode_ampModSens]
@@ -429,12 +479,12 @@ void OperatorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     //[/UsersliderValueChanged_Post]
 }
 
-void OperatorEditor::buttonClicked (Button* buttonThatWasClicked)
+void OperatorEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 {
     //[UserbuttonClicked_Pre]
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == opMode)
+    if (buttonThatWasClicked == opMode.get())
     {
         //[UserButtonCode_opMode] -- add your button handler code here..
         repaint();
@@ -442,6 +492,9 @@ void OperatorEditor::buttonClicked (Button* buttonThatWasClicked)
     }
 
     //[UserbuttonClicked_Post]
+    if (buttonThatWasClicked == opSwitch.get()) {
+        this->processor->forceRefreshUI = true;
+    }
     //[/UserbuttonClicked_Post]
 }
 
@@ -449,28 +502,28 @@ void OperatorEditor::buttonClicked (Button* buttonThatWasClicked)
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
-    parent->opCtrl[op].egLevel[0]->bind(s_egl1);
-    parent->opCtrl[op].egLevel[1]->bind(s_egl2);
-    parent->opCtrl[op].egLevel[2]->bind(s_egl3);
-    parent->opCtrl[op].egLevel[3]->bind(s_egl4);
-    parent->opCtrl[op].egRate[0]->bind(s_egv1);
-    parent->opCtrl[op].egRate[1]->bind(s_egv2);
-    parent->opCtrl[op].egRate[2]->bind(s_egv3);
-    parent->opCtrl[op].egRate[3]->bind(s_egv4);
-    parent->opCtrl[op].level->bind(opLevel);
-    parent->opCtrl[op].opMode->bind(opMode);
-    parent->opCtrl[op].fine->bind(opFine);
-    parent->opCtrl[op].coarse->bind(opCoarse);
-    parent->opCtrl[op].detune->bind(detune);
-    parent->opCtrl[op].sclBrkPt->bind(sclLvlBrkPt);
-    parent->opCtrl[op].sclLeftCurve->bind(kbdLeftCurve);
-    parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve);
-    parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel);
-    parent->opCtrl[op].sclRightDepth->bind(sclRightLevel);
-    parent->opCtrl[op].sclRate->bind(sclRateScaling);
-    parent->opCtrl[op].ampModSens->bind(ampModSens);
-    parent->opCtrl[op].velModSens->bind(keyVelSens);
-    parent->opCtrl[op].opSwitch->bind(opSwitch);
+    parent->opCtrl[op].egLevel[0]->bind(s_egl1.get());
+    parent->opCtrl[op].egLevel[1]->bind(s_egl2.get());
+    parent->opCtrl[op].egLevel[2]->bind(s_egl3.get());
+    parent->opCtrl[op].egLevel[3]->bind(s_egl4.get());
+    parent->opCtrl[op].egRate[0]->bind(s_egv1.get());
+    parent->opCtrl[op].egRate[1]->bind(s_egv2.get());
+    parent->opCtrl[op].egRate[2]->bind(s_egv3.get());
+    parent->opCtrl[op].egRate[3]->bind(s_egv4.get());
+    parent->opCtrl[op].level->bind(opLevel.get());
+    parent->opCtrl[op].opMode->bind(opMode.get());
+    parent->opCtrl[op].fine->bind(opFine.get());
+    parent->opCtrl[op].coarse->bind(opCoarse.get());
+    parent->opCtrl[op].detune->bind(detune.get());
+    parent->opCtrl[op].sclBrkPt->bind(sclLvlBrkPt.get());
+    parent->opCtrl[op].sclLeftCurve->bind(kbdLeftCurve.get());
+    parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve.get());
+    parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel.get());
+    parent->opCtrl[op].sclRightDepth->bind(sclRightLevel.get());
+    parent->opCtrl[op].sclRate->bind(sclRateScaling.get());
+    parent->opCtrl[op].ampModSens->bind(ampModSens.get());
+    parent->opCtrl[op].velModSens->bind(keyVelSens.get());
+    parent->opCtrl[op].opSwitch->bind(opSwitch.get());
 
     int offset = parent->opCtrl[op].egRate[0]->getOffset();
     envDisplay->pvalues = &(parent->data[offset]);
@@ -566,91 +619,91 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="287" initialHeight="218">
   <BACKGROUND backgroundColour="ffffff"/>
   <SLIDER name="egl1" id="dc070cc41347df47" memberName="s_egl1" virtualName=""
-          explicitFocusOrder="0" pos="5 128 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="5 128 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="egl2" id="66f5195e9c374029" memberName="s_egl2" virtualName=""
-          explicitFocusOrder="0" pos="33 129 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="33 129 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="egl3" id="9d57bd53203dcdb4" memberName="s_egl3" virtualName=""
-          explicitFocusOrder="0" pos="61 128 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="61 128 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="egl4" id="4f7c3ece3ea2cf9c" memberName="s_egl4" virtualName=""
-          explicitFocusOrder="0" pos="89 128 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="89 128 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="egr1" id="2ca8137d80da46fb" memberName="s_egv1" virtualName=""
-          explicitFocusOrder="0" pos="5 169 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="5 169 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="egr3" id="4ad6d0c532d15973" memberName="s_egv2" virtualName=""
-          explicitFocusOrder="0" pos="33 169 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="33 169 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="egr3" id="8a2027f9ede16b4f" memberName="s_egv3" virtualName=""
-          explicitFocusOrder="0" pos="61 169 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="61 169 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="egr4" id="8c04f1c943d837e8" memberName="s_egv4" virtualName=""
-          explicitFocusOrder="0" pos="89 169 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="89 169 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="opLevel" id="f8521c8214fb8993" memberName="opLevel" virtualName=""
-          explicitFocusOrder="0" pos="245 76 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="245 76 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="opFine" id="e445aa61bd6cddcb" memberName="opFine" virtualName=""
-          explicitFocusOrder="0" pos="78 24 34 34" min="0" max="99" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="78 24 34 34" min="0.0" max="99.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="opCoarse" id="4eec63d30d7488d2" memberName="opCoarse" virtualName=""
-          explicitFocusOrder="0" pos="43 24 34 34" min="0" max="31" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="43 24 34 34" min="0.0" max="31.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="khz" id="eb961eed8902a6fc" memberName="khzDisplay" virtualName=""
          explicitFocusOrder="0" pos="15 10 95 10" bkgCol="6a000000" textCol="ffffffff"
          outlineCol="0" edTextCol="ff000000" edBkgCol="0" labelText="1,000 kHz"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="12.599999999999999645" bold="0"
+         fontname="Default font" fontsize="12.6" kerning="0.0" bold="0"
          italic="0" justification="36"/>
   <SLIDER name="detune" id="f093ec8defca2fc2" memberName="detune" virtualName=""
-          explicitFocusOrder="0" pos="6 24 34 34" min="-7" max="7" int="1"
-          style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
-          textBoxWidth="80" textBoxHeight="20" skewFactor="1" needsCallback="1"/>
+          explicitFocusOrder="0" pos="6 24 34 34" min="-7.0" max="7.0"
+          int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
+          textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <GENERICCOMPONENT name="envDisplay" id="b18856de924c6340" memberName="envDisplay"
                     virtualName="" explicitFocusOrder="0" pos="16 83 94 30" class="EnvDisplay"
                     params=""/>
   <SLIDER name="sclLeftLevel" id="bd6f338ae68e454f" memberName="sclLeftLevel"
           virtualName="" explicitFocusOrder="0" pos="131 115 34 34" tooltip="Keyboard Scale Level Left Depth "
-          min="0" max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          min="0.0" max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="sclRightLevel" id="b9e23ed5187fc7e5" memberName="sclRightLevel"
           virtualName="" explicitFocusOrder="0" pos="241 115 34 34" tooltip="Keyboard Scale Level Right Depth "
-          min="0" max="99" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          min="0.0" max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="sclLvlBrkPt" id="c563ac3116923bbc" memberName="sclLvlBrkPt"
           virtualName="" explicitFocusOrder="0" pos="178 130 54 24" tooltip="Scale Level Breakpoint"
-          min="0" max="99" int="1" style="LinearHorizontal" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          min="0.0" max="99.0" int="1.0" style="LinearHorizontal" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="sclRateScaling" id="f0d17c8e09aa4c49" memberName="sclRateScaling"
           virtualName="" explicitFocusOrder="0" pos="186 179 34 34" tooltip="Keyboard Rate Scaling"
-          min="0" max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          min="0.0" max="7.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="keyVelSens" id="21795d045d07602b" memberName="keyVelSens"
-          virtualName="" explicitFocusOrder="0" pos="204 76 34 34" min="0"
-          max="7" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="204 76 34 34" min="0.0"
+          max="7.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="ampModSens" id="634ceaa7b0f81a6c" memberName="ampModSens"
-          virtualName="" explicitFocusOrder="0" pos="140 76 34 34" min="0"
-          max="3" int="1" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
-          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1"
+          virtualName="" explicitFocusOrder="0" pos="140 76 34 34" min="0.0"
+          max="3.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <GENERICCOMPONENT name="vu" id="6f952594ea99dc1e" memberName="vu" virtualName=""
                     explicitFocusOrder="0" pos="132 52 140 8" class="VuMeter" params=""/>
@@ -672,3 +725,4 @@ END_JUCER_METADATA
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

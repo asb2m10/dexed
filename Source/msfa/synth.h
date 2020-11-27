@@ -26,8 +26,8 @@ typedef unsigned __int32 uint32_t;
 typedef __int16 SInt16;
 #endif
 
-#define LG_N 6
-#define N (1 << LG_N)
+const static int LG_N = 6;
+const static int N = (1 << LG_N);
 
 #if defined(__APPLE__)
 #include <libkern/OSAtomic.h>
@@ -57,16 +57,15 @@ inline static T max(const T& a, const T& b) {
     return a > b ? a : b;
 }
 
-
 void dexed_trace(const char *source, const char *fmt, ...);
 
 #define QER(n,b) ( ((float)n)/(1<<b) )
-
-#ifdef _MSC_VER
-#define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
-#else
-#define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
-#endif
-
+//#ifndef TRACE
+//    #ifdef _MSC_VER
+//        #define TRACE(fmt, ...) dexed_trace(__FUNCTION__,fmt,##__VA_ARGS__)
+//    #else
+//        #define TRACE(fmt, ...) dexed_trace(__PRETTY_FUNCTION__,fmt,##__VA_ARGS__)
+//    #endif
+//#endif
 
 #endif  // __SYNTH_H

@@ -109,22 +109,22 @@ public:
 };
 
 struct OperatorCtrl {
-    ScopedPointer<CtrlDX> egRate[4];
-    ScopedPointer<CtrlDX> egLevel[4];
-    ScopedPointer<CtrlDX> level;
-    ScopedPointer<CtrlDX> opMode;
-    ScopedPointer<CtrlDX> coarse;
-    ScopedPointer<CtrlDX> fine;
-    ScopedPointer<CtrlDX> detune;
-    ScopedPointer<CtrlDX> sclBrkPt;
-    ScopedPointer<CtrlDX> sclLeftDepth;
-    ScopedPointer<CtrlDX> sclRightDepth;
-    ScopedPointer<CtrlDX> sclLeftCurve;
-    ScopedPointer<CtrlDX> sclRightCurve;
-    ScopedPointer<CtrlDX> sclRate;
-    ScopedPointer<CtrlDX> ampModSens;
-    ScopedPointer<CtrlDX> velModSens;
-    ScopedPointer<Ctrl> opSwitch;
+    std::unique_ptr<CtrlDX> egRate[4];
+    std::unique_ptr<CtrlDX> egLevel[4];
+    std::unique_ptr<CtrlDX> level;
+    std::unique_ptr<CtrlDX> opMode;
+    std::unique_ptr<CtrlDX> coarse;
+    std::unique_ptr<CtrlDX> fine;
+    std::unique_ptr<CtrlDX> detune;
+    std::unique_ptr<CtrlDX> sclBrkPt;
+    std::unique_ptr<CtrlDX> sclLeftDepth;
+    std::unique_ptr<CtrlDX> sclRightDepth;
+    std::unique_ptr<CtrlDX> sclLeftCurve;
+    std::unique_ptr<CtrlDX> sclRightCurve;
+    std::unique_ptr<CtrlDX> sclRate;
+    std::unique_ptr<CtrlDX> ampModSens;
+    std::unique_ptr<CtrlDX> velModSens;
+    std::unique_ptr<Ctrl> opSwitch;
 };
 
 #endif  // PLUGINPARAM_H_INCLUDED

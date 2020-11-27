@@ -24,8 +24,8 @@
 #include "../JuceLibraryCode/JuceHeader.h"
 
 class SysexComm {
-    MidiInput *input;
-    MidiOutput *output;
+    std::unique_ptr<MidiInput> input;
+    std::unique_ptr<MidiOutput> output;
     String inputName;
     String outputName;
     int sysexChl;
@@ -39,7 +39,6 @@ public :
     bool outActivity;
     
     SysexComm();
-    ~SysexComm();
     
     bool setInput(String name);
     bool setOutput(String name);

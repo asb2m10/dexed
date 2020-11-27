@@ -7,18 +7,17 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 4.3.1
+  Created with Projucer version: 6.0.1
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
 
-#ifndef __JUCE_HEADER_F21C2CC3FAD5D98E__
-#define __JUCE_HEADER_F21C2CC3FAD5D98E__
+#pragma once
 
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
@@ -38,13 +37,13 @@
                                                                     //[/Comments]
 */
 class OperatorEditor  : public Component,
-                        public Slider::Listener,
-                        public Button::Listener
+                        public juce::Slider::Listener,
+                        public juce::Button::Listener
 {
 public:
     //==============================================================================
     OperatorEditor ();
-    ~OperatorEditor();
+    ~OperatorEditor() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -56,10 +55,10 @@ public:
     void mouseDown(const MouseEvent& e) override;
     //[/UserMethods]
 
-    void paint (Graphics& g) override;
+    void paint (juce::Graphics& g) override;
     void resized() override;
-    void sliderValueChanged (Slider* sliderThatWasMoved) override;
-    void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
+    void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
 
 
@@ -70,34 +69,34 @@ private:
     Image light;
     DexedAudioProcessor *processor;
     Image background;
-    ScopedPointer<ToggleButton> opSwitch;
+    std::unique_ptr<ToggleButton> opSwitch;
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Slider> s_egl1;
-    ScopedPointer<Slider> s_egl2;
-    ScopedPointer<Slider> s_egl3;
-    ScopedPointer<Slider> s_egl4;
-    ScopedPointer<Slider> s_egv1;
-    ScopedPointer<Slider> s_egv2;
-    ScopedPointer<Slider> s_egv3;
-    ScopedPointer<Slider> s_egv4;
-    ScopedPointer<Slider> opLevel;
-    ScopedPointer<Slider> opFine;
-    ScopedPointer<Slider> opCoarse;
-    ScopedPointer<Label> khzDisplay;
-    ScopedPointer<Slider> detune;
-    ScopedPointer<EnvDisplay> envDisplay;
-    ScopedPointer<Slider> sclLeftLevel;
-    ScopedPointer<Slider> sclRightLevel;
-    ScopedPointer<Slider> sclLvlBrkPt;
-    ScopedPointer<Slider> sclRateScaling;
-    ScopedPointer<Slider> keyVelSens;
-    ScopedPointer<Slider> ampModSens;
-    ScopedPointer<VuMeter> vu;
-    ScopedPointer<ToggleButton> opMode;
-    ScopedPointer<ComboBoxImage> kbdLeftCurve;
-    ScopedPointer<ComboBoxImage> kbdRightCurve;
+    std::unique_ptr<juce::Slider> s_egl1;
+    std::unique_ptr<juce::Slider> s_egl2;
+    std::unique_ptr<juce::Slider> s_egl3;
+    std::unique_ptr<juce::Slider> s_egl4;
+    std::unique_ptr<juce::Slider> s_egv1;
+    std::unique_ptr<juce::Slider> s_egv2;
+    std::unique_ptr<juce::Slider> s_egv3;
+    std::unique_ptr<juce::Slider> s_egv4;
+    std::unique_ptr<juce::Slider> opLevel;
+    std::unique_ptr<juce::Slider> opFine;
+    std::unique_ptr<juce::Slider> opCoarse;
+    std::unique_ptr<juce::Label> khzDisplay;
+    std::unique_ptr<juce::Slider> detune;
+    std::unique_ptr<EnvDisplay> envDisplay;
+    std::unique_ptr<juce::Slider> sclLeftLevel;
+    std::unique_ptr<juce::Slider> sclRightLevel;
+    std::unique_ptr<juce::Slider> sclLvlBrkPt;
+    std::unique_ptr<juce::Slider> sclRateScaling;
+    std::unique_ptr<juce::Slider> keyVelSens;
+    std::unique_ptr<juce::Slider> ampModSens;
+    std::unique_ptr<VuMeter> vu;
+    std::unique_ptr<juce::ToggleButton> opMode;
+    std::unique_ptr<ComboBoxImage> kbdLeftCurve;
+    std::unique_ptr<ComboBoxImage> kbdRightCurve;
 
 
     //==============================================================================
@@ -107,4 +106,3 @@ private:
 //[EndFile] You can add extra defines here...
 //[/EndFile]
 
-#endif   // __JUCE_HEADER_F21C2CC3FAD5D98E__

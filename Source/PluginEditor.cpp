@@ -23,6 +23,7 @@
 #include "GlobalEditor.h"
 #include "ParamDialog.h"
 #include "SysexComm.h"
+#include "TuningShow.h"
 #include "Dexed.h"
 #include "math.h"
 #include <fstream>
@@ -32,10 +33,10 @@
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
-    midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-    cartManager(this)
+      midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
+      cartManager(this)
 {
-    setSize(866, ownerFilter->showKeyboard ? 674 : 581);
+    setSize(866, (ownerFilter->showKeyboard ? 674 : 581));
 
     processor = ownerFilter;
     
@@ -153,30 +154,74 @@ void DexedAudioProcessorEditor::saveCart() {
     }
 }
 
+void DexedAudioProcessorEditor::tuningShow() {
+    auto te = new TuningShow();
+    te->setTuning( processor->synthTuningState->getTuning() );
+    
+    DialogWindow::LaunchOptions options;
+    options.content.setOwned(te);
+    options.dialogTitle = "Current Tuning";
+    options.dialogBackgroundColour = Colour(0xFF323E44);
+    options.escapeKeyTriggersCloseButton = true;
+    options.useNativeTitleBar = false;
+    options.resizable = false;
+
+    auto dialogwindow = options.launchAsync();
+}
+
 void DexedAudioProcessorEditor::parmShow() {
     int tp = processor->getEngineType();
-    
-    AlertWindow window("","", AlertWindow::NoIcon, this);
-    ParamDialog param;
-    param.setColour(AlertWindow::backgroundColourId, Colour(0x32FFFFFF));
-    param.setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard);
+    DialogWindow::LaunchOptions options;
 
-    window.addCustomComponent(&param);
-    window.addButton("OK", 0);
-    window.addButton("Cancel" ,1);
-    if ( window.runModalLoop() != 0 )
-        return;
-    
-    bool ret = param.getDialogValues(processor->controllers, processor->sysexComm, &tp, &processor->showKeyboard);
-    processor->setEngineType(tp);
-    processor->savePreference();
-    
-    setSize(866, processor->showKeyboard ? 674 : 581);
-    midiKeyboard.repaint();
-    
-    if ( ret == false ) {
-        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
-    }
+    auto param = new ParamDialog();
+    param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
+    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->dpiScaleFactor);
+    param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
+    param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
+                                switch(which)
+                                {
+                                case ParamDialog::LOAD_SCL:
+                                    this->processor->applySCLTuning();
+                                    break;
+                                case ParamDialog::LOAD_KBM:
+                                    this->processor->applyKBMMapping();
+                                    break;
+                                case ParamDialog::RESET_TUNING:
+                                    this->processor->retuneToStandard();
+                                    break;
+                                case ParamDialog::SHOW_TUNING:
+                                    // consider https://forum.juce.com/t/closing-a-modal-dialog-window/2961
+                                    this->tuningShow();
+                                    break;
+                                }
+                                p->setIsStandardTuning(this->processor->synthTuningState->is_standard_tuning() );
+                            } );
+
+    options.content.setOwned(param);
+    options.dialogTitle = "dexed Parameters";
+    options.dialogBackgroundColour = Colour(0xFF323E44);
+    options.escapeKeyTriggersCloseButton = true;
+    options.useNativeTitleBar = false;
+    options.resizable = false;
+
+    auto generalCallback = [this](ParamDialog *param)
+                               {
+                                   int tpo;
+                                   bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &this->processor->dpiScaleFactor);
+                                   this->processor->setEngineType(tpo);
+                                   this->processor->savePreference();
+                                   
+                                   this->setScaleFactor(this->processor->dpiScaleFactor);
+                                   this->setSize(866, (processor->showKeyboard ? 674 : 581));
+                                   this->midiKeyboard.repaint();
+                                   
+                                   if ( ret == false ) {
+                                       AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
+                                   }
+                               };
+    param->setGeneralCallback(generalCallback);
+
+    auto dialogWindow = options.launchAsync();
 }
 
 void DexedAudioProcessorEditor::initProgram() {
@@ -198,7 +243,7 @@ void DexedAudioProcessorEditor::timerCallback() {
         return;
 
     for(int i=0;i<6;i++) {
-        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsens
+        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsense
         operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
@@ -369,3 +414,28 @@ void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
     ccListener.runModalLoop();
 }
 
+bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)
+{
+    if( files.size() != 1 ) return false;
+    
+    for( auto i = files.begin(); i != files.end(); ++i )
+    {
+        if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) )
+            return true;
+    }
+    return false;
+}
+
+void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, int y )
+{
+    if( files.size() != 1 ) return;
+    auto fn = files[0];
+    if( fn.endsWithIgnoreCase( ".scl" ) )
+    {
+        processor->applySCLTuning( File( fn ) );
+    }
+    if( fn.endsWithIgnoreCase( ".kbm" ) )
+    {
+        processor->applyKBMMapping( File( fn ) );
+    }
+}

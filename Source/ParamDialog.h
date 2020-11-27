@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.2.0
+  Created with Projucer version: 5.4.7
 
   ------------------------------------------------------------------------------
 
-  The Projucer is part of the JUCE library - "Jules' Utility Class Extensions"
-  Copyright (c) 2015 - ROLI Ltd.
+  The Projucer is part of the JUCE library.
+  Copyright (c) 2017 - ROLI Ltd.
 
   ==============================================================================
 */
@@ -23,6 +23,8 @@
 #include "JuceHeader.h"
 #include "msfa/controllers.h"
 #include "SysexComm.h"
+#include <functional>
+#include "DXLookNFeel.h"
 //[/Headers]
 
 
@@ -43,12 +45,24 @@ class ParamDialog  : public Component,
 public:
     //==============================================================================
     ParamDialog ();
-    ~ParamDialog();
+    ~ParamDialog() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard);
-    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard);
+    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard, float dpiScaleFactor);
+    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard, float *dpiScaleFactor);
+
+    typedef enum {
+        LOAD_SCL,
+        LOAD_KBM,
+        RESET_TUNING,
+        SHOW_TUNING
+    } TuningAction;
+
+    void setTuningCallback(std::function<void(ParamDialog *, ParamDialog::TuningAction)> tc ) { tuning_callback_ = tc; }
+    void setGeneralCallback(std::function<void(ParamDialog *)> gc ) { general_callback_ = gc; }
+
+    void setIsStandardTuning(bool s);
     //[/UserMethods]
 
     void paint (Graphics& g) override;
@@ -61,32 +75,45 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    std::function<void(ParamDialog *, ParamDialog::TuningAction)> tuning_callback_ = [](ParamDialog *, ParamDialog::TuningAction i) {};
+    bool is_standard_tuning_;
+    std::function<void(ParamDialog *)> general_callback_ = [](ParamDialog *p) {};
     //[/UserVariables]
 
     //==============================================================================
-    ScopedPointer<Slider> pitchRange;
-    ScopedPointer<Slider> pitchStep;
-    ScopedPointer<ComboBox> sysexIn;
-    ScopedPointer<ComboBox> sysexOut;
-    ScopedPointer<Slider> sysexChl;
-    ScopedPointer<ComboBox> engineReso;
-    ScopedPointer<ToggleButton> showKeyboard;
-    ScopedPointer<Slider> whlRange;
-    ScopedPointer<Slider> ftRange;
-    ScopedPointer<Slider> brRange;
-    ScopedPointer<Slider> atRange;
-    ScopedPointer<ToggleButton> whlEg;
-    ScopedPointer<ToggleButton> ftEg;
-    ScopedPointer<ToggleButton> brEg;
-    ScopedPointer<ToggleButton> atEg;
-    ScopedPointer<ToggleButton> whlAmp;
-    ScopedPointer<ToggleButton> ftAmp;
-    ScopedPointer<ToggleButton> brAmp;
-    ScopedPointer<ToggleButton> atAmp;
-    ScopedPointer<ToggleButton> whlPitch;
-    ScopedPointer<ToggleButton> ftPitch;
-    ScopedPointer<ToggleButton> brPitch;
-    ScopedPointer<ToggleButton> atPitch;
+    std::unique_ptr<Slider> pitchRangeDn;
+    std::unique_ptr<Slider> pitchStep;
+    std::unique_ptr<ComboBox> sysexIn;
+    std::unique_ptr<ComboBox> sysexOut;
+    std::unique_ptr<Slider> sysexChl;
+    std::unique_ptr<ComboBox> engineReso;
+    std::unique_ptr<LightedToggleButton> showKeyboard;
+    std::unique_ptr<Slider> whlRange;
+    std::unique_ptr<Slider> ftRange;
+    std::unique_ptr<Slider> brRange;
+    std::unique_ptr<Slider> atRange;
+    std::unique_ptr<LightedToggleButton> whlEg;
+    std::unique_ptr<LightedToggleButton> ftEg;
+    std::unique_ptr<LightedToggleButton> brEg;
+    std::unique_ptr<LightedToggleButton> atEg;
+    std::unique_ptr<LightedToggleButton> whlAmp;
+    std::unique_ptr<LightedToggleButton> ftAmp;
+    std::unique_ptr<LightedToggleButton> brAmp;
+    std::unique_ptr<LightedToggleButton> atAmp;
+    std::unique_ptr<LightedToggleButton> whlPitch;
+    std::unique_ptr<LightedToggleButton> ftPitch;
+    std::unique_ptr<LightedToggleButton> brPitch;
+    std::unique_ptr<LightedToggleButton> atPitch;
+    std::unique_ptr<TextButton> sclButton;
+    std::unique_ptr<TextButton> kbmButton;
+    std::unique_ptr<TextButton> showTunButton;
+    std::unique_ptr<TextButton> resetTuningButton;
+    std::unique_ptr<LightedToggleButton> transposeScale;
+    std::unique_ptr<Slider> mpePBRange;
+    std::unique_ptr<LightedToggleButton> mpeEnabled;
+    std::unique_ptr<ImageButton> transposeHelp;
+    std::unique_ptr<Slider> pitchRangeUp;
+    std::unique_ptr<ComboBox> scalingFactor;
 
 
     //==============================================================================
@@ -95,3 +122,4 @@ private:
 
 //[EndFile] You can add extra defines here...
 //[/EndFile]
+

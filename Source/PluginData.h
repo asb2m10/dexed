@@ -59,6 +59,7 @@ public:
         
         for (int j = 0; j < 10; j++) {
             char c = (unsigned char) buffer[j];
+            c &= 0x7F; // strip don't care most-significant bit from name
             switch (c) {
                 case 92:
                     c = 'Y';
@@ -82,17 +83,16 @@ public:
     }
     
     int load(File f) {
-        FileInputStream *fis = f.createInputStream();
+        std::unique_ptr<juce::FileInputStream> fis = f.createInputStream();
         if ( fis == NULL )
             return -1;
         int rc = load(*fis);
-        delete fis;
         return rc;
     }
     
     /**
      * Loads sysex stream
-     * Returns 0 if it was parsed sucessfully
+     * Returns 0 if it was parsed successfully
      * Returns -1 if it cannot open the stream
      */
     int load(InputStream &fis) {
@@ -105,7 +105,7 @@ public:
     
     /**
      * Loads sysex buffer
-     * Returns 0 if it was parsed sucessfully
+     * Returns 0 if it was parsed successfully
      * Returns 1 if sysex checksum didn't match
      * Returns 2 if no sysex data found, probably random data
      */
@@ -175,15 +175,14 @@ public:
             return f.replaceWithData(voiceData, SYSEX_SIZE);
         }
         
-        FileInputStream *fis = f.createInputStream();
+        std::unique_ptr<juce::FileInputStream> fis = f.createInputStream();
         if ( fis == NULL )
             return -1;
         
         uint8 buffer[65535];
         int sz = fis->read(buffer, 65535);
-        delete fis;
         
-        // if the file is smaller than 4104, it probably needs to be overriden.
+        // if the file is smaller than 4104, it probably needs to be overridden.
         if ( sz <= 4104 ) {
             return f.replaceWithData(voiceData, SYSEX_SIZE);
         }
