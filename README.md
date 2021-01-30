@@ -147,6 +147,18 @@ then open and build the resulting Visual Studio Solution file.
 ./scripts/projuce-lin.sh
 ./scripts/build-lin.sh
 ```
+### Compilation errors - missing header files
+If you get missing header compilation errors you can just look up the names of the missing header files on debian.packages.org, which will give you a list of packages that include that header.
+You may have to install packages like:
+```
+sudo apt install libx11-dev
+sudo apt install libcurl4-gnutls-dev
+sudo apt install libfreetype6-dev
+sudo apt install libasound2-dev
+sudo apt install libxinerama-dev
+sudo apt install libjack-jackd2-dev
+sudo apt install libxcursor-dev
+```
 
 ### VST2 Support
 Since Steinberg has discontinued the VST2 API we no longer distribute a VST2.
