@@ -202,7 +202,7 @@
     </VS2017>
     <VS2019 targetFolder="Builds/VisualStudio2019" IPPLibrary="Parallel_Static"
             extraCompilerFlags="/I../../libs/tuning-library/include" smallIcon="SpSpb4"
-            bigIcon="SpSpb4" extraDefs="JUCE_VST3_EMULATE_MIDI_CC_WITH_PARAMETERS=0">
+            bigIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
