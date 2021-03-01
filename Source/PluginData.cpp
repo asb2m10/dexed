@@ -486,6 +486,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     lastStateSave = (long) time(NULL);    
     TRACE("setting VST STATE");
+    panic();
     updateUI();
 }
 
