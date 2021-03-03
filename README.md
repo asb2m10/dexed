@@ -158,6 +158,7 @@ sudo apt install libasound2-dev
 sudo apt install libxinerama-dev
 sudo apt install libjack-jackd2-dev
 sudo apt install libxcursor-dev
+sudo apt install libxrandr-dev
 ```
 
 ### VST2 Support
