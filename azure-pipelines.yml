@@ -44,7 +44,7 @@ jobs:
   strategy:
     matrix:
       mac:
-        imageName: 'macos-10.14'
+        imageName: 'macOS-10.15'
         isMac: True
       win:
         imageName: 'windows-2019'
