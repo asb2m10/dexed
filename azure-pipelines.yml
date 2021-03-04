@@ -25,7 +25,7 @@ jobs:
       git submodule update --init --recursive
 
       ./scripts/get-juce.sh osx
-      ./scripts/projuce-mac.sh
+      ./scripts/projuce.sh
 
       mkdir pipeline
       tar czf pipeline/juced.tgz Builds/ JuceLibraryCode/
