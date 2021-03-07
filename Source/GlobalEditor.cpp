@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.1
+  Created with Projucer version: 6.0.7
 
   ------------------------------------------------------------------------------
 
@@ -66,7 +66,7 @@ public:
     HyperlinkButton dexed;
     HyperlinkButton surge;
 
-    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true), 
+    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
             dexed("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/")),
             surge("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")) {
         setUsingNativeTitleBar(false);
@@ -76,11 +76,11 @@ public:
         centreAroundComponent(parent, getWidth(), getHeight());
 
         dexed.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        dexed.setJustificationType(Justification::left);        
+        dexed.setJustificationType(Justification::left);
         dexed.setBounds(18, 433, getWidth() - 36, 30);
         addAndMakeVisible(&dexed);
         surge.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        surge.setJustificationType(Justification::left);        
+        surge.setJustificationType(Justification::left);
         surge.setBounds(18, 458, getWidth() - 36, 30);
         addAndMakeVisible(&surge);
     }
@@ -462,13 +462,13 @@ GlobalEditor::~GlobalEditor()
 void GlobalEditor::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
-    g.drawImage(background, 0, 0, 864, 144, 0, 0, 864, 144);
+    g.drawImage(background, 0, 0, 864, 144, 0, 0, 1728, 288);
     //[/UserPrePaint]
 
     //[UserPaint] Add your own custom painting code here..
-    g.drawImage(imageLight, 300, 70, 14, 14, 0, monoMode->getToggleState() ? 14 : 0, 14, 14);
-    g.drawImage(imageLight, 619, 102, 14, 14, 0, lfoSync->getToggleState() ? 14 : 0, 14, 14);
-    g.drawImage(imageLight, 705, 102, 14, 14, 0, oscSync->getToggleState() ? 14 : 0, 14, 14);
+    g.drawImage(imageLight, 300, 70, 14, 14, 0, monoMode->getToggleState() ? 28 : 0, 28, 28);
+    g.drawImage(imageLight, 619, 102, 14, 14, 0, lfoSync->getToggleState() ? 28 : 0, 28, 28);
+    g.drawImage(imageLight, 705, 102, 14, 14, 0, oscSync->getToggleState() ? 28 : 0, 28, 28);
     //[/UserPaint]
 }
 

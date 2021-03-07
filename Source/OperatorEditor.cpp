@@ -38,7 +38,7 @@ public :
     }
 
     void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) {
-        g.drawImage(image, 0, 0, 32, 32, 0, getToggleState() ? 0 : 32, 32, 32);
+        g.drawImage(image, 0, 0, 32, 32, 0, getToggleState() ? 0 : 64, 64, 64);
     }
 };
 
@@ -336,7 +336,7 @@ OperatorEditor::~OperatorEditor()
 void OperatorEditor::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
-    g.drawImage(background, 0, 0, 287, 218, 0, 0, 287, 218);
+    g.drawImage(background, 0, 0, 287, 218, 0, 0, 574, 436);
     //[/UserPrePaint]
 
     //[UserPaint] Add your own custom painting code here..
@@ -352,9 +352,9 @@ void OperatorEditor::paint (juce::Graphics& g)
     bool state = opMode->getToggleState();
 
     // 129 x 24
-    g.drawImage(light, 127, 24, 14, 14, 0, state ? 0 : 14, 14, 14);
+    g.drawImage(light, 127, 24, 14, 14, 0, state ? 0 : 28, 28, 28);
     // 199 x 24
-    g.drawImage(light, 198, 24, 14, 14, 0, !state ? 0 : 14, 14, 14);
+    g.drawImage(light, 198, 24, 14, 14, 0, !state ? 0 : 28, 28, 28);
     //[/UserPaint]
 }
 
