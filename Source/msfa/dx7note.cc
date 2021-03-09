@@ -41,7 +41,7 @@ int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detu
     int32_t logfreq;
     static const int m=(1<<24)/log(2.);
     if (mode == 0) {
-        if (mtsClient && MTS_HasMaster(mtsClient) && midinote>=0 && midinote<=127) logfreq = log(MTS_NoteToFrequency(mtsClient,midinote)) * m;
+        if (mtsClient && MTS_HasMaster(mtsClient) && midinote>=0 && midinote<=127) logfreq = log(MTS_NoteToFrequency(mtsClient, midinote, -1)) * m;
         else tuning_state_->midinote_to_logfreq(midinote);
 
         // could use more precision, closer enough for now. those numbers comes from my DX7
@@ -299,7 +299,7 @@ void Dx7Note::keyup() {
 void Dx7Note::updateBasePitches()
 {
     if (note<0 || note>127 || !currentPatch || !mtsClient) return;
-    double f = MTS_NoteToFrequency(mtsClient, note);
+    double f = MTS_NoteToFrequency(mtsClient, note, -1);
     if (f==mtsFreq) return;
     mtsFreq=f;
     for (int op = 0; op < 6; op++)

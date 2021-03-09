@@ -22,7 +22,7 @@
 #define PLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
-#include "../../MTS/libMTSClient.h"
+#include "libMTSClient.h"
 
 #include "msfa/controllers.h"
 #include "msfa/dx7note.h"
@@ -267,8 +267,6 @@ public :
     std::string currentKBMData = "";
     
     float dpiScaleFactor = -1;
-    
->>>>>>> c1269566a6774fb5e0fe37426d8c9ca3ab736e97
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

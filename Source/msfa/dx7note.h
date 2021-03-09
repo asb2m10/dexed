@@ -27,7 +27,7 @@
 #include "env.h"
 #include "pitchenv.h"
 #include "fm_core.h"
-#include "../../MTS/libMTSClient.h"
+#include "libMTSClient.h"
 #include "tuning.h"
 #include <memory>
 
@@ -61,7 +61,7 @@ public:
     void transferSignal(Dx7Note &src);
     void oscSync();
 
-    int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune);
+    int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune, MTSClient *mtsClient);
 
     std::shared_ptr<TuningState> tuning_state_;
 
