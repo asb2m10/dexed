@@ -35,14 +35,14 @@ const int32_t coarsemul[] = {
     81503396, 82323963, 83117622
 };
 
-int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detune, MTSClient *mtsClient) {
+int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detune, int32_t mtsLogFreq) {
 
     // TODO: pitch randomization
     int32_t logfreq;
     static const int m=(1<<24)/log(2.);
     if (mode == 0) {
-        if (mtsClient && MTS_HasMaster(mtsClient) && midinote>=0 && midinote<=127) logfreq = log(MTS_NoteToFrequency(mtsClient, midinote, -1)) * m;
-        else tuning_state_->midinote_to_logfreq(midinote);
+        if (tuning_state_->is_standard_tuning()) logfreq = mtsLogFreq;
+        else logfreq = tuning_state_->midinote_to_logfreq(midinote);
 
         // could use more precision, closer enough for now. those numbers comes from my DX7
         double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
@@ -176,7 +176,9 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, MTSClie
         int coarse = patch[off + 18];
         int fine = patch[off + 19];
         int detune = patch[off + 20];
-        int32_t freq = osc_freq(midinote, mode, coarse, fine, detune, mtsClient);
+        static const int m = (1<<24) / log(2.);
+        int32_t mtsLogFreq = log(MTS_NoteToFrequency(mtsClient, midinote, -1)) * m;
+        int32_t freq = osc_freq(midinote, mode, coarse, fine, detune, mtsLogFreq);
         opMode[op] = mode;
         basepitch_[op] = freq;
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
@@ -298,9 +300,11 @@ void Dx7Note::keyup() {
 
 void Dx7Note::updateBasePitches()
 {
-    if (note<0 || note>127 || !currentPatch || !mtsClient) return;
+    if (!tuning_state_->is_standard_tuning() || note<0 || note>127 || !currentPatch || !mtsClient) return;
     double f = MTS_NoteToFrequency(mtsClient, note, -1);
     if (f==mtsFreq) return;
+    static const int m = (1<<24) / log(2.);
+    int32_t mtsLogFreq = log(f) * m;
     mtsFreq=f;
     for (int op = 0; op < 6; op++)
     {
@@ -309,7 +313,7 @@ void Dx7Note::updateBasePitches()
         int coarse = currentPatch[off + 18];
         int fine = currentPatch[off + 19];
         int detune = currentPatch[off + 20];
-        basepitch_[op] = osc_freq(note, mode, coarse, fine, detune, mtsClient);
+        basepitch_[op] = osc_freq(note, mode, coarse, fine, detune, mtsLogFreq);
     }
 }
 
@@ -319,13 +323,15 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
     int rates[4];
     int levels[4];
     playingMidiNote = midinote;
+    static const int m = (1<<24) / log(2.);
+    int32_t mtsLogFreq = log(MTS_NoteToFrequency(mtsClient, midinote, -1)) * m;
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];
         int coarse = patch[off + 18];
         int fine = patch[off + 19];
         int detune = patch[off + 20];
-        basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune, mtsClient);
+        basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune, mtsLogFreq);
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
         opMode[op] = mode;
         

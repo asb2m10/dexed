@@ -309,7 +309,7 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     if ( msg->isSysEx() ) {
-        if (mtsClient) MTS_ParseMIDIDataU(mtsClient, msg->getRawData(), msg->getRawDataSize());
+        MTS_ParseMIDIDataU(mtsClient, msg->getRawData(), msg->getRawDataSize());
         handleIncomingMidiMessage(NULL, *msg);
         return;
     }
@@ -365,7 +365,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         return;
 
         case 0x90 :
-            if (!MTS_ShouldFilterNote(mtsClient, buf[1], cmd & 0xf) || !buf[2]) keydown(channel, buf[1], buf[2]);
+            if (!synthTuningState->is_standard_tuning() || !MTS_ShouldFilterNote(mtsClient, buf[1], cmd & 0xf) || !buf[2]) keydown(channel, buf[1], buf[2]);
         return;
             
         case 0xb0 : {

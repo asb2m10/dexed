@@ -61,7 +61,7 @@ public:
     void transferSignal(Dx7Note &src);
     void oscSync();
 
-    int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune, MTSClient *mtsClient);
+    int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune, int32_t mtsLogFreq);
 
     std::shared_ptr<TuningState> tuning_state_;
 
