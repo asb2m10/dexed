@@ -1,6 +1,6 @@
 [Setup]
 AppName=Dexed
-AppVersion=0.9.5
+AppVersion=0.9.6
 DefaultDirName={commonpf64}\Dexed
 DefaultGroupName=Dexed
 Compression=lzma2

@@ -18,6 +18,12 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.6
+* Apple Silicon M1 builds
+* Fix VST3 automation issues
+* Fix to apply UI scaling only when applicable
+* Fix hang notes on program changes
+
 #### Version 0.9.5
 * Added support for SCL/KBM microtuning
 * Added initial support for MPE performance
@@ -124,7 +130,7 @@ which will expand the submodules. Then follow platform specific directions below
 
 ```
 ./scripts/get-juce.sh
-./scripts/projuce-mac.sh
+./scripts/projuce.sh
 ./scripts/build-mac.sh
 ```
 
@@ -135,7 +141,7 @@ Run this in the bash shell that comes with the standard Git distribution.
 
 ```
 ./scripts/get-juce.sh
-./assets/JUCE/Projucer.exe --resave dexed.jucer
+./scripts/projuce.sh
 ```
 
 then open and build the resulting Visual Studio Solution file.
@@ -144,18 +150,17 @@ then open and build the resulting Visual Studio Solution file.
 
 ```
 ./scripts/get-juce.sh
-./scripts/projuce-lin.sh
+./scripts/projuce.sh
 ./scripts/build-lin.sh
 ```
+
+If you get missing header compilation errors, be sure to check the [known Linux dependencies](https://github.com/asb2m10/dexed/wiki/Linux-builds-dependencies) based on your distribution.
 
 ### VST2 Support
-Since Steinberg has discontinued the VST2 API we no longer distribute a VST2.
+Since Steinberg has discontinued the VST2 API we no longer distribute a VST2. If you are a licensee to the VST2SDK, though, you can still build it. 
 
-If you are a licensee to the VST2SDK, though, you can build a VST2 version of DEXED yourself with these commands
+The first thing is to be sure to initialise the path of the VST2 sdk before calling any script builds.
 
 ```
-./scripts/get-juce.sh
 export VST2SDK_DIR=~/path/to/vst2/sdk/dir
-./scripts/projuce-lin-vst2.sh
-./scripts/build-lin.sh
 ```

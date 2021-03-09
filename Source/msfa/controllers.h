@@ -51,7 +51,7 @@ struct FmMod {
         int r = 0, p = 0, a = 0, e = 0;
         sscanf(cfg, "%d %d %d %d", &r, &p, &a, &e);
         
-        range = r < 0 && r > 127 ? 0 : r;
+        range = r < 0 || r > 127 ? 0 : r;
         pitch = p != 0;
         amp = a != 0;
         eg = e != 0;

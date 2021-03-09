@@ -36,7 +36,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
       cartManager(this)
 {
-    setSize(866, (ownerFilter->showKeyboard ? 674 : 581));
+    setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : 581));
 
     processor = ownerFilter;
     
@@ -212,7 +212,7 @@ void DexedAudioProcessorEditor::parmShow() {
                                    this->processor->savePreference();
                                    
                                    this->setScaleFactor(this->processor->dpiScaleFactor);
-                                   this->setSize(866, (processor->showKeyboard ? 674 : 581));
+                                   this->setSize(WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : 581));
                                    this->midiKeyboard.repaint();
                                    
                                    if ( ret == false ) {

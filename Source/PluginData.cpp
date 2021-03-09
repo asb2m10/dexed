@@ -195,6 +195,7 @@ void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
 }
 
 int DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
+    panic();
     memcpy(data, rawdata, 155);
     unpackOpSwitch(0x3F);
     lfo.reset(data + 137);
@@ -485,6 +486,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     lastStateSave = (long) time(NULL);    
     TRACE("setting VST STATE");
+    panic();
     updateUI();
 }
 

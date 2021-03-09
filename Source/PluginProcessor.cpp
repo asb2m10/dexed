@@ -777,6 +777,20 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
             dpiScaleFactor = 1.0;
         }
     }
+    
+    const juce::Rectangle rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
+    bool displayFound = false;
+    
+    // validate if there is really a display that can show the complete plugin size
+    for (auto& display : Desktop::getInstance().getDisplays().displays) {
+        if ( display.userArea.getHeight() > rect.getHeight() && display.userArea.getWidth() > rect.getWidth() )
+            displayFound = true;
+    }
+    
+    // no display found, scaling to default value	
+    if ( ! displayFound )
+        dpiScaleFactor = 1.0;
+    
     // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
     // plugin window.
     editor->setScaleFactor(dpiScaleFactor);

@@ -62,6 +62,9 @@ public:
 
     virtual bool isInterestedInFileDrag (const StringArray &files) override;
     virtual void filesDropped (const StringArray &files, int x, int y ) override;
+                                       
+    static const int WINDOW_SIZE_X = 866;
+    static const int WINDOW_SIZE_Y = 674;
 };
 
 
