@@ -69,6 +69,7 @@
 		A75C179712D4F59160200035 /* include_juce_audio_processors.mm in Sources */ = {isa = PBXBuildFile; fileRef = A65D861B780A336E00059DE6 /* include_juce_audio_processors.mm */; };
 		A7D45B047CA84D7EF7018CDC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F55D83145737DE69999DB92 /* QuartzCore.framework */; };
 		A9DF6BAEA633EC2CFF7D946E /* include_juce_gui_extra.mm in Sources */ = {isa = PBXBuildFile; fileRef = 857732A2E35577F8D9DB0D9D /* include_juce_gui_extra.mm */; };
+		ABDD889325F90302004B0DC9 /* libMTSClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDD889225F90302004B0DC9 /* libMTSClient.cpp */; };
 		ABF4859025F7F98700AC21C0 /* RecentFilesMenuTemplate.nib in Resources */ = {isa = PBXBuildFile; fileRef = 6F9852573AA442CFBAD9695F /* RecentFilesMenuTemplate.nib */; };
 		ABF4859125F7F98700AC21C0 /* Icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 6322687B925B988520542A6D /* Icon.icns */; };
 		ABF4859225F7F98700AC21C0 /* AudioUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 838A5E852BBD79A98CD9FDDD /* AudioUnit.framework */; };
@@ -99,7 +100,6 @@
 		ABF485AB25F7F98700AC21C0 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC856709502EE15E8D3F448B /* IOKit.framework */; };
 		ABF485AC25F7F98700AC21C0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F55D83145737DE69999DB92 /* QuartzCore.framework */; };
 		ABF485AD25F7F98700AC21C0 /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E966C95FACF7B8D5A907FE3 /* WebKit.framework */; };
-		ABF485B625F7FBCA00AC21C0 /* libMTSClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABF485B525F7FBCA00AC21C0 /* libMTSClient.cpp */; };
 		AC94863F3C89343FA18D8D65 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12543CC48C24596A9894C9BF /* Foundation.framework */; };
 		B0A4786A252B14B604101175 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A01DC4DEBE65C313C7C8A44 /* CoreAudio.framework */; };
 		B18C192606DF6079E7B9AEB9 /* PluginFx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8BADEB7BF1A65E83A7A1736D /* PluginFx.cpp */; };
@@ -266,7 +266,8 @@
 		A4732634AB48AFD0FB06D7FA /* AppConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppConfig.h; path = ../../JuceLibraryCode/AppConfig.h; sourceTree = SOURCE_ROOT; };
 		A65D861B780A336E00059DE6 /* include_juce_audio_processors.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = include_juce_audio_processors.mm; path = ../../JuceLibraryCode/include_juce_audio_processors.mm; sourceTree = SOURCE_ROOT; };
 		A81F4DC234E8D93BF9803529 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
-		ABF485B525F7FBCA00AC21C0 /* libMTSClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = libMTSClient.cpp; path = "../../libs/MTS-ESP/libMTSClient.cpp"; sourceTree = "<group>"; };
+		ABDD889225F90302004B0DC9 /* libMTSClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = libMTSClient.cpp; path = "../../libs/MTS-ESP/libMTSClient.cpp"; sourceTree = "<group>"; };
+		ABDD889525F90364004B0DC9 /* libMTSClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = libMTSClient.h; path = "../../libs/MTS-ESP/libMTSClient.h"; sourceTree = "<group>"; };
 		ACC1CDF49C0F7F4FF305AF4E /* libDexed.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libDexed.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD4586B2B535DFAB7C1648A2 /* Info-AU.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-AU.plist"; sourceTree = SOURCE_ROOT; };
 		AE09B4C2A4BDE8FDA01A8A13 /* dx7note.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = dx7note.cc; path = ../../Source/msfa/dx7note.cc; sourceTree = SOURCE_ROOT; };
@@ -406,6 +407,7 @@
 				0652CE27AE4971C99654E3BF /* dsp */,
 				427DD4218ED26D69B0149A90 /* ui */,
 				BDC5059F1563FD8DD69AD324 /* msfa */,
+				ABDD889425F90332004B0DC9 /* MTS-ESP */,
 				0BD21CA621B7350EBED18C0A /* Dexed.h */,
 				45ADFD8885BE76C7F7D999AC /* PluginProcessor.cpp */,
 				5C0A1B7E2BF8FCAF5A1E8616 /* PluginProcessor.h */,
@@ -512,7 +514,6 @@
 		8FF698E2E4B3B82B8C64B444 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				ABF485B525F7FBCA00AC21C0 /* libMTSClient.cpp */,
 				C21CEF3B473FDC99270B7623 /* Dexed */,
 				D62CAA66658707456DEC1897 /* JUCE Modules */,
 				3E0C3A2E8ED7ED09FA4E1CF0 /* JUCE Library Code */,
@@ -521,6 +522,15 @@
 				01533246E329E35CCD6F8580 /* Products */,
 			);
 			name = Source;
+			sourceTree = "<group>";
+		};
+		ABDD889425F90332004B0DC9 /* MTS-ESP */ = {
+			isa = PBXGroup;
+			children = (
+				ABDD889525F90364004B0DC9 /* libMTSClient.h */,
+				ABDD889225F90302004B0DC9 /* libMTSClient.cpp */,
+			);
+			name = "MTS-ESP";
 			sourceTree = "<group>";
 		};
 		BDC5059F1563FD8DD69AD324 /* msfa */ = {
@@ -887,7 +897,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABF485B625F7FBCA00AC21C0 /* libMTSClient.cpp in Sources */,
 				B18C192606DF6079E7B9AEB9 /* PluginFx.cpp in Sources */,
 				697C52FD23363CB2EB9075C6 /* EngineMkI.cpp in Sources */,
 				4B27ACC5993C8C74FFCDD3BB /* EngineOpl.cpp in Sources */,
@@ -930,6 +939,7 @@
 				191E15E49A6BCA75D79BD0B8 /* include_juce_gui_basics.mm in Sources */,
 				A9DF6BAEA633EC2CFF7D946E /* include_juce_gui_extra.mm in Sources */,
 				B6B496A8A6E7A102A5F04864 /* include_surgesynthteam_tuningui.cpp in Sources */,
+				ABDD889325F90302004B0DC9 /* libMTSClient.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

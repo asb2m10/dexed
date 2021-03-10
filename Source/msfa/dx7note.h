@@ -27,8 +27,8 @@
 #include "env.h"
 #include "pitchenv.h"
 #include "fm_core.h"
-#include "libMTSClient.h"
 #include "tuning.h"
+#include "libMTSClient.h"
 #include <memory>
 
 struct VoiceStatus {
