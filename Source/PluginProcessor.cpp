@@ -194,7 +194,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     if ( refreshVoice ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity);
+                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity, voices[i].channel);
         }
         lfo.reset(data + 137);
         refreshVoice = false;
@@ -239,9 +239,11 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
             
+            bool checkMTSESPRetuning = synthTuningState->is_standard_tuning() && MTS_HasMaster(mtsClient) && mtsClient;
+            
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
-                    voices[note].dx7_note->updateBasePitches();
+                    if (checkMTSESPRetuning) voices[note].dx7_note->updateBasePitches();
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
                     
                     for (int j=0; j < N; ++j) {
@@ -476,7 +478,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo);
+            voices[note].dx7_note->init(data, pitch, velo, channel);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;

@@ -142,21 +142,18 @@ Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc)
         params_[op].phase = 0;
         params_[op].gain_out = 0;
     }
-    note=-1;
     currentPatch = nullptr;
-    mtsFreq = 0;
-    noteLogFreq = tuning_state_->midinote_to_logfreq(60);
 }
 
-void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity) {
-    note = midinote;
+void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int channel) {
     currentPatch = patch;
     int rates[4];
     int levels[4];
     playingMidiNote = midinote;
+    midiChannel = channel;
     
     if (tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
-        mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, -1);
+        mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, channel - 1);
         noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
     }
     else {
@@ -308,10 +305,7 @@ void Dx7Note::keyup() {
 
 void Dx7Note::updateBasePitches()
 {
-    if (!tuning_state_->is_standard_tuning() || !MTS_HasMaster(mtsClient) ||
-        note<0 || note>127 || !currentPatch || !mtsClient)
-        return;
-    double f = MTS_NoteToFrequency(mtsClient, note, -1);
+    double f = MTS_NoteToFrequency(mtsClient, playingMidiNote, midiChannel - 1);
     if (f == mtsFreq) return;
     mtsFreq = f;
     noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
@@ -322,19 +316,19 @@ void Dx7Note::updateBasePitches()
         int coarse = currentPatch[off + 18];
         int fine = currentPatch[off + 19];
         int detune = currentPatch[off + 20];
-        basepitch_[op] = osc_freq(note, mode, coarse, fine, detune);
+        basepitch_[op] = osc_freq(playingMidiNote, mode, coarse, fine, detune);
     }
 }
 
-void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity) {
-    note = midinote;
+void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity, int channel) {
     currentPatch = patch;
     int rates[4];
     int levels[4];
     playingMidiNote = midinote;
+    midiChannel = channel;
     
     if (tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
-        mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, -1);
+        mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, channel - 1);
         noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
     }
     else {
