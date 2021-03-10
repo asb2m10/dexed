@@ -138,7 +138,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     fx.init(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        voices[note].dx7_note = new Dx7Note(synthTuningState);
+        voices[note].dx7_note = new Dx7Note(synthTuningState, mtsClient);
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
@@ -309,7 +309,6 @@ bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samp
 
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     if ( msg->isSysEx() ) {
-        MTS_ParseMIDIDataU(mtsClient, msg->getRawData(), msg->getRawDataSize());
         handleIncomingMidiMessage(NULL, *msg);
         return;
     }
@@ -365,7 +364,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         return;
 
         case 0x90 :
-            if (!synthTuningState->is_standard_tuning() || !MTS_ShouldFilterNote(mtsClient, buf[1], cmd & 0xf) || !buf[2]) keydown(channel, buf[1], buf[2]);
+            if (!synthTuningState->is_standard_tuning() || !buf[2] ||
+                (MTS_HasMaster(mtsClient) && !MTS_ShouldFilterNote(mtsClient, buf[1], channel - 1)))
+                keydown(channel, buf[1], buf[2]);
         return;
             
         case 0xb0 : {
@@ -475,7 +476,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo, mtsClient);
+            voices[note].dx7_note->init(data, pitch, velo);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;

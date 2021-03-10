@@ -39,8 +39,8 @@ struct VoiceStatus {
 
 class Dx7Note {
 public:
-    Dx7Note(std::shared_ptr<TuningState> ts);
-    void init(const uint8_t patch[156], int midinote, int velocity, MTSClient *mtsc);
+    Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc);
+    void init(const uint8_t patch[156], int midinote, int velocity);
     // Note: this _adds_ to the buffer. Interesting question whether it's
     // worth it...
     void compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
@@ -61,7 +61,7 @@ public:
     void transferSignal(Dx7Note &src);
     void oscSync();
 
-    int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune, int32_t mtsLogFreq);
+    int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune);
 
     std::shared_ptr<TuningState> tuning_state_;
 
@@ -88,10 +88,12 @@ private:
     
     const uint8_t *currentPatch;
     int note;
-    double mtsFreq;
     
+    int32_t noteLogFreq;
+    double mtsFreq;
+    static const int32_t mtsLogFreqToNoteLogFreq;
     MTSClient *mtsClient;
-
+    
 };
 
 #endif  // SYNTH_DX7NOTE_H_
