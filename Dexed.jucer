@@ -110,6 +110,11 @@
         <FILE id="TGO2sW" name="sin.h" compile="0" resource="0" file="Source/msfa/sin.h"/>
         <FILE id="SqG02X" name="synth.h" compile="0" resource="0" file="Source/msfa/synth.h"/>
       </GROUP>
+      <GROUP id="{B585BFE4-F913-A99E-818E-7A6B434D9232}" name="MTS-ESP">
+        <FILE id="vVJxkm" name="libMTSClient.cpp" compile="1" resource="0"
+              file="libs/MTS-ESP/Client/libMTSClient.cpp"/>
+        <FILE id="sLtEjn" name="libMTSClient.h" compile="0" resource="0" file="libs/MTS-ESP/Client/libMTSClient.h"/>
+      </GROUP>
       <FILE id="pBbZ9Y" name="Dexed.h" compile="0" resource="0" file="Source/Dexed.h"/>
       <FILE id="Yp2cX4" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
