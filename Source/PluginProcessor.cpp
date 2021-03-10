@@ -240,13 +240,15 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
             
-            bool checkMTSESPRetuning = mtsClient &&
-                                        synthTuningState->is_standard_tuning() &&
+            bool checkMTSESPRetuning = synthTuningState->is_standard_tuning() &&
                                         MTS_HasMaster(mtsClient);
             
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
-                    if (checkMTSESPRetuning) voices[note].dx7_note->updateBasePitches();
+                    
+                    if (checkMTSESPRetuning)
+                        voices[note].dx7_note->updateBasePitches();
+                    
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
                     
                     for (int j=0; j < N; ++j) {
