@@ -112,8 +112,9 @@
       </GROUP>
       <GROUP id="{B585BFE4-F913-A99E-818E-7A6B434D9232}" name="MTS-ESP">
         <FILE id="vVJxkm" name="libMTSClient.cpp" compile="1" resource="0"
-              file="libs/MTS-ESP/Client/libMTSClient.cpp"/>
-        <FILE id="sLtEjn" name="libMTSClient.h" compile="0" resource="0" file="libs/MTS-ESP/Client/libMTSClient.h"/>
+              file="libs/MTS-ESP/Client/libMTSClient.cpp" xcodeResource="0"/>
+        <FILE id="sLtEjn" name="libMTSClient.h" compile="0" resource="0" file="libs/MTS-ESP/Client/libMTSClient.h"
+              xcodeResource="0"/>
       </GROUP>
       <FILE id="pBbZ9Y" name="Dexed.h" compile="0" resource="0" file="Source/Dexed.h"/>
       <FILE id="Yp2cX4" name="PluginProcessor.cpp" compile="1" resource="0"
@@ -130,7 +131,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/Linux" vstLegacyFolder="VST2SDK_DIR" smallIcon="SpSpb4"
-                bigIcon="SpSpb4" extraLinkerFlags="-fPIC" extraCompilerFlags="-I../../libs/tuning-library/include">
+                bigIcon="SpSpb4" extraLinkerFlags="-fPIC" extraCompilerFlags="-I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="Dexed"/>
@@ -152,7 +153,7 @@
       </MODULEPATHS>
     </LINUX_MAKE>
     <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="SpSpb4" bigIcon="SpSpb4"
-               vst3Folder="libs/vst3sdk" extraCompilerFlags="-I../../libs/tuning-library/include -Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32">
+               vst3Folder="libs/vst3sdk" extraCompilerFlags="-I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
                        osxCompatibility="10.10 SDK" osxArchitecture="Native" enablePluginBinaryCopyStep="1"/>
@@ -177,7 +178,7 @@
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"
             IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4"
-            vst3Folder="libs/vst3sdk" extraCompilerFlags="/I../../libs/tuning-library/include">
+            vst3Folder="libs/vst3sdk" extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
@@ -205,8 +206,8 @@
       </MODULEPATHS>
     </VS2017>
     <VS2019 targetFolder="Builds/VisualStudio2019" IPPLibrary="Parallel_Static"
-            extraCompilerFlags="/I../../libs/tuning-library/include" smallIcon="SpSpb4"
-            bigIcon="SpSpb4">
+            extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client"
+            smallIcon="SpSpb4" bigIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
