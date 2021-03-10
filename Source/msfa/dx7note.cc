@@ -152,7 +152,7 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
     playingMidiNote = midinote;
     midiChannel = channel;
     
-    if (tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
+    if (mtsClient && tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
         mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, channel - 1);
         noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
     }
@@ -327,7 +327,7 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity, int c
     playingMidiNote = midinote;
     midiChannel = channel;
     
-    if (tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
+    if (mtsClient && tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
         mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, channel - 1);
         noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
     }

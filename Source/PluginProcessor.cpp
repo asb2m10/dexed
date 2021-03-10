@@ -116,6 +116,7 @@ DexedAudioProcessor::DexedAudioProcessor() {
 
     clipboardContent = -1;
     
+    mtsClient = NULL;
     mtsClient = MTS_RegisterClient();
 }
 
@@ -126,7 +127,7 @@ DexedAudioProcessor::~DexedAudioProcessor() {
 		delete tmp;
 	}
     TRACE("Bye");
-    MTS_DeregisterClient(mtsClient);
+    if (mtsClient) MTS_DeregisterClient(mtsClient);
 }
 
 //==============================================================================
@@ -239,7 +240,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
             
-            bool checkMTSESPRetuning = synthTuningState->is_standard_tuning() && MTS_HasMaster(mtsClient) && mtsClient;
+            bool checkMTSESPRetuning = mtsClient &&
+                                        synthTuningState->is_standard_tuning() &&
+                                        MTS_HasMaster(mtsClient);
             
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
