@@ -9,4 +9,4 @@
 	url = https://github.com/surge-synthesizer/surgesynthteam_tuningui.git
 [submodule "libs/MTS-ESP"]
 	path = libs/MTS-ESP
-	url = git@github.com:ODDSound/MTS-ESP.git
+	url = https://github.com/ODDSound/MTS-ESP.git
