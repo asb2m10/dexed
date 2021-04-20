@@ -372,7 +372,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
 
         case 0x90 :
             if (!synthTuningState->is_standard_tuning() || !buf[2] ||
-                (MTS_HasMaster(mtsClient) && !MTS_ShouldFilterNote(mtsClient, buf[1], channel - 1)))
+                !MTS_HasMaster(mtsClient) || !MTS_ShouldFilterNote(mtsClient, buf[1], channel - 1))
                 keydown(channel, buf[1], buf[2]);
         return;
             
