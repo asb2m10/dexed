@@ -25,6 +25,7 @@
 #include "PluginData.h"
 
 #include <fstream>
+#include <random>
 using namespace ::std;
 
 class SyxFileFilter : public FileFilter {
@@ -120,6 +121,11 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     addAndMakeVisible(fileMgrButton.get());
     fileMgrButton->setBounds(148, 545, 70, 30);
     fileMgrButton->addListener(this);
+
+    randomButton.reset(new TextButton("LOAD RANDOM CART & PROGRAM"));
+    addAndMakeVisible(randomButton.get());
+    randomButton->setBounds(216, 545, 205, 30);
+    randomButton->addListener(this);
 /*
  *
  * I've removed this since it only works on the DX7 II. TBC.
@@ -146,7 +152,14 @@ void CartManager::paint(Graphics &g) {
     g.setColour(DXLookNFeel::roundBackground);
     g.fillRoundedRectangle(8, 418, 843, 126, 15);
     g.setColour(Colours::whitesmoke);
-    g.drawText("currently loaded cartridge", 38, 410, 150, 40, Justification::left);
+
+    String path = mainWindow->processor->activeFileCartridge.getFullPathName();
+    int maxLength = 110;
+    if(path.length() > maxLength){
+        path = "..." + path.substring(path.length()-maxLength);
+    }
+    
+    g.drawText("currently loaded cartridge: " + path, 38, 410, 775, 40, Justification::left);
 }
 
 void CartManager::programSelected(ProgramListBox *source, int pos) {
@@ -186,6 +199,40 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     
     if ( buttonThatWasClicked == fileMgrButton.get() ) {
         cartDir.revealToUser();
+        return;
+    }
+
+    if ( buttonThatWasClicked == randomButton.get() ) {
+        Array<File> files;
+
+        for(const auto& iter : RangedDirectoryIterator(DexedAudioProcessor::dexedCartDir, true, "*.syx;*.SYX", File::findFiles)) {
+            files.add(iter.getFile());
+        }
+
+        auto cartIndex = Random::getSystemRandom().nextInt(files.size());
+        mainWindow->loadCart(files[cartIndex]);
+
+        int numPrograms = mainWindow->processor->getNumPrograms();
+        vector<int> programIndices;
+        for(int i=0; i<numPrograms; i++) {
+            programIndices.push_back(i);
+        }
+
+        random_device rd;
+        mt19937 g(rd());
+        shuffle(programIndices.begin(), programIndices.end(), g);
+        
+        // A while loop was originally considered here, but this solution prevents the possibility of an infinite loop.
+        for(int i=0; i<numPrograms; i++) {
+            int programIndex = programIndices[i];
+            String programName = mainWindow->processor->getProgramName(programIndex).trim();
+            if(programName.length() > 0){
+                // A program exists at this index.
+                programSelected(activeCart.get(), programIndex);
+                break;
+            }
+        }
+
         return;
     }
 
