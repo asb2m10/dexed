@@ -129,7 +129,6 @@ void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
             unpackPgm[op * 21 + i] = normparm(currparm, 99, i);
         }
         
-        memcpy(unpackPgm + op * 21, bulk + op * 17, 11);
         char leftrightcurves = bulk[op * 17 + 11]&0xF; // bits 4-7 don't care per sysex spec
         unpackPgm[op * 21 + 11] = leftrightcurves & 3;
         unpackPgm[op * 21 + 12] = (leftrightcurves >> 2) & 3;
