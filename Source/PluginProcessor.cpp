@@ -65,7 +65,7 @@
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor() {
 #ifdef DEBUG
-    
+
     // avoid creating the log file if it is in standalone mode
     if ( !JUCEApplication::isStandaloneApp() ) {
         Logger *tmp = Logger::getCurrentLogger();
@@ -81,36 +81,36 @@ DexedAudioProcessor::DexedAudioProcessor() {
     Sin::init();
 
     synthTuningState = createStandardTuning();
-    
+
     lastStateSave = 0;
     currentNote = -1;
     engineType = -1;
-    
+
     vuSignal = 0;
     monoMode = 0;
-    
+
     resolvAppDir();
-    
+
     initCtrl();
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
     showKeyboard = true;
-    
+
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
     setEngineType(DEXED_ENGINE_MARKI);
-    
+
     controllers.values_[kControllerPitchRangeUp] = 3;
     controllers.values_[kControllerPitchRangeDn] = 3;
     controllers.values_[kControllerPitchStep] = 0;
     controllers.masterTune = 0;
-    
+
     loadPreference();
 
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
     }
-    setCurrentProgram(0);    
+    setCurrentProgram(0);
     nextMidi = NULL;
     midiMsg = NULL;
 
@@ -133,7 +133,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     PitchEnv::init(sampleRate);
     Env::init_sr(sampleRate);
     fx.init(sampleRate);
-    
+
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = new Dx7Note(synthTuningState);
         voices[note].keydown = false;
@@ -147,15 +147,15 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
-	controllers.refresh(); 
+	controllers.refresh();
 
     sustain = false;
     extra_buf_size = 0;
 
     keyboardState.reset();
-    
+
     lfo.reset(data + 137);
-    
+
     nextMidi = new MidiMessage(0xF0);
 	midiMsg = new MidiMessage(0xF0);
 }
@@ -187,7 +187,7 @@ void DexedAudioProcessor::releaseResources() {
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
     int numSamples = buffer.getNumSamples();
     int i;
-    
+
     if ( refreshVoice ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
@@ -198,24 +198,24 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, numSamples, true);
-    
+
     MidiBuffer::Iterator it(midiMessages);
     hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
 
     float *channelData = buffer.getWritePointer(0);
-  
+
     // flush first events
     for (i=0; i < numSamples && i < extra_buf_size; i++) {
         channelData[i] = extra_buf[i];
     }
-    
+
     // remaining buffer is still to be processed
     if (extra_buf_size > numSamples) {
         for (int j = 0; j < extra_buf_size - numSamples; j++) {
             extra_buf[j] = extra_buf[j + numSamples];
         }
         extra_buf_size -= numSamples;
-        
+
         // flush the events, they will be process in the next cycle
         while(getNextEvent(&it, numSamples)) {
             processMidiMessage(midiMsg);
@@ -224,25 +224,25 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         for (; i < numSamples; i += N) {
             AlignedBuf<int32_t, N> audiobuf;
             float sumbuf[N];
-            
+
             while(getNextEvent(&it, i)) {
                 processMidiMessage(midiMsg);
             }
-            
+
             for (int j = 0; j < N; ++j) {
                 audiobuf.get()[j] = 0;
                 sumbuf[j] = 0;
             }
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
-            
+
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-                    
+
                     for (int j=0; j < N; ++j) {
                         int32_t val = audiobuf.get()[j];
-                        
+
                         val = val >> 4;
                         int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
                         float f = ((float) clip_val) / (float) 0x8000;
@@ -253,7 +253,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                     }
                 }
             }
-            
+
             int jmax = numSamples - i;
             for (int j = 0; j < N; ++j) {
                 if (j < jmax) {
@@ -265,7 +265,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         }
         extra_buf_size = i - numSamples;
     }
-    
+
     while(getNextEvent(&it, numSamples)) {
         processMidiMessage(midiMsg);
     }
@@ -273,7 +273,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     fx.process(channelData, numSamples);
     for(i=0; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
-        
+
         const double decayFactor = 0.99992;
         if (s > vuSignal)
             vuSignal = s;
@@ -282,7 +282,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         else
             vuSignal = 0;
     }
-    
+
     // DX7 is a mono synth
     buffer.copyFrom(1, 0, channelData, numSamples, 1);
 }
@@ -362,7 +362,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         case 0x90 :
             keydown(channel, buf[1], buf[2]);
         return;
-            
+
         case 0xb0 : {
             int ctrl = buf[1];
             int value = buf[2];
@@ -405,7 +405,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     TRACE("handle CC %d %d", ctrl, value);
                     if ( mappedMidiCC.contains(ctrl) ) {
                         Ctrl *linkedCtrl = mappedMidiCC[ctrl];
-                        
+
                         // We are not publishing this in the DSP thread, moving that in the
                         // event thread
                         linkedCtrl->publishValueAsync((float) value / 127);
@@ -415,16 +415,16 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                 }
             }
             return;
-            
+
         case 0xc0 :
             setCurrentProgram(buf[1]);
             return;
-            
+
         case 0xd0 :
             controllers.aftertouch_cc = buf[1];
             controllers.refresh();
             return;
-        
+
 		case 0xe0 :
 			controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
             return;
@@ -441,7 +441,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     }
 
     pitch += tuningTranspositionShift();
-    
+
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
@@ -459,7 +459,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             note = (note + 1) % MAX_ACTIVE_NOTES;
         }
     }
-    
+
     int note = currentNote;
     for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
         if (!voices[note].keydown) {
@@ -477,9 +477,9 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
         }
         note = (note + 1) % MAX_ACTIVE_NOTES;
     }
-    
+
     if ( monoMode ) {
-        for(int i=0; i<MAX_ACTIVE_NOTES; i++) {            
+        for(int i=0; i<MAX_ACTIVE_NOTES; i++) {
             if ( voices[i].live ) {
                 // all keys are up, only transfer signal
                 if ( ! voices[i].keydown ) {
@@ -496,7 +496,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             }
         }
     }
- 
+
     voices[note].live = true;
 	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }
@@ -515,13 +515,13 @@ void DexedAudioProcessor::keyup(uint8_t chan, uint8_t pitch, uint8_t velo) {
             break;
         }
     }
-    
+
     // note not found ?
     if ( note >= MAX_ACTIVE_NOTES ) {
 		TRACE("note found ??? %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
         return;
     }
-    
+
     if ( monoMode ) {
         int highNote = -1;
         int target = 0;
@@ -531,14 +531,14 @@ void DexedAudioProcessor::keyup(uint8_t chan, uint8_t pitch, uint8_t velo) {
                 highNote = voices[i].midi_note;
             }
         }
-        
+
         if ( highNote != -1 && voices[note].live ) {
             voices[note].live = false;
             voices[target].live = true;
             voices[target].dx7_note->transferState(*voices[note].dx7_note);
         }
     }
-    
+
     if ( sustain ) {
         voices[note].sustained = true;
     } else {
@@ -576,7 +576,7 @@ void DexedAudioProcessor::panic() {
 }
 
 void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) {
-    if ( message.isActiveSense() ) 
+    if ( message.isActiveSense() )
         return;
 
     sysexComm.inActivity = true;
@@ -588,15 +588,15 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 
     if ( ! message.isSysEx() )
         return;
-    
+
     // test if it is a Yamaha Sysex
     if ( buf[1] != 0x43 ) {
         TRACE("not a yamaha sysex %d", buf[0]);
         return;
     }
-    
+
     int substatus = buf[2] >> 4;
-    
+
     if ( substatus == 0 ) {
         // single voice dump
         if ( buf[3] == 0 ) {
@@ -607,14 +607,14 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
             if ( updateProgramFromSysex(buf+6) )
                 TRACE("bad checksum when updating program from sysex message");
         }
-        
+
         // 32 voice dump
         if ( buf[3] == 9 ) {
             if ( sz < 4104 ) {
                 TRACE("wrong 32 voice dump data size %d", sz);
                 return;
             }
-            
+
             Cartridge received;
             if ( received.load(buf, sz) == 0 ) {
                 loadCartridge(received);
@@ -627,17 +627,17 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
            TRACE("wrong single voice datasize %d", sz);
            return;
         }
-        
+
         uint8 offset = (buf[3] << 7) + buf[4];
         uint8 value = buf[5];
-        
+
         TRACE("parameter change message offset:%d value:%d", offset, value);
-        
+
         if ( offset > 155 ) {
             TRACE("wrong offset size");
             return;
         }
-        
+
         if ( offset == 155 ) {
             unpackOpSwitch(value);
         } else {
@@ -646,7 +646,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
     } else {
         TRACE("unknown sysex substatus: %d", substatus);
     }
-    
+
     updateHostDisplay();
     forceRefreshUI = true;
 }
@@ -657,7 +657,7 @@ int DexedAudioProcessor::getEngineType() {
 
 void DexedAudioProcessor::setEngineType(int tp) {
     TRACE("settings engine %d", tp);
-    
+
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             controllers.core = &engineMkI;
@@ -751,7 +751,7 @@ bool DexedAudioProcessor::hasEditor() const {
 void DexedAudioProcessor::updateUI() {
     // notify host something has changed
     updateHostDisplay();
- 
+
     AudioProcessorEditor *editor = getActiveEditor();
     if ( editor == NULL ) {
         return;
@@ -762,34 +762,48 @@ void DexedAudioProcessor::updateUI() {
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     static const uint8_t HIGH_DPI_THRESHOLD = 128;
-    
-    AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
+
+    DexedAudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
 
     if ( dpiScaleFactor == -1 ) {
-        if ( Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD ) {
-            dpiScaleFactor = 1.5;
+        double dpi   = Desktop::getInstance().getDisplays().getMainDisplay().dpi;
+        double scale = Desktop::getInstance().getDisplays().getMainDisplay().scale;
+        if ( dpi > HIGH_DPI_THRESHOLD ) {
+            dpiScaleFactor = dpi / HIGH_DPI_THRESHOLD;
+            std::stringstream message;
+            message << "Main display DPI is " << dpi << " so changing global scale factor from " << scale << " to " << dpiScaleFactor;
+            Logger::writeToLog(message.str());
         } else {
             dpiScaleFactor = 1.0;
         }
     }
-    
+
     const juce::Rectangle rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
     bool displayFound = false;
-    
+
     // validate if there is really a display that can show the complete plugin size
     for (auto& display : Desktop::getInstance().getDisplays().displays) {
-        if ( display.userArea.getHeight() > rect.getHeight() && display.userArea.getWidth() > rect.getWidth() )
+        std::stringstream message;
+        message <<
+            "Checking whether " << display.userArea.getWidth() << "×" << display.userArea.getHeight() <<
+            " display can show " << rect.getWidth() << "×" << rect.getHeight() << " UI component";
+        Logger::writeToLog(message.str());
+        if ( display.userArea.getHeight() > rect.getHeight() && display.userArea.getWidth() > rect.getWidth() ) {
             displayFound = true;
+        }
     }
-    
-    // no display found, scaling to default value	
-    if ( ! displayFound )
+
+    // no display found, scaling to default value
+    if ( ! displayFound ) {
         dpiScaleFactor = 1.0;
-    
+    }
+
     // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
-    // plugin window.
-    editor->setScaleFactor(dpiScaleFactor);
-    
+    // plugin window.  Previously, we called editor->setScaleFactor() here, but that was only a partial solution as it
+    // does not scale pop-ups (or the Options button in the top menu bar).  Setting a global scale factor gives the
+    // whole app a consistent scale.
+    Desktop::getInstance().setGlobalScaleFactor(dpiScaleFactor);
+
     return editor;
 }
 
@@ -840,7 +854,7 @@ void DexedAudioProcessor::applySCLTuning(File s) {
 
 void DexedAudioProcessor::applySCLTuning(std::string sclcontents) {
     currentSCLData = sclcontents;
-    
+
     if( currentKBMData.size() < 1 )
     {
         auto t = createTuningFromSCLData( sclcontents );
@@ -870,7 +884,7 @@ void DexedAudioProcessor::applyKBMMapping( File s )
 
 void DexedAudioProcessor::applyKBMMapping(std::string kbmcontents) {
     currentKBMData = kbmcontents;
-    
+
     if( currentSCLData.size() < 1 )
     {
         auto t = createTuningFromKBMData( currentKBMData );

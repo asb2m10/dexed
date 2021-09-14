@@ -66,7 +66,7 @@ public:
     HyperlinkButton dexed;
     HyperlinkButton surge;
 
-    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true), 
+    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
             dexed("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/")),
             surge("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")) {
         setUsingNativeTitleBar(false);
@@ -76,11 +76,11 @@ public:
         centreAroundComponent(parent, getWidth(), getHeight());
 
         dexed.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        dexed.setJustificationType(Justification::left);        
+        dexed.setJustificationType(Justification::left);
         dexed.setBounds(18, 433, getWidth() - 36, 30);
         addAndMakeVisible(&dexed);
         surge.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        surge.setJustificationType(Justification::left);        
+        surge.setJustificationType(Justification::left);
         surge.setBounds(18, 458, getWidth() - 36, 30);
         addAndMakeVisible(&surge);
     }
