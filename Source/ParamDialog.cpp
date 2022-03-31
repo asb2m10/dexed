@@ -291,19 +291,6 @@ ParamDialog::ParamDialog ()
 
     pitchRangeUp->setBounds (168, 16, 72, 24);
 
-    scalingFactor.reset (new ComboBox ("scalingFactor"));
-    addAndMakeVisible (scalingFactor.get());
-    scalingFactor->setEditableText (false);
-    scalingFactor->setJustificationType (Justification::centredLeft);
-    scalingFactor->setTextWhenNothingSelected (String());
-    scalingFactor->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    scalingFactor->addItem (TRANS("100 %"), 1);
-    scalingFactor->addItem (TRANS("150 %"), 2);
-    scalingFactor->addListener (this);
-
-    scalingFactor->setBounds (236, 136, 90, 24);
-
-
     //[UserPreSize]
     //[/UserPreSize]
 
@@ -367,7 +354,6 @@ ParamDialog::~ParamDialog()
     mpeEnabled = nullptr;
     transposeHelp = nullptr;
     pitchRangeUp = nullptr;
-    scalingFactor = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -667,18 +653,6 @@ void ParamDialog::paint (Graphics& g)
                     Justification::centredLeft, true);
     }
 
-    {
-        int x = 20, y = 136, width = 276, height = 23;
-        String text (TRANS("UI Scaling"));
-        Colour fillColour = Colours::white;
-        //[UserPaintCustomArguments] Customize the painting arguments here..
-        //[/UserPaintCustomArguments]
-        g.setColour (fillColour);
-        g.setFont (Font (15.00f, Font::plain).withTypefaceStyle ("Regular"));
-        g.drawText (text, x, y, width, height,
-                    Justification::centredLeft, true);
-    }
-
     //[UserPaint] Add your own custom painting code here..
     if ( ! JUCEApplication::isStandaloneApp() ) {
         g.setColour (Colours::white);
@@ -785,11 +759,6 @@ void ParamDialog::comboBoxChanged (ComboBox* comboBoxThatHasChanged)
     {
         //[UserComboBoxCode_engineReso] -- add your combo box handling code here..
         //[/UserComboBoxCode_engineReso]
-    }
-    else if (comboBoxThatHasChanged == scalingFactor.get())
-    {
-        //[UserComboBoxCode_scalingFactor] -- add your combo box handling code here..
-        //[/UserComboBoxCode_scalingFactor]
     }
 
     //[UsercomboBoxChanged_Post]
@@ -998,10 +967,6 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     engineReso->setSelectedItemIndex(reso);
     showKeyboard->setToggleState(showKey, NotificationType::dontSendNotification);
 
-    if ( dpiScaleFactor == 1.5 )
-        scalingFactor->setSelectedItemIndex(1);
-    else
-        scalingFactor->setSelectedItemIndex(0);
 }
 
 bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey, float *dpiScaleFactor) {
@@ -1047,13 +1012,6 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     *reso = engineReso->getSelectedItemIndex();
     *showKey = showKeyboard->getToggleState();
 
-    switch(scalingFactor->getSelectedItemIndex()) {
-        case 1 :
-            *dpiScaleFactor = 1.5;
-            break;
-        default:
-            *dpiScaleFactor = 1.0;
-    }
     return ret;
 }
 
@@ -1146,9 +1104,6 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <TEXT pos="240 16 20 23" fill="solid: ffffffff" hasStroke="0" text="dn"
-          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-          italic="0" justification="33"/>
-    <TEXT pos="20 136 276 23" fill="solid: ffffffff" hasStroke="0" text="UI Scaling"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
   </BACKGROUND>
@@ -1273,9 +1228,6 @@ BEGIN_JUCER_METADATA
           max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
-  <COMBOBOX name="scalingFactor" id="843af1bae988d4d6" memberName="scalingFactor"
-            virtualName="" explicitFocusOrder="0" pos="236 136 90 24" editable="0"
-            layout="33" items="100 %&#10;150 %" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

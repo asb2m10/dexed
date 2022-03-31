@@ -113,7 +113,6 @@ private:
     std::unique_ptr<LightedToggleButton> mpeEnabled;
     std::unique_ptr<ImageButton> transposeHelp;
     std::unique_ptr<Slider> pitchRangeUp;
-    std::unique_ptr<ComboBox> scalingFactor;
 
 
     //==============================================================================
