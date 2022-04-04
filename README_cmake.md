@@ -2,7 +2,7 @@ Initial cmake support
 =====================
 
 This initial cmake support is based on Eyal Amir's JUCECmakeRepoPrototype [1]. It is not considered complete
-and has only been tested on Debian. No linker or compile options have been set for  other operating systems.
+and has only been tested on Debian and Ubuntu. No linker or compile options have been set for  other operating systems.
 
 But, since this initial cmake support doesn't conflict with the projucer based build system and
 not a single file needs to be changed for it to work it might serve as a first building step for a proper transition to cmake.
@@ -16,23 +16,21 @@ After you clone your first step is within the main directory:
 git submodule update --init --recursive
 ```
 
-
 Then proceed in the usual cmake way:
 
 ```
-# Leave project directory
-cd ..
-# Create build directory and change into it
-mkdir build-dexed && cd build-dexed
-# invoke cmake
-cmake ../dexed/
-# build (i.e. make on Linux)
-make
+# Debug build of all targets (vst3 and Standalone)
+#
+cmake -Bbuild-dexed  
+cmake --build build-dexed -j4
 ```
-
-
-JUCE will be automatically downloaded via CPM [2] in the cmake step.
-So there's no need invoke the ./scripts/get-juce.sh script.
+```
+# Release build of just a vst3
+#
+cmake -Bbuild-dexed -DCMAKE_BUILD_TYPE=Release 
+cmake --build build-dexed --target Dexed_VST3 -j4
+```
+(Change the number in `-j4` to match your cpu's parallel processing count)
 
 You'll find the build results in:
 
@@ -40,8 +38,17 @@ You'll find the build results in:
 build-dexed/Source/Dexed_artefacts/
 ```
 
+JUCE will be downloaded during the `submodule update` step.
+So there's no need invoke the ./scripts/get-juce.sh script.
+
+IF you want to try building with a different (local) JUCE version, you can do so with
+```
+cmake -Bbuild-blah -DDEXED_JUCE_PATH=/location/of/JUCE
+```
+as the first cmake command.
+
+
 
 
 [1] https://github.com/eyalamirmusic/JUCECmakeRepoPrototype
-[2] https://github.com/cpm-cmake/CPM.cmake
 

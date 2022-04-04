@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(Dexed VERSION 0.9.6)
 
-#including CPM.cmake, a package manager:
-#https://github.com/TheLartians/CPM.cmake
-include(CMake/CPM.cmake)
+set(DEXED_JUCE_PATH "${CMAKE_SOURCE_DIR}/libs/JUCE" CACHE STRING "Path to JUCE library source tree")
+add_subdirectory(${DEXED_JUCE_PATH} ${CMAKE_BINARY_DIR}/JUCE EXCLUDE_FROM_ALL)
 
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -37,12 +36,6 @@ option(JUCE_ENABLE_MODULE_SOURCE_GROUPS "Enable Module Source Groups" ON)
 #or extras (Projucer/AudioPluginHost, etc):
 option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
 option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
-
-
-#Fetching JUCE from git
-#IF you want to instead point it to a local version, you can invoke CMake with
-#-DCPM_JUCE_SOURCE="Path_To_JUCE"
-CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
 
 add_subdirectory(libs)
 add_subdirectory(Resources)
