@@ -14,3 +14,5 @@ assets/
 products/
 
 .DS_Store
+build*/
+.cache/
