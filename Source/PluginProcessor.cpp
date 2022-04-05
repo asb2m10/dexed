@@ -773,7 +773,7 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
         }
     }
     
-    const juce::Rectangle rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
+    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
     bool displayFound = false;
     
     // validate if there is really a display that can show the complete plugin size
