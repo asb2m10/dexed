@@ -40,3 +40,27 @@ option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
 add_subdirectory(libs)
 add_subdirectory(Resources)
 add_subdirectory(Source)
+
+# uncomment to enable warnings are errors,
+# suppress warnings (or remove when fixed)
+# or add -Wall, -Wextra or specific warnings as you see fit 
+if (APPLE)
+target_compile_options(${PROJECT_NAME} PUBLIC
+        #-Werror
+        #-Wno-deprecated-declarations
+        #-Wno-unused-value
+        )
+elseif(UNIX AND NOT APPLE)
+target_compile_options(${PROJECT_NAME} PUBLIC
+        -Werror
+        -Wno-deprecated-declarations
+        -Wno-unused-value
+        )
+else()
+target_compile_options(${PROJECT_NAME} PUBLIC
+        #/WX # Warnings are errors
+        #/wd4996 # deprecated-declarations
+        # (I don't know all the windows warning numbers
+        #  replace cxxx with /wdxxx to supress them)
+        )
+endif()

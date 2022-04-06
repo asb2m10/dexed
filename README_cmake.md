@@ -39,14 +39,21 @@ build-dexed/Source/Dexed_artefacts/
 ```
 
 JUCE will be downloaded during the `submodule update` step.
-So there's no need invoke the ./scripts/get-juce.sh script.
+So there's no need to invoke the ./scripts/get-juce.sh script.
 
-IF you want to try building with a different (local) JUCE version, you can do so with
+If you want to try building with a different (local) JUCE version, you can do so with
 ```
 cmake -Bbuild-blah -DDEXED_JUCE_PATH=/location/of/JUCE
 ```
 as the first cmake command.
 
+CMake will use whatever is the default compiler on your system.
+If you want to switch to a different one you can do:
+```
+# example using clang
+#
+cmake -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+```
 
 
 

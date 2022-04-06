@@ -37,7 +37,7 @@ inline static float tptpc(float& state,float inp,float cutoff) {
 }
 
 inline static float tptlpupw(float & state , float inp , float cutoff , float srInv) {
-	cutoff = (cutoff * srInv)*juce::float_Pi;
+	cutoff = (cutoff * srInv)*juce::MathConstants<float>::pi;
 	double v = (inp - state) * cutoff / (1 + cutoff);
 	double res = v + state;
 	state = res + v;
@@ -72,7 +72,7 @@ void PluginFx::init(int sr) {
     rcor24 = (970.0 / 44000)*rcrate;
     rcor24Inv = 1 / rcor24;
     
-    bright = tan((sampleRate*0.5f-10) * juce::float_Pi * sampleRateInv);
+    bright = tan((sampleRate*0.5f-10) * juce::MathConstants<float>::pi * sampleRateInv);
     
     R = 1;
 	rcor = (480.0 / 44000)*rcrate;
@@ -127,7 +127,7 @@ void PluginFx::process(float *work, int sampleSize) {
         R24 = 3.5 * rReso;
         
         float cutoffNorm = logsc(uiCutoff,60,19000);
-        rCutoff = (float)tan(cutoffNorm * sampleRateInv * juce::float_Pi);
+        rCutoff = (float)tan(cutoffNorm * sampleRateInv * juce::MathConstants<float>::pi);
             
         pCutoff = uiCutoff;
         pReso = uiReso;
