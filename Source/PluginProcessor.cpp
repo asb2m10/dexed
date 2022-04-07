@@ -63,7 +63,8 @@
 #endif
 
 //==============================================================================
-DexedAudioProcessor::DexedAudioProcessor() {
+DexedAudioProcessor::DexedAudioProcessor()
+    : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)) {
 #ifdef DEBUG
     
     // avoid creating the log file if it is in standalone mode
@@ -721,6 +722,11 @@ bool DexedAudioProcessor::isInputChannelStereoPair (int index) const {
 
 bool DexedAudioProcessor::isOutputChannelStereoPair (int index) const {
     return true;
+}
+
+bool DexedAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
+    return layouts.getMainOutputChannelSet() == AudioChannelSet::mono()
+                || layouts.getMainOutputChannelSet() == AudioChannelSet::stereo();
 }
 
 bool DexedAudioProcessor::acceptsMidi() const {
