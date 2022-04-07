@@ -57,13 +57,10 @@ target_compile_definitions(${BaseTargetName} PUBLIC
     JUCE_JACK=1
     JUCE_MODAL_LOOPS_PERMITTED=1 # needed for FileBrowser in CartManager
     JUCE_DISPLAY_SPLASH_SCREEN=0
-
 )
 
-target_link_libraries(${BaseTargetName} PRIVATE
-    juce::juce_recommended_config_flags
-    juce::juce_recommended_lto_flags
-    juce::juce_recommended_warning_flags
+target_link_libraries(${BaseTargetName} 
+PRIVATE
     juce::juce_audio_basics
     juce::juce_audio_devices
     juce::juce_audio_formats
@@ -79,6 +76,7 @@ target_link_libraries(${BaseTargetName} PRIVATE
     surgesynthteam_tuningui
     tuning-library
     DexedResources
+PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_lto_flags
 )
-
-

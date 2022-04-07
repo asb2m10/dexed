@@ -766,7 +766,7 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
 
     if ( dpiScaleFactor == -1 ) {
-        if ( Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD ) {
+        if ( Desktop::getInstance().getDisplays().getPrimaryDisplay()->dpi > HIGH_DPI_THRESHOLD ) {
             dpiScaleFactor = 1.5;
         } else {
             dpiScaleFactor = 1.0;
