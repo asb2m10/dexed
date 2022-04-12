@@ -1,5 +1,17 @@
 set(BaseTargetName Dexed)
 
+set(DEXED_JUCE_FORMATS Standalone)
+
+if(NOT DEXED_SKIP_VST3)
+  list(APPEND DEXED_JUCE_FORMATS VST3)
+endif()
+
+if (APPLE)
+  list(APPEND DEXED_JUCE_FORMATS AU)
+endif()
+
+message(STATUS "Building Dexed in formats: ${DEXED_JUCE_FORMATS}")
+
 juce_add_plugin("${BaseTargetName}"
         # VERSION ...                               # Set this if the plugin version is different to the project version
         ICON_BIG "../Resources/ui/dexedIcon.png"
@@ -13,7 +25,7 @@ juce_add_plugin("${BaseTargetName}"
         COPY_PLUGIN_AFTER_BUILD FALSE
         PLUGIN_MANUFACTURER_CODE DGSB
         PLUGIN_CODE Dexd
-        FORMATS AU VST3 Standalone
+        FORMATS ${DEXED_JUCE_FORMATS}
         PRODUCT_NAME "Dexed"
         DESCRIPTION "Dexed FM Synth"
 )
@@ -54,11 +66,19 @@ target_sources(${BaseTargetName} PRIVATE
         msfa/tuning.cc
 )
 
+if(DEXED_NO_ALSA)
+    set(DEXED_ALSA FALSE)
+    message(STATUS "Building Dexed without ALSA support")
+else()
+    set(DEXED_ALSA TRUE)
+endif()
+
 target_compile_definitions(${BaseTargetName} PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_JACK=1
+    JUCE_ALSA=$<IF:$<BOOL:${DEXED_ALSA}>,1,0>
     JUCE_MODAL_LOOPS_PERMITTED=1 # needed for FileBrowser in CartManager
     JUCE_DISPLAY_SPLASH_SCREEN=0
 )
