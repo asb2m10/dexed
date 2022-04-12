@@ -52,7 +52,7 @@ target_compile_options(${PROJECT_NAME} PUBLIC
         )
 elseif(UNIX AND NOT APPLE)
 target_compile_options(${PROJECT_NAME} PUBLIC
-        -Werror
+        #-Werror
         -Wno-deprecated-declarations
         -Wno-unused-value
         )
