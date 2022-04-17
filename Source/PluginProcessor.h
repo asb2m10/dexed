@@ -208,6 +208,7 @@ public :
     void setParameter (int index, float newValue);
     const String getParameterName (int index);
     const String getParameterText (int index);
+    String getParameterID (int index) override;
 
     const String getInputChannelName (int channelIndex) const;
     const String getOutputChannelName (int channelIndex) const;

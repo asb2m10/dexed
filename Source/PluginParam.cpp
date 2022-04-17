@@ -331,6 +331,7 @@ float CtrlFloat::getValueHost() {
 }
 
 void CtrlFloat::setValueHost(float v) {
+    TRACE("float set idx=%d v=%f", idx, v);
     *vPointer = v;
 }
 
@@ -364,7 +365,7 @@ void CtrlDX::setValueHost(float f) {
 }
 
 void CtrlDX::setValue(int v) {
-    TRACE("setting value %d %d", dxOffset, v);
+    TRACE("setting value idx=%d dxOffset=%d v=%d", idx, dxOffset, v);
     dxValue = v;
     if (dxOffset >= 0) {
         if (parent != NULL)
@@ -628,7 +629,7 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
         packOpSwitch();
         v = data[155];
     } else if ( data[offset] != v ) {
-        TRACE("setting dx %d %d", offset, v);
+        TRACE("setting dx offset=%d v=%d", offset, v);
         data[offset] = v;
     } else {
         TRACE("ignoring dx7 same values %d %d", offset, v);
@@ -670,6 +671,7 @@ float DexedAudioProcessor::getParameter(int index) {
 }
 
 void DexedAudioProcessor::setParameter(int index, float newValue) {
+    TRACE("setParameter index=%d newValue=%f", index, newValue);
     forceRefreshUI = true;
     ctrl[index]->setValueHost(newValue);
 }
@@ -724,6 +726,10 @@ const String DexedAudioProcessor::getParameterName(int index) {
 
 const String DexedAudioProcessor::getParameterText(int index) {
     return ctrl[index]->getValueDisplay();
+}
+
+String DexedAudioProcessor::getParameterID(int index) {
+    return getParameterName(index);
 }
 
 void DexedAudioProcessor::loadPreference() {
