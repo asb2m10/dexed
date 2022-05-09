@@ -186,6 +186,9 @@ void DexedAudioProcessor::releaseResources() {
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
+
+    juce::ScopedNoDenormals noDenormals;
+
     int numSamples = buffer.getNumSamples();
     int i;
     
