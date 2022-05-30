@@ -16,3 +16,8 @@ products/
 .DS_Store
 build*/
 .cache/
+
+# CLION
+.idea
+cmake-build-*
+ignore/
