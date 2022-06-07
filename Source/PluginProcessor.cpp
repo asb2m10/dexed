@@ -791,6 +791,10 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     // no display found, scaling to default value	
     if ( ! displayFound )
         dpiScaleFactor = 1.0;
+
+    // Currently the clap juce wrapper doesn't work with this deprecated scale factor direct set so
+    if ( is_clap )
+       dpiScaleFactor = 1.0;
     
     // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
     // plugin window.

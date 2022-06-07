@@ -18,6 +18,10 @@ juce_add_plugin("${BaseTargetName}"
         DESCRIPTION "Dexed FM Synth"
 )
 
+clap_juce_extensions_plugin(TARGET ${BaseTargetName}
+        CLAP_ID "com.digital-suburban.dexed"
+        CLAP_FEATURES instrument FM DX7)
+
 juce_generate_juce_header(${PROJECT_NAME})
 
 target_sources(${BaseTargetName} PRIVATE
