@@ -1,10 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 project(Dexed VERSION 0.9.6)
 
-set(DEXED_JUCE_PATH "${CMAKE_SOURCE_DIR}/libs/JUCE" CACHE STRING "Path to JUCE library source tree")
-add_subdirectory(${DEXED_JUCE_PATH} ${CMAKE_BINARY_DIR}/JUCE EXCLUDE_FROM_ALL)
-add_subdirectory(libs/clap-juce-extensions EXCLUDE_FROM_ALL)
-
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
@@ -28,6 +24,13 @@ endif()
 
 #static linking in Windows
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+# include JUCE *AFTER* the MSVC runtime and so on is set up
+set(DEXED_JUCE_PATH "${CMAKE_SOURCE_DIR}/libs/JUCE" CACHE STRING "Path to JUCE library source tree")
+add_subdirectory(${DEXED_JUCE_PATH} ${CMAKE_BINARY_DIR}/JUCE EXCLUDE_FROM_ALL)
+add_subdirectory(libs/clap-juce-extensions EXCLUDE_FROM_ALL)
+
+
 
 #Adds all the module sources so they appear correctly in the IDE
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
