@@ -24,6 +24,8 @@ clap_juce_extensions_plugin(TARGET ${BaseTargetName}
 
 juce_generate_juce_header(${PROJECT_NAME})
 
+include_directories(../libs/MTS-ESP/Client)
+
 target_sources(${BaseTargetName} PRIVATE
 	AlgoDisplay.cpp
 	CartManager.cpp
@@ -52,6 +54,9 @@ target_sources(${BaseTargetName} PRIVATE
         msfa/pitchenv.cc
         msfa/sin.cc
         msfa/tuning.cc
+
+    # until MTS-ESP has is own cmake project
+    ../libs/MTS-ESP/Client/libMTSClient.cpp
 )
 
 target_compile_definitions(${BaseTargetName} PUBLIC
