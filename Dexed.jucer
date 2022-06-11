@@ -131,7 +131,7 @@
   </MAINGROUP>
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/Linux" vstLegacyFolder="VST2SDK_DIR" smallIcon="SpSpb4"
-                bigIcon="SpSpb4" extraLinkerFlags="-fPIC" extraCompilerFlags="-I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client">
+                bigIcon="SpSpb4" extraLinkerFlags="-fPIC" extraCompilerFlags="-I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -DJUCE_MODAL_LOOPS_PERMITTED=1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="2" targetName="Dexed"/>
@@ -153,7 +153,7 @@
       </MODULEPATHS>
     </LINUX_MAKE>
     <XCODE_MAC targetFolder="Builds/MacOSX" smallIcon="SpSpb4" bigIcon="SpSpb4"
-               vst3Folder="libs/vst3sdk" extraCompilerFlags="-I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32">
+               vst3Folder="libs/vst3sdk" extraCompilerFlags="-I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32 -DJUCE_MODAL_LOOPS_PERMITTED=1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
                        osxCompatibility="10.10 SDK" osxArchitecture="Native" enablePluginBinaryCopyStep="1"/>
@@ -178,7 +178,7 @@
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017" windowsTargetPlatformVersion="10.0.16299.0"
             IPPLibrary="Parallel_Static" bigIcon="SpSpb4" smallIcon="SpSpb4"
-            vst3Folder="libs/vst3sdk" extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client">
+            vst3Folder="libs/vst3sdk" extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -DJUCE_MODAL_LOOPS_PERMITTED=1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"
@@ -206,8 +206,8 @@
       </MODULEPATHS>
     </VS2017>
     <VS2019 targetFolder="Builds/VisualStudio2019" IPPLibrary="Parallel_Static"
-            extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client"
-            smallIcon="SpSpb4" bigIcon="SpSpb4">
+            extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -DJUCE_MODAL_LOOPS_PERMITTED=1" smallIcon="SpSpb4"
+            bigIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"

@@ -63,7 +63,8 @@
 #endif
 
 //==============================================================================
-DexedAudioProcessor::DexedAudioProcessor() {
+DexedAudioProcessor::DexedAudioProcessor()
+    : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)) {
 #ifdef DEBUG
     
     // avoid creating the log file if it is in standalone mode
@@ -189,6 +190,9 @@ void DexedAudioProcessor::releaseResources() {
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
+
+    juce::ScopedNoDenormals noDenormals;
+
     int numSamples = buffer.getNumSamples();
     int i;
     
@@ -736,6 +740,11 @@ bool DexedAudioProcessor::isOutputChannelStereoPair (int index) const {
     return true;
 }
 
+bool DexedAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
+    return layouts.getMainOutputChannelSet() == AudioChannelSet::mono()
+                || layouts.getMainOutputChannelSet() == AudioChannelSet::stereo();
+}
+
 bool DexedAudioProcessor::acceptsMidi() const {
     return true;
 }
@@ -779,14 +788,14 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
 
     if ( dpiScaleFactor == -1 ) {
-        if ( Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD ) {
+        if ( Desktop::getInstance().getDisplays().getPrimaryDisplay()->dpi > HIGH_DPI_THRESHOLD ) {
             dpiScaleFactor = 1.5;
         } else {
             dpiScaleFactor = 1.0;
         }
     }
     
-    const juce::Rectangle rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
+    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
     bool displayFound = false;
     
     // validate if there is really a display that can show the complete plugin size
@@ -798,6 +807,10 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     // no display found, scaling to default value	
     if ( ! displayFound )
         dpiScaleFactor = 1.0;
+
+    // Currently the clap juce wrapper doesn't work with this deprecated scale factor direct set so
+    if ( is_clap )
+       dpiScaleFactor = 1.0;
     
     // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
     // plugin window.
