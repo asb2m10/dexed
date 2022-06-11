@@ -244,9 +244,10 @@ public :
     
     static File dexedAppDir;
     static File dexedCartDir;
-    
+
     Value lastCCUsed;
 
+    MTSClient *mtsClient;
     std::shared_ptr<TuningState> synthTuningState;
     // Prompt for a file
     void applySCLTuning();
@@ -268,7 +269,6 @@ public :
     std::string currentKBMData = "";
     
     float dpiScaleFactor = -1;
-    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

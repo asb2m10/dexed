@@ -28,6 +28,7 @@
 #include "pitchenv.h"
 #include "fm_core.h"
 #include "tuning.h"
+#include "libMTSClient.h"
 #include <memory>
 
 struct VoiceStatus {
@@ -38,9 +39,8 @@ struct VoiceStatus {
 
 class Dx7Note {
 public:
-    Dx7Note(std::shared_ptr<TuningState> ts);
-    void init(const uint8_t patch[156], int midinote, int velocity);
-    
+    Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc);
+    void init(const uint8_t patch[156], int midinote, int velocity, int channel);
     // Note: this _adds_ to the buffer. Interesting question whether it's
     // worth it...
     void compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
@@ -54,7 +54,8 @@ public:
     // keyup, that won't work.
     
     // PG:add the update
-    void update(const uint8_t patch[156], int midinote, int velocity);
+    void update(const uint8_t patch[156], int midinote, int velocity, int channel);
+    void updateBasePitches();
     void peekVoiceStatus(VoiceStatus &status);
     void transferState(Dx7Note& src);
     void transferSignal(Dx7Note &src);
@@ -79,12 +80,20 @@ private:
     int32_t opMode[6];
 
     uint8_t playingMidiNote; // We need this for scale aware pitch bend
+    uint8_t midiChannel;
     
     int ampmoddepth_;
     int algorithm_;
     int pitchmoddepth_;
     int pitchmodsens_;
-
+    
+    const uint8_t *currentPatch;
+    
+    int32_t noteLogFreq;
+    double mtsFreq;
+    static const int32_t mtsLogFreqToNoteLogFreq;
+    MTSClient *mtsClient;
+    
 };
 
 #endif  // SYNTH_DX7NOTE_H_
