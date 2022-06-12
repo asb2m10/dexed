@@ -18,7 +18,7 @@ jobs:
     - name: Install Dexed Dependencies
       if: runner.os == 'Linux'
       run: |
-        sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev ccache xvfb
+        sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev ccache xvfb libjack-dev
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
         
@@ -39,7 +39,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: linux-bin
-        path: ${{github.workspace}}/build/*_artefacts/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/Standalone/*
 
   build-macos:
     runs-on: macos-10.15
@@ -60,9 +62,13 @@ jobs:
 
     - name: Upload
       uses: actions/upload-artifact@v3
-      with:
+      with: 
         name: macos-bin
-        path: ${{github.workspace}}/build/*_artefacts/**        
+        path: |
+          ${{github.workspace}}/build/Source/*_artefacts/*/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/AU/*.component/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/Standalone/*.app/**
 
   build-windows:
     runs-on: windows-latest
@@ -87,4 +93,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: windows-bin
-        path: ${{github.workspace}}/build/*_artefacts/**        
+        path: |
+          ${{github.workspace}}/build/Source/*_artefacts/*/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/*/Standalone/*.exe
