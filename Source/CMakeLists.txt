@@ -86,6 +86,7 @@ target_compile_definitions(${BaseTargetName} PUBLIC
     JUCE_ALSA=$<IF:$<BOOL:${DEXED_ALSA}>,1,0>
     JUCE_MODAL_LOOPS_PERMITTED=1 # needed for FileBrowser in CartManager
     JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_REPORT_APP_USAGE=0
 )
 
 target_link_libraries(${BaseTargetName} 

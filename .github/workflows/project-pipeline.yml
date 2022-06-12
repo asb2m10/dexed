@@ -39,9 +39,10 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: linux-bin
-          ${{github.workspace}}/build/Source/*_artefacts/*/VST3/*.vst3/**
-          ${{github.workspace}}/build/Source/*_artefacts/*/CLAP/*.clap/**
-          ${{github.workspace}}/build/Source/*_artefacts/*/Standalone/*
+        path: |        
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
 
   build-macos:
     runs-on: macos-10.15
@@ -65,10 +66,10 @@ jobs:
       with: 
         name: macos-bin
         path: |
-          ${{github.workspace}}/build/Source/*_artefacts/*/VST3/*.vst3/**
-          ${{github.workspace}}/build/Source/*_artefacts/*/CLAP/*.clap/**
-          ${{github.workspace}}/build/Source/*_artefacts/*/AU/*.component/**
-          ${{github.workspace}}/build/Source/*_artefacts/*/Standalone/*.app/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/AU/*.component/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.app/**
 
   build-windows:
     runs-on: windows-latest
@@ -94,6 +95,6 @@ jobs:
       with:
         name: windows-bin
         path: |
-          ${{github.workspace}}/build/Source/*_artefacts/*/VST3/*.vst3/**
-          ${{github.workspace}}/build/Source/*_artefacts/*/CLAP/*.clap/**
-          ${{github.workspace}}/build/Source/*_artefacts/*/Standalone/*.exe
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.exe
