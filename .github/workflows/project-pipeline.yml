@@ -1,4 +1,4 @@
-name: project-pipeline
+name: dexed-pipeline
 
 on:
   push:
