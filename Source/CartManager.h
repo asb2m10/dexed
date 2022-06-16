@@ -33,6 +33,7 @@ class CartManager  : public Component, public Button::Listener, public DragAndDr
     std::unique_ptr<TextButton> saveButton;
     std::unique_ptr<TextButton> closeButton;
     std::unique_ptr<TextButton> fileMgrButton;
+    std::unique_ptr<TextButton> randomButton;
     std::unique_ptr<TextButton> getDXPgmButton;
     std::unique_ptr<TextButton> getDXCartButton;
     
