@@ -20,7 +20,7 @@ Changelog
 ---------
 #### Version 0.9.7 (IN DEVELOPMENT)
 * [MTS-ESP](https://oddsound.com/index.php) microtuning support
-* [CLAP](https://github.com/free-audio/clap) plugin support
+* [CLAP](https://github.com/free-audio/clap) plugin support (IN PROGRESS)
 * Scalable UI upgrade, better UI redraw
 * For developers: cmake is now the built system
 
