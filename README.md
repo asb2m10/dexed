@@ -134,7 +134,7 @@ Then you crate the cmake build files that are will be created in the build direc
 ```
 ~/dexed $ mkdir build
 ~/dexed $ cd build
-~/dexed/build $ cmake ..
+~/dexed/build $ cmake .. -DJUCE_COPY_PLUGIN_AFTER_BUILD=TRUE
 ~/dexed/build $ cmake --build .
 ```
 
