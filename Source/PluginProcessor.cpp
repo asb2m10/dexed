@@ -63,7 +63,8 @@
 #endif
 
 //==============================================================================
-DexedAudioProcessor::DexedAudioProcessor() {
+DexedAudioProcessor::DexedAudioProcessor()
+    : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)) {
 #ifdef DEBUG
     
     // avoid creating the log file if it is in standalone mode
@@ -115,6 +116,9 @@ DexedAudioProcessor::DexedAudioProcessor() {
     midiMsg = NULL;
 
     clipboardContent = -1;
+    
+    mtsClient = NULL;
+    mtsClient = MTS_RegisterClient();
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
@@ -124,6 +128,7 @@ DexedAudioProcessor::~DexedAudioProcessor() {
 		delete tmp;
 	}
     TRACE("Bye");
+    if (mtsClient) MTS_DeregisterClient(mtsClient);
 }
 
 //==============================================================================
@@ -135,7 +140,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     fx.init(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
-        voices[note].dx7_note = new Dx7Note(synthTuningState);
+        voices[note].dx7_note = new Dx7Note(synthTuningState, mtsClient);
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
@@ -185,13 +190,16 @@ void DexedAudioProcessor::releaseResources() {
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
+
+    juce::ScopedNoDenormals noDenormals;
+
     int numSamples = buffer.getNumSamples();
     int i;
     
     if ( refreshVoice ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity);
+                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity, voices[i].channel);
         }
         lfo.reset(data + 137);
         refreshVoice = false;
@@ -236,8 +244,15 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
             
+            bool checkMTSESPRetuning = synthTuningState->is_standard_tuning() &&
+                                        MTS_HasMaster(mtsClient);
+            
             for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
                 if (voices[note].live) {
+                    
+                    if (checkMTSESPRetuning)
+                        voices[note].dx7_note->updateBasePitches();
+                    
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
                     
                     for (int j=0; j < N; ++j) {
@@ -360,7 +375,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         return;
 
         case 0x90 :
-            keydown(channel, buf[1], buf[2]);
+            if (!synthTuningState->is_standard_tuning() || !buf[2] ||
+                !MTS_HasMaster(mtsClient) || !MTS_ShouldFilterNote(mtsClient, buf[1], channel - 1))
+                keydown(channel, buf[1], buf[2]);
         return;
             
         case 0xb0 : {
@@ -470,7 +487,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo);
+            voices[note].dx7_note->init(data, pitch, velo, channel);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;
@@ -723,6 +740,11 @@ bool DexedAudioProcessor::isOutputChannelStereoPair (int index) const {
     return true;
 }
 
+bool DexedAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
+    return layouts.getMainOutputChannelSet() == AudioChannelSet::mono()
+                || layouts.getMainOutputChannelSet() == AudioChannelSet::stereo();
+}
+
 bool DexedAudioProcessor::acceptsMidi() const {
     return true;
 }
@@ -766,14 +788,14 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
 
     if ( dpiScaleFactor == -1 ) {
-        if ( Desktop::getInstance().getDisplays().getMainDisplay().dpi > HIGH_DPI_THRESHOLD ) {
+        if ( Desktop::getInstance().getDisplays().getPrimaryDisplay()->dpi > HIGH_DPI_THRESHOLD ) {
             dpiScaleFactor = 1.5;
         } else {
             dpiScaleFactor = 1.0;
         }
     }
     
-    const juce::Rectangle rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
+    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
     bool displayFound = false;
     
     // validate if there is really a display that can show the complete plugin size
@@ -785,6 +807,10 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     // no display found, scaling to default value	
     if ( ! displayFound )
         dpiScaleFactor = 1.0;
+
+    // Currently the clap juce wrapper doesn't work with this deprecated scale factor direct set so
+    if ( is_clap )
+       dpiScaleFactor = 1.0;
     
     // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
     // plugin window.

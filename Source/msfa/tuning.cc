@@ -39,8 +39,8 @@ struct SCLAndKBMTuningState : public TuningState {
         return tuning.logScaledFrequencyForMidiNote( midinote ) * step + base;
     }
 
-    virtual int scale_length() { return tuning.scale.count; }
-    virtual std::string display_tuning_str() { return "SCL KBM Tuning"; }
+    virtual int scale_length() override { return tuning.scale.count; }
+    virtual std::string display_tuning_str() override { return "SCL KBM Tuning"; }
 
     virtual Tunings::Tuning &getTuning() override { return tuning; }
 

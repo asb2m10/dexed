@@ -18,6 +18,12 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 
 Changelog
 ---------
+#### Version 0.9.7 (IN DEVELOPMENT)
+* [MTS-ESP](https://oddsound.com/index.php) microtuning support
+* [CLAP](https://github.com/free-audio/clap) plugin support (IN PROGRESS)
+* Scalable UI upgrade, better UI redraw
+* For developers: cmake is now the built system
+
 #### Version 0.9.6
 * Apple Silicon M1 builds
 * Fix VST3 automation issues
@@ -99,7 +105,6 @@ Credits & thanks
 
 TODO - Dexed 
 ------------
-* Scalable UI upgrade, better UI redraw
 * Various code cleanup
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
 
@@ -109,58 +114,30 @@ TODO - msfa
 * Better Amplitude Modulation
 * Accurate live operator level envelope updates
 
-# How to build DEXED
+# How to build
 
-You will notice that DEXED no longer ships with built makefiles. Rather it has a collection of scripts to 
-get a version of JUCE and build them for you. With juce6 this will change even more, but for now to build you
-will want to get and run juce and the projucer yourself. Luckily this is fairly easy
-
-## All OSes
-
-DEXED has several submodules it now depends on, including VST3 and a library to support non standard tuning.
-After you clone your first step is
+Clone Dexed from github
 
 ```
-git submodule update --init --recursive
+~ $ git clone https://github.com/asb2m10/dexed.git
 ```
 
-which will expand the submodules. Then follow platform specific directions below
-
-## macOS
+Dexed has several submodules it now depends on, including VST3/CLAP and a library to support non standard tuning. After you clone your first step is
 
 ```
-./scripts/get-juce.sh
-./scripts/projuce.sh
-./scripts/build-mac.sh
+~ $ cd dexed
+~/dexed $ git submodule update --init --recursive
 ```
 
-This will build a VST3, and AU and a Standalone in Build/MacOSX/Release for your
-
-## windows
-Run this in the bash shell that comes with the standard Git distribution.
+Then you crate the cmake build files that are will be created in the build directory. On that build you can trigger your favorite IDE or simply use `--build` cmake option.
 
 ```
-./scripts/get-juce.sh
-./scripts/projuce.sh
+~/dexed $ mkdir build
+~/dexed $ cd build
+~/dexed/build $ cmake .. -DJUCE_COPY_PLUGIN_AFTER_BUILD=TRUE
+~/dexed/build $ cmake --build .
 ```
 
-then open and build the resulting Visual Studio Solution file.
+If you get missing header compilation errors, be sure to check the [known Linux dependencies](https://github.com/asb2m10/dexed/wiki/Linux-builds-dependencies) based on your distribution for Linux.
 
-## Linux
-
-```
-./scripts/get-juce.sh
-./scripts/projuce.sh
-./scripts/build-lin.sh
-```
-
-If you get missing header compilation errors, be sure to check the [known Linux dependencies](https://github.com/asb2m10/dexed/wiki/Linux-builds-dependencies) based on your distribution.
-
-### VST2 Support
-Since Steinberg has discontinued the VST2 API we no longer distribute a VST2. If you are a licensee to the VST2SDK, though, you can still build it. 
-
-The first thing is to be sure to initialise the path of the VST2 sdk before calling any script builds.
-
-```
-export VST2SDK_DIR=~/path/to/vst2/sdk/dir
-```
+Binaries will be found in `~/dexed/build/Source/Dexed_artefacts/*`

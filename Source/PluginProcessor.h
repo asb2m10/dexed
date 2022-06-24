@@ -23,6 +23,8 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include "clap-juce-extensions/clap-juce-extensions.h"
+
 #include "msfa/controllers.h"
 #include "msfa/dx7note.h"
 #include "msfa/lfo.h"
@@ -60,7 +62,7 @@ enum DexedEngineResolution {
 //==============================================================================
 /**
 */
-class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback
+class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback, public clap_juce_extensions::clap_properties
 {
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
@@ -208,11 +210,13 @@ public :
     void setParameter (int index, float newValue);
     const String getParameterName (int index);
     const String getParameterText (int index);
+    String getParameterID (int index) override;
 
     const String getInputChannelName (int channelIndex) const;
     const String getOutputChannelName (int channelIndex) const;
     bool isInputChannelStereoPair (int index) const;
     bool isOutputChannelStereoPair (int index) const;
+    bool isBusesLayoutSupported (const BusesLayout& layouts) const;
 
     bool acceptsMidi() const;
     bool producesMidi() const;
@@ -241,9 +245,10 @@ public :
     
     static File dexedAppDir;
     static File dexedCartDir;
-    
+
     Value lastCCUsed;
 
+    MTSClient *mtsClient;
     std::shared_ptr<TuningState> synthTuningState;
     // Prompt for a file
     void applySCLTuning();
@@ -265,7 +270,6 @@ public :
     std::string currentKBMData = "";
     
     float dpiScaleFactor = -1;
-    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
