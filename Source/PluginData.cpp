@@ -472,6 +472,11 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
             int cc = ccMapping->getIntAttribute("cc", -1);
             String target = ccMapping->getStringAttribute("target", "");
             if ( target.isNotEmpty() && cc != -1 ) {
+                if ((cc >> 8) == 0) {
+                    // Simple migration logic lets old mappings without channel
+                    // work on channel 1.
+                    cc |= 1 << 8;
+                }
                 for(int i=0;i<ctrl.size();i++) {
                     if ( ctrl[i]->label == target) {
                         TRACE("mapping CC=%d to %s", cc, target.toRawUTF8());

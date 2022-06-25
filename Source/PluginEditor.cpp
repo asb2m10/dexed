@@ -392,7 +392,7 @@ public :
         this->target = target;
         setMessage("Mapping: " + String(target->label) + ", waiting for midi controller change (CC) message...");
         addButton("CANCEL", -1);
-        editor->processor->lastCCUsed.setValue(-1);        
+        editor->processor->lastCCUsed.setValue(-1);
         editor->processor->lastCCUsed.addListener(this);
     }
     
