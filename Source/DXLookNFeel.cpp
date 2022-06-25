@@ -164,6 +164,7 @@ Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {
 
 void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
      float rotaryStartAngle, float rotaryEndAngle,  Slider &slider ) {
+     TRACE("knob render");
      if ( imageKnob.isNull() ) {
          LookAndFeel_V3::drawRotarySlider(g, x, y, width, height, sliderPosProportional, rotaryStartAngle, rotaryEndAngle, slider);
          return;
@@ -172,13 +173,13 @@ void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int he
      const double fractRotation = (slider.getValue() - slider.getMinimum())  /   (slider.getMaximum() - slider.getMinimum()); //value between 0 and 1 for current amount of rotation
      const int nFrames = imageKnob.getHeight()/imageKnob.getWidth(); // number of frames for vertical film strip
      const int frameIdx = (int)ceil(fractRotation * ((double)nFrames-1.0) ); // current index from 0 --> nFrames-1
-        
+
      const float radius = jmin (width / 2.0f, height / 2.0f) ;
      const float centreX = x + width * 0.5f;
      const float centreY = y + height * 0.5f;
      const float rx = centreX - radius - 1.0f;
      const float ry = centreY - radius - 1.0f;
-        
+
      g.drawImage(imageKnob, (int)rx, (int)ry, 2*(int)radius, 2*(int)radius, 0, frameIdx*imageKnob.getWidth(), imageKnob.getWidth(), imageKnob.getWidth());
 };
 
