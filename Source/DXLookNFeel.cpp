@@ -62,17 +62,17 @@ DXLookNFeel::DXLookNFeel() {
     REG_COLOUR(DirectoryContentsDisplayComponent::highlightColourId, fillColour);
     REG_COLOUR(DirectoryContentsDisplayComponent::textColourId, Colours::white);
     
-    imageKnob = ImageCache::getFromMemory(BinaryData::Knob_34x34_png, BinaryData::Knob_34x34_pngSize);
-    imageSwitch = ImageCache::getFromMemory(BinaryData::Switch_48x26_png, BinaryData::Switch_48x26_pngSize);
+    imageKnob = ImageCache::getFromMemory(BinaryData::Knob_68x68_png, BinaryData::Knob_68x68_pngSize); // 2x
+    imageSwitch = ImageCache::getFromMemory(BinaryData::Switch_96x52_png, BinaryData::Switch_96x52_pngSize); // 2x
     imageSwitchLighted = ImageCache::getFromMemory(BinaryData::SwitchLighted_48x26_png, BinaryData::SwitchLighted_48x26_pngSize);
-    imageSwitchOperator = ImageCache::getFromMemory(BinaryData::Switch_32x32_png, BinaryData::Switch_32x32_pngSize);
+    imageSwitchOperator = ImageCache::getFromMemory(BinaryData::Switch_64x64_png, BinaryData::Switch_64x64_pngSize); // 2x
     imageButton = ImageCache::getFromMemory(BinaryData::ButtonUnlabeled_50x30_png, BinaryData::ButtonUnlabeled_50x30_pngSize);
-    imageSlider = ImageCache::getFromMemory(BinaryData::Slider_26x26_png, BinaryData::Slider_26x26_pngSize);
-    imageScaling = ImageCache::getFromMemory(BinaryData::Scaling_36_26_png, BinaryData::Scaling_36_26_pngSize);;
-    imageLight = ImageCache::getFromMemory(BinaryData::Light_14x14_png, BinaryData::Light_14x14_pngSize);
+    imageSlider = ImageCache::getFromMemory(BinaryData::Slider_52x52_png, BinaryData::Slider_52x52_pngSize); // 2x
+    imageScaling = ImageCache::getFromMemory(BinaryData::Scaling_36_26_png, BinaryData::Scaling_36_26_pngSize); // 2x
+    imageLight = ImageCache::getFromMemory(BinaryData::Light_28x28_png, BinaryData::Light_28x28_pngSize); // 2x
     imageLFO = ImageCache::getFromMemory(BinaryData::LFO_36_26_png, BinaryData::LFO_36_26_pngSize);
-    imageOperator =  ImageCache::getFromMemory(BinaryData::OperatorEditor_287x218_png, BinaryData::OperatorEditor_287x218_pngSize);
-    imageGlobal = ImageCache::getFromMemory (BinaryData::GlobalEditor_864x144_png, BinaryData::GlobalEditor_864x144_pngSize);
+    imageOperator =  ImageCache::getFromMemory(BinaryData::OperatorEditor_574x436_png, BinaryData::OperatorEditor_574x436_pngSize); // 2x
+    imageGlobal = ImageCache::getFromMemory (BinaryData::GlobalEditor_1728x288_png, BinaryData::GlobalEditor_1728x288_pngSize); // 2x
 
     File dexedTheme = DexedAudioProcessor::dexedAppDir.getChildFile("DexedTheme.xml");
 
@@ -107,6 +107,7 @@ DXLookNFeel::DXLookNFeel() {
         }
     }
 
+    // TODO: THIS IS DEAD CODE. NOBODY IS USING THIS.
     forEachXmlChildElementWithTagName(*root, image, "image") {
         String name = image->getStringAttribute("id", "");
         String path = image->getStringAttribute("path", "");
@@ -163,6 +164,7 @@ Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {
 
 void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
      float rotaryStartAngle, float rotaryEndAngle,  Slider &slider ) {
+     TRACE("knob render");
      if ( imageKnob.isNull() ) {
          LookAndFeel_V3::drawRotarySlider(g, x, y, width, height, sliderPosProportional, rotaryStartAngle, rotaryEndAngle, slider);
          return;
@@ -171,13 +173,13 @@ void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int he
      const double fractRotation = (slider.getValue() - slider.getMinimum())  /   (slider.getMaximum() - slider.getMinimum()); //value between 0 and 1 for current amount of rotation
      const int nFrames = imageKnob.getHeight()/imageKnob.getWidth(); // number of frames for vertical film strip
      const int frameIdx = (int)ceil(fractRotation * ((double)nFrames-1.0) ); // current index from 0 --> nFrames-1
-        
+
      const float radius = jmin (width / 2.0f, height / 2.0f) ;
      const float centreX = x + width * 0.5f;
      const float centreY = y + height * 0.5f;
      const float rx = centreX - radius - 1.0f;
      const float ry = centreY - radius - 1.0f;
-        
+
      g.drawImage(imageKnob, (int)rx, (int)ry, 2*(int)radius, 2*(int)radius, 0, frameIdx*imageKnob.getWidth(), imageKnob.getWidth(), imageKnob.getWidth());
 };
 
@@ -198,7 +200,7 @@ void DXLookNFeel::drawToggleButton(Graphics& g, ToggleButton& button, bool isMou
         g.drawImage(imageSwitchLighted, 0, 0, 48, 26, 0, button.getToggleState() ? 0 : 26, 48, 26);
     }
     else
-        g.drawImage(imageSwitch, 0, 0, 48, 26, 0, button.getToggleState() ? 0 : 26, 48, 26);
+        g.drawImage(imageSwitch, 0, 0, 48, 26, 0, button.getToggleState() ? 0 : 52, 96, 52);
     
 }
 
@@ -234,7 +236,7 @@ void DXLookNFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int width, i
 
     int p = sliderPos - minSliderPos;
     p -= 6;
-    g.drawImage(imageSlider, p, 0, 26, 26, 0, 0, 26, 26);
+    g.drawImage(imageSlider, p, 0, 26, 26, 0, 0, 52, 52);
 }
 
 void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {

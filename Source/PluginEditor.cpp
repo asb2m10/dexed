@@ -175,7 +175,7 @@ void DexedAudioProcessorEditor::parmShow() {
 
     auto param = new ParamDialog();
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
-    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->dpiScaleFactor);
+    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getDpiScaleFactor());
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
     param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
                                 switch(which)
@@ -207,14 +207,16 @@ void DexedAudioProcessorEditor::parmShow() {
     auto generalCallback = [this](ParamDialog *param)
                                {
                                    int tpo;
-                                   bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &this->processor->dpiScaleFactor);
+                                   float scale = this->processor->getDpiScaleFactor();
+                                   bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &scale);
                                    this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
-                                   
-                                   this->setScaleFactor(this->processor->dpiScaleFactor);
+
+                                   this->processor->setDpiScaleFactor(scale);
+                                   param->setSize(710, 355);
                                    this->setSize(WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : 581));
                                    this->midiKeyboard.repaint();
-                                   
+
                                    if ( ret == false ) {
                                        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
                                    }

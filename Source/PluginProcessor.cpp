@@ -784,18 +784,18 @@ void DexedAudioProcessor::updateUI() {
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     static const uint8_t HIGH_DPI_THRESHOLD = 128;
-    
     AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
+    float scaleFactor = getDpiScaleFactor();
 
-    if ( dpiScaleFactor == -1 ) {
+    if ( scaleFactor == -1 ) {
         if ( Desktop::getInstance().getDisplays().getPrimaryDisplay()->dpi > HIGH_DPI_THRESHOLD ) {
-            dpiScaleFactor = 1.5;
+            scaleFactor = 1.5;
         } else {
-            dpiScaleFactor = 1.0;
+            scaleFactor = 1.0;
         }
     }
     
-    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * dpiScaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * dpiScaleFactor);
+    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * scaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * scaleFactor);
     bool displayFound = false;
     
     // validate if there is really a display that can show the complete plugin size
@@ -806,17 +806,23 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     
     // no display found, scaling to default value	
     if ( ! displayFound )
-        dpiScaleFactor = 1.0;
+        setDpiScaleFactor(1.0);
+    else 
+        setDpiScaleFactor(scaleFactor);
+    return editor;
+}
 
+void DexedAudioProcessor::setDpiScaleFactor(float factor) {
     // Currently the clap juce wrapper doesn't work with this deprecated scale factor direct set so
-    if ( is_clap )
-       dpiScaleFactor = 1.0;
+    if ( is_clap ) {
+        dpiScaleFactor = 1.0;
+        return;
+    }
+    dpiScaleFactor = factor;
     
     // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
     // plugin window.
-    editor->setScaleFactor(dpiScaleFactor);
-    
-    return editor;
+    Desktop::getInstance().setGlobalScaleFactor(dpiScaleFactor);
 }
 
 void DexedAudioProcessor::handleAsyncUpdate() {

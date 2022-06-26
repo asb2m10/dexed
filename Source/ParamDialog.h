@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.7
+  Created with Projucer version: 6.0.7
 
   ------------------------------------------------------------------------------
 
   The Projucer is part of the JUCE library.
-  Copyright (c) 2017 - ROLI Ltd.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
@@ -38,9 +38,9 @@
                                                                     //[/Comments]
 */
 class ParamDialog  : public Component,
-                     public Slider::Listener,
-                     public ComboBox::Listener,
-                     public Button::Listener
+                     public juce::Slider::Listener,
+                     public juce::ComboBox::Listener,
+                     public juce::Button::Listener
 {
 public:
     //==============================================================================
@@ -65,11 +65,11 @@ public:
     void setIsStandardTuning(bool s);
     //[/UserMethods]
 
-    void paint (Graphics& g) override;
+    void paint (juce::Graphics& g) override;
     void resized() override;
-    void sliderValueChanged (Slider* sliderThatWasMoved) override;
-    void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
-    void buttonClicked (Button* buttonThatWasClicked) override;
+    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
+    void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override;
+    void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
 
 
@@ -81,17 +81,17 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<Slider> pitchRangeDn;
-    std::unique_ptr<Slider> pitchStep;
-    std::unique_ptr<ComboBox> sysexIn;
-    std::unique_ptr<ComboBox> sysexOut;
-    std::unique_ptr<Slider> sysexChl;
-    std::unique_ptr<ComboBox> engineReso;
+    std::unique_ptr<juce::Slider> pitchRangeDn;
+    std::unique_ptr<juce::Slider> pitchStep;
+    std::unique_ptr<juce::ComboBox> sysexIn;
+    std::unique_ptr<juce::ComboBox> sysexOut;
+    std::unique_ptr<juce::Slider> sysexChl;
+    std::unique_ptr<juce::ComboBox> engineReso;
     std::unique_ptr<LightedToggleButton> showKeyboard;
-    std::unique_ptr<Slider> whlRange;
-    std::unique_ptr<Slider> ftRange;
-    std::unique_ptr<Slider> brRange;
-    std::unique_ptr<Slider> atRange;
+    std::unique_ptr<juce::Slider> whlRange;
+    std::unique_ptr<juce::Slider> ftRange;
+    std::unique_ptr<juce::Slider> brRange;
+    std::unique_ptr<juce::Slider> atRange;
     std::unique_ptr<LightedToggleButton> whlEg;
     std::unique_ptr<LightedToggleButton> ftEg;
     std::unique_ptr<LightedToggleButton> brEg;
@@ -104,16 +104,16 @@ private:
     std::unique_ptr<LightedToggleButton> ftPitch;
     std::unique_ptr<LightedToggleButton> brPitch;
     std::unique_ptr<LightedToggleButton> atPitch;
-    std::unique_ptr<TextButton> sclButton;
-    std::unique_ptr<TextButton> kbmButton;
-    std::unique_ptr<TextButton> showTunButton;
-    std::unique_ptr<TextButton> resetTuningButton;
+    std::unique_ptr<juce::TextButton> sclButton;
+    std::unique_ptr<juce::TextButton> kbmButton;
+    std::unique_ptr<juce::TextButton> showTunButton;
+    std::unique_ptr<juce::TextButton> resetTuningButton;
     std::unique_ptr<LightedToggleButton> transposeScale;
-    std::unique_ptr<Slider> mpePBRange;
+    std::unique_ptr<juce::Slider> mpePBRange;
     std::unique_ptr<LightedToggleButton> mpeEnabled;
-    std::unique_ptr<ImageButton> transposeHelp;
-    std::unique_ptr<Slider> pitchRangeUp;
-    std::unique_ptr<ComboBox> scalingFactor;
+    std::unique_ptr<juce::ImageButton> transposeHelp;
+    std::unique_ptr<juce::Slider> pitchRangeUp;
+    std::unique_ptr<juce::ComboBox> scalingFactor;
 
 
     //==============================================================================

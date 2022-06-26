@@ -128,7 +128,9 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     
     void unpackOpSwitch(char packOpValue);
     void packOpSwitch();
-    
+
+    float dpiScaleFactor = -1;
+
 public :
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
@@ -268,8 +270,10 @@ public :
     
     std::string currentSCLData = "";
     std::string currentKBMData = "";
-    
-    float dpiScaleFactor = -1;
+    void setDpiScaleFactor(float factor);
+    float getDpiScaleFactor() {
+        return dpiScaleFactor;
+    }    
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
