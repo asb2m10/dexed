@@ -164,7 +164,6 @@ Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {
 
 void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
      float rotaryStartAngle, float rotaryEndAngle,  Slider &slider ) {
-     TRACE("knob render");
      if ( imageKnob.isNull() ) {
          LookAndFeel_V3::drawRotarySlider(g, x, y, width, height, sliderPosProportional, rotaryStartAngle, rotaryEndAngle, slider);
          return;

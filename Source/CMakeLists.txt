@@ -13,7 +13,7 @@ endif()
 message(STATUS "Building Dexed in formats: ${DEXED_JUCE_FORMATS}")
 
 juce_add_plugin("${BaseTargetName}"
-        # VERSION ...                               # Set this if the plugin version is different to the project version
+        VERSION "1.0.0"   # FORCING THIS SINCE OLDER VERSION WILL NOT BE ABLE TO SYNC PLUGIN DATA. THIS WILL GET UPDATED ONCE 1.0 is released.
         ICON_BIG "../Resources/ui/dexedIcon.png"
         ICON_SMALL "../Resources/ui/dexedIcon.png"
         COMPANY_NAME "Digital Suburban"
@@ -86,7 +86,7 @@ target_compile_definitions(${BaseTargetName} PUBLIC
     JUCE_MODAL_LOOPS_PERMITTED=1 # needed for FileBrowser in CartManager
     JUCE_DISPLAY_SPLASH_SCREEN=0
     JUCE_REPORT_APP_USAGE=0
-    JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS=1
+    # JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS=1     # REVERT BACK SINCE THERE IS AN ISSUE WITH JUCE 7.0.0
 )
 
 target_link_libraries(${BaseTargetName} 
