@@ -210,9 +210,9 @@ void DexedAudioProcessorEditor::parmShow() {
                                    float scale = this->processor->getDpiScaleFactor();
                                    bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &scale);
                                    this->processor->setEngineType(tpo);
+                                   this->processor->setDpiScaleFactor(scale);
                                    this->processor->savePreference();
 
-                                   this->processor->setDpiScaleFactor(scale);
                                    param->setSize(710, 355);
                                    this->setSize(WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : 581));
                                    this->midiKeyboard.repaint();
