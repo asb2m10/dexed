@@ -95,6 +95,7 @@ jobs:
       with:
         name: windows-bin
         path: |
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/**        
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.exe
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
+
