@@ -1,70 +1,162 @@
-cmake_minimum_required(VERSION 3.16)
-project(Dexed VERSION 0.9.6)
+cmake_minimum_required(VERSION 3.15)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#Compile commands, useful for some IDEs like VS-Code
-set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+set(PROJECT_NAME "Dexed")
+set(VERSION "0.9.6")
+set(FORMATS "VST3" "AU" "Standalone")
 
-#Minimum MacOS target, set globally
+project(${PROJECT_NAME} VERSION ${VERSION})
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
-    set(CMAKE_OSX_DEPLOYMENT_TARGET 11.0 CACHE STRING "Minimum OS X deployment version" FORCE)
+set(JUCE_DIR "../JUCE")
+set(LIBS_DIR "./libs")
+set(SRC_DIR "./Source")
+set(RSC_DIR "./Resources")
 
-    #code signing to run on an iOS device:
-#    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer" CACHE STRING "" FORCE)
-#    set(CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "XXXXXXXXXX" CACHE STRING "" FORCE)
+add_subdirectory(${JUCE_DIR} "juce")
+
+if(WIN32 AND CMAKE_PLUGIN_IS_STANDALONE)
+    message(STATUS "Building for Windows...")
+    set(ASIO_DIR "sdk/asio")
+    if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ASIO_DIR})
+        set(BUILD_ASIO 1)
+    endif()
+endif()
+
+set(VST2_DIR "sdk/vst2")
+if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${VST2_DIR} AND NOT CMAKE_PLUGIN_IS_STANDALONE)
+    set(BUILD_VST2 1)
+    juce_set_vst2_sdk_path(${VST2_DIR})
+    list(APPEND FORMATS "VST")
+endif()
+
+juce_add_plugin(${PROJECT_NAME}
+    VERSION ${VERSION}
+    PLUGIN_NAME ${PROJECT_NAME}
+    DESCRIPTION "${PROJECT_NAME} FM Synth (Mod)"
+    COMPANY_NAME "Digital Suburban"
+    COMPANY_COPYRIGHT "Digital Suburban"
+    BUNDLE_ID "com.digital-suburban.dexed"
+    AAX_IDENTIFIER "com.digital-suburban.dexed"
+    AU_EXPORT_PREFIX "DexedAU"
+    PLUGIN_CODE "Dexd"
+    PLUGIN_MANUFACTURER_CODE "DGSB"
+    IS_SYNTH TRUE
+    NEEDS_MIDI_INPUT TRUE
+    NEEDS_MIDI_OUTPUT TRUE
+    ICON_BIG "${RSC_DIR}/ui/dexedIcon.png"
+    ICON_SMALL "${RSC_DIR}/ui/dexedIcon.png"
+    FORMATS ${FORMATS}
+)
+
+juce_generate_juce_header(${PROJECT_NAME})
+juce_add_module(${LIBS_DIR}/surgesynthteam_tuningui)
+add_subdirectory(${LIBS_DIR}/clap-juce-extensions)
+clap_juce_extensions_plugin(TARGET ${PROJECT_NAME}
+    CLAP_ID "com.digital-suburban.dexed"
+    CLAP_FEATURES instrument FM DX7
+)
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIBS_DIR}/MTS-ESP/Client)
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIBS_DIR}/tuning-library/include)
+
+target_compile_definitions(${PROJECT_NAME}
+  PUBLIC
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_MODAL_LOOPS_PERMITTED=1
+    JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_REPORT_APP_USAGE=0
+)
+
+target_sources(${PROJECT_NAME}
+  PRIVATE
+    "${SRC_DIR}/AlgoDisplay.cpp"
+    "${SRC_DIR}/CartManager.cpp"
+    "${SRC_DIR}/DXComponents.cpp"
+    "${SRC_DIR}/DXLookNFeel.cpp"
+    "${SRC_DIR}/EngineMkI.cpp"
+    "${SRC_DIR}/EngineOpl.cpp"
+    "${SRC_DIR}/GlobalEditor.cpp"
+    "${SRC_DIR}/OperatorEditor.cpp"
+    "${SRC_DIR}/ParamDialog.cpp"
+    "${SRC_DIR}/PluginData.cpp"
+    "${SRC_DIR}/PluginEditor.cpp"
+    "${SRC_DIR}/PluginFx.cpp"
+    "${SRC_DIR}/PluginParam.cpp"
+    "${SRC_DIR}/PluginProcessor.cpp"
+    "${SRC_DIR}/ProgramListBox.cpp"
+    "${SRC_DIR}/SysexComm.cpp"
+    "${SRC_DIR}/TuningShow.cpp"
+    "${SRC_DIR}/msfa/dx7note.cc"
+    "${SRC_DIR}/msfa/env.cc"
+    "${SRC_DIR}/msfa/exp2.cc"
+    "${SRC_DIR}/msfa/fm_core.cc"
+    "${SRC_DIR}/msfa/fm_op_kernel.cc"
+    "${SRC_DIR}/msfa/freqlut.cc"
+    "${SRC_DIR}/msfa/lfo.cc"
+    "${SRC_DIR}/msfa/pitchenv.cc"
+    "${SRC_DIR}/msfa/sin.cc"
+    "${SRC_DIR}/msfa/tuning.cc"
+)
+
+juce_add_binary_data(${PROJECT_NAME}_BinaryData
+  SOURCES
+    "${RSC_DIR}/builtin_pgm.zip"
+    "${RSC_DIR}/ui/ButtonUnlabeled_50x30.png"
+    "${RSC_DIR}/ui/GlobalEditor_864x144.png"
+    "${RSC_DIR}/ui/HelpButton.png"
+    "${RSC_DIR}/ui/HelpButton.svg"
+    "${RSC_DIR}/ui/Knob_34x34.png"
+    "${RSC_DIR}/ui/LFO_36_26.png"
+    "${RSC_DIR}/ui/Light_14x14.png"
+    "${RSC_DIR}/ui/Meter_140x8.png"
+    "${RSC_DIR}/ui/NotoSans-Bold.ttf"
+    "${RSC_DIR}/ui/NotoSans-Regular.ttf"
+    "${RSC_DIR}/ui/OperatorEditor_287x218.png"
+    "${RSC_DIR}/ui/Scaling_36_26.png"
+    "${RSC_DIR}/ui/Slider_26x26.png"
+    "${RSC_DIR}/ui/SwitchLighted_48x26.png"
+    "${RSC_DIR}/ui/Switch_32x32.png"
+    "${RSC_DIR}/ui/Switch_48x26.png"
+    "${RSC_DIR}/ui/dexed-logo.png"
+    "${RSC_DIR}/ui/dexedIcon.png"
+)
+
+if(BUILD_VST2)
+    message(STATUS "Adding VST2...")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_VST3_CAN_REPLACE_VST2=1)
 else()
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Minimum OS X deployment version" FORCE)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_VST3_CAN_REPLACE_VST2=0)
+endif(BUILD_VST2)
+
+if(BUILD_ASIO)
+    message(STATUS "Adding ASIO...")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE JUCE_ASIO=1)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${ASIO_DIR})
+endif(BUILD_ASIO)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    add_compile_options(-fPIC)
 endif()
 
-option(UniversalBinary "Build universal binary for mac" OFF)
-
-if (UniversalBinary)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE INTERNAL "")
-endif()
-
-#static linking in Windows
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
-# include JUCE *AFTER* the MSVC runtime and so on is set up
-set(DEXED_JUCE_PATH "${CMAKE_SOURCE_DIR}/libs/JUCE" CACHE STRING "Path to JUCE library source tree")
-add_subdirectory(${DEXED_JUCE_PATH} ${CMAKE_BINARY_DIR}/JUCE EXCLUDE_FROM_ALL)
-add_subdirectory(libs/clap-juce-extensions EXCLUDE_FROM_ALL)
-
-
-
-#Adds all the module sources so they appear correctly in the IDE
-set_property(GLOBAL PROPERTY USE_FOLDERS YES)
-option(JUCE_ENABLE_MODULE_SOURCE_GROUPS "Enable Module Source Groups" ON)
-
-#set any of these to "ON" if you want to build one of the juce examples
-#or extras (Projucer/AudioPluginHost, etc):
-option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
-option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
-
-add_subdirectory(libs)
-add_subdirectory(Resources)
-add_subdirectory(Source)
-
-# uncomment to enable warnings are errors,
-# suppress warnings (or remove when fixed)
-# or add -Wall, -Wextra or specific warnings as you see fit 
-if (APPLE)
-target_compile_options(${PROJECT_NAME} PUBLIC
-        #-Werror
-        #-Wno-deprecated-declarations
-        #-Wno-unused-value
-        )
-elseif(UNIX AND NOT APPLE)
-target_compile_options(${PROJECT_NAME} PUBLIC
-        #-Werror
-        -Wno-deprecated-declarations
-        -Wno-unused-value
-        )
-else()
-target_compile_options(${PROJECT_NAME} PUBLIC
-        #/WX # Warnings are errors
-        #/wd4996 # deprecated-declarations
-        # (I don't know all the windows warning numbers
-        #  replace cxxx with /wdxxx to supress them)
-        )
-endif()
+target_link_libraries(${PROJECT_NAME}
+  PRIVATE
+    ${PROJECT_NAME}_BinaryData
+    juce::juce_audio_basics
+    juce::juce_audio_devices
+    juce::juce_audio_formats
+    juce::juce_audio_plugin_client
+    juce::juce_audio_processors
+    juce::juce_audio_utils
+    juce::juce_core
+    juce::juce_data_structures
+    juce::juce_events
+    juce::juce_graphics
+    juce::juce_gui_basics
+    juce::juce_gui_extra
+    surgesynthteam_tuningui
+  PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_lto_flags
+    juce::juce_recommended_warning_flags
+)
