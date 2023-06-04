@@ -1,6 +1,11 @@
-Dexed - FM Plugin Synth
+Dexed - FM Plugin Synth (Mod)
 =======================
+Mod Changelog:
 
+* Simplified cmake build
+* Cleaned unused resources
+* LV2 support (Add "LV2" to `FORMATS` in CMakelists.txt to build)
+--------------------------
 
 Please see [Dexed User Website](https://asb2m10.github.io/dexed) for user and download information.
 
