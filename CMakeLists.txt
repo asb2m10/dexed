@@ -52,6 +52,7 @@ juce_add_plugin(${PROJECT_NAME}
     COMPANY_COPYRIGHT "Digital Suburban"
     BUNDLE_ID "com.digital-suburban.dexed"
     AAX_IDENTIFIER "com.digital-suburban.dexed"
+    LV2URI "https://dexed.digital-suburban.com"
     AU_EXPORT_PREFIX "DexedAU"
     PLUGIN_CODE "Dexd"
     PLUGIN_MANUFACTURER_CODE "DGSB"
