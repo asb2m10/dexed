@@ -8,10 +8,15 @@ set(FORMATS "VST3" "Standalone") # Standalone Unity VST VST3 AU AUv3 AAX LV2
 
 project(${PROJECT_NAME} VERSION ${VERSION})
 
-set(JUCE_DIR "../JUCE")
 set(LIBS_DIR "./libs")
 set(SRC_DIR "./Source")
-set(RSC_DIR "./Resources")
+set(RSC_DIR "./Resources/ui")
+
+if(DEFINED ENV{JUCE_PATH})
+    set(JUCE_DIR $ENV{JUCE_PATH}) # try %JUCE_PATH% env first
+else()
+    set(JUCE_DIR "${LIBS_DIR}/JUCE")
+endif()
 
 add_subdirectory(${JUCE_DIR} "juce")
 
@@ -59,8 +64,8 @@ juce_add_plugin(${PROJECT_NAME}
     IS_SYNTH TRUE
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT TRUE
-    ICON_BIG "${RSC_DIR}/ui/dexedIcon.png"
-    ICON_SMALL "${RSC_DIR}/ui/dexedIcon.png"
+    ICON_BIG "${RSC_DIR}/dexedIcon.png"
+    ICON_SMALL "${RSC_DIR}/dexedIcon.png"
     FORMATS ${FORMATS}
 )
 
@@ -112,29 +117,38 @@ target_sources(${PROJECT_NAME}
     "${SRC_DIR}/msfa/pitchenv.cc"
     "${SRC_DIR}/msfa/sin.cc"
     "${SRC_DIR}/msfa/tuning.cc"
+
+    "${LIBS_DIR}/MTS-ESP/Client/libMTSClient.cpp"
 )
 
 juce_add_binary_data(${PROJECT_NAME}_BinaryData
   SOURCES
-    "${RSC_DIR}/builtin_pgm.zip"
-    "${RSC_DIR}/ui/ButtonUnlabeled_50x30.png"
-    "${RSC_DIR}/ui/GlobalEditor_864x144.png"
-    "${RSC_DIR}/ui/HelpButton.png"
-    "${RSC_DIR}/ui/HelpButton.svg"
-    "${RSC_DIR}/ui/Knob_34x34.png"
-    "${RSC_DIR}/ui/LFO_36_26.png"
-    "${RSC_DIR}/ui/Light_14x14.png"
-    "${RSC_DIR}/ui/Meter_140x8.png"
-    "${RSC_DIR}/ui/NotoSans-Bold.ttf"
-    "${RSC_DIR}/ui/NotoSans-Regular.ttf"
-    "${RSC_DIR}/ui/OperatorEditor_287x218.png"
-    "${RSC_DIR}/ui/Scaling_36_26.png"
-    "${RSC_DIR}/ui/Slider_26x26.png"
-    "${RSC_DIR}/ui/SwitchLighted_48x26.png"
-    "${RSC_DIR}/ui/Switch_32x32.png"
-    "${RSC_DIR}/ui/Switch_48x26.png"
-    "${RSC_DIR}/ui/dexed-logo.png"
-    "${RSC_DIR}/ui/dexedIcon.png"
+    "${RSC_DIR}/../builtin_pgm.zip"
+    "${RSC_DIR}/ButtonUnlabeled_50x30.png"
+    "${RSC_DIR}/GlobalEditor_864x144.png"
+    "${RSC_DIR}/GlobalEditor_1728x288.png"
+    "${RSC_DIR}/HelpButton.png"
+    "${RSC_DIR}/HelpButton.svg"
+    "${RSC_DIR}/Knob_34x34.png"
+    "${RSC_DIR}/Knob_68x68.png"
+    "${RSC_DIR}/LFO_36_26.png"
+    "${RSC_DIR}/Light_14x14.png"
+    "${RSC_DIR}/Light_28x28.png"
+    "${RSC_DIR}/Meter_140x8.png"
+    "${RSC_DIR}/NotoSans-Bold.ttf"
+    "${RSC_DIR}/NotoSans-Regular.ttf"
+    "${RSC_DIR}/OperatorEditor_287x218.png"
+    "${RSC_DIR}/OperatorEditor_574x436.png"
+    "${RSC_DIR}/Scaling_36_26.png"
+    "${RSC_DIR}/Slider_26x26.png"
+    "${RSC_DIR}/Slider_52x52.png"
+    "${RSC_DIR}/SwitchLighted_48x26.png"
+    "${RSC_DIR}/Switch_32x32.png"
+    "${RSC_DIR}/Switch_48x26.png"
+    "${RSC_DIR}/Switch_64x64.png"
+    "${RSC_DIR}/Switch_96x52.png"
+    "${RSC_DIR}/dexed-logo.png"
+    "${RSC_DIR}/dexedIcon.png"
 )
 
 if(BUILD_VST2)
