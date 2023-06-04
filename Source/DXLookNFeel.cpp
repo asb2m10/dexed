@@ -106,56 +106,6 @@ DXLookNFeel::DXLookNFeel() {
             }
         }
     }
-
-    // TODO: THIS IS DEAD CODE. NOBODY IS USING THIS.
-    forEachXmlChildElementWithTagName(*root, image, "image") {
-        String name = image->getStringAttribute("id", "");
-        String path = image->getStringAttribute("path", "");
-        if ( name == "Knob_34x34.png" ) {
-            imageKnob = findImage(path);
-            continue;
-        }
-        if ( name == "Switch_48x26.png" ) {
-            imageSwitch = findImage(path);
-            continue;
-        }
-        if ( name == "SwitchLighted_48x26.png" ) {
-            imageSwitchLighted = findImage(path);
-            continue;
-        }
-        if ( name == "Switch_32x64.png" ) {
-            imageSwitchOperator = findImage(path);
-            continue;
-        }
-        if ( name == "ButtonUnlabeled_50x30.png" ) {
-            imageButton = findImage(path);
-            continue;
-        }
-        if ( name == "Slider_26x26.png" ) {
-            imageSlider = findImage(path);
-            continue;
-        }
-        if ( name == "Scaling_36_26.png" ) {
-            imageScaling = findImage(path);
-            continue;
-        }
-        if ( name == "Light_14x14.png" ) {
-            imageLight = findImage(path);
-            continue;
-        }
-        if ( name == "LFO_36_26.png" ) {
-            imageLFO = findImage(path);
-            continue;
-        }
-        if ( name == "OperatorEditor_287x218.png" ) {
-            imageOperator = findImage(path);
-            continue;
-        }
-        if ( name == "GlobalEditor_864x144.png" ) {
-            imageGlobal = findImage(path);
-            continue;
-        }
-    }
 }
 
 Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {

@@ -40,6 +40,6 @@ Example configuration
 ```xml
 <dexedTheme>
 	<colour id="TextEditor::textColourId" value="0xFFFF33FF"/>
-	<image id="Knob_34x34.png" path="myTheme/Knob_34x34.png"/>
+	<image id="Knob_68x68.png" path="myTheme/Knob_68x68.png"/>
 </dexedTheme>
 ```
