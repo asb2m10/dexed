@@ -85,25 +85,71 @@ DXLookNFeel::DXLookNFeel() {
 
     forEachXmlChildElementWithTagName(*root, colour, "colour") {
         String name = colour->getStringAttribute("id", "");
-        if ( name == "" )
-            continue;
+        if (name == "") continue;
         String value = colour->getStringAttribute("value", "");
-        if ( value == "" )
-            continue;
-        if ( value.length() < 8 ) 
-            continue;
+        if (value == "") continue;
+        if (value.length() < 8) continue;
         int conv = strtol(value.toRawUTF8(), NULL, 16);
-        if ( colourMap.contains(name) ) {
+        if (colourMap.contains(name)) {
             setColour(colourMap[name], Colour(conv));
         } else {
-            if ( name == "Dexed::backgroundId" ) {
+            if (name == "Dexed::backgroundId") {
                 background = Colour(conv);
                 continue;
             }
-            if ( name == "Dexed::fillColourId" ) {
+            if (name == "Dexed::fillColourId") {
                 fillColour = Colour(conv);
                 continue;
             }
+        }
+    }
+
+    forEachXmlChildElementWithTagName(*root, image, "image") {
+        String name = image->getStringAttribute("id", "");
+        String path = image->getStringAttribute("path", "");
+        if (name == "Knob_68x68.png") {
+            imageKnob = findImage(path);
+            continue;
+        }
+        if (name == "Switch_96x52.png") {
+            imageSwitch = findImage(path);
+            continue;
+        }
+        if (name == "SwitchLighted_48x26.png") {
+            imageSwitchLighted = findImage(path);
+            continue;
+        }
+        if (name == "Switch_64x64") {
+            imageSwitchOperator = findImage(path);
+            continue;
+        }
+        if (name == "ButtonUnlabeled_50x30.png") {
+            imageButton = findImage(path);
+            continue;
+        }
+        if (name == "Slider_52x52.png") {
+            imageSlider = findImage(path);
+            continue;
+        }
+        if (name == "Scaling_36_26.png") {
+            imageScaling = findImage(path);
+            continue;
+        }
+        if (name == "Light_28x28.png") {
+            imageLight = findImage(path);
+            continue;
+        }
+        if (name == "LFO_36_26.png") {
+            imageLFO = findImage(path);
+            continue;
+        }
+        if (name == "OperatorEditor_574x436.png") {
+            imageOperator = findImage(path);
+            continue;
+        }
+        if (name == "GlobalEditor_1728x288.png") {
+            imageGlobal = findImage(path);
+            continue;
         }
     }
 }
