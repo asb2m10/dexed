@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(PROJECT_NAME "Dexed")
 set(VERSION "0.9.6")
-set(FORMATS "VST3" "AU" "Standalone")
+set(FORMATS "VST3" "Standalone") # Standalone Unity VST VST3 AU AUv3 AAX LV2
 
 project(${PROJECT_NAME} VERSION ${VERSION})
 
@@ -15,14 +15,28 @@ set(RSC_DIR "./Resources")
 
 add_subdirectory(${JUCE_DIR} "juce")
 
+# for ASIO support create the following dir structure containing headers from https://www.steinberg.net/asiosdk
+# ├── sdk
+# │   └── asio
+# │       ├── asio.h
+# │       ├── asiosys.h
+# │       └── iasiodrv.h
 if(WIN32 AND CMAKE_PLUGIN_IS_STANDALONE)
     message(STATUS "Building for Windows...")
-    set(ASIO_DIR "sdk/asio")
+    set(ASIO_DIR "sdk/asio") 
     if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${ASIO_DIR})
         set(BUILD_ASIO 1)
     endif()
 endif()
 
+# for legacy VST support create the dir structure (due to licensing issues you need to find it by yourself)
+# ├── sdk
+# │   └── vst2
+# |       └──pluginterfaces
+# |          └──vst2.x
+# |             ├── aeffect.h
+# |             ├── aeffectx.h
+# |             └── vstfxstore.h
 set(VST2_DIR "sdk/vst2")
 if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/${VST2_DIR} AND NOT CMAKE_PLUGIN_IS_STANDALONE)
     set(BUILD_VST2 1)
@@ -50,14 +64,14 @@ juce_add_plugin(${PROJECT_NAME}
 )
 
 juce_generate_juce_header(${PROJECT_NAME})
-juce_add_module(${LIBS_DIR}/surgesynthteam_tuningui)
-add_subdirectory(${LIBS_DIR}/clap-juce-extensions)
+juce_add_module(${LIBS_DIR}/surgesynthteam_tuningui) # tuning ui lib
+add_subdirectory(${LIBS_DIR}/clap-juce-extensions) # "*.clap" format support
 clap_juce_extensions_plugin(TARGET ${PROJECT_NAME}
     CLAP_ID "com.digital-suburban.dexed"
     CLAP_FEATURES instrument FM DX7
 )
-target_include_directories(${PROJECT_NAME} PRIVATE ${LIBS_DIR}/MTS-ESP/Client)
-target_include_directories(${PROJECT_NAME} PRIVATE ${LIBS_DIR}/tuning-library/include)
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIBS_DIR}/MTS-ESP/Client) # microtuning lib
+target_include_directories(${PROJECT_NAME} PRIVATE ${LIBS_DIR}/tuning-library/include) # tuning lib
 
 target_compile_definitions(${PROJECT_NAME}
   PUBLIC
