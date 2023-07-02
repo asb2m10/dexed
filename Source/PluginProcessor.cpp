@@ -201,6 +201,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     const size_t HWY_NI = hn::Lanes(di);
     const hn::FixedTag<float, HWY_NI> dif; // must have same lane count
 
+    const hn::ScalableTag<float> df;
+    const size_t HWY_NF = hn::Lanes(df);
+
     juce::ScopedNoDenormals noDenormals;
 
     int numSamples = buffer.getNumSamples();
@@ -325,10 +328,23 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     fx.process(channelData, numSamples);
-    for(i=0; i<numSamples; i++) {
+    const double decayFactor = 0.99992;
+    const double vecDecayFactor = std::pow(decayFactor, HWY_NF);
+    for(i=0; i+HWY_NF<=numSamples; i+=HWY_NF) {
+        // this technique is not sample-accurate, but fast
+        const auto s = hn::GetLane(
+            hn::MaxOfLanes(df, hn::Abs(hn::Load(df, &channelData[i])))
+        );
+        if (s > vuSignal)
+            vuSignal = s;
+        else if (vuSignal > 0.001f)
+            vuSignal *= vecDecayFactor;
+        else
+            vuSignal = 0;
+    }
+    for(; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
         
-        const double decayFactor = 0.99992;
         if (s > vuSignal)
             vuSignal = s;
         else if (vuSignal > 0.001f)
