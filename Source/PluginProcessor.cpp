@@ -226,15 +226,16 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     float *channelData = buffer.getWritePointer(0);
   
     // flush first events
-    for (i=0; i < numSamples && i < extra_buf_size; i++) {
-        channelData[i] = extra_buf[i];
-    }
-    
+    i = std::min(numSamples, extra_buf_size);
+    std::memcpy(channelData, extra_buf, sizeof(float) * i);
+
     // remaining buffer is still to be processed
     if (extra_buf_size > numSamples) {
-        for (int j = 0; j < extra_buf_size - numSamples; j++) {
-            extra_buf[j] = extra_buf[j + numSamples];
-        }
+        std::memmove(
+            extra_buf,
+            &extra_buf[numSamples],
+            sizeof(float) * (extra_buf_size - numSamples)
+        );
         extra_buf_size -= numSamples;
         
         // flush the events, they will be process in the next cycle
@@ -311,13 +312,10 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                 }
             }
             
-            int jmax = numSamples - i;
-            for (int j = 0; j < N; ++j) {
-                if (j < jmax) {
-                    channelData[i + j] = sumbuf[j];
-                } else {
-                    extra_buf[j - jmax] = sumbuf[j];
-                }
+            const int jmax = numSamples - i;
+            std::memcpy(&channelData[i], sumbuf.get(), sizeof(float)*std::min(N, jmax));
+            if (jmax < N) {
+                std::memcpy(extra_buf, &sumbuf.get()[jmax], sizeof(float)*(N-jmax));
             }
         }
         extra_buf_size = i - numSamples;
