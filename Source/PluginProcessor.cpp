@@ -20,6 +20,7 @@
 
 #include <stdarg.h>
 #include <bitset>
+#include <cstring>
 
 #include <hwy/highway.h>
 #include <hwy/aligned_allocator.h>
@@ -246,10 +247,8 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                 processMidiMessage(midiMsg);
             }
             
-            for (int j = 0; j < N; ++j) {
-                audiobuf[j] = 0;
-                sumbuf[j] = 0;
-            }
+            std::memset(audiobuf.get(), 0, sizeof(int32_t)*N);
+            std::memset(sumbuf.get(), 0, sizeof(float)*N);
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
             
