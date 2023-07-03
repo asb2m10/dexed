@@ -26,6 +26,8 @@
 #include <cmath>
 #include <cstdlib>
 
+#include <hwy/highway.h>
+
 #include "msfa/sin.h"
 #include "msfa/exp2.h"
 
@@ -48,16 +50,19 @@
     const int32_t __attribute__ ((aligned(16))) zeros[N] = {0};
 #endif
 
+HWY_BEFORE_NAMESPACE();
+namespace hn = hwy::HWY_NAMESPACE;
+
 static const uint16_t NEGATIVE_BIT = 0x8000;
 static const uint16_t ENV_BITDEPTH = 14;
 
 static const uint16_t SINLOG_BITDEPTH = 10;
 static const uint16_t SINLOG_TABLESIZE = 1<<SINLOG_BITDEPTH;
-static uint16_t sinLogTable[SINLOG_TABLESIZE];
+static uint16_t sinLogTable[SINLOG_TABLESIZE+1];
 
 static const uint16_t SINEXP_BITDEPTH = 10;
 static const uint16_t SINEXP_TABLESIZE = 1<<SINEXP_BITDEPTH;
-static uint16_t sinExpTable[SINEXP_TABLESIZE];
+static uint16_t sinExpTable[SINEXP_TABLESIZE+1];
 
 const uint16_t ENV_MAX = 1<<ENV_BITDEPTH;
 
@@ -75,6 +80,56 @@ static inline uint16_t sinLog(uint16_t phi) {
         default:
             return sinLogTable[index ^ SINLOG_TABLEFILTER] | NEGATIVE_BIT;
     }
+}
+
+template<typename D>
+static inline hn::Vec<D> u16TableLookup(D d, hn::Vec<D> indexes, const uint16_t *table) {
+    static_assert(std::is_same<hn::TFromD<D>, uint16_t>::value);
+    using P = hn::Rebind<uint32_t, D>;
+    P p;
+    using PS = hn::Rebind<int32_t, D>;
+    PS ps;
+
+    return hn::TruncateTo(
+        d,
+        hn::GatherOffset(
+            p,
+            // the cast is a lie, but offset should be in bytes anyway
+            (uint32_t*)table,
+            hn::PromoteTo(
+                ps,
+                // byte indexes of short ints
+                indexes * hn::Set(d, 2)
+            )
+        )
+    );
+}
+
+template<typename D>
+static inline hn::Vec<D> sinLog(D d, hn::Vec<D> phi) {
+    static_assert(std::is_same<hn::TFromD<D>, uint16_t>::value);
+
+    const auto SINLOG_TABLEFILTER = hn::Set(d, SINLOG_TABLESIZE-1);
+
+    const auto switch_vals = phi & hn::Set(d, SINLOG_TABLESIZE * 3);
+    const auto sv_zero = switch_vals == hn::Set(d, 0);
+    const auto sv_sinlog_tablesize = switch_vals == hn::Set(d, SINLOG_TABLESIZE);
+    const auto sv_sinlog_tablesize2 = switch_vals == hn::Set(d, SINLOG_TABLESIZE * 2);
+
+    auto indexes = phi & SINLOG_TABLEFILTER;
+    indexes = hn::IfThenElse(
+        hn::Or(sv_zero, sv_sinlog_tablesize2),
+        indexes,
+        indexes ^ SINLOG_TABLEFILTER
+    );
+
+    const auto result = u16TableLookup(d, indexes, sinLogTable);
+
+    return hn::IfThenElse(
+        hn::Or(sv_zero, sv_sinlog_tablesize),
+        result,
+        result | hn::Set(d, NEGATIVE_BIT)
+    );
 }
 
 EngineMkI::EngineMkI() {
@@ -149,31 +204,108 @@ inline int32_t mkiSin(int32_t phase, uint16_t env) {
         return result << 13;
 }
 
+template<typename D, typename D2>
+inline hn::Vec<D2> mkiSin(
+    D2 d2,
+    hn::Vec<D2> phase,
+    D d,
+    hn::Vec<D> env
+) {
+    static_assert(std::is_same<hn::TFromD<D2>, int32_t>::value);
+    static_assert(std::is_same<hn::TFromD<D>, uint16_t>::value);
+
+    hn::Rebind<uint32_t, D2> du;
+
+    auto expVal = sinLog(
+        d,
+        hn::TruncateTo(d, hn::BitCast(du, hn::ShiftRight<22-SINLOG_BITDEPTH>(phase)))
+    ) + env;
+
+    const auto isSigned = (
+        hn::PromoteTo(du, expVal) & hn::Set(du, NEGATIVE_BIT)
+    ) != hn::Set(du, 0);
+    expVal = expVal & hn::Not(hn::Set(d, NEGATIVE_BIT));
+
+    const auto SINEXP_FILTER = hn::Set(d, 0x3FF);
+    auto result = hn::Set(d, 4096) + u16TableLookup(
+        d,
+        ( expVal & SINEXP_FILTER ) ^ SINEXP_FILTER,
+        sinExpTable
+    );
+
+    result = result >> hn::ShiftRight<10>(expVal);
+
+    auto presult = hn::PromoteTo(d2, result);
+    presult = hn::IfThenElse(
+        hn::RebindMask(d2, isSigned),
+        hn::Neg(presult) - hn::Set(d2, 1),
+        presult
+    );
+    return hn::ShiftLeft<13>(presult);
+}
+
 void EngineMkI::compute(int32_t *output, const int32_t *input,
                         int32_t phase0, int32_t freq,
                         int32_t gain1, int32_t gain2, bool add) {
+    const hn::CappedTag<int32_t, N> d;
+    const hn::Rebind<uint32_t, decltype(d)> du;
+    const hn::Rebind<uint16_t, decltype(d)> ds;
+    const size_t HWY_N = hn::Lanes(d);
+
     int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
     int32_t gain = gain1;
     int32_t phase = phase0;
     const int32_t *adder = add ? output : zeros;
-    
-    for (int i = 0; i < N; i++) {
+
+    int i = 0;
+    for (; i+HWY_N <= N; i+=HWY_N) {
+        const auto gains = hn::Set(d, gain) + (hn::Iota(d, 1) * hn::Set(d, dgain));
+        gain += dgain*HWY_N;
+        const auto phases = hn::Set(d, phase) + (hn::Iota(d, 0) * hn::Set(d, freq));
+        const auto y = mkiSin(
+            d,
+            phases + hn::LoadU(d, &input[i]),
+            ds,
+            hn::TruncateTo(ds, hn::BitCast(du, gains))
+        );
+        hn::StoreU(y + hn::LoadU(d, &adder[i]), d, &output[i]);
+        phase += freq*HWY_N;
+    }
+    for (; i < N; i++) {
         gain += dgain;
         int32_t y = mkiSin((phase+input[i]), gain);
         output[i] = y + adder[i];
         phase += freq;
     }
-    
 }
 
 void EngineMkI::compute_pure(int32_t *output, int32_t phase0, int32_t freq,
                              int32_t gain1, int32_t gain2, bool add) {
+    const hn::CappedTag<int32_t, N> d;
+    const hn::Rebind<uint32_t, decltype(d)> du;
+    const hn::Rebind<uint16_t, decltype(d)> ds;
+    const size_t HWY_N = hn::Lanes(d);
+
     int32_t dgain = (gain2 - gain1 + (N >> 1)) >> LG_N;
     int32_t gain = gain1;
     int32_t phase = phase0;
     const int32_t *adder = add ? output : zeros;
-    
-    for (int i = 0; i < N; i++) {
+
+    int i = 0;
+    for (; i+HWY_N <= N; i+=HWY_N) {
+        const auto gains = hn::Set(d, gain) + (hn::Iota(d, 1) * hn::Set(d, dgain));
+        gain += dgain*HWY_N;
+        const auto phases = hn::Set(d, phase) + (hn::Iota(d, 0) * hn::Set(d, freq));
+        const auto y = mkiSin(
+            d,
+            phases,
+            ds,
+            hn::TruncateTo(ds, hn::BitCast(du, gains))
+        );
+        hn::StoreU(y + hn::LoadU(d, &adder[i]), d, &output[i]);
+        phase += freq*HWY_N;
+    }
+    for (; i < N; i++) {
         gain += dgain;
         int32_t y = mkiSin(phase , gain);
         output[i] = y + adder[i];
