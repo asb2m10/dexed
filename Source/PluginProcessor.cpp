@@ -20,6 +20,10 @@
 
 #include <stdarg.h>
 #include <bitset>
+#include <cstring>
+
+#include <hwy/highway.h>
+#include <hwy/aligned_allocator.h>
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
@@ -33,6 +37,9 @@
 #include "msfa/pitchenv.h"
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
+
+HWY_BEFORE_NAMESPACE();
+namespace hn = hwy::HWY_NAMESPACE;
 
 #if JUCE_MSVC
     #pragma comment (lib, "kernel32.lib")
@@ -190,6 +197,12 @@ void DexedAudioProcessor::releaseResources() {
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
+    const hn::ScalableTag<int32_t> di;
+    const size_t HWY_NI = hn::Lanes(di);
+    const hn::FixedTag<float, HWY_NI> dif; // must have same lane count
+
+    const hn::ScalableTag<float> df;
+    const size_t HWY_NF = hn::Lanes(df);
 
     juce::ScopedNoDenormals noDenormals;
 
@@ -213,15 +226,16 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     float *channelData = buffer.getWritePointer(0);
   
     // flush first events
-    for (i=0; i < numSamples && i < extra_buf_size; i++) {
-        channelData[i] = extra_buf[i];
-    }
-    
+    i = std::min(numSamples, extra_buf_size);
+    std::memcpy(channelData, extra_buf, sizeof(float) * i);
+
     // remaining buffer is still to be processed
     if (extra_buf_size > numSamples) {
-        for (int j = 0; j < extra_buf_size - numSamples; j++) {
-            extra_buf[j] = extra_buf[j + numSamples];
-        }
+        std::memmove(
+            extra_buf,
+            &extra_buf[numSamples],
+            sizeof(float) * (extra_buf_size - numSamples)
+        );
         extra_buf_size -= numSamples;
         
         // flush the events, they will be process in the next cycle
@@ -229,18 +243,16 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             processMidiMessage(midiMsg);
         }
     } else {
+        const auto audiobuf = hwy::MakeUniqueAlignedArray<int32_t>(N);
+        const auto sumbuf = hwy::MakeUniqueAlignedArray<float>(N);
+
         for (; i < numSamples; i += N) {
-            AlignedBuf<int32_t, N> audiobuf;
-            float sumbuf[N];
-            
             while(getNextEvent(&it, i)) {
                 processMidiMessage(midiMsg);
             }
             
-            for (int j = 0; j < N; ++j) {
-                audiobuf.get()[j] = 0;
-                sumbuf[j] = 0;
-            }
+            std::memset(audiobuf.get(), 0, sizeof(int32_t)*N);
+            std::memset(sumbuf.get(), 0, sizeof(float)*N);
             int32_t lfovalue = lfo.getsample();
             int32_t lfodelay = lfo.getdelay();
             
@@ -255,8 +267,39 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                     
                     voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
                     
-                    for (int j=0; j < N; ++j) {
-                        int32_t val = audiobuf.get()[j];
+                    int j=0;
+                    for (; j+HWY_NI <= N; j+=HWY_NI) {
+                        auto val = hn::Load(di, &audiobuf[j]);
+
+                        val = hn::ShiftRight<4>(val);
+                        const auto clip_val = hn::IfThenElse(
+                            val < hn::Set(di, -(1 << 24)),
+                            hn::Set(di, 0x8000),
+                            hn::IfThenElse(
+                                hn::Or(
+                                    val > hn::Set(di, 1 << 24),
+                                    val == hn::Set(di, 1 << 24)
+                                ),
+                                hn::Set(di, 0x7fff),
+                                hn::ShiftRight<9>(val)
+                            )
+                        );
+                        auto f = hn::ConvertTo(dif, clip_val) * hn::Set(dif, 1./0x8000);
+                        f = hn::IfThenElse(
+                            f > hn::Set(dif, 1.),
+                            hn::Set(dif, 1.),
+                            hn::IfThenElse(
+                                f < hn::Set(dif, -1.),
+                                hn::Set(dif, -1.),
+                                f
+                            )
+                        );
+                        const auto s = hn::Load(dif, &sumbuf[j]);
+                        hn::Store(s + f, dif, &sumbuf[j]);
+                        hn::Store(hn::Set(di, 0), di, &audiobuf[j]);
+                    }
+                    for (; j < N; ++j) {
+                        int32_t val = audiobuf[j];
                         
                         val = val >> 4;
                         int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
@@ -264,18 +307,15 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                         if( f > 1 ) f = 1;
                         if( f < -1 ) f = -1;
                         sumbuf[j] += f;
-                        audiobuf.get()[j] = 0;
+                        audiobuf[j] = 0;
                     }
                 }
             }
             
-            int jmax = numSamples - i;
-            for (int j = 0; j < N; ++j) {
-                if (j < jmax) {
-                    channelData[i + j] = sumbuf[j];
-                } else {
-                    extra_buf[j - jmax] = sumbuf[j];
-                }
+            const int jmax = numSamples - i;
+            std::memcpy(&channelData[i], sumbuf.get(), sizeof(float)*std::min(N, jmax));
+            if (jmax < N) {
+                std::memcpy(extra_buf, &sumbuf.get()[jmax], sizeof(float)*(N-jmax));
             }
         }
         extra_buf_size = i - numSamples;
@@ -286,10 +326,23 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     fx.process(channelData, numSamples);
-    for(i=0; i<numSamples; i++) {
+    const double decayFactor = 0.99992;
+    const double vecDecayFactor = std::pow(decayFactor, HWY_NF);
+    for(i=0; i+HWY_NF<=numSamples; i+=HWY_NF) {
+        // this technique is not sample-accurate, but fast
+        const auto s = hn::GetLane(
+            hn::MaxOfLanes(df, hn::Abs(hn::Load(df, &channelData[i])))
+        );
+        if (s > vuSignal)
+            vuSignal = s;
+        else if (vuSignal > 0.001f)
+            vuSignal *= vecDecayFactor;
+        else
+            vuSignal = 0;
+    }
+    for(; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
         
-        const double decayFactor = 0.99992;
         if (s > vuSignal)
             vuSignal = s;
         else if (vuSignal > 0.001f)

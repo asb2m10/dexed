@@ -103,6 +103,7 @@ PRIVATE
     juce::juce_graphics
     juce::juce_gui_basics
     juce::juce_gui_extra
+    hwy::hwy
     surgesynthteam_tuningui
     tuning-library
     DexedResources
