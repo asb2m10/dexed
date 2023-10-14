@@ -21,17 +21,17 @@ jobs:
         sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev ccache xvfb libjack-dev
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
         sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
-        
-    - uses: actions/checkout@v2
+
+    - uses: actions/checkout@v3
       with:
          submodules: recursive
-         
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
-  
+
     - name: Show
       run: ls -lR ${{github.workspace}}/build
 
@@ -39,19 +39,19 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: linux-bin
-        path: |        
+        path: |
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
 
   build-macos:
-    runs-on: macos-10.15
+    runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
          submodules: recursive
-         
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
@@ -63,7 +63,7 @@ jobs:
 
     - name: Upload
       uses: actions/upload-artifact@v3
-      with: 
+      with:
         name: macos-bin
         path: |
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
@@ -75,10 +75,10 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
          submodules: recursive
-         
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
@@ -95,7 +95,7 @@ jobs:
       with:
         name: windows-bin
         path: |
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/**        
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/**
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
 
