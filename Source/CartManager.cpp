@@ -342,6 +342,7 @@ void CartManager::initialFocus() {
 }
 
 bool CartManager::keyPressed(const KeyPress& key, Component* originatingComponent) {
+    // Keycode 13 is enter.
     if ( key.getKeyCode() == 13 ) {
         File file = cartBrowser->getSelectedFile();
         if ( file.isDirectory() )

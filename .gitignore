@@ -8,6 +8,8 @@ Builds/VisualStudio2017/
 .vs/
 *.exe
 
+.vscode
+
 JuceLibraryCode/
 Builds/
 assets/
