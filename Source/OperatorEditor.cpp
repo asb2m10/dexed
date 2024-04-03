@@ -150,7 +150,7 @@ OperatorEditor::OperatorEditor ()
     opCoarse->setBounds (43, 24, 34, 34);
 
     khzDisplay.reset (new juce::Label ("khz",
-                                       TRANS("1,000 kHz")));
+                                       translate("1,000 kHz")));
     addAndMakeVisible (khzDisplay.get());
     khzDisplay->setFont (juce::Font (12.60f, juce::Font::plain).withTypefaceStyle ("Regular"));
     khzDisplay->setJustificationType (juce::Justification::centred);
@@ -180,7 +180,7 @@ OperatorEditor::OperatorEditor ()
 
     sclLeftLevel.reset (new juce::Slider ("sclLeftLevel"));
     addAndMakeVisible (sclLeftLevel.get());
-    sclLeftLevel->setTooltip (TRANS("Keyboard Scale Level Left Depth "));
+    sclLeftLevel->setTooltip (translate("Keyboard Scale Level Left Depth "));
     sclLeftLevel->setRange (0, 99, 1);
     sclLeftLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     sclLeftLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -190,7 +190,7 @@ OperatorEditor::OperatorEditor ()
 
     sclRightLevel.reset (new juce::Slider ("sclRightLevel"));
     addAndMakeVisible (sclRightLevel.get());
-    sclRightLevel->setTooltip (TRANS("Keyboard Scale Level Right Depth "));
+    sclRightLevel->setTooltip (translate("Keyboard Scale Level Right Depth "));
     sclRightLevel->setRange (0, 99, 1);
     sclRightLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     sclRightLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -200,7 +200,7 @@ OperatorEditor::OperatorEditor ()
 
     sclLvlBrkPt.reset (new juce::Slider ("sclLvlBrkPt"));
     addAndMakeVisible (sclLvlBrkPt.get());
-    sclLvlBrkPt->setTooltip (TRANS("Scale Level Breakpoint"));
+    sclLvlBrkPt->setTooltip (translate("Scale Level Breakpoint"));
     sclLvlBrkPt->setRange (0, 99, 1);
     sclLvlBrkPt->setSliderStyle (juce::Slider::LinearHorizontal);
     sclLvlBrkPt->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -210,7 +210,7 @@ OperatorEditor::OperatorEditor ()
 
     sclRateScaling.reset (new juce::Slider ("sclRateScaling"));
     addAndMakeVisible (sclRateScaling.get());
-    sclRateScaling->setTooltip (TRANS("Keyboard Rate Scaling"));
+    sclRateScaling->setTooltip (translate("Keyboard Rate Scaling"));
     sclRateScaling->setRange (0, 7, 1);
     sclRateScaling->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     sclRateScaling->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);

@@ -324,28 +324,28 @@ GlobalEditor::GlobalEditor ()
 
     initButton.reset (new juce::TextButton ("initButton"));
     addAndMakeVisible (initButton.get());
-    initButton->setButtonText (TRANS("INIT"));
+    initButton->setButtonText (translate("INIT"));
     initButton->addListener (this);
 
     initButton->setBounds (100, 111, 50, 30);
 
     parmButton.reset (new juce::TextButton ("parmButton"));
     addAndMakeVisible (parmButton.get());
-    parmButton->setButtonText (TRANS("PARM"));
+    parmButton->setButtonText (translate("PARM"));
     parmButton->addListener (this);
 
     parmButton->setBounds (52, 111, 50, 30);
 
     cartButton.reset (new juce::TextButton ("cartButton"));
     addAndMakeVisible (cartButton.get());
-    cartButton->setButtonText (TRANS("CART"));
+    cartButton->setButtonText (translate("CART"));
     cartButton->addListener (this);
 
     cartButton->setBounds (3, 111, 50, 30);
 
     storeButton.reset (new juce::TextButton ("storeButton"));
     addAndMakeVisible (storeButton.get());
-    storeButton->setButtonText (TRANS("STORE"));
+    storeButton->setButtonText (translate("STORE"));
     storeButton->addListener (this);
 
     storeButton->setBounds (270, 109, 50, 30);

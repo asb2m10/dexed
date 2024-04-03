@@ -8,6 +8,7 @@
 #include <sstream>
 #include <vector>
 
+#include <juce_gui_basics/juce_gui_basics.h>
 
 struct StandardTuning : public TuningState {
     StandardTuning() {
@@ -55,25 +56,91 @@ std::shared_ptr<TuningState> createStandardTuning()
 
 std::shared_ptr<TuningState> createTuningFromSCLData( const std::string &scl )
 {
-    auto s = Tunings::parseSCLData(scl);
+    Tunings::Scale s;
+    try {
+        s = Tunings::parseSCLData(scl);
+    } catch (const std::exception& e) {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon,
+            "Error parsing SCL data for SCL tuning",
+            e.what(),
+            "OK");
+        return nullptr;
+    }
+
     auto res = std::make_shared<SCLAndKBMTuningState>();
-    res->tuning = Tunings::Tuning( s );
+    try {
+        res->tuning = Tunings::Tuning(s);
+    } catch (const std::exception& e) {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon,
+            "Error creating tuning for SCL tuning",
+            e.what(),
+            "OK");
+        res = nullptr;
+    }
+
     return res;
 }
 
 std::shared_ptr<TuningState> createTuningFromKBMData( const std::string &kbm )
 {
-    auto k = Tunings::parseKBMData(kbm);
+    Tunings::KeyboardMapping k;
+    try {
+        k = Tunings::parseKBMData(kbm);        
+    } catch (const std::exception& e) {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon,
+            "Error parsing KBM data for KBM tuning",
+            e.what(),
+            "OK");
+        return nullptr;
+    }
+
     auto res = std::make_shared<SCLAndKBMTuningState>();
-    res->tuning = Tunings::Tuning( k );
+    try {
+        res->tuning = Tunings::Tuning(k);
+    } catch (const std::exception& e) {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon,
+            "Error creating tuning for KBM tuning",
+            e.what(),
+            "OK");
+        res = nullptr;
+    }
+
     return res;
 }
 
 std::shared_ptr<TuningState> createTuningFromSCLAndKBMData( const std::string &sclData, const std::string &kbmData )
 {
-    auto s = Tunings::parseSCLData(sclData);
-    auto k = Tunings::parseKBMData(kbmData);
+    Tunings::Scale s;
+    try {
+        s = Tunings::parseSCLData(sclData);
+    } catch (const std::exception& e) {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon,
+            "Error parsing SCL data for SCL/KBM tuning",
+            e.what(),
+            "OK");
+        return nullptr;
+    }
+
+    Tunings::KeyboardMapping k;
+    try {
+        k = Tunings::parseKBMData(kbmData);        
+    } catch (const std::exception& e) {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon,
+            "Error parsing KBM data for SCL/KBM tuning",
+            e.what(),
+            "OK");
+        return nullptr;
+    }
+    
     auto res = std::make_shared<SCLAndKBMTuningState>();
-    res->tuning = Tunings::Tuning( s, k );
+    try {
+        res->tuning = Tunings::Tuning(s, k);
+    } catch (const std::exception& e) {
+        juce::AlertWindow::showMessageBoxAsync(juce::AlertWindow::AlertIconType::WarningIcon,
+            "Error creating tuning for SCL/KBM tuning",
+            e.what(),
+            "OK");
+        res = nullptr;
+    }
     return res;
 }
