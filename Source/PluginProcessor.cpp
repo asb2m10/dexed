@@ -882,7 +882,16 @@ void DexedAudioProcessor::applySCLTuning() {
         if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
             std::string msg;
             msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File too big!", msg);
+            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
+            continue;
+        }
+
+        // enforce to select non-empty file
+        // TODO: check, whether zero sized files may occur indeed here; if not, delete this if-statement, please
+        if (s.getSize() == 0) {
+            std::string msg;
+            msg = "File is empty.";
+            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
             continue;
         }
 
@@ -949,7 +958,16 @@ void DexedAudioProcessor::applyKBMMapping() {
         if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
             std::string msg;
             msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File too big!", msg);
+            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
+            continue;
+        }
+
+        // enforce to select non-empty file
+        // TODO: check, whether zero sized files may occur indeed here; if not, delete this if-statement, please
+        if (s.getSize() == 0) {
+            std::string msg;
+            msg = "File is empty.";
+            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
             continue;
         }
 
