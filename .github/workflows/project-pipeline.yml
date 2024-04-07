@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Debug
-
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -90,10 +86,10 @@ jobs:
       with:
         name: macos-bin
         path: |
-          ${{github.workspace}}/build/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
-          ${{github.workspace}}/build/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
-          ${{github.workspace}}/build/*_artefacts/${{env.BUILD_TYPE}}/AU/*.component/**
-          ${{github.workspace}}/build/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.app/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/AU/*.component/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.app/**
 
   build-windows:
     runs-on: windows-latest
@@ -122,8 +118,8 @@ jobs:
           cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
 
     - name: Show
-      shell: bash
-      run: ls -lR ${{github.workspace}}/build
+      shell: cmd
+      run: dir /s ${{github.workspace}}\build
 
     - name: Upload
       uses: actions/upload-artifact@v4
