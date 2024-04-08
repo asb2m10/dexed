@@ -63,26 +63,35 @@ public:
 class AboutBox : public DialogWindow {
 public:
     Image logo_png;
-    HyperlinkButton dexed;
-    HyperlinkButton surge;
+    juce::ScopedPointer<juce::HyperlinkButton> dexed; // changed to ScopedPointer
+    juce::ScopedPointer<juce::HyperlinkButton> surge; // changed to ScopedPointer
 
-    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
-            dexed("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/")),
-            surge("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")) {
+    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true) {
         setUsingNativeTitleBar(false);
         setAlwaysOnTop(true);
         logo_png = ImageCache::getFromMemory(BinaryData::dexedlogo_png, BinaryData::dexedlogo_pngSize);
-        setSize(logo_png.getWidth()+ 8, 500);
+        setSize(logo_png.getWidth() + 8, 500);
         centreAroundComponent(parent, getWidth(), getHeight());
 
-        dexed.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        dexed.setJustificationType(Justification::left);
-        dexed.setBounds(18, 433, getWidth() - 36, 30);
-        addAndMakeVisible(&dexed);
-        surge.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        surge.setJustificationType(Justification::left);
-        surge.setBounds(18, 458, getWidth() - 36, 30);
-        addAndMakeVisible(&surge);
+        // initialize ''dexed'' and ''surge'' (ScopedPointers) here
+        dexed = new juce::HyperlinkButton("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"));
+        surge = new juce::HyperlinkButton("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/"));
+
+        dexed->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
+        dexed->setJustificationType(Justification::left);
+        dexed->setBounds(18, 433, getWidth() - 36, 30);
+
+        surge->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
+        surge->setJustificationType(Justification::left);
+        surge->setBounds(18, 458, getWidth() - 36, 30);
+        
+        // create a new Component to hold ''dexed'' and ''surge'' as subcomponents
+        // and set this holder Component as the content component of the DialogWindow
+        Component* holder = new Component();
+        holder->setSize(getWidth(), getHeight());
+        holder->addAndMakeVisible(dexed);
+        holder->addAndMakeVisible(surge);        
+        setContentOwned(holder, true);  // TODO: ''setContentComponent(holder, true, true);'' also worked; which is the better?
     }
 
     void closeButtonPressed() {
