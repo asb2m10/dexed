@@ -110,15 +110,13 @@ jobs:
         else
             echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
             echo "BUILD_VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
-            echo "CMAKE_CXX_FLAGS='-D DEXED_ID=\"$BUILD_VERSION\"'" >> "$GITHUB_ENV"
-
         fi
         echo "BUILD PARM =========="
         cat $GITHUB_ENV
 
     - name: Build
       run: |
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_FLAGS=-DDEXED_ID=${{ env.BUILD_VERSION }}"
           cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
 
     - name: Show

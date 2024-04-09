@@ -96,7 +96,7 @@ public:
         g.setFont(20);
         g.setColour(Colour(0xFFFFFFFF));
         const char *credits = "Version " DEXED_VERSION " build date: " __DATE__ "\n"
-                            "This software is released under the GPL V3.\n\n"
+                            "This software is released under the GPL V3\n\n"
                             "DSP Engine: orignal project (msfa) Raph Levin, enhancements Pascal Gauthier\n"
                             "UI Programming: Pascal Gauthier\n"
                             "UI Design: AZur Studio\n\n"
