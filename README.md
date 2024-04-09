@@ -19,7 +19,7 @@ in the source folder) stays on the Apache 2.0 license to able to collaborate bet
 Dexed Forks
 -----------
  * [MiniDexed](https://github.com/probonopd/MiniDexed) Run a DX7 bare metal Raspberry Pi
- * [SIMD-optimized](https://github.com/risicle/dexed/tree/ris-highway) SIMD optimized version with [highway](https://github.com/google/highway/tree/master)
+ * [SIMD-optimized](https://github.com/risicle/dexed/tree/ris-highway) CPU optimized version with [highway](https://github.com/google/highway/tree/master)
 
 Changelog
 ---------
