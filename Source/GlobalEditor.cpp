@@ -63,19 +63,18 @@ public:
 class AboutBox : public DialogWindow {
 public:
     Image logo_png;
-    juce::ScopedPointer<juce::HyperlinkButton> dexed; // changed to ScopedPointer
-    juce::ScopedPointer<juce::HyperlinkButton> surge; // changed to ScopedPointer
+    std::unique_ptr<juce::HyperlinkButton> dexed; // changed to std::unique_ptr from juce::ScopedPointer
+    std::unique_ptr<juce::HyperlinkButton> surge; // changed to std__unique_ptr from juce::ScopedPointer
 
-    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true) {
+    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
+        dexed(std::make_unique<juce::HyperlinkButton>("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"))),
+        surge(std::make_unique<juce::HyperlinkButton>("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")))
+    {
         setUsingNativeTitleBar(false);
         setAlwaysOnTop(true);
         logo_png = ImageCache::getFromMemory(BinaryData::dexedlogo_png, BinaryData::dexedlogo_pngSize);
         setSize(logo_png.getWidth() + 8, 500);
         centreAroundComponent(parent, getWidth(), getHeight());
-
-        // initialize ''dexed'' and ''surge'' (ScopedPointers) here
-        dexed = new juce::HyperlinkButton("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"));
-        surge = new juce::HyperlinkButton("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/"));
 
         dexed->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
         dexed->setJustificationType(Justification::left);
@@ -89,8 +88,8 @@ public:
         // and set this holder Component as the content component of the DialogWindow
         Component* holder = new Component();
         holder->setSize(getWidth(), getHeight());
-        holder->addAndMakeVisible(dexed);
-        holder->addAndMakeVisible(surge);        
+        holder->addAndMakeVisible((juce::Component*)dexed.get());
+        holder->addAndMakeVisible((juce::Component*)surge.get());
         setContentOwned(holder, true);  // TODO: ''setContentComponent(holder, true, true);'' also worked; which is the better?
     }
 
