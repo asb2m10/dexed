@@ -9,89 +9,89 @@ on:
     branches: [ master ]
 
 jobs:
-  # build-linux:
-  #   runs-on: ubuntu-latest
+  build-linux:
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #   - name: Install Dexed Dependencies
-  #     if: runner.os == 'Linux'
-  #     run: |
-  #       sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev ccache xvfb libjack-dev
-  #       sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
-  #       sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
+    steps:
+    - name: Install Dexed Dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev ccache xvfb libjack-dev
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
 
-  #   - uses: actions/checkout@v4
-  #     with:
-  #        submodules: recursive
+    - uses: actions/checkout@v4
+      with:
+         submodules: recursive
 
-  #   - name: Set build type
-  #     shell: bash
-  #     run: |
-  #       if [ "$GITHUB_REF_TYPE" == "tag" ]; then
-  #           echo "BUILD_TYPE=Release" >> "$GITHUB_ENV"
-  #           echo "BUILD_VERSION=${GITHUB_REF_NAME:1}" >> "$GITHUB_ENV"
-  #       else
-  #           echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
-  #           echo "BUILD_VERSION=DEVBUILD" >> "$GITHUB_ENV"
-  #       fi
-  #       echo "BUILD PARM =========="
-  #       cat $GITHUB_ENV
+    - name: Set build type
+      shell: bash
+      run: |
+        if [ "$GITHUB_REF_TYPE" == "tag" ]; then
+            echo "BUILD_TYPE=Release" >> "$GITHUB_ENV"
+            echo "BUILD_VERSION=${GITHUB_REF_NAME:1}" >> "$GITHUB_ENV"
+        else
+            echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
+            echo "BUILD_VERSION=DEVBUILD" >> "$GITHUB_ENV"
+        fi
+        echo "BUILD PARM =========="
+        cat $GITHUB_ENV
 
-  #   - name: Build
-  #     run: |
-  #         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DDEXED_ID=${{ env.BUILD_VERSION }}
-  #         cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
+    - name: Build
+      run: |
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_FLAGS=-DDEXED_ID=${{ env.BUILD_VERSION }}
+        cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
 
-  #   - name: Show
-  #     run: ls -lR ${{github.workspace}}/build
+    - name: Show
+      run: ls -lR ${{github.workspace}}/build
 
-  #   - name: Upload
-  #     uses: actions/upload-artifact@v4
-  #     with:
-  #       name: linux-bin
-  #       path: |
-  #         ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
-  #         ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
-  #         ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: linux-bin
+        path: |
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
 
-  # build-macos:
-  #   runs-on: macos-latest
+  build-macos:
+    runs-on: macos-latest
 
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #     with:
-  #        submodules: recursive
+    steps:
+    - uses: actions/checkout@v4
+      with:
+         submodules: recursive
 
-  #   - name: Set build type
-  #     shell: bash
-  #     run: |
-  #       if [ "$GITHUB_REF_TYPE" == "tag" ]; then
-  #           echo "BUILD_TYPE=Release" >> "$GITHUB_ENV"
-  #           echo "BUILD_VERSION=${GITHUB_REF_NAME:1}" >> "$GITHUB_ENV"
-  #       else
-  #           echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
-  #           echo "BUILD_VERSION=DEVBUILD" >> "$GITHUB_ENV"
-  #       fi
-  #       echo "BUILD PARM =========="
-  #       cat $GITHUB_ENV
+    - name: Set build type
+      shell: bash
+      run: |
+        if [ "$GITHUB_REF_TYPE" == "tag" ]; then
+            echo "BUILD_TYPE=Release" >> "$GITHUB_ENV"
+            echo "BUILD_VERSION=${GITHUB_REF_NAME:1}" >> "$GITHUB_ENV"
+        else
+            echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
+            echo "BUILD_VERSION=DEVBUILD" >> "$GITHUB_ENV"
+        fi
+        echo "BUILD PARM =========="
+        cat $GITHUB_ENV
 
-  #   - name: Build
-  #     run: |
-  #         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DDEXED_ID=${{ env.BUILD_VERSION }}
-  #         cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
+    - name: Build
+      run: |
+        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_FLAGS=-DDEXED_ID=${{ env.BUILD_VERSION }}
+        cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
 
-  #   - name: Show
-  #     run: ls -lR ${{github.workspace}}/build
+    - name: Show
+      run: ls -lR ${{github.workspace}}/build
 
-  #   - name: Upload
-  #     uses: actions/upload-artifact@v4
-  #     with:
-  #       name: macos-bin
-  #       path: |
-  #         ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
-  #         ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
-  #         ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/AU/*.component/**
-  #         ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.app/**
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-bin
+        path: |
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/AU/*.component/**
+          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.app/**
 
   build-windows:
     runs-on: windows-latest
