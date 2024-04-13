@@ -35,9 +35,9 @@ TuningShow::TuningShow ()
     tabbedComponent.reset (new TabbedComponent (TabbedButtonBar::TabsAtTop));
     addAndMakeVisible (tabbedComponent.get());
     tabbedComponent->setTabBarDepth (30);
-    tabbedComponent->addTab (TRANS("Tuning"), Colours::lightgrey, new TableListBox(), true);
-    tabbedComponent->addTab (TRANS("SCL"), Colours::lightgrey, new TextEditor(), true);
-    tabbedComponent->addTab (TRANS("KBM"), Colours::lightgrey, new TextEditor(), true);
+    tabbedComponent->addTab (translate("Tuning"), Colours::lightgrey, new TableListBox(), true, 0);
+    tabbedComponent->addTab (translate("SCL"), Colours::lightgrey, new TextEditor(), true, 1);
+    tabbedComponent->addTab (translate("KBM"), Colours::lightgrey, new TextEditor(), true, 2);
     tabbedComponent->setCurrentTabIndex (0);
 
     tabbedComponent->setBounds (0, 0, 500, 400);
@@ -54,6 +54,11 @@ TuningShow::TuningShow ()
     kbmt = dynamic_cast<TextEditor*>( tabbedComponent->getTabContentComponent(2) );
     sclt->setReadOnly(true);
     kbmt->setReadOnly(true);
+
+    sclt->setMultiLine(true);
+    sclt->setScrollbarsShown(true);
+    kbmt->setMultiLine(true);
+    kbmt->setScrollbarsShown(true);
 
     table = dynamic_cast<TableListBox*>( tabbedComponent->getTabContentComponent(0) );
 

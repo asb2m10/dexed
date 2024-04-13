@@ -432,12 +432,67 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
 {
     if( files.size() != 1 ) return;
     auto fn = files[0];
-    if( fn.endsWithIgnoreCase( ".scl" ) )
-    {
-        processor->applySCLTuning( File( fn ) );
+    try {
+        std::ifstream in(fn.toStdString(), std::ifstream::ate | std::ifstream::binary);
+        std::ifstream::pos_type filesize = in.tellg();
+        if (fn.endsWithIgnoreCase(".scl"))
+        {
+            if (filesize == 0) {
+                AlertWindow::showMessageBox(
+                    AlertWindow::WarningIcon,
+                    "File size error!",
+                    "File \'" + fn.toStdString() + "\' is empty."
+                );
+            }
+            else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
+                AlertWindow::showMessageBox(
+                    AlertWindow::WarningIcon,
+                    "File size error!",
+                    "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit ("+std::to_string(MAX_SCL_KBM_FILE_SIZE)+")."
+                );
+            }
+            else {
+                processor->applySCLTuning(File(fn));
+            }
+        }
+        if (fn.endsWithIgnoreCase(".kbm"))
+        {
+            if (filesize == 0) {
+                AlertWindow::showMessageBox(
+                    AlertWindow::WarningIcon,
+                    "File size error!",
+                    "File \'" + fn.toStdString() + "\' is empty."
+                );
+            }
+            else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
+                AlertWindow::showMessageBox(
+                    AlertWindow::WarningIcon,
+                    "File size error!",
+                    "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit (" + std::to_string(MAX_SCL_KBM_FILE_SIZE) + ")."
+                );
+            }
+            else {
+                processor->applyKBMMapping(File(fn));
+            }
+        }
     }
-    if( fn.endsWithIgnoreCase( ".kbm" ) )
-    {
-        processor->applyKBMMapping( File( fn ) );
+    catch (const std::ios_base::failure& ex) {
+        AlertWindow::showMessageBox(
+            AlertWindow::WarningIcon, 
+            "I/O error!", 
+            "Related to file \'" + fn.toStdString() + "\', an exception (std::ios_base::failure) occured: " + ex.what()
+        );
     }
+    catch (std::bad_alloc& ex) {
+        AlertWindow::showMessageBox(
+            AlertWindow::WarningIcon, 
+            "I/O error!", 
+            "Related to file \'" + fn.toStdString() + "\', an exception (std::bad_alloc) occured: " + ex.what());
+    }
+    catch (...) {
+        AlertWindow::showMessageBox(
+            AlertWindow::WarningIcon, 
+            "I/O error!", 
+            "Related to file \'"+fn.toStdString()+"\', an unknown exception occured.");
+    };
 }

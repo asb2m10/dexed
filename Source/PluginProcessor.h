@@ -59,6 +59,13 @@ enum DexedEngineResolution {
     DEXED_ENGINE_OPL
 };
 
+/// Maximum allowed size for SCL and KBM files.
+/// (COMMENT: Since none of the 5175 .scl files in the Scala archive 
+/// at ‘https://www.huygens-fokker.org/scala/downloads.html#scales’ 
+/// exceed 6 KB (in 25th Mar 2024), a maximum size of 16 KB appears 
+/// to be a practical choice.)
+const int MAX_SCL_KBM_FILE_SIZE = 16384;
+
 //==============================================================================
 /**
 */
@@ -252,6 +259,12 @@ public :
 
     MTSClient *mtsClient;
     std::shared_ptr<TuningState> synthTuningState;
+
+    // holds the previous working tuning state;
+    // used to restore tuning state when there was a problem 
+    // with loading/applying a new .SCL and/or .KBM file 
+    std::shared_ptr<TuningState> synthTuningStateLast;
+
     // Prompt for a file
     void applySCLTuning();
     void applyKBMMapping();

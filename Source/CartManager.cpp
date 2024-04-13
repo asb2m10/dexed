@@ -302,6 +302,7 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
             if ( mainWindow->processor->sysexComm.isOutputActive() ) {
                 uint8_t msg[163];
                 exportSysexPgm(msg, unpackPgm);
+                msg[2] |= mainWindow->processor->sysexComm.getChl();
                 mainWindow->processor->sysexComm.send(MidiMessage(msg, 163));
             }
             break;

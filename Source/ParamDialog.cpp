@@ -56,7 +56,7 @@ ParamDialog::ParamDialog ()
     sysexIn->setEditableText (false);
     sysexIn->setJustificationType (juce::Justification::centredLeft);
     sysexIn->setTextWhenNothingSelected (juce::String());
-    sysexIn->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    sysexIn->setTextWhenNoChoicesAvailable (translate("(no choices)"));
     sysexIn->addListener (this);
 
     sysexIn->setBounds (104, 244, 224, 24);
@@ -66,7 +66,7 @@ ParamDialog::ParamDialog ()
     sysexOut->setEditableText (false);
     sysexOut->setJustificationType (juce::Justification::centredLeft);
     sysexOut->setTextWhenNothingSelected (juce::String());
-    sysexOut->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
+    sysexOut->setTextWhenNoChoicesAvailable (translate("(no choices)"));
     sysexOut->addListener (this);
 
     sysexOut->setBounds (104, 280, 224, 24);
@@ -85,10 +85,10 @@ ParamDialog::ParamDialog ()
     engineReso->setEditableText (false);
     engineReso->setJustificationType (juce::Justification::centredLeft);
     engineReso->setTextWhenNothingSelected (juce::String());
-    engineReso->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    engineReso->addItem (TRANS("Modern (24-bit)"), 1);
-    engineReso->addItem (TRANS("Mark I"), 2);
-    engineReso->addItem (TRANS("OPL Series"), 3);
+    engineReso->setTextWhenNoChoicesAvailable (translate("(no choices)"));
+    engineReso->addItem (translate("Modern (24-bit)"), 1);
+    engineReso->addItem (translate("Mark I"), 2);
+    engineReso->addItem (translate("OPL Series"), 3);
     engineReso->addListener (this);
 
     engineReso->setBounds (160, 188, 168, 24);
@@ -222,28 +222,28 @@ ParamDialog::ParamDialog ()
 
     sclButton.reset (new juce::TextButton ("scl button"));
     addAndMakeVisible (sclButton.get());
-    sclButton->setButtonText (TRANS("SCL"));
+    sclButton->setButtonText (translate("SCL"));
     sclButton->addListener (this);
 
     sclButton->setBounds (448, 205, 56, 30);
 
     kbmButton.reset (new juce::TextButton ("kbm button"));
     addAndMakeVisible (kbmButton.get());
-    kbmButton->setButtonText (TRANS("KBM"));
+    kbmButton->setButtonText (translate("KBM"));
     kbmButton->addListener (this);
 
     kbmButton->setBounds (512, 205, 56, 30);
 
     showTunButton.reset (new juce::TextButton ("show tuning button"));
     addAndMakeVisible (showTunButton.get());
-    showTunButton->setButtonText (TRANS("Show"));
+    showTunButton->setButtonText (translate("Show"));
     showTunButton->addListener (this);
 
     showTunButton->setBounds (576, 205, 48, 30);
 
     resetTuningButton.reset (new juce::TextButton ("reset tuning button"));
     addAndMakeVisible (resetTuningButton.get());
-    resetTuningButton->setButtonText (TRANS("Reset"));
+    resetTuningButton->setButtonText (translate("Reset"));
     resetTuningButton->addListener (this);
 
     resetTuningButton->setBounds (632, 205, 48, 30);
@@ -296,10 +296,10 @@ ParamDialog::ParamDialog ()
     scalingFactor->setEditableText (false);
     scalingFactor->setJustificationType (juce::Justification::centredLeft);
     scalingFactor->setTextWhenNothingSelected (juce::String());
-    scalingFactor->setTextWhenNoChoicesAvailable (TRANS("(no choices)"));
-    scalingFactor->addItem (TRANS("100 %"), 1);
-    scalingFactor->addItem (TRANS("125 %"), 2);
-    scalingFactor->addItem (TRANS("150 %"), 3);
+    scalingFactor->setTextWhenNoChoicesAvailable (translate("(no choices)"));
+    scalingFactor->addItem (translate("100 %"), 1);
+    scalingFactor->addItem (translate("125 %"), 2);
+    scalingFactor->addItem (translate("150 %"), 3);
     scalingFactor->addSeparator();
     scalingFactor->addListener (this);
 
@@ -386,7 +386,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 16, width = 276, height = 23;
-        juce::String text (TRANS("Pitch Bend Range"));
+        juce::String text (translate("Pitch Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -398,7 +398,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 56, width = 276, height = 23;
-        juce::String text (TRANS("Pitch Bend Step"));
+        juce::String text (translate("Pitch Bend Step"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -410,7 +410,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 318, width = 245, height = 23;
-        juce::String text (TRANS("DX7 Channel"));
+        juce::String text (translate("DX7 Channel"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -422,7 +422,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 190, width = 276, height = 23;
-        juce::String text (TRANS("Engine Resolution"));
+        juce::String text (translate("Engine Resolution"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -452,7 +452,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 96, width = 276, height = 23;
-        juce::String text (TRANS("Show Keyboard"));
+        juce::String text (translate("Show Keyboard"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -473,7 +473,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 16, width = 276, height = 23;
-        juce::String text (TRANS("Wheel"));
+        juce::String text (translate("Wheel"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -485,7 +485,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 96, width = 276, height = 23;
-        juce::String text (TRANS("Breath"));
+        juce::String text (translate("Breath"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -497,7 +497,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 56, width = 276, height = 23;
-        juce::String text (TRANS("Foot"));
+        juce::String text (translate("Foot"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -509,7 +509,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 136, width = 276, height = 23;
-        juce::String text (TRANS("After Touch"));
+        juce::String text (translate("After Touch"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -521,7 +521,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 528, y = 163, width = 48, height = 23;
-        juce::String text (TRANS("PITCH"));
+        juce::String text (translate("PITCH"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -533,7 +533,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 584, y = 163, width = 48, height = 23;
-        juce::String text (TRANS("AMP"));
+        juce::String text (translate("AMP"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -545,7 +545,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 640, y = 163, width = 48, height = 23;
-        juce::String text (TRANS("EG BIAS"));
+        juce::String text (translate("EG BIAS"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -566,7 +566,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 371, y = 208, width = 276, height = 25;
-        juce::String text (TRANS("Tuning"));
+        juce::String text (translate("Tuning"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -578,7 +578,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 371, y = 242, width = 157, height = 25;
-        juce::String text (TRANS("Transposition 12 as:"));
+        juce::String text (translate("Transposition 12 as:"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -599,7 +599,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 371, y = 290, width = 276, height = 27;
-        juce::String text (TRANS("MPE"));
+        juce::String text (translate("MPE"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -611,7 +611,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 528, y = 290, width = 119, height = 27;
-        juce::String text (TRANS("Bend Range"));
+        juce::String text (translate("Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -623,7 +623,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 555, y = 242, width = 37, height = 25;
-        juce::String text (TRANS("12"));
+        juce::String text (translate("12"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -635,7 +635,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 659, y = 242, width = 45, height = 25;
-        juce::String text (TRANS("SCL"));
+        juce::String text (translate("SCL"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -647,7 +647,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 147, y = 16, width = 20, height = 23;
-        juce::String text (TRANS("up"));
+        juce::String text (translate("up"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -659,7 +659,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 240, y = 16, width = 20, height = 23;
-        juce::String text (TRANS("dn"));
+        juce::String text (translate("dn"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -671,7 +671,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 136, width = 276, height = 23;
-        juce::String text (TRANS("UI Scaling"));
+        juce::String text (translate("UI Scaling"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -685,14 +685,14 @@ void ParamDialog::paint (juce::Graphics& g)
     if ( ! JUCEApplication::isStandaloneApp() ) {
         g.setColour (Colours::white);
         g.setFont (Font (15.00f, Font::plain));
-        g.drawText (TRANS("DX7 In"),
+        g.drawText (translate("DX7 In"),
                     20, 245, 131, 23,
                     Justification::centredLeft, true);
 
     }
     g.setColour (Colours::white);
     g.setFont (Font (15.00f, Font::plain));
-    g.drawText (TRANS("DX7 Out"),
+    g.drawText (translate("DX7 Out"),
                 20, 280, 131, 23,
                 Justification::centredLeft, true);
     //[/UserPaint]
@@ -1068,8 +1068,14 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 void ParamDialog::setIsStandardTuning( bool b )
 {
     is_standard_tuning_ = b;
+
+    // Allow to see the actual tuning always.
+/*
+    // Enable to ''showTunButton'' only if the tuning
+    // is not the standard one.
     if( showTunButton != nullptr )
         showTunButton->setEnabled( ! b );
+*/
     if( resetTuningButton != nullptr )
         resetTuningButton->setEnabled( ! b );
 }

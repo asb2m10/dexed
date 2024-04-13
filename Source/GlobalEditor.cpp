@@ -63,26 +63,34 @@ public:
 class AboutBox : public DialogWindow {
 public:
     Image logo_png;
-    HyperlinkButton dexed;
-    HyperlinkButton surge;
+    std::unique_ptr<juce::HyperlinkButton> dexed; // changed to std::unique_ptr from juce::ScopedPointer
+    std::unique_ptr<juce::HyperlinkButton> surge; // changed to std__unique_ptr from juce::ScopedPointer
 
     AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
-            dexed("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/")),
-            surge("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")) {
+        dexed(std::make_unique<juce::HyperlinkButton>("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"))),
+        surge(std::make_unique<juce::HyperlinkButton>("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")))
+    {
         setUsingNativeTitleBar(false);
         setAlwaysOnTop(true);
         logo_png = ImageCache::getFromMemory(BinaryData::dexedlogo_png, BinaryData::dexedlogo_pngSize);
-        setSize(logo_png.getWidth()+ 8, 500);
+        setSize(logo_png.getWidth() + 8, 500);
         centreAroundComponent(parent, getWidth(), getHeight());
 
-        dexed.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        dexed.setJustificationType(Justification::left);
-        dexed.setBounds(18, 433, getWidth() - 36, 30);
-        addAndMakeVisible(&dexed);
-        surge.setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        surge.setJustificationType(Justification::left);
-        surge.setBounds(18, 458, getWidth() - 36, 30);
-        addAndMakeVisible(&surge);
+        dexed->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
+        dexed->setJustificationType(Justification::left);
+        dexed->setBounds(18, 433, getWidth() - 36, 30);
+
+        surge->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
+        surge->setJustificationType(Justification::left);
+        surge->setBounds(18, 458, getWidth() - 36, 30);
+        
+        // create a new Component to hold ''dexed'' and ''surge'' as subcomponents
+        // and set this holder Component as the content component of the DialogWindow
+        Component* holder = new Component();
+        holder->setSize(getWidth(), getHeight());
+        holder->addAndMakeVisible((juce::Component*)dexed.get());
+        holder->addAndMakeVisible((juce::Component*)surge.get());
+        setContentOwned(holder, true);  // TODO: ''setContentComponent(holder, true, true);'' also worked; which is the better?
     }
 
     void closeButtonPressed() {
@@ -324,28 +332,28 @@ GlobalEditor::GlobalEditor ()
 
     initButton.reset (new juce::TextButton ("initButton"));
     addAndMakeVisible (initButton.get());
-    initButton->setButtonText (TRANS("INIT"));
+    initButton->setButtonText (translate("INIT"));
     initButton->addListener (this);
 
     initButton->setBounds (100, 111, 50, 30);
 
     parmButton.reset (new juce::TextButton ("parmButton"));
     addAndMakeVisible (parmButton.get());
-    parmButton->setButtonText (TRANS("PARM"));
+    parmButton->setButtonText (translate("PARM"));
     parmButton->addListener (this);
 
     parmButton->setBounds (52, 111, 50, 30);
 
     cartButton.reset (new juce::TextButton ("cartButton"));
     addAndMakeVisible (cartButton.get());
-    cartButton->setButtonText (TRANS("CART"));
+    cartButton->setButtonText (translate("CART"));
     cartButton->addListener (this);
 
     cartButton->setBounds (3, 111, 50, 30);
 
     storeButton.reset (new juce::TextButton ("storeButton"));
     addAndMakeVisible (storeButton.get());
-    storeButton->setButtonText (TRANS("STORE"));
+    storeButton->setButtonText (translate("STORE"));
     storeButton->addListener (this);
 
     storeButton->setBounds (270, 109, 50, 30);
