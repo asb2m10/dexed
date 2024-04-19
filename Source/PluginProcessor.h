@@ -66,6 +66,42 @@ enum DexedEngineResolution {
 /// to be a practical choice.)
 const int MAX_SCL_KBM_FILE_SIZE = 16384;
 
+//--- Some constants used for approximating derivation of ``FLT_CNV_FACT_*`` consts (see them below).
+
+// Maximum allowed value of the outgoing float amplitudes from the plugin.
+static const int MAX_FLOAT_AMP_PLUGIN_OUTPUT = 1.0F;
+
+// Minimum allowed value of the outgoing float amplitudes from the plugin.
+static const int MIN_FLOAT_AMP_PLUGIN_OUTPUT = -1.0F;
+
+/// Maximum absolute value of the experimentally observed amplitudes for engine ``MSFA``.
+static const int32_t MAX_ABS_AMP_MSFA = 369373301;
+
+/// Maximum absolute value of the experimentally observed amplitudes for engine ``MKI``.
+static const int32_t MAX_ABS_AMP_MKI = 369678658;
+
+/// Maximum absolute value of the experimentally observed amplitudes for engine ``OPL``.
+static const int32_t MAX_ABS_AMP_OPL = 368971281;
+
+// An experimental value to reproduce the former Dexed's output loudness, approximately
+static const float EXPERIMENTAL_VOLUME_CONSTANT = 0.95;
+
+//--- Conversion factors to convert int32_t sample values to float sample values
+// These values _should_ _be_ derived from other constants used in the engines by some exact calculation.
+// (The actual values below are determined experimentally.)
+
+/// Conversion factor to convert int32_t sample values to float sample values 
+/// into the allowed range of the plugin output for the ``MSFA`` engine
+static const float FLT_CNV_FACT_MSFA = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MSFA * EXPERIMENTAL_VOLUME_CONSTANT;
+
+/// Conversion factor to convert int32_t sample values to float sample values 
+/// into the allowed range of the plugin output for the ``MARK I`` engine
+static const float FLT_CNV_FACT_MKI = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MKI * EXPERIMENTAL_VOLUME_CONSTANT;
+
+/// Conversion factor to convert int32_t sample values to float sample values 
+/// into the allowed range of the plugin output for the ``OPL`` engine
+static const float FLT_CNV_FACT_OPL = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_OPL * EXPERIMENTAL_VOLUME_CONSTANT;
+
 //==============================================================================
 /**
 */
@@ -128,6 +164,9 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     EngineMkI engineMkI;
     EngineOpl engineOpl;
     
+    // a multiplier used to convert int32_t samples produced by the currently selected engine to float samples
+    float flt_cnv_fact = FLT_CNV_FACT_MKI;
+
     char clipboard[161];
     char clipboardContent;
     

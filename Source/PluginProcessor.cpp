@@ -198,9 +198,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     int i;
     
     if ( refreshVoice ) {
-        for(i=0;i < MAX_ACTIVE_NOTES;i++) {
-            if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity, voices[i].channel);
+        for(int j=0;j < MAX_ACTIVE_NOTES;j++) {
+            if ( voices[j].live )
+                voices[j].dx7_note->update(data, voices[j].midi_note, voices[j].velocity, voices[j].channel);
         }
         lfo.reset(data + 137);
         refreshVoice = false;
@@ -254,28 +254,28 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
                     if (checkMTSESPRetuning)
                         voices[note].dx7_note->updateBasePitches();
                     
-                    voices[note].dx7_note->compute(audiobuf.get(), lfovalue, lfodelay, &controllers);
-                    
-                    for (int j=0; j < N; ++j) {
-                        int32_t val = audiobuf.get()[j];
-                        
-                        val = val >> 4;
-                        int clip_val = val < -(1 << 24) ? 0x8000 : val >= (1 << 24) ? 0x7fff : val >> 9;
-                        float f = ((float) clip_val) / (float) 0x8000;
-                        if( f > 1 ) f = 1;
-                        if( f < -1 ) f = -1;
-                        sumbuf[j] += f;
-                        audiobuf.get()[j] = 0;
+                    int32_t* audiobufjp = audiobuf.get();
+                    voices[note].dx7_note->compute(audiobufjp, lfovalue, lfodelay, &controllers);
+
+                    float* sumbufjp = sumbuf;
+                    for (int j = 0; j < N; ++j) {
+                        *sumbufjp++ += (*audiobufjp) * flt_cnv_fact;
+                        *audiobufjp++ = 0;
                     }
                 }
             }
             
             int jmax = numSamples - i;
-            for (int j = 0; j < N; ++j) {
+
+            float* sumbufjp = sumbuf;
+            float* channelDatap = channelData + i;
+            float* extra_bufp = extra_buf;
+            for (int j = 0; j < N; ++j, ++sumbufjp) {
                 if (j < jmax) {
-                    channelData[i + j] = sumbuf[j];
-                } else {
-                    extra_buf[j - jmax] = sumbuf[j];
+                    *channelDatap++ = *sumbufjp;
+                }
+                else {
+                    *extra_bufp++ = *sumbufjp;
                 }
             }
         }
@@ -287,9 +287,15 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     fx.process(channelData, numSamples);
-    for(i=0; i<numSamples; i++) {
-        float s = std::abs(channelData[i]);
-        
+
+    float* channelDatap = channelData;
+    for (i = 0; i < numSamples; i++, channelDatap++) {
+        float f = *channelDatap;
+
+        // update VU meter
+        // The +1.0 outgoing sample value is scaled only to 0.8 on VU meter, 
+        // to values exceeding 0.8 on VU meter indicate clippings/distortions.
+        float s = std::abs(f * 0.8);
         const double decayFactor = 0.99992;
         if (s > vuSignal)
             vuSignal = s;
@@ -297,8 +303,16 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             vuSignal *= decayFactor;
         else
             vuSignal = 0;
+
+        // threshold limiting
+        if (f < MIN_FLOAT_AMP_PLUGIN_OUTPUT) {
+            *channelDatap = MIN_FLOAT_AMP_PLUGIN_OUTPUT;
+        }
+        else if (f > MAX_FLOAT_AMP_PLUGIN_OUTPUT) {
+            *channelDatap = MAX_FLOAT_AMP_PLUGIN_OUTPUT;
+        }
     }
-    
+
     // DX7 is a mono synth
     buffer.copyFrom(1, 0, channelData, numSamples, 1);
 }
@@ -679,12 +693,15 @@ void DexedAudioProcessor::setEngineType(int tp) {
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             controllers.core = &engineMkI;
+            flt_cnv_fact = FLT_CNV_FACT_MKI;
             break;
         case DEXED_ENGINE_OPL:
             controllers.core = &engineOpl;
+            flt_cnv_fact = FLT_CNV_FACT_OPL;
             break;
         default:
             controllers.core = &engineMsfa;
+            flt_cnv_fact = FLT_CNV_FACT_MSFA;
             break;
     }
     engineType = tp;
