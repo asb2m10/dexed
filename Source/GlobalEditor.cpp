@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.7
+  Created with Projucer version: 7.0.7
 
   ------------------------------------------------------------------------------
 
@@ -83,7 +83,7 @@ public:
         surge->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
         surge->setJustificationType(Justification::left);
         surge->setBounds(18, 458, getWidth() - 36, 30);
-        
+
         // create a new Component to hold ''dexed'' and ''surge'' as subcomponents
         // and set this holder Component as the content component of the DialogWindow
         Component* holder = new Component();
@@ -324,11 +324,11 @@ GlobalEditor::GlobalEditor ()
 
     output->setBounds (157, 60, 34, 34);
 
-    vuOutput.reset (new VuMeter());
-    addAndMakeVisible (vuOutput.get());
-    vuOutput->setName ("vuOutput");
+    m_vuMeterMain.reset(new VuMeterMain());
+    addAndMakeVisible(m_vuMeterMain.get());
+    m_vuMeterMain->setName("id_VuMeterMain");
 
-    vuOutput->setBounds (6, 103, 140, 8);
+    m_vuMeterMain->setBounds(6, 103, 140, 8);
 
     initButton.reset (new juce::TextButton ("initButton"));
     addAndMakeVisible (initButton.get());
@@ -397,6 +397,12 @@ GlobalEditor::GlobalEditor ()
 
     tune->setBounds (190, 9, 34, 34);
 
+    m_vuMeterMain.reset (new VuMeterMain());
+    addAndMakeVisible (m_vuMeterMain.get());
+    m_vuMeterMain->setName ("id_vuMeterMain");
+
+    m_vuMeterMain->setBounds (6, 103, 150, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -450,7 +456,6 @@ GlobalEditor::~GlobalEditor()
     algo = nullptr;
     lcdDisplay = nullptr;
     output = nullptr;
-    vuOutput = nullptr;
     initButton = nullptr;
     parmButton = nullptr;
     cartButton = nullptr;
@@ -460,7 +465,7 @@ GlobalEditor::~GlobalEditor()
     programSelector = nullptr;
     aboutButton = nullptr;
     tune = nullptr;
-
+    m_vuMeterMain = nullptr;
 
     //[Destructor]. You can add your own custom destruction code here..
     //[/Destructor]
@@ -730,8 +735,8 @@ void GlobalEditor::updatePitchPos(int pos) {
 }
 
 void GlobalEditor::updateVu(float f) {
-    vuOutput->v = f;
-    vuOutput->repaint();
+    m_vuMeterMain->v = f;
+    m_vuMeterMain->repaint();
     //midiMonitor->repaint();
 }
 
@@ -875,8 +880,6 @@ BEGIN_JUCER_METADATA
           explicitFocusOrder="0" pos="157 60 34 34" min="0.0" max="1.0"
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
-  <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
-                    explicitFocusOrder="0" pos="6 103 140 8" class="VuMeter" params=""/>
   <TEXTBUTTON name="initButton" id="92b278163c42e21d" memberName="initButton"
               virtualName="" explicitFocusOrder="0" pos="100 111 50 30" buttonText="INIT"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
@@ -908,6 +911,9 @@ BEGIN_JUCER_METADATA
           explicitFocusOrder="0" pos="190 9 34 34" min="0.0" max="1.0"
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <GENERICCOMPONENT name="id_vuMeterMain" id="c18ba85c0a5c7198" memberName="m_vuMeterMain"
+                    virtualName="" explicitFocusOrder="0" pos="6 103 150 24"
+                    class="vuMeterMain" params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

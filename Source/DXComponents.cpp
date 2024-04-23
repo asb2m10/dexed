@@ -324,7 +324,6 @@ void VuMeter::paint(Graphics &g) {
     if ( v <= 0 )
         return;
     
-    const int totalBlocks = 46;
     int numBlocks = roundToInt(totalBlocks * v);
 
     if ( numBlocks > 46 )
@@ -332,6 +331,28 @@ void VuMeter::paint(Graphics &g) {
     int brkpoint = numBlocks * 3 + 2;
     
     g.drawImage(myStrip, 0, 0, brkpoint, 8, 0, 8, brkpoint, 8);
+}
+
+
+VuMeterMain::VuMeterMain() {
+    // load the three-colored strip
+    MemoryInputStream mis(BinaryData::Meter3C_140x8_png, BinaryData::Meter3C_140x8_pngSize, false);
+    strip3c = ImageFileFormat::loadFrom(mis);
+}
+
+void VuMeterMain::paint(Graphics& g) {    
+    g.drawImage(strip3c, 0, 0, 140, 8, 0, 0, 140, 8);
+
+    if (v <= 0)
+        return;
+
+    int numBlocks = roundToInt(totalBlocks * v);
+
+    if (numBlocks > 46)
+        numBlocks = totalBlocks;
+    int brkpoint = numBlocks * 3 + 2;
+
+    g.drawImage(strip3c, 0, 0, brkpoint, 8, 0, 8, brkpoint, 8);
 }
 
 LcdDisplay::LcdDisplay() {

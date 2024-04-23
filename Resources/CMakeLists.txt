@@ -22,5 +22,6 @@ juce_add_binary_data(DexedResources SOURCES
     ui/Switch_64x64.png
     ui/Switch_96x52.png
     ui/SwitchLighted_48x26.png
+    ui/Meter3C_140x8.png
     builtin_pgm.zip
 )

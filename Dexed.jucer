@@ -64,6 +64,10 @@
             file="Resources/ui/GlobalEditor_864x144.png"/>
       <FILE id="GAIMQD" name="OperatorEditor_287x218.png" compile="0" resource="1"
             file="Resources/ui/OperatorEditor_287x218.png"/>
+      <FILE id="kqdmAj" name="Meter3C_140x8.png" compile="0" resource="1"
+            file="Resources/ui/Meter3C_140x8.png"/>
+      <FILE id="c6DTJL" name="Meter3C_280x16.png" compile="0" resource="1"
+            file="Resources/ui/Meter3C_280x16.png"/>
     </GROUP>
     <GROUP id="{EA38D88A-6B79-E394-8B57-FA22D50C4D86}" name="Source">
       <GROUP id="{1B64F271-8E56-F19A-FF63-094159E5EF7B}" name="dsp">

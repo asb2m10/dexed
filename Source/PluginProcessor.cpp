@@ -34,6 +34,8 @@
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
+#include "DXComponents.h"
+
 #if JUCE_MSVC
     #pragma comment (lib, "kernel32.lib")
     #pragma comment (lib, "user32.lib")
@@ -293,9 +295,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         float f = *channelDatap;
 
         // update VU meter
-        // The +1.0 outgoing sample value is scaled only to 0.8 on VU meter, 
-        // to values exceeding 0.8 on VU meter indicate clippings/distortions.
-        float s = std::abs(f * 0.8);
+        // The abs values of outgoing sample values are scaled to the end of the last yellow block on VU meter, 
+        // so outgoing abs values exceeding +1.0 will lie in the red region indicate clippings/distortions.
+        float s = std::abs(f * (VuMeterMain::VU_0dB));
         const double decayFactor = 0.99992;
         if (s > vuSignal)
             vuSignal = s;

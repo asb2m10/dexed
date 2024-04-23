@@ -41,10 +41,37 @@ public:
     void paint(Graphics &g);
 };
 
+// Red-strip VU Meter for Operators' outputs
 class VuMeter: public Component {
     void paint(Graphics &g);
 public : 
+    /// Total number of blocks of the strips,
+    /// according to content of ''Meter3C_140x8_png''.
+    static const int totalBlocks = 46; 
     float v;
+};
+
+// Green-yellow-red-colored VU Meter for Dexed's main output
+class VuMeterMain : public VuMeter {
+public:
+    VuMeterMain();
+    void paint(Graphics& g);
+
+    /// Number of red blocks on the three-colored strip,
+    /// according to the content of ''Meter3C_140x8_png''.
+    static const int numRedBlocks = 6; 
+
+    /// Number of yellow blocks on the three-colored strip,
+    /// according to the content of ''Meter3C_140x8_png''.
+    static const int numYellowBlocks = 6;
+
+    /// Ratio of length of the green+yellow area to total length
+    /// of the three-colored strip.
+    static constexpr float VU_0dB = ((float)(totalBlocks - numRedBlocks)) / ((float)totalBlocks);
+
+    /// Image of a three-colored (green-yellow-red) strip,
+    /// loaded from ''Meter3C_140x8.png''.
+    Image strip3c;
 };
 
 class LcdDisplay : public Component {
