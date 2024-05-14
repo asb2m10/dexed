@@ -401,8 +401,7 @@ GlobalEditor::GlobalEditor ()
     addAndMakeVisible (m_vuMeterMain.get());
     m_vuMeterMain->setName ("id_vuMeterMain");
 
-    m_vuMeterMain->setBounds (6, 103, 150, 24);
-
+    m_vuMeterMain->setBounds(6, 103, 140, 8);
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -912,7 +911,7 @@ BEGIN_JUCER_METADATA
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <GENERICCOMPONENT name="id_vuMeterMain" id="c18ba85c0a5c7198" memberName="m_vuMeterMain"
-                    virtualName="" explicitFocusOrder="0" pos="6 103 150 24"
+                    virtualName="" explicitFocusOrder="0" pos="6 103 140 8"
                     class="vuMeterMain" params=""/>
 </JUCER_COMPONENT>
 
