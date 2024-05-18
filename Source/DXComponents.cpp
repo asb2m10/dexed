@@ -326,7 +326,7 @@ void VuMeter::paint(Graphics &g) {
     
     int numBlocks = roundToInt(totalBlocks * v);
 
-    if ( numBlocks > 46 )
+    if ( numBlocks > totalBlocks )
         numBlocks = totalBlocks;
     int brkpoint = numBlocks * 3 + 2;
     
@@ -343,12 +343,17 @@ VuMeterMain::VuMeterMain() {
 void VuMeterMain::paint(Graphics& g) {    
     g.drawImage(strip3c, 0, 0, 140, 8, 0, 0, 140, 8);
 
-    if (v <= 0)
+    // apply dB scale
+    v = 10 * log10(v);
+    v = (v + numNonRedBlocks) * one_per_totalBlocks;
+    if (v <= 0) {
+        //v = 0;
         return;
+    }
 
     int numBlocks = roundToInt(totalBlocks * v);
 
-    if (numBlocks > 46)
+    if (numBlocks > totalBlocks)
         numBlocks = totalBlocks;
     int brkpoint = numBlocks * 3 + 2;
 

@@ -45,5 +45,15 @@ public:
     void compute_fb3(int32_t *output, FmOpParams *params, int32_t gain01, int32_t gain02, int32_t *fb_buf, int fb_shift);
 };
 
+/// Maximum absolute value of output amplitude of an operator of MkI Engine.
+/// TODO: Its value _should_ _be_ derived from other constants used in this engine by some exact calculation
+/// giving the maximum absolute value stored or added to ``output[i]`` in methods ``EngineMkI::compute()``,
+/// ``EngineMkI::compute_pure()`` and ``EngineMkI::::compute_fb()``.
+/// NOTE: this current value is still determined experimentally! 61613110 
+#define MAX_ABS_AMP_MKI_OP 6113110
+
+
+/// Value of DC bias of output amplitude of an operator of MkI Engine.
+#define DC_BIAS_MKI_OP 1069
 
 #endif  // ENGINEMKI_H_INCLUDED

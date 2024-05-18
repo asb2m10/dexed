@@ -533,8 +533,19 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     internalOp = 5-op;
 }
 
+// v should be > 0
 void OperatorEditor::updateGain(float v) {
+    const float one_per_totalBlocks = 1.0F / VuMeter::totalBlocks;
+
+    // apply dB scale
+    v = 10 * log10(v);
+    v = (v + VuMeter::totalBlocks) * one_per_totalBlocks;
+    if (v < 0)
+        v = 0;
+    else if (v > 1.0F)
+        v = 1.0F;
     vu->v = v;
+
     vu->repaint();
 }
 

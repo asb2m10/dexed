@@ -48,6 +48,12 @@ public :
     /// Total number of blocks of the strips,
     /// according to content of ''Meter3C_140x8_png''.
     static const int totalBlocks = 46; 
+
+    static constexpr float one_per_totalBlocks = 1.0F / totalBlocks;
+
+    // amplitude value corresponding to -(totalBlocks) dB
+    static constexpr float amp_46dB = 2.51189E-05;
+
     float v;
 };
 
@@ -65,9 +71,11 @@ public:
     /// according to the content of ''Meter3C_140x8_png''.
     static const int numYellowBlocks = 6;
 
+    static const int numNonRedBlocks = totalBlocks - numRedBlocks;
+
     /// Ratio of length of the green+yellow area to total length
     /// of the three-colored strip.
-    static constexpr float VU_0dB = ((float)(totalBlocks - numRedBlocks)) / ((float)totalBlocks);
+    static constexpr float VU_0dB = ((float)numNonRedBlocks) / ((float)totalBlocks);
 
     /// Image of a three-colored (green-yellow-red) strip,
     /// loaded from ''Meter3C_140x8.png''.

@@ -74,33 +74,37 @@ static const int MAX_FLOAT_AMP_PLUGIN_OUTPUT = 1.0F;
 // Minimum allowed value of the outgoing float amplitudes from the plugin.
 static const int MIN_FLOAT_AMP_PLUGIN_OUTPUT = -1.0F;
 
-/// Maximum absolute value of the experimentally observed amplitudes for engine ``MSFA``.
-static const int32_t MAX_ABS_AMP_MSFA = 369373301;
+/// Maximum absolute value of the output amplitudes for engine ``MSFA``.
+static const int32_t MAX_ABS_AMP_MSFA = MAX_ABS_AMP_FM_CORE_OP * 6; // ``*6`` = because outputs of all the 6 operators may contribute to the final output in Algorithm 32.
 
-/// Maximum absolute value of the experimentally observed amplitudes for engine ``MKI``.
-static const int32_t MAX_ABS_AMP_MKI = 369678658;
+/// Maximum absolute value of the output amplitudes for engine ``MKI``.
+static const int32_t MAX_ABS_AMP_MKI = MAX_ABS_AMP_MKI_OP * 6;
 
-/// Maximum absolute value of the experimentally observed amplitudes for engine ``OPL``.
-static const int32_t MAX_ABS_AMP_OPL = 368971281;
+/// Maximum absolute value of the output amplitudes for engine ``OPL``.
+static const int32_t MAX_ABS_AMP_OPL = MAX_ABS_AMP_OPL_OP * 6;
 
-// An experimental value to reproduce the former Dexed's output loudness, approximately
-static const float EXPERIMENTAL_VOLUME_CONSTANT = 0.95;
 
-//--- Conversion factors to convert int32_t sample values to float sample values
-// These values _should_ _be_ derived from other constants used in the engines by some exact calculation.
-// (The actual values below are determined experimentally.)
+//--- Conversion factors to convert in32t_t sample values to float sample values for the indivudual VU indicators of the operators.
+static const float FLT_CNV_FACT_MSFA_OP = 1.0F / MAX_ABS_AMP_FM_CORE_OP;
+static const float FLT_CNV_FACT_MKI_OP = 1.0F / MAX_ABS_AMP_MKI_OP;
+static const float FLT_CNV_FACT_OPL_OP = 1.0F / MAX_ABS_AMP_OPL_OP;
+
+//--- Conversion factors to convert int32_t sample values to float main output sample values
+
+// An experimental value to reproduce about the similar loudness of main output than before
+static const float EXPERIMENTAL_VOLUME_CONSTANT = 0.15;
 
 /// Conversion factor to convert int32_t sample values to float sample values 
 /// into the allowed range of the plugin output for the ``MSFA`` engine
-static const float FLT_CNV_FACT_MSFA = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MSFA * EXPERIMENTAL_VOLUME_CONSTANT;
+static const float FLT_CNV_FACT_MSFA_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MSFA * EXPERIMENTAL_VOLUME_CONSTANT;
 
 /// Conversion factor to convert int32_t sample values to float sample values 
 /// into the allowed range of the plugin output for the ``MARK I`` engine
-static const float FLT_CNV_FACT_MKI = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MKI * EXPERIMENTAL_VOLUME_CONSTANT;
+static const float FLT_CNV_FACT_MKI_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MKI * EXPERIMENTAL_VOLUME_CONSTANT;
 
 /// Conversion factor to convert int32_t sample values to float sample values 
 /// into the allowed range of the plugin output for the ``OPL`` engine
-static const float FLT_CNV_FACT_OPL = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_OPL * EXPERIMENTAL_VOLUME_CONSTANT;
+static const float FLT_CNV_FACT_OPL_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_OPL * EXPERIMENTAL_VOLUME_CONSTANT;
 
 //==============================================================================
 /**
@@ -165,7 +169,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     EngineOpl engineOpl;
     
     // a multiplier used to convert int32_t samples produced by the currently selected engine to float samples
-    float flt_cnv_fact = FLT_CNV_FACT_MKI;
+    float flt_cnv_fact_main_output = FLT_CNV_FACT_MKI_MAIN_OUTPUT;
 
     char clipboard[161];
     char clipboardContent;

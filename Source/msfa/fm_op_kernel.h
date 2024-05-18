@@ -44,4 +44,14 @@ class FmOpKernel {
                          int32_t *fb_buf, int fb_gain, bool add);
 };
 
+/// Maximum absolute value of output amplitude of an operator of MSFA Engine.
+/// TODO: Its value _should_ _be_ derived from other constants used in this engine by some exact calculation
+/// giving the maximum absolute value stored or added to ``output[i]`` in methods ``FmOpKernel::compute()``,
+/// ``FmOpKernel::compute_pure()`` and ``FmOpKernel::compute_fb()``.
+/// NOTE: this current value is still determined experimentally!
+#define MAX_ABS_AMP_FM_CORE_OP 61562217
+
+/// Value of DC bias of output amplitude of an operator of MSFA Engine.
+#define DC_BIAS_FM_CORE_OP 1069
+
 #endif

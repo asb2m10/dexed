@@ -65,6 +65,12 @@ public:
                                        
     static const int WINDOW_SIZE_X = 866;
     static const int WINDOW_SIZE_Y = 674;
+
+    // Conversion factor to calculate the int32_t operators' output values into range of 0.0F...1.0F.
+    float flt_cnv_fact_op = FLT_CNV_FACT_MKI_OP;
+
+    // A DC bias value; levels below it are cosidered as 0 on operators' VU meters.
+    float dc_bias_op = DC_BIAS_MKI_OP;
 };
 
 

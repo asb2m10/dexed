@@ -39,6 +39,14 @@ public:
                     int32_t *fb_buf, int fb_gain, bool add);
 };
 
+/// Maximum absolute value of output amplitude of an operator of OPL Engine.
+/// TODO: Its value _should_ _be_ derived from other constants used in this engine by some exact calculation
+/// giving the maximum absolute value assigned or added to ``output[i]`` in methods ``EngineOpl::compute()``,
+/// ``EngineOplFmOpKernel::compute_pure()`` and ``EngineOpl::compute_fb()``.
+/// NOTE: this current value is still determined experimentally!
+#define MAX_ABS_AMP_OPL_OP 61495214
 
+/// Value of DC bias of output amplitude of an operator of OPL Engine.
+#define DC_BIAS_OPL_OP 1069
 
 #endif  // ENGINEOPL_H_INCLUDED

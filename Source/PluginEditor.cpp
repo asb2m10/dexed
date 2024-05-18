@@ -245,7 +245,12 @@ void DexedAudioProcessorEditor::timerCallback() {
         return;
 
     for(int i=0;i<6;i++) {
-        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsense
+        //operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsense
+        int32_t amp = processor->voiceStatus.amp[5 - i];    
+        amp -= dc_bias_op;
+        if (amp < 0) amp = -amp;
+        if (amp < VuMeter::amp_46dB) amp = VuMeter::amp_46dB;
+        operators[i].updateGain(amp * flt_cnv_fact_op);                       // TODO: changed to dB-scale but based on the costly ``log10()``
         operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);

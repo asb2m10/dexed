@@ -261,7 +261,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
 
                     float* sumbufjp = sumbuf;
                     for (int j = 0; j < N; ++j) {
-                        *sumbufjp++ += (*audiobufjp) * flt_cnv_fact;
+                        *sumbufjp++ += (*audiobufjp) * flt_cnv_fact_main_output;
                         *audiobufjp++ = 0;
                     }
                 }
@@ -692,18 +692,36 @@ int DexedAudioProcessor::getEngineType() {
 void DexedAudioProcessor::setEngineType(int tp) {
     TRACE("settings engine %d", tp);
     
+    DexedAudioProcessorEditor* dexedEditor = nullptr;
+    AudioProcessorEditor* editor = getActiveEditor();
+    if (editor != NULL) {
+        dexedEditor = (DexedAudioProcessorEditor*)editor;
+    }
+    
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             controllers.core = &engineMkI;
-            flt_cnv_fact = FLT_CNV_FACT_MKI;
+            flt_cnv_fact_main_output = FLT_CNV_FACT_MKI_MAIN_OUTPUT;
+            if (dexedEditor != nullptr) {
+                dexedEditor->flt_cnv_fact_op = FLT_CNV_FACT_MKI_OP;
+                dexedEditor->dc_bias_op = DC_BIAS_MKI_OP;
+            }
             break;
         case DEXED_ENGINE_OPL:
             controllers.core = &engineOpl;
-            flt_cnv_fact = FLT_CNV_FACT_OPL;
+            flt_cnv_fact_main_output = FLT_CNV_FACT_OPL_MAIN_OUTPUT;
+            if (dexedEditor != nullptr) {
+                dexedEditor->flt_cnv_fact_op = FLT_CNV_FACT_OPL_OP;
+                dexedEditor->dc_bias_op = DC_BIAS_OPL_OP;
+            }
             break;
         default:
             controllers.core = &engineMsfa;
-            flt_cnv_fact = FLT_CNV_FACT_MSFA;
+            flt_cnv_fact_main_output = FLT_CNV_FACT_MSFA_MAIN_OUTPUT;
+            if (dexedEditor != nullptr) {
+                dexedEditor->flt_cnv_fact_op = FLT_CNV_FACT_MSFA_OP;
+                dexedEditor->dc_bias_op = DC_BIAS_FM_CORE_OP;
+            }
             break;
     }
     engineType = tp;

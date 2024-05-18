@@ -212,15 +212,3 @@ void EngineOpl::render(int32_t *output, FmOpParams *params, int algorithm,
         param.phase += param.freq << LG_N;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
