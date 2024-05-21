@@ -23,6 +23,13 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+/// If the macro ''IMPLEMENT_DEADCODE_DXLookAndFeel'' is defined as any NONZERO value, 
+/// then a recently unused code snippet in constuctor ''DXLookNFeel::DXLookNFeel()'' 
+/// in file ''DXLookNFeel.cpp'', is implemented.
+/// Use 0 to exclude the related source snippets.
+/// WARNING: this code snippet mentioned is very likely a candidate for deprecation/obsolescence.
+#define IMPLEMENT_DEADCODE_DXLookNFeel 0
+
 class LightedToggleButton : public ToggleButton {
 public:
     LightedToggleButton(const char*l) : ToggleButton(l) { }

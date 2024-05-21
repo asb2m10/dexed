@@ -24,6 +24,9 @@
 #include "PluginProcessor.h"
 #include "DXComponents.h"
 #include "AlgoDisplay.h"
+#ifdef IMPLEMENT_MidiMonitor
+#include "SysexComm.h"
+#endif // IMPLEMENT_MidiMonitor
 
 class DexedAudioProcessorEditor;
 //[/Headers]
@@ -59,7 +62,10 @@ public:
 
     void setMonoState(bool state);
     ProgramSelector *programs;
-    //std::unique_ptr<Component> midiMonitor;
+
+#if IMPLEMENT_MidiMonitor
+    std::unique_ptr<Component> midiMonitor;
+#endif //IMPLEMENT_MidiMonitor
 
     void mouseDown(const MouseEvent& e) override;
     //[/UserMethods]

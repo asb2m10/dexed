@@ -106,7 +106,7 @@ DXLookNFeel::DXLookNFeel() {
             }
         }
     }
-
+#ifdef IMPLEMENT_DEADCODE_DXLookNFeel
     // TODO: THIS IS DEAD CODE. NOBODY IS USING THIS.
     forEachXmlChildElementWithTagName(*root, image, "image") {
         String name = image->getStringAttribute("id", "");
@@ -156,6 +156,8 @@ DXLookNFeel::DXLookNFeel() {
             continue;
         }
     }
+TRACE("WARNING! Dead code snippet is implemented!");
+#endif // IMPLEMENT_DEADCODE_DXLookNFeel
 }
 
 Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {

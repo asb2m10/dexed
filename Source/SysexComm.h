@@ -23,6 +23,13 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+// If the macro ''IMPLEMENT_MidiMonitor'' is defined as any NONZREO value,
+// then the class ''MidiMonitor'' and its related variables 
+// and invocations occurring in other classes are implemented.
+// Use 0 to exclude the related source snippets (RECOMMENDED!).
+// WARNING: this class and related variables and invocations are very likely candidates for deprecation / obsolescence.
+#define IMPLEMENT_MidiMonitor 0
+
 class SysexComm {
     std::unique_ptr<MidiInput> input;
     std::unique_ptr<MidiOutput> output;
@@ -35,8 +42,10 @@ class SysexComm {
     MidiBuffer noteOutput;
 public :
     MidiInputCallback *listener;
+#if IMPLEMENT_MidiMonitor
     bool inActivity;
     bool outActivity;
+#endif //IMPLEMENT_MidiMonitor
     
     SysexComm();
     

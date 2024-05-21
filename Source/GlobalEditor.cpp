@@ -31,14 +31,19 @@
  * Ugly but useful midi monitor to know if you are really sending/receiving something from the DX7
  * If the midi is not configured this component wont show up
  *
+ */
+#if IMPLEMENT_MidiMonitor
 class MidiMonitor : public Component {
     SysexComm *midi;
     Image light;
 
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public:
     MidiMonitor(SysexComm *sysexComm) {
         midi = sysexComm;
-        light = DXLookNFeel::getLookAndFeel()->imageLight;
+        light = lookAndFeel->imageLight;
+        
+        TRACE("WARNING! This functionality is a candidate for deprecation/obsolescence!");
     }
 
     void paint(Graphics &g) {
@@ -58,13 +63,14 @@ public:
             midi->outActivity = false;
         }
     }
-};*/
+};
+#endif // IMPLEMENT_MidiMonitor
 
 class AboutBox : public DialogWindow {
 public:
     Image logo_png;
     std::unique_ptr<juce::HyperlinkButton> dexed; // changed to std::unique_ptr from juce::ScopedPointer
-    std::unique_ptr<juce::HyperlinkButton> surge; // changed to std__unique_ptr from juce::ScopedPointer
+    std::unique_ptr<juce::HyperlinkButton> surge; // changed to std::unique_ptr from juce::ScopedPointer
 
     AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
         dexed(std::make_unique<juce::HyperlinkButton>("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"))),
@@ -708,9 +714,11 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
 
     editor = edit;
 
-    //midiMonitor = new MidiMonitor(&(processor->sysexComm));
-    //addAndMakeVisible(midiMonitor);
-    //midiMonitor->setBounds(155, 21, 80, 45);
+#if IMPLEMENT_MidiMonitor
+    midiMonitor = std::make_unique<MidiMonitor>(&(processor->sysexComm));
+    addAndMakeVisible(*midiMonitor);
+    midiMonitor->setBounds(116, 14, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
+#endif //IMPLEMENT_MidiMonitor
 
     repaint();
 }
@@ -736,7 +744,10 @@ void GlobalEditor::updatePitchPos(int pos) {
 void GlobalEditor::updateVu(float f) {
     m_vuMeterMain->v = f;
     m_vuMeterMain->repaint();
-    //midiMonitor->repaint();
+
+#if IMPLEMENT_MidiMonitor
+    midiMonitor->repaint();
+#endif
 }
 
 void GlobalEditor::setMonoState(bool state)  {

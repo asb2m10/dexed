@@ -613,7 +613,9 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
     if ( message.isActiveSense() ) 
         return;
 
+#if IMPLEMENT_MidiMonitor
     sysexComm.inActivity = true;
+#endif IMPLEMENT_MidiMonitor
 
     const uint8 *buf = message.getRawData();
     int sz = message.getRawDataSize();

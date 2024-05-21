@@ -31,6 +31,11 @@ SysexComm::SysexComm() {
     input = NULL;
     output = NULL;
     inputOutput = false;
+
+#if IMPLEMENT_MidiMonitor
+    inActivity = false;
+    outActivity = false;
+#endif //IMPLEMENT_MidiMonitor
 }
 
 String SysexComm::getInput() {
@@ -132,7 +137,11 @@ void SysexComm::setChl(int chl) {
 int SysexComm::send(const MidiMessage &message) {
     if ( output == NULL )
         return 2;
+
+#if IMPLEMENT_MidiMonitor
     outActivity = true;
+#endif // IMPLEMENT_MidiMonitor
+
     output->sendMessageNow(message);
     return 0;
 }
