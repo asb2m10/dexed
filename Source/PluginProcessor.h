@@ -92,19 +92,21 @@ static const float FLT_CNV_FACT_OPL_OP = 1.0F / MAX_ABS_AMP_OPL_OP;
 //--- Conversion factors to convert int32_t sample values to float main output sample values
 
 // An experimental value to reproduce about the similar loudness of main output than before
-static const float EXPERIMENTAL_VOLUME_CONSTANT = 0.15;
+static const float EXPERIMENTAL_VOLUME_CONSTANT_MSFA = 1.510;
+static const float EXPERIMENTAL_VOLUME_CONSTANT_MKI = 0.1500;
+static const float EXPERIMENTAL_VOLUME_CONSTANT_OPL = 1.512;
 
 /// Conversion factor to convert int32_t sample values to float sample values 
 /// into the allowed range of the plugin output for the ``MSFA`` engine
-static const float FLT_CNV_FACT_MSFA_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MSFA * EXPERIMENTAL_VOLUME_CONSTANT;
+static const float FLT_CNV_FACT_MSFA_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MSFA * EXPERIMENTAL_VOLUME_CONSTANT_MSFA;
 
 /// Conversion factor to convert int32_t sample values to float sample values 
 /// into the allowed range of the plugin output for the ``MARK I`` engine
-static const float FLT_CNV_FACT_MKI_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MKI * EXPERIMENTAL_VOLUME_CONSTANT;
+static const float FLT_CNV_FACT_MKI_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_MKI * EXPERIMENTAL_VOLUME_CONSTANT_MKI;
 
 /// Conversion factor to convert int32_t sample values to float sample values 
 /// into the allowed range of the plugin output for the ``OPL`` engine
-static const float FLT_CNV_FACT_OPL_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_OPL * EXPERIMENTAL_VOLUME_CONSTANT;
+static const float FLT_CNV_FACT_OPL_MAIN_OUTPUT = MAX_FLOAT_AMP_PLUGIN_OUTPUT / (float)MAX_ABS_AMP_OPL * EXPERIMENTAL_VOLUME_CONSTANT_OPL;
 
 //==============================================================================
 /**
