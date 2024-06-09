@@ -300,6 +300,9 @@ ParamDialog::ParamDialog ()
     scalingFactor->addItem (translate("100 %"), 1);
     scalingFactor->addItem (translate("125 %"), 2);
     scalingFactor->addItem (translate("150 %"), 3);
+    scalingFactor->addItem(translate("200 %"), 4);
+    scalingFactor->addItem(translate("300 %"), 5);
+    scalingFactor->addItem(translate("400 %"), 6);
     scalingFactor->addSeparator();
     scalingFactor->addListener (this);
 
@@ -1004,6 +1007,15 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
         scalingFactor->setSelectedItemIndex(1);
     } else if ( dpiScaleFactor == 1.50 ) {
         scalingFactor->setSelectedItemIndex(2);
+    }
+    else if (dpiScaleFactor == 2.00) {
+        scalingFactor->setSelectedItemIndex(3);
+    }
+    else if (dpiScaleFactor == 3.00) {
+        scalingFactor->setSelectedItemIndex(4);
+    }
+    else if (dpiScaleFactor == 4.00) {
+        scalingFactor->setSelectedItemIndex(5);
     } else {
         scalingFactor->setSelectedItemIndex(0);
     }
@@ -1058,6 +1070,15 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
             break;
         case 2 :
             *dpiScaleFactor = 1.5;
+            break;
+        case 3:
+            *dpiScaleFactor = 2.0;
+            break;
+        case 4:
+            *dpiScaleFactor = 3.0;
+            break;
+        case 5:
+            *dpiScaleFactor = 4.0;
             break;
         default:
             *dpiScaleFactor = 1.0;
