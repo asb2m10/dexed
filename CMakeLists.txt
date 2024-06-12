@@ -4,6 +4,15 @@ project(Dexed VERSION 0.9.6)
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
+include(CheckIPOSupported)
+check_ipo_supported(RESULT supported OUTPUT error)
+if (supported)
+    option(ENABLE_LTO "Enable LTO" OFF)
+    if (ENABLE_LTO)
+        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+    endif()
+endif()
+
 #Minimum MacOS target, set globally
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
