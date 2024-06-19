@@ -245,7 +245,17 @@ void DexedAudioProcessorEditor::timerCallback() {
         return;
 
     for(int i=0;i<6;i++) {
-        operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsense
+        //operators[i].updateGain(sqrt(processor->voiceStatus.amp[5 - i]) / 8196);        // TODO: FUGLY !!!! change this sqrt nonsense
+
+        const int amp_min = 1036152;
+        const float one_per_amp_diff = (float)(1.0 / (259037922 - amp_min));
+        // These two constants were determined from the results produced by the OPL engine,
+        // because its minimum is smaller, its maximum is higher than in the other cases. 
+
+        int amp = processor->voiceStatus.amp[5 - i] - amp_min;
+        if (amp <= 0) amp = 0; 
+        operators[i].updateGain(amp * one_per_amp_diff);
+
         operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);

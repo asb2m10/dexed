@@ -290,10 +290,11 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     for(i=0; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
         
-        const double decayFactor = 0.99992;
+        //const double decayFactor = 0.99992;
+        const float decayFactor = 0.9997F;
         if (s > vuSignal)
             vuSignal = s;
-        else if (vuSignal > 0.001f)
+        else if (vuSignal > 1.26E-4F) // -39 dB, the min amplitude associated to leftmost LED
             vuSignal *= decayFactor;
         else
             vuSignal = 0;

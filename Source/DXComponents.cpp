@@ -28,6 +28,8 @@
 #include "PluginProcessor.h"
 #include "msfa/pitchenv.h"
 
+#include <cfenv>	// fesetround, FE_*
+
 static char TMP_LEVEL_PTR[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 
 static float EG_rate_rise_duration[128] = {
@@ -316,22 +318,137 @@ void PitchEnvDisplay::paint(Graphics &g) {
     g.fillEllipse(dx-2, dy-2, 4, 4);
 }
 
-void VuMeter::paint(Graphics &g) {
-    Image myStrip = ImageCache::getFromMemory(BinaryData::Meter_140x8_png, BinaryData::Meter_140x8_pngSize);
-    
-    g.drawImage(myStrip, 0, 0, 140, 8, 0, 0, 140, 8);
-        
-    if ( v <= 0 )
-        return;
-    
-    const int totalBlocks = 46;
-    int numBlocks = roundToInt(totalBlocks * v);
+VuMeter::VuMeter(bool tricolor, int maxdB) {
+    // load original image
+    myStrip = ImageCache::getFromMemory(BinaryData::Meter_140x8_png, BinaryData::Meter_140x8_pngSize);
 
-    if ( numBlocks > 46 )
-        numBlocks = totalBlocks;
-    int brkpoint = numBlocks * 3 + 2;
+    if (myStrip.isValid()) {
+        // get dimensions of the image
+        height = myStrip.getHeight();
+        height2 = height / 2;
+        width = myStrip.getWidth();
+
+        // create a tricolor image if specified
+        if (tricolor)
+            recolorize();
+
+        // create individual thin stripes
+        createStripes();
+    }
+    else {
+DBG("ERROR: myStrip not loaded.");
+    }
+
+    mindB = maxdB - totalBlocks + 1;
+    minamp = dB_to_amp((float)mindB);
+    maxamp = dB_to_amp((float)maxdB);
+}
+
+
+void VuMeter::createStripes() {
+    // create a single, RGB colors based, opaque stripe
+    juce::Image img(juce::Image::RGB, width, height2, false);
+    //juce::Image img = myStrip.rescaled(width, height2, juce::Graphics::highResamplingQuality);
+    //juce::Rectangle<int> rimg(0, 0, width, height2);
+    //img.clear(rimg, juce::Colours::bisque);
+
+    // create individual stripes;
+    // the boundary between the bright and dark LEDs is determined by xLimit
+    for (int iStripe = 0, xLimit = blockGap + border; iStripe <= totalBlocks; ++iStripe, xLimit += blockWidthWithGap) {
+        // get a copy of the single stripe
+        stripes[iStripe] = img.createCopy();
+
+        // set the iStripe pieces of the leftmost LEDs to a bright color,
+        // leave the remaining rightmost LEDs in dark color
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height2; ++y) {
+                juce::Colour pixel;
+                if (x < xLimit) {
+                    // get a bright pixel from tge lower bright band
+                    pixel = myStrip.getPixelAt(x, y + height2);
+                }
+                else {
+                    // get a dark pixel from the upper dark band
+                    pixel = myStrip.getPixelAt(x, y);
+                }
+                // set the pixel of the current stripe
+                stripes[iStripe].setPixelAt(x, y, pixel);
+            }
+        }
+    }
+}
+
+void VuMeter::paint(juce::Graphics& g) {
+    int index;
+
+    float amp = fabs(v);
+
+    // check amplitude, whether it is out of the range
+    if (amp <= minamp) {
+        index = 0;
+    }
+    else if (amp >= maxamp) {
+        index = totalBlocks;
+    }
+    else {
+        //fesetround(FE_UPWARD);!!
+        index = (int)rint(10.0F * log10(amp)) - mindB;
+    }
     
-    g.drawImage(myStrip, 0, 0, brkpoint, 8, 0, 8, brkpoint, 8);
+    //g.drawImage(stripes[index], 0, 0, width, height2, 0, 0, width, height2);
+    g.drawImageAt(stripes[index], 0, 0); // it might be a more efficient drawing method
+}
+
+
+float VuMeter::dB_to_amp(float dB) {
+    return (float)pow(10.0, ((double)dB * 0.1));
+}
+
+void VuMeter::recolorize() {
+    uint8_t a;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+
+    int iFirstRedBlock = totalBlocks - numRedBlocks;
+    int xFirstRedBlock = iFirstRedBlock * blockWidthWithGap + blockGap + border;
+    int xFirstYellowBlock = (iFirstRedBlock - numYellowBlocks) * blockWidthWithGap + blockGap + border;
+
+    int w = myStrip.getWidth();
+    int h = myStrip.getHeight();
+
+    // repaint
+    for (int x = 0; x < w; ++x) {
+        for (int y = 0; y < h; ++y) {
+            // get color of the given pixel
+            juce::Colour pixel = myStrip.getPixelAt(x, y);
+
+            // get the components of the current color
+            uint32_t rgba = pixel.getARGB();
+            a = (uint8_t)((rgba & 0xFF000000) >> 24); // alfa
+            r = (uint8_t)((rgba & 0x00FF0000) >> 16); // red
+            g = (uint8_t)((rgba & 0x0000FF00) >> 8); // green
+            b = (uint8_t) (rgba & 0x000000FF); // blue
+
+            // create new colors
+            if (x >= xFirstRedBlock) {
+                // leave as is
+            }
+            else if (x >= xFirstYellowBlock) {
+                // make yellow blocks: set blue component to 0, and green and red ones to their max
+                b = 0;
+                r = g = r > g ? r : b;
+            }
+            else {
+                // make green blocks: swap the original red and green components
+                uint8_t t = r; r = g; g = t;
+            }
+            juce::Colour newpixel = juce::Colour::fromRGBA(r, g, b, a);
+
+            // set it
+            myStrip.setPixelAt(x, y, newpixel);
+        }
+    }
 }
 
 LcdDisplay::LcdDisplay() {

@@ -236,7 +236,7 @@ OperatorEditor::OperatorEditor ()
 
     ampModSens->setBounds (140, 76, 34, 34);
 
-    vu.reset (new VuMeter());
+    vu.reset (new VuMeter(false, 0));
     addAndMakeVisible (vu.get());
     vu->setName ("vu");
 

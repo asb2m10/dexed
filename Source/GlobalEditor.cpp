@@ -324,7 +324,7 @@ GlobalEditor::GlobalEditor ()
 
     output->setBounds (157, 60, 34, 34);
 
-    vuOutput.reset (new VuMeter());
+    vuOutput.reset (new VuMeter(true, 6));
     addAndMakeVisible (vuOutput.get());
     vuOutput->setName ("vuOutput");
 
