@@ -40,13 +40,13 @@ public:
     char vPos;
     void paint(Graphics &g);
 };
-
+/*
 class VuMeter: public Component {
     void paint(Graphics &g);
 public : 
     float v;
 };
-
+*/
 class LcdDisplay : public Component {
 public:
     LcdDisplay();

@@ -56,6 +56,7 @@ target_sources(${BaseTargetName} PRIVATE
 	ProgramListBox.cpp
 	SysexComm.cpp
 	TuningShow.cpp
+	VUMeter.cpp
         msfa/dx7note.cc
         msfa/env.cc
         msfa/exp2.cc

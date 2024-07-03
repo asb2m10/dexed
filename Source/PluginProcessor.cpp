@@ -139,6 +139,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     PitchEnv::init(sampleRate);
     Env::init_sr(sampleRate);
     fx.init(sampleRate);
+
+    vuDecayFactor = VuMeterOutput::getDecayFactor(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = new Dx7Note(synthTuningState, mtsClient);
@@ -287,14 +289,14 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     fx.process(channelData, numSamples);
+
     for(i=0; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
-        
-        const double decayFactor = 0.99992;
+
         if (s > vuSignal)
             vuSignal = s;
-        else if (vuSignal > 0.001f)
-            vuSignal *= decayFactor;
+        else if (vuSignal > /*0.001f*/ 1.26E-4F) // 1.26E-4 is equivalent to -39 dB, the min amplitude associated to leftmost LED
+            vuSignal *= vuDecayFactor;
         else
             vuSignal = 0;
     }

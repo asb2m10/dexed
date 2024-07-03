@@ -19,7 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 //[/Headers]
-
+#include "VUMeter.h"
 #include "OperatorEditor.h"
 
 

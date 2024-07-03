@@ -151,6 +151,7 @@ public :
     
     bool forceRefreshUI;
     float vuSignal;
+    double vuDecayFactor = 0.999361; // (for 48 kHz sampling rate)
     bool showKeyboard;
     int getEngineType();
     void setEngineType(int rs);

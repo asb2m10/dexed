@@ -24,6 +24,7 @@
 #include "PluginProcessor.h"
 #include "DXComponents.h"
 #include "DXLookNFeel.h"
+#include "VUMeter.h"
 //[/Headers]
 
 

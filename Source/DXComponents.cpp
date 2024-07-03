@@ -315,7 +315,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
     g.setColour(Colours::white);
     g.fillEllipse(dx-2, dy-2, 4, 4);
 }
-
+/*
 void VuMeter::paint(Graphics &g) {
     Image myStrip = ImageCache::getFromMemory(BinaryData::Meter_140x8_png, BinaryData::Meter_140x8_pngSize);
     
@@ -333,7 +333,7 @@ void VuMeter::paint(Graphics &g) {
     
     g.drawImage(myStrip, 0, 0, brkpoint, 8, 0, 8, brkpoint, 8);
 }
-
+*/
 LcdDisplay::LcdDisplay() {
     paramMsg = "DEXED " DEXED_VERSION;
 }

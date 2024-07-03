@@ -75,6 +75,8 @@
         <FILE id="TF7JMc" name="EngineOpl.h" compile="0" resource="0" file="Source/EngineOpl.h"/>
       </GROUP>
       <GROUP id="{998D2187-B355-9C12-0FB2-2D048B83342D}" name="ui">
+        <FILE id="lQfZ4Z" name="VUMeter.cpp" compile="1" resource="0" file="Source/VUMeter.cpp"/>
+        <FILE id="ZXsxxH" name="VUMeter.h" compile="0" resource="0" file="Source/VUMeter.h"/>
         <FILE id="Ec211k" name="PluginEditor.cpp" compile="1" resource="0"
               file="Source/PluginEditor.cpp"/>
         <FILE id="lZFsG0" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
