@@ -28,6 +28,7 @@ juce_add_plugin("${BaseTargetName}"
         PRODUCT_NAME "Dexed"
         DESCRIPTION "Dexed FM Synth"
         BUNDLE_ID "com.digitalsuburban.Dexed"  # To avoid CMake Warning at libs/JUCE/extras/Build/CMake/JUCEUtils.cmake
+        COPY_PLUGIN_AFTER_BUILD TRUE
 )
 
 clap_juce_extensions_plugin(TARGET ${BaseTargetName}
