@@ -324,7 +324,9 @@ GlobalEditor::GlobalEditor ()
 
     output->setBounds (157, 60, 34, 34);
 
-    vuOutput.reset (new VuMeter());
+    //vuOutput.reset (new VuMeter());
+    //vuOutput.reset(new VuMeterMain(6));
+    vuOutput.reset(new VuMeterOutput);
     addAndMakeVisible (vuOutput.get());
     vuOutput->setName ("vuOutput");
 
@@ -876,7 +878,7 @@ BEGIN_JUCER_METADATA
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
-                    explicitFocusOrder="0" pos="6 103 140 8" class="VuMeter" params=""/>
+                    explicitFocusOrder="0" pos="6 103 140 8" class="VuMeterOutput" params=""/>
   <TEXTBUTTON name="initButton" id="92b278163c42e21d" memberName="initButton"
               virtualName="" explicitFocusOrder="0" pos="100 111 50 30" buttonText="INIT"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>

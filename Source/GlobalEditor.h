@@ -105,7 +105,7 @@ private:
     std::unique_ptr<juce::Slider> algo;
     std::unique_ptr<LcdDisplay> lcdDisplay;
     std::unique_ptr<juce::Slider> output;
-    std::unique_ptr<VuMeter> vuOutput;
+    std::unique_ptr<VuMeterOutput> vuOutput;
     std::unique_ptr<juce::TextButton> initButton;
     std::unique_ptr<juce::TextButton> parmButton;
     std::unique_ptr<juce::TextButton> cartButton;
