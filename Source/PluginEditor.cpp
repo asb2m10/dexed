@@ -499,3 +499,8 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
             "Related to file \'"+fn.toStdString()+"\', an unknown exception occured.");
     };
 }
+
+void DexedAudioProcessorEditor::setSize(int w, int h) {
+    TRACE("******************** new size %d %d bound %d %d", w, h, getX(), getY());
+    Component::setBounds(0, 0, w, h);
+}
