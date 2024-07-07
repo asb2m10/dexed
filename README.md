@@ -1,33 +1,36 @@
 Dexed - FM Plugin Synth
 =======================
 
-
 Please see [Dexed User Website](https://asb2m10.github.io/dexed) for user and download information.
 
-Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7. 
-Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android) 
+Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7.
+Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android)
 for the synth engine and [JUCE](https://www.juce.com) as an application/plugin wrapper.
 
-The goal of this project is to be a tool/companion for the original DX7. Sound engine 
-with 'float' value parameters, different waveform à la TX81z would be great but anything that 
+The goal of this project is to be a tool/companion for the original DX7. Sound engine
+with 'float' value parameters, different waveform à la TX81z would be great but anything that
 goes beyond the DX7 should and will be a fork of this project. This is to keep the compatibility with
 the original machine.
 
-Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa 
+Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa
 in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
 
 Dexed Forks
 -----------
- * [MiniDexed](https://github.com/probonopd/MiniDexed) Run a DX7 bare metal Raspberry Pi
+ * [MiniDexed](https://github.com/probonopd/MiniDexed) Run a DX7 bare metal from a Raspberry Pi
  * [SIMD-optimized](https://github.com/risicle/dexed/tree/ris-highway) CPU optimized version with [highway](https://github.com/google/highway/tree/master)
 
 Changelog
 ---------
-#### Version 0.9.7 (IN DEVELOPMENT)
+#### Version 0.9.7
 * [MTS-ESP](https://oddsound.com/index.php) microtuning support
-* [CLAP](https://github.com/free-audio/clap) plugin support (IN PROGRESS)
-* Scalable UI upgrade, better UI redraw
+* [CLAP](https://github.com/free-audio/clap) plugin support (sadly scaling is not available for now, but we are working on this)
+* Scalable UI upgrade (better resolution), optimized UI redraw
+* More accurate VU meter. Thanks @FulopNandor
+* Releases are now notarized for mac OS
+* Fix for VST3 automation (again)
 * For developers: cmake is now the built system
+
 
 #### Version 0.9.6
 * Apple Silicon M1 builds
@@ -98,17 +101,17 @@ Changelog
 
 Credits & thanks
 ----------------
-* DX Synth engine : Raph Levien and the [msfa](https://github.com/google/music-synthesizer-for-android) team 
+* DX Synth engine : Raph Levien and the [msfa](https://github.com/google/music-synthesizer-for-android) team
 * [Surge Synth Team](https://surge-synth-team.org/) for substantial contributions like microtuning and MPE support.
 * Graphical design : AZur Studio
 * [Sentinel77](https://github.com/Sentinel77) for numerous engine fixes
 * LP Filter : Filatov Vadim (2DaT); taken from the excellent [Obxd](https://obxd.wordpress.com) project
 * PPPlay : Great [OPL3](https://github.com/stohrendorf/ppplay) implementation, with documented code :D
-* DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM)) 
+* DX7 program compilation : Jean-Marc Desprez (author of [SynprezFM](http://www.synprez.com/SynprezFM))
 * DX7 programs : Dave Benson, Frank Carvalho, Tim Conrardy, Jack Deckard, Chris Dodunski, Tim Garrett, Hitaye, Stephan Ibsen, Christian Jezreel, Narfman, Godric Wilkie
 * falkTX [distrho](http://distrho.sourceforge.net/)
 
-TODO - Dexed 
+TODO - Dexed
 ------------
 * Various code cleanup
 * Yamaha 4 operators (DX21/DX27/DX100) sysex import
