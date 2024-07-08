@@ -16,9 +16,7 @@ else()
     set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Minimum OS X deployment version" FORCE)
 endif()
 
-option(UniversalBinary "Build universal binary for mac" OFF)
-
-if (UniversalBinary)
+if (CMAKE_BUILD_TYPE EQUAL "Release")
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE INTERNAL "")
 endif()
 
@@ -29,8 +27,6 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 set(DEXED_JUCE_PATH "${CMAKE_SOURCE_DIR}/libs/JUCE" CACHE STRING "Path to JUCE library source tree")
 add_subdirectory(${DEXED_JUCE_PATH} ${CMAKE_BINARY_DIR}/JUCE EXCLUDE_FROM_ALL)
 add_subdirectory(libs/clap-juce-extensions EXCLUDE_FROM_ALL)
-
-
 
 #Adds all the module sources so they appear correctly in the IDE
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
