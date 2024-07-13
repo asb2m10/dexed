@@ -31,6 +31,11 @@ SysexComm::SysexComm() {
     input = NULL;
     output = NULL;
     inputOutput = false;
+
+#ifdef IMPLEMENT_MidiMonitor
+    inActivity = false;
+    outActivity = false;
+#endif //IMPLEMENT_MidiMonitor
 }
 
 String SysexComm::getInput() {
@@ -38,8 +43,10 @@ String SysexComm::getInput() {
 }
 
 bool SysexComm::setInput(String target) {
+#ifndef IMPLEMENT_MidiMonitor
     if ( JUCEApplication::isStandaloneApp() )
         return true;
+#endif
     
     if ( input != NULL ) {
         input->stop();
@@ -132,7 +139,11 @@ void SysexComm::setChl(int chl) {
 int SysexComm::send(const MidiMessage &message) {
     if ( output == NULL )
         return 2;
+
+#ifdef IMPLEMENT_MidiMonitor
     outActivity = true;
+#endif // IMPLEMENT_MidiMonitor
+
     output->sendMessageNow(message);
     return 0;
 }

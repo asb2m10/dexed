@@ -101,7 +101,12 @@ inline float PluginFx::NR(float sample, float g) {
 }
 
 void PluginFx::process(float *work, int sampleSize) {
+
     // very basic DC filter
+    // see descriptions at: https://www.musicdsp.org/en/latest/Filters/135-dc-filter.html
+    // https://www.degruyter.com/document/doi/10.1515/freq-2020-0177/html?lang=en
+    // https://www.dsprelated.com/showarticle/58.php
+
     float t_fd = work[0];
     work[0] = work[0] - dc_id + dc_r * dc_od;
     dc_id = t_fd;

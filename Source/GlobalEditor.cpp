@@ -31,14 +31,25 @@
  * Ugly but useful midi monitor to know if you are really sending/receiving something from the DX7
  * If the midi is not configured this component wont show up
  *
+ */
+#ifdef IMPLEMENT_MidiMonitor
 class MidiMonitor : public Component {
     SysexComm *midi;
     Image light;
+    int imageHeight;
+    int imageHeight2;
+    int imageWidth;
 
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public:
     MidiMonitor(SysexComm *sysexComm) {
         midi = sysexComm;
-        light = DXLookNFeel::getLookAndFeel()->imageLight;
+        light = lookAndFeel->imageLight;
+        imageHeight = light.getHeight();
+        imageHeight2 = imageHeight / 2;
+        imageWidth = light.getWidth();
+        
+        TRACE("WARNING! This functionality is a candidate for deprecation/obsolescence!");
     }
 
     void paint(Graphics &g) {
@@ -47,24 +58,25 @@ public:
         g.setColour(Colours::white);
 
         if ( midi->isInputActive() ) {
-            g.drawSingleLineText("DX7 IN", 17,14);
-            g.drawImage(light, 0, 3, 14, 14, 0, midi->inActivity ? 14 : 0, 14, 14);
+            g.drawSingleLineText("DX7 IN", 24, 18);
+            g.drawImage(light, 0, 0, imageWidth, imageHeight2, 0, midi->inActivity ? imageHeight2 : 0, imageWidth, imageHeight2);
             midi->inActivity = false;
         }
 
         if ( midi->isOutputActive() ) {
-            g.drawSingleLineText("DX7 OUT", 17, 28);
-            g.drawImage(light, 0, 17, 14, 14, 0, midi->outActivity ? 14 : 0, 14, 14);
+            g.drawSingleLineText("DX7 OUT", 24, 36);
+            g.drawImage(light, 0, 18, imageWidth, imageHeight2, 0, midi->outActivity ? imageHeight2 : 0, imageWidth, imageHeight2);
             midi->outActivity = false;
         }
     }
-};*/
+};
+#endif //IMPLEMENT_MidiMonitor
 
 class AboutBox : public DialogWindow {
 public:
     Image logo_png;
     std::unique_ptr<juce::HyperlinkButton> dexed; // changed to std::unique_ptr from juce::ScopedPointer
-    std::unique_ptr<juce::HyperlinkButton> surge; // changed to std__unique_ptr from juce::ScopedPointer
+    std::unique_ptr<juce::HyperlinkButton> surge; // changed to std::unique_ptr from juce::ScopedPointer
 
     AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
         dexed(std::make_unique<juce::HyperlinkButton>("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"))),
@@ -706,9 +718,11 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
 
     editor = edit;
 
-    //midiMonitor = new MidiMonitor(&(processor->sysexComm));
-    //addAndMakeVisible(midiMonitor);
-    //midiMonitor->setBounds(155, 21, 80, 45);
+#ifdef IMPLEMENT_MidiMonitor
+    midiMonitor = std::make_unique<MidiMonitor>(&(processor->sysexComm));
+    addAndMakeVisible(*midiMonitor);
+    midiMonitor->setBounds(110, 10, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
+#endif //IMPLEMENT_MidiMonitor
 
     repaint();
 }
@@ -734,7 +748,9 @@ void GlobalEditor::updatePitchPos(int pos) {
 void GlobalEditor::updateVu(float f) {
     vuOutput->v = f;
     vuOutput->repaint();
-    //midiMonitor->repaint();
+#ifdef IMPLEMENT_MidiMonitor
+    midiMonitor->repaint();
+#endif //IMPLEMENT_MidiMonitor
 }
 
 void GlobalEditor::setMonoState(bool state)  {

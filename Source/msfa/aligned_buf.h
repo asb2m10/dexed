@@ -17,11 +17,16 @@
 // A convenient wrapper for buffers with alignment constraints
 
 // Note that if we were on C++11, we'd use aligned_storage or somesuch.
+//
+// Define ``IMPLEMENT_ORIGINAL_ALIGNED_BUF`` to use the original version, 
+// or DO NOT define it to allow alignment mechanism provided by the C++ compilers. 
 
 #ifndef __ALIGNED_BUF_H
 #define __ALIGNED_BUF_H
 
 #include<stddef.h>
+
+#ifdef IMPLEMENT_ORIGINAL_ALIGNED_BUF
 
 template<typename T, size_t size, size_t alignment = 16>
 class AlignedBuf {
@@ -32,5 +37,25 @@ class AlignedBuf {
  private:
   unsigned char storage_[size * sizeof(T) + alignment];
 };
+
+#else //IMPLEMENT_ORIGINAL_ALIGNED_BUF
+
+template<typename T, size_t size, size_t alignment = 8>
+class AlignedBuf {
+public:
+    inline T* get() {
+        return (T*)storage_;
+    }
+private:
+#ifdef __GNUC__ 
+    // GCC specific code
+    T storage_[size] __attribute__((aligned(alignment)));
+#else // __GNUC__
+    // MSC specific code
+    alignas(alignment) T storage_[size];
+#endif // __GNUC__
+};
+
+#endif //IMPLEMENT_ORIGINAL_ALIGNED_BUF
 
 #endif  // __ALIGNED_BUF_H
