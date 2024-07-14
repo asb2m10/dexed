@@ -60,9 +60,9 @@ enum DexedEngineResolution {
 };
 
 /// Maximum allowed size for SCL and KBM files.
-/// (COMMENT: Since none of the 5175 .scl files in the Scala archive 
-/// at ‘https://www.huygens-fokker.org/scala/downloads.html#scales’ 
-/// exceed 6 KB (in 25th Mar 2024), a maximum size of 16 KB appears 
+/// (COMMENT: Since none of the 5175 .scl files in the Scala archive
+/// at https://www.huygens-fokker.org/scala/downloads.html#scales
+/// exceed 6 KB (in 25th Mar 2024), a maximum size of 16 KB appears
 /// to be a practical choice.)
 const int MAX_SCL_KBM_FILE_SIZE = 16384;
 
@@ -129,7 +129,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     EngineOpl engineOpl;
     
     char clipboard[161];
-    char clipboardContent;
+    signed char clipboardContent;
     
     void resolvAppDir();
     
