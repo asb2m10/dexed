@@ -106,7 +106,7 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 void DexedAudioProcessorEditor::cartShow() {
     stopTimer();    
     cartManager.resetActiveSysex();
-    cartManager.setBounds(4, 2, 859, 576);
+    cartManager.setBounds(16, 16, WINDOW_SIZE_X - 32, WINDOW_SIZE_Y - 94 - 32);
     cartManager.setVisible(true);
     cartManager.initialFocus();
 }
