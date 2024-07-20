@@ -301,8 +301,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
             vuSignal = 0;
     }
     
-    // DX7 is a mono synth
-    buffer.copyFrom(1, 0, channelData, numSamples, 1);
+    // DX7 is a mono synth, but copy it to the right channel is available
+    if ( buffer.getNumChannels() > 1 )
+        buffer.copyFrom(1, 0, channelData, numSamples, 1);
 }
 
 
