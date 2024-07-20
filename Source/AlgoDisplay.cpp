@@ -228,17 +228,17 @@ void AlgoDisplay::paint(Graphics &g) {
             displayOp(g, 2, 4, 2, 0, 0);
             displayOp(g, 1, 4, 3, 2, 0);
             break;
-        case 13:
-            displayOp(g, 6, 3, 1, 0, 1);
-            displayOp(g, 5, 2, 1, 1, 0);
+        case 13:                                                                       
+            displayOp(g, 6, 4, 1, 7, 1);// displayOp(g, 6, 3, 1, 0, 1);
+            displayOp(g, 5, 3, 1, 0, 0);// displayOp(g, 5, 2, 1, 1, 0);
             displayOp(g, 4, 3, 2, 0, 0);
             displayOp(g, 3, 3, 3, 2, 0);
             displayOp(g, 2, 2, 2, 0, 0);
             displayOp(g, 1, 2, 3, 1, 0);
             break;
         case 14:
-            displayOp(g, 6, 3, 1, 0, 0);
-            displayOp(g, 5, 2, 1, 1, 0);
+            displayOp(g, 6, 4, 1, 7, 0);// displayOp(g, 6, 3, 1, 0, 0);
+            displayOp(g, 5, 3, 1, 0, 0);// displayOp(g, 5, 2, 1, 1, 0);
             displayOp(g, 4, 3, 2, 0, 0);
             displayOp(g, 3, 3, 3, 2, 0);
             displayOp(g, 2, 2, 2, 0, 4);
