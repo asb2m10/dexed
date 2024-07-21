@@ -85,8 +85,10 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     rebuildProgramCombobox();
     global.programs->addListener(this);
     
-    addChildComponent(&cartManager);
-    
+    addChildComponent(&cartManagerCover);
+    cartManagerCover.addChildComponent(&cartManager);
+    cartManager.setVisible(true);
+
     updateUI();
     startTimer(100);
 }
@@ -106,11 +108,12 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 void DexedAudioProcessorEditor::cartShow() {
     stopTimer();    
     cartManager.resetActiveSysex();
-    cartManager.setBounds(16, 16, WINDOW_SIZE_X - 32, WINDOW_SIZE_Y - 94 - 32);
-    cartManager.setVisible(true);
+    cartManagerCover.setBounds(0, 0, WINDOW_SIZE_X , WINDOW_SIZE_Y - 94);
+    cartManager.setBounds(16, 16, cartManagerCover.getWidth() - 32, cartManagerCover.getHeight() - 32);
+    cartManager.updateCartFilename();
     cartManager.initialFocus();
+    cartManagerCover.setVisible(true);
 }
-
 
 void DexedAudioProcessorEditor::loadCart(File file) {
     Cartridge cart;
@@ -273,6 +276,7 @@ void DexedAudioProcessorEditor::updateUI() {
     }
     rebuildProgramCombobox();
     global.updateDisplay();
+    cartManager.updateCartFilename();
 }
 
 void DexedAudioProcessorEditor::rebuildProgramCombobox() {

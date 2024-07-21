@@ -25,7 +25,6 @@
 #include "PluginData.h"
 
 #include <fstream>
-using namespace ::std;
 
 class SyxFileFilter : public FileFilter {
 public:
@@ -114,9 +113,9 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     addAndMakeVisible(fileMgrButton.get());
     fileMgrButton->addListener(this);
 
-    activeCartName.reset(new Label("activeCart"));
+    activeCartName.reset(new CartridgeFileDisplay());
     addAndMakeVisible(activeCartName.get());
-    updateCartFilename();
+
 /*
  *
  * I've removed this since it only works on the DX7 II. TBC.
@@ -143,25 +142,19 @@ void CartManager::resized() {
     activeCart->setBounds(15, 402, activeSize * 8, 96);
     browserCart->setBounds(activeSize * 6 + 15, 10, activeSize * 2, 384);
     cartBrowser->setBounds(15, 10, activeSize * 6 - 1, 383);
-    closeButton->setBounds(4, getHeight() - 40, 50, 30);
-    saveButton->setBounds(100, getHeight() - 40, 50, 30);
-    loadButton->setBounds(52, getHeight() - 40, 50, 30);
-    fileMgrButton->setBounds(148, getHeight() - 40, 70, 30);
-    activeCartName->setBounds(getWidth() - 30 - 100, getHeight() - 40, 100, 30);
+    closeButton->setBounds(4, getHeight() - 40, 70, 30);
+    saveButton->setBounds(144, getHeight() - 40, 70, 30);
+    loadButton->setBounds(74, getHeight() - 40, 70, 30);
+    fileMgrButton->setBounds(214, getHeight() - 40, 90, 30);
+    activeCartName->setBounds(getWidth() - 8 - 300, getHeight() - 40, 300, 30);
 }
 
 void CartManager::paint(Graphics &g) {
     g.fillAll(DXLookNFeel::lightBackground);
-/*    g.setColour(DXLookNFeel::roundBackground);
-    g.fillRoundedRectangle(8, 418, 843, 126, 15);
-    g.setColour(Colours::whitesmoke);
-    g.drawText("currently loaded cartridge", 38, 410, 150, 40, Justification::left);*/
 }
 
 void CartManager::updateCartFilename() {
-    if ( mainWindow->processor->activeFileCartridge.exists() )
-        DBG("OK");
-        /*activeCartName->setText(mainWindow->processor->activeFileCartridge.getFileName(), NotificationType::dontSendNotification);*/
+    activeCartName->setCartrdigeFile(mainWindow->processor->activeFileCartridge);
 }
 
 void CartManager::programSelected(ProgramListBox *source, int pos) {
@@ -183,15 +176,17 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
 void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     if ( buttonThatWasClicked == closeButton.get() ) {
         mainWindow->startTimer(100);
-        setVisible(false);
+        getParentComponent()->setVisible(false);
         return;
     }
 
     if ( buttonThatWasClicked == loadButton.get() ) {
         FileChooser fc ("Import original DX sysex...", File::getSpecialLocation(File::SpecialLocationType::userDocumentsDirectory), "*.syx;*.SYX;*.*", 1);
 
-        if ( fc.browseForFileToOpen())
+        if ( fc.browseForFileToOpen()) {
             mainWindow->loadCart(fc.getResult());
+            updateCartFilename();
+        }
         return;
     }
 
@@ -231,6 +226,7 @@ void CartManager::fileDoubleClicked(const File& file) {
         return;
     mainWindow->loadCart(file);
     activeCart->setCartridge(mainWindow->processor->currentCart);
+    updateCartFilename();
 }
 
 void CartManager::fileClicked(const File& file, const MouseEvent& e) {

@@ -26,6 +26,37 @@
 #include "ProgramListBox.h"
 #include "PluginData.h"
 
+class CartridgeFileDisplay : public Component {
+    File file;
+    float clickableArea = 0;
+public:
+    void setCartrdigeFile(File &file) {
+        this->file = file;
+        repaint();
+    }
+
+    void paint(Graphics& g) override {
+        g.setColour(Colours::whitesmoke);
+        if ( file.exists() ) {
+            g.setFont(g.getCurrentFont().withStyle(Font::underlined));
+            clickableArea = g.getCurrentFont().getStringWidthFloat(file.getFileName());
+            g.drawText(file.getFileName(), 0, 0, getWidth(), getHeight(), Justification::right);
+            g.setFont(g.getCurrentFont().withStyle(Font::plain));
+            g.drawText("Based on cartridge: ", 0, 0, getWidth() - (clickableArea + 2), getHeight(), Justification::right);
+        } else {
+            g.drawText("[No reference to original cartridge]", 0, 0, getWidth(), getHeight(), Justification::right);
+            clickableArea = 0;
+        }
+    }
+
+    void mouseDown(const MouseEvent &event) override {
+        if ( event.getMouseDownX() > getWidth() - clickableArea ) {
+            if ( file.exists() )
+                file.revealToUser();
+        }
+    }
+};
+
 class CartManager  : public Component, public Button::Listener, public DragAndDropContainer, public FileBrowserListener
     , public ProgramListBoxListener, public KeyListener {
     std::unique_ptr<TextButton> newButton;
@@ -44,7 +75,7 @@ class CartManager  : public Component, public Button::Listener, public DragAndDr
     std::unique_ptr<FileTreeComponent> cartBrowser;
     std::unique_ptr<TimeSliceThread> timeSliceThread;
     std::unique_ptr<DirectoryContentsList> cartBrowserList;
-    std::unique_ptr<Label> activeCartName;
+    std::unique_ptr<CartridgeFileDisplay> activeCartName;
 
     File cartDir;
 
