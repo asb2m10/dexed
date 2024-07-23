@@ -654,8 +654,6 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == monoMode.get())
     {
         //[UserButtonCode_monoMode] -- add your button handler code here..
-        editor->processor->setMonoMode(monoMode->getToggleState());
-        repaint();
         //[/UserButtonCode_monoMode]
     }
     else if (buttonThatWasClicked == aboutButton.get())
@@ -699,6 +697,8 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor->fxReso->bind(reso.get());
     processor->output->bind(output.get());
     processor->tune->bind(tune.get());
+    processor->monoModeCtrl->bind(monoMode.get());
+
     algoDisplay->algo = (char *) &(processor->data[134]);
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 

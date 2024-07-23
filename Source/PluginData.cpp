@@ -321,7 +321,6 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("reso", fx.uiReso);
     dexedState.setAttribute("gain", fx.uiGain);
     dexedState.setAttribute("currentProgram", currentProgram);
-    dexedState.setAttribute("monoMode", monoMode);
     dexedState.setAttribute("engineType", (int) engineType);
     dexedState.setAttribute("masterTune", controllers.masterTune);
     //TRACE("saving opswitch %s", controllers.opSwitch);

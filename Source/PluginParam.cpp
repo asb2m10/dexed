@@ -202,6 +202,32 @@ public :
     }
 };
 
+class CtrlMonoPoly : public Ctrl {
+    DexedAudioProcessor *processor;
+public:
+    CtrlMonoPoly(String name, DexedAudioProcessor *owner) : Ctrl(name) {
+        processor = owner;
+    }
+
+    String getValueDisplay() {
+        return processor->isMonoMode() ? String("MONO") : String("POLY");
+    }
+
+    float getValueHost() {
+        return processor->isMonoMode() ? 1 : 0;
+    }
+
+    void setValueHost(float v) {
+        processor->setMonoMode(v == 1);
+    }
+
+    void updateComponent() {
+        if (button != NULL) {
+            button->setToggleState(processor->isMonoMode(), dontSendNotification);
+        }
+    }
+};
+
 // ************************************************************************
 //
 Ctrl::Ctrl(String name) {
@@ -455,6 +481,9 @@ void DexedAudioProcessor::initCtrl() {
     
     output.reset(new CtrlFloat("Output", &fx.uiGain));
     ctrl.add(output.get());
+
+    monoModeCtrl.reset(new CtrlMonoPoly("MonoMode", this));
+    ctrl.add(monoModeCtrl.get());
     
     tune.reset(new CtrlTune("MASTER TUNE ADJ", this));
     ctrl.add(tune.get());
