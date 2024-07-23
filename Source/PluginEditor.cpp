@@ -39,7 +39,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
 
     processor = ownerFilter;
-    
+
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
     background = lookAndFeel->background;
 
@@ -47,30 +47,30 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     addAndMakeVisible(&(operators[0]));
     operators[0].setBounds(2, 1, 287, 218);
     operators[0].bind(processor, 0);
-    
+
     addAndMakeVisible(&(operators[1]));
     operators[1].setBounds(290, 1, 287, 218);
     operators[1].bind(processor, 1);
-    
+
     addAndMakeVisible(&(operators[2]));
     operators[2].setBounds(578, 1, 287, 218);
     operators[2].bind(processor, 2);
-    
+
     addAndMakeVisible(&(operators[3]));
     operators[3].setBounds(2, 219, 287, 218);
     operators[3].bind(processor, 3);
-    
+
     addAndMakeVisible(&(operators[4]));
     operators[4].setBounds(290, 219, 287, 218);
     operators[4].bind(processor, 4);
-    
+
     addAndMakeVisible(&(operators[5]));
     operators[5].setBounds(578, 219, 287, 218);
     operators[5].bind(processor, 5);
 
     // add the midi keyboard component..
     addAndMakeVisible (&midiKeyboard);
-    
+
     // The DX7 is a badass on the bass, keep it that way
     midiKeyboard.setLowestVisibleKey(24);
 
@@ -79,12 +79,12 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     addAndMakeVisible(&global);
     global.setBounds(2,436,864,144);
     global.bind(this);
-    
+
     global.setMonoState(processor->isMonoMode());
-    
+
     rebuildProgramCombobox();
     global.programs->addListener(this);
-    
+
     addChildComponent(&cartManagerCover);
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
@@ -100,33 +100,33 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 }
 
 //==============================================================================
-void DexedAudioProcessorEditor::paint (Graphics& g) {    
+void DexedAudioProcessorEditor::paint (Graphics& g) {
     g.setColour(background);
     g.fillRoundedRectangle(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 0);
 }
 
 void DexedAudioProcessorEditor::cartShow() {
-    stopTimer();    
+    stopTimer();
     cartManager.resetActiveSysex();
     cartManagerCover.setBounds(0, 0, WINDOW_SIZE_X , WINDOW_SIZE_Y - 94);
     cartManager.setBounds(16, 16, cartManagerCover.getWidth() - 32, cartManagerCover.getHeight() - 32);
     cartManager.updateCartFilename();
-    cartManager.initialFocus();
     cartManagerCover.setVisible(true);
+    cartManager.initialFocus();
 }
 
 void DexedAudioProcessorEditor::loadCart(File file) {
     Cartridge cart;
 
     int rc = cart.load(file);
-    
+
     if ( rc < 0 ) {
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                           "Error",
                                           "Unable to open: " + file.getFullPathName());
         return;
     }
-    
+
     if ( rc != 0 ) {
         rc = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Unable to find DX7 sysex cartridge in file",
                                           "This sysex file is not for the DX7 or it is corrupted. "
@@ -134,13 +134,13 @@ void DexedAudioProcessorEditor::loadCart(File file) {
         if ( rc == 0 )
             return;
     }
-    
+
     processor->loadCartridge(cart);
     rebuildProgramCombobox();
     processor->setCurrentProgram(0);
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
     processor->updateHostDisplay();
-    
+
     processor->activeFileCartridge = file;
 }
 
@@ -160,7 +160,7 @@ void DexedAudioProcessorEditor::saveCart() {
 void DexedAudioProcessorEditor::tuningShow() {
     auto te = new TuningShow();
     te->setTuning( processor->synthTuningState->getTuning() );
-    
+
     DialogWindow::LaunchOptions options;
     options.content.setOwned(te);
     options.dialogTitle = "Current Tuning";
@@ -243,7 +243,7 @@ void DexedAudioProcessorEditor::timerCallback() {
         processor->forceRefreshUI = false;
         updateUI();
     }
-    
+
     if ( ! processor->peekVoiceStatus() )
         return;
 
@@ -265,7 +265,7 @@ void DexedAudioProcessorEditor::timerCallback() {
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
     global.updateVu(processor->vuSignal);
-}   
+}
 
 void DexedAudioProcessorEditor::updateUI() {
     for(int i=0;i<processor->ctrl.size();i++) {
@@ -281,22 +281,22 @@ void DexedAudioProcessorEditor::updateUI() {
 
 void DexedAudioProcessorEditor::rebuildProgramCombobox() {
     global.programs->clear(dontSendNotification);
-    
+
     processor->currentCart.getProgramNames(processor->programNames);
-    
+
     for(int i=0;i<processor->getNumPrograms();i++) {
         String id;
         id << (i+1) << ". " << processor->getProgramName(i);
         global.programs->addItem(id, i+1);
     }
-    
+
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
-    
+
     String name = Cartridge::normalizePgmName((const char *) processor->data+145);
     cartManager.setActiveProgram(processor->getCurrentProgram(), name);
     if ( name != processor->getProgramName(processor->getCurrentProgram()) )
         global.programs->setText("**. " + name, dontSendNotification);
-    
+
     cartManager.resetActiveSysex();
 }
 
@@ -306,10 +306,10 @@ void DexedAudioProcessorEditor::storeProgram() {
     File *externalFile = NULL;
 
     bool activeCartridgeFound = processor->activeFileCartridge.exists();
-    
+
     while (true) {
         String msg;
-        
+
         if ( externalFile == NULL ) {
             if ( activeCartridgeFound )
                 msg = "Store program to current (" + processor->activeFileCartridge.getFileName() + ") / new cartridge";
@@ -318,7 +318,7 @@ void DexedAudioProcessorEditor::storeProgram() {
         } else {
             msg = "Store program to " + externalFile->getFileName();
         }
-        
+
         AlertWindow dialog("Store Program", msg, AlertWindow::NoIcon, this);
         dialog.addTextEditor("Name", currentName, String("Name"), false);
         // TODO: fix the name length to 10
@@ -333,10 +333,10 @@ void DexedAudioProcessorEditor::storeProgram() {
             saveAction.add("Store program and create a new copy of the .syx cartridge");
             if ( activeCartridgeFound )
                 saveAction.add("Store program and overwrite current .syx cartridge");
-        
+
             dialog.addComboBox("SaveAction", saveAction, "Store Action");
         }
-                
+
         dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
         dialog.addButton("CANCEL", 1, KeyPress(KeyPress::escapeKey));
         dialog.addButton("EXTERNAL FILE", 2, KeyPress());
@@ -359,7 +359,7 @@ void DexedAudioProcessorEditor::storeProgram() {
         if ( response == 0 ) {
             TextEditor *name = dialog.getTextEditor("Name");
             ComboBox *dest = dialog.getComboBoxComponent("Dest");
-            
+
             int programNum = dest->getSelectedItemIndex();
             String programName(name->getText());
             if ( programName.length() > 10 ) {
@@ -372,9 +372,9 @@ void DexedAudioProcessorEditor::storeProgram() {
                 rebuildProgramCombobox();
                 processor->setCurrentProgram(programNum);
                 processor->updateHostDisplay();
-                
+
                 int action = dialog.getComboBoxComponent("SaveAction")->getSelectedItemIndex();
-                if ( action > 0 ) {                  
+                if ( action > 0 ) {
                     File destination = processor->activeFileCartridge;
                     if ( action == 1 ) {
                         FileChooser fc("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX", 1);
@@ -382,7 +382,7 @@ void DexedAudioProcessorEditor::storeProgram() {
                             break;
                         destination = fc.getResult();
                     }
-                    
+
                     processor->currentCart.saveVoice(destination);
                     processor->activeFileCartridge = destination;
                 }
@@ -410,14 +410,14 @@ public :
         this->target = target;
         setMessage("Mapping: " + String(target->label) + ", waiting for midi controller change (CC) message...");
         addButton("CANCEL", -1);
-        editor->processor->lastCCUsed.setValue(-1);        
+        editor->processor->lastCCUsed.setValue(-1);
         editor->processor->lastCCUsed.addListener(this);
     }
-    
+
     ~MidiCCListener() {
         editor->processor->lastCCUsed.removeListener(this);
     }
-    
+
     void valueChanged(Value &value) {
         int cc = value.getValue();
         editor->processor->mappedMidiCC.remove(cc);
@@ -435,7 +435,7 @@ void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
 bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)
 {
     if( files.size() != 1 ) return false;
-    
+
     for( auto i = files.begin(); i != files.end(); ++i )
     {
         if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) )
