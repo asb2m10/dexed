@@ -26,6 +26,37 @@
 #include "ProgramListBox.h"
 #include "PluginData.h"
 
+class CartridgeFileDisplay : public Component {
+    File file;
+    float clickableArea = 0;
+public:
+    void setCartrdigeFile(File &file) {
+        this->file = file;
+        repaint();
+    }
+
+    void paint(Graphics& g) override {
+        g.setColour(Colours::whitesmoke);
+        if ( file.exists() ) {
+            g.setFont(g.getCurrentFont().withStyle(Font::underlined));
+            clickableArea = g.getCurrentFont().getStringWidthFloat(file.getFileName());
+            g.drawText(file.getFileName(), 0, 0, getWidth(), getHeight(), Justification::right);
+            g.setFont(g.getCurrentFont().withStyle(Font::plain));
+            g.drawText("Based on cartridge: ", 0, 0, getWidth() - (clickableArea + 2), getHeight(), Justification::right);
+        } else {
+            g.drawText("[No reference to original cartridge]", 0, 0, getWidth(), getHeight(), Justification::right);
+            clickableArea = 0;
+        }
+    }
+
+    void mouseDown(const MouseEvent &event) override {
+        if ( event.getMouseDownX() > getWidth() - clickableArea ) {
+            if ( file.exists() )
+                file.revealToUser();
+        }
+    }
+};
+
 class CartManager  : public Component, public Button::Listener, public DragAndDropContainer, public FileBrowserListener
     , public ProgramListBoxListener, public KeyListener {
     std::unique_ptr<TextButton> newButton;
@@ -35,18 +66,19 @@ class CartManager  : public Component, public Button::Listener, public DragAndDr
     std::unique_ptr<TextButton> fileMgrButton;
     std::unique_ptr<TextButton> getDXPgmButton;
     std::unique_ptr<TextButton> getDXCartButton;
-    
+
     std::unique_ptr<ProgramListBox> activeCart;
     std::unique_ptr<ProgramListBox> browserCart;
-    
+
     std::unique_ptr<FileFilter> syxFileFilter;
-        
+
     std::unique_ptr<FileTreeComponent> cartBrowser;
     std::unique_ptr<TimeSliceThread> timeSliceThread;
     std::unique_ptr<DirectoryContentsList> cartBrowserList;
-        
+    std::unique_ptr<CartridgeFileDisplay> activeCartName;
+
     File cartDir;
-    
+
     DexedAudioProcessorEditor *mainWindow;
 
     void showSysexConfigMsg();
@@ -56,22 +88,25 @@ public:
     virtual ~CartManager();
     void paint(Graphics& g) override;
     void buttonClicked (Button* buttonThatWasClicked) override;
-    
+
     void selectionChanged() override;
     void fileClicked (const File& file, const MouseEvent& e) override;
     void fileDoubleClicked (const File& file) override;
     void browserRootChanged (const File& newRoot) override;
-        
+
     void setActiveProgram(int idx, String activeName);
     void resetActiveSysex();
-        
+
+    void updateCartFilename();
+
+    void resized() override;
+
     virtual void programSelected(ProgramListBox *source, int pos) override;
     virtual void programRightClicked(ProgramListBox *source, int pos) override;
     virtual void programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) override;
     virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
-        
+
     void initialFocus();
 };
-
 
 #endif  // CARTMANAGER_H_INCLUDED

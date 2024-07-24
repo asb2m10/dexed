@@ -37,6 +37,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;
+    // This cover is used to disable main window when cart manager is shown
+    Component cartManagerCover;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public:
