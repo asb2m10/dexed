@@ -599,7 +599,9 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
     if ( message.isActiveSense() ) 
         return;
 
-    sysexComm.inActivity = true;
+#ifdef IMPLEMENT_MidiMonitor
+    sysexComm.inActivity = true; // indicate to MidiMonitor that a MIDI messages (other than Active Sense) is received
+#endif //IMPLEMENT_MidiMonitor
 
     const uint8 *buf = message.getRawData();
     int sz = message.getRawDataSize();
