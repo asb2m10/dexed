@@ -63,8 +63,8 @@ void replaceImage(String path, Image &image) {
     img = ImageCache::getFromFile(imgFile);
     if (!img.isNull()) {
         // check sizes
-        int hnew = img.getWidth();
-        int wnew = img.getHeight();
+        int hnew = img.getHeight();
+        int wnew = img.getWidth();        
         int horig = image.getHeight();
         int worig = image.getWidth();
         if (horig != hnew || worig != wnew) {
@@ -139,7 +139,7 @@ DXLookNFeel::DXLookNFeel() {
     File dexedTheme = DexedAudioProcessor::dexedAppDir.getChildFile("DexedTheme.xml");
 
     if ( ! dexedTheme.existsAsFile() ) {
-        TRACE("file \"%s\" does not exists", dexedTheme.getFullPathName());
+        TRACE("file \"%s\" does not exists", dexedTheme.getFullPathName().toRawUTF8());
         return;
     }
 
