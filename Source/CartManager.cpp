@@ -71,6 +71,52 @@ public :
     }
 };
 
+/**
+ * This is a hack to override global dexed focus traversal when the cart manager is shown. We could have used a 
+ * modal window but this would have blocked the keys and the user would not have been able to play the current
+ * selected preset. Anything that is keyboard related should be ordered in the focusOrder vector.
+ */
+class CartBrowserFocusTraverser : public KeyboardFocusTraverser {
+    std::vector<Component*> &orders;
+    Component *root;
+public:
+    CartBrowserFocusTraverser(Component *root, std::vector<Component*> &orders) : orders(orders), root(root) {}
+
+    Component* getDefaultComponent(Component* parentComponent) override {
+        return orders[0];
+    }
+
+    Component* getNextComponent(Component* current) override {
+        for (int i=0;i<orders.size();i++) {
+            if ( orders[i] == current ) {
+                i += 1;
+                if ( i == orders.size() )
+                    return orders.front();
+                else 
+                    return orders[i];
+            }
+        }
+        return root;
+    }
+
+    Component* getPreviousComponent(Component* current) override {
+        for (int i=0;i<orders.size();i++) {
+            if ( orders[i] == current ) {
+                i -= 1;
+                if ( i < 0 )
+                    return orders.back();
+                else 
+                    return orders[i];
+            }
+        }
+        return root;
+    }
+
+    std::vector<Component*> getAllComponents(Component* parentComponent) override {
+        return orders;
+    }
+};
+
 CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartManager") {
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;
@@ -116,6 +162,15 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     activeCartName.reset(new CartridgeFileDisplay());
     addAndMakeVisible(activeCartName.get());
 
+    focusOrder.push_back(cartBrowser.get());
+    focusOrder.push_back(activeCart.get());
+    focusOrder.push_back(browserCart.get());
+    focusOrder.push_back(closeButton.get());
+    focusOrder.push_back(loadButton.get());
+    focusOrder.push_back(saveButton.get());
+    focusOrder.push_back(fileMgrButton.get());
+    focusOrder.push_back(activeCartName.get());
+
 /*
  *
  * I've removed this since it only works on the DX7 II. TBC.
@@ -134,6 +189,10 @@ CartManager::~CartManager() {
     timeSliceThread->stopThread(500);
     cartBrowser.reset(NULL);
     cartBrowserList.reset(NULL);
+}
+
+std::unique_ptr<ComponentTraverser> CartManager::createFocusTraverser() {
+    return std::make_unique<CartBrowserFocusTraverser>(this, focusOrder);
 }
 
 void CartManager::resized() {
@@ -322,7 +381,6 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
             mainWindow->processor->sendCurrentSysexCartridge();
             break;
     }
-
 }
 
 void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) {
@@ -373,5 +431,3 @@ void CartManager::showSysexConfigMsg() {
 
 // unused stuff from FileBrowserListener
 void CartManager::browserRootChanged (const File& newRoot) {}
-
-

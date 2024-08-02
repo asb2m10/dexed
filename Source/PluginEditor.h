@@ -41,6 +41,7 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     Component cartManagerCover;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
+
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;

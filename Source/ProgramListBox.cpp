@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2015 Pascal Gauthier.
+ * Copyright (c) 2015-2024 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name)
     dragCandidate = -1;
     readOnly = false;
     programNames.clear();
+    setWantsKeyboardFocus(true);
+    addKeyListener(this);
 }
 
 void ProgramListBox::paint(Graphics &g) {
@@ -188,3 +190,28 @@ void ProgramListBox::itemDragExit(const SourceDetails &dragSourceDetails) {
     repaint();
 }
 
+bool ProgramListBox::keyPressed(const KeyPress &key, Component *originatingComponent) {
+
+    if ( key.getKeyCode() == KeyPress::upKey ) {
+        selectedPgm--;
+        if ( selectedPgm < 0 )
+            selectedPgm += rows;
+    } else if ( key.getKeyCode() == KeyPress::downKey ) {
+        selectedPgm++;
+        if ( selectedPgm >= 32 )
+            selectedPgm -= rows;
+    } else if ( key.getKeyCode() == KeyPress::leftKey ) {
+        selectedPgm -= rows;
+        if ( selectedPgm < 0 )
+            selectedPgm += 32;
+    } else if ( key.getKeyCode() == KeyPress::rightKey ) {
+        selectedPgm += rows;
+        if ( selectedPgm >= 32 )
+            selectedPgm -= 32;
+    } else {
+        return false;
+    }
+
+    repaint();
+    return true;
+}

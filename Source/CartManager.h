@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2015 Pascal Gauthier.
+ * Copyright (c) 2015-2024 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,6 +83,8 @@ class CartManager  : public Component, public Button::Listener, public DragAndDr
 
     void showSysexConfigMsg();
 
+    std::vector<Component*> focusOrder;
+
 public:
     CartManager(DexedAudioProcessorEditor *editor);
     virtual ~CartManager();
@@ -107,6 +109,8 @@ public:
     virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
     void initialFocus();
+
+    std::unique_ptr<ComponentTraverser> createFocusTraverser() override;
 };
 
 #endif  // CARTMANAGER_H_INCLUDED

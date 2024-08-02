@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2015 Pascal Gauthier.
+ * Copyright (c) 2015-2024 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public:
     virtual void programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) = 0;
 };
 
-class ProgramListBox : public Component, public DragAndDropTarget {
+class ProgramListBox : public Component, public DragAndDropTarget, public KeyListener {
     ProgramListBoxListener *listener;
     bool hasContent;
     bool showPgmNumber;
@@ -67,6 +67,8 @@ public:
     void itemDragMove(const SourceDetails &dragSourceDetails) override;
     void itemDragExit(const SourceDetails &dragSourceDetails) override;
     void itemDropped(const SourceDetails& dragSourceDetails) override;
+
+    bool keyPressed (const KeyPress& key, Component* originatingComponent) override;
 };
 
 
