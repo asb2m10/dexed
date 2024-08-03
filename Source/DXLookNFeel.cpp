@@ -217,24 +217,16 @@ void DXLookNFeel::drawButtonBackground(Graphics &g, Button &button, const Colour
     g.drawImage(imageButton, w-3, 0,   3,  30,   47, isButtonDown ? 30 : 0, 47, 30);
 }
 
-void DXLookNFeel::drawLinearSliderBackground (Graphics&, int x, int y, int width, int height,
-                                         float sliderPos, float minSliderPos, float maxSliderPos,
-                                              const Slider::SliderStyle st, Slider& s) {
-    // NOP
-}
-
-void DXLookNFeel::drawLinearSliderThumb (Graphics& g, int x, int y, int width, int height,
-                                    float sliderPos, float minSliderPos, float maxSliderPos,
-                                         const Slider::SliderStyle st, Slider& s) {
-    // TODO: find out why the V4 LookNFeel doesn't call this
-    // TRACE("draw slider"); 
+void DXLookNFeel::drawLinearSlider (Graphics& g, int x, int y, int width, int height,
+                                 float sliderPos, float minSliderPos, float maxSliderPos,
+                                 const Slider::SliderStyle style, Slider& slider) {
     if ( imageSlider.isNull() ) {
-        LookAndFeel_V3::drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, st, s);
+        LookAndFeel_V3::drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
         return;
     }
 
     int p = sliderPos - minSliderPos;
-    p -= 6;
+    p -= 2;
     g.drawImage(imageSlider, p, 0, 26, 26, 0, 0, 52, 52);
 }
 
