@@ -3,7 +3,7 @@ AppName=Dexed
 AppVersion=0.9.7
 DefaultDirName={commonpf64}\Dexed
 DefaultGroupName=Dexed
-Compression=lzma2
+Compression=zip
 SolidCompression=yes
 OutputDir=.\
 OutputBaseFilename=DexedInstaller
@@ -23,7 +23,7 @@ Name: "clap"; Description: "64-bit CLAP Plugin"; Types: full custom;
 
 [Files]
 Source: "Dexed.exe"; DestDir: "{app}"; Components:app; Flags: ignoreversion recursesubdirs createallsubdirs 
-Source: "Dexed.vst3"; DestDir: "{commoncf64}\VST3"; Components:vst3_64; Flags: ignoreversion 
+Source: "Dexed.vst3"; DestDir: "{commoncf64}\VST3"; Components:vst3_64; Flags: ignoreversion
 Source: "Dexed.clap"; DestDir: "{commoncf64}\CLAP"; Components:clap; Flags: ignoreversion 
                    
 [Icons]
