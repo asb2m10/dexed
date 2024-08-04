@@ -614,7 +614,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
     
     // test if it is a Yamaha Sysex
     if ( buf[1] != 0x43 ) {
-        TRACE("not a yamaha sysex %d", buf[0]);
+        TRACE("not a yamaha sysex %d", buf[1]);
         return;
     }
     
@@ -670,8 +670,8 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
         TRACE("unknown sysex substatus: %d", substatus);
     }
     
-    updateHostDisplay();
     forceRefreshUI = true;
+    triggerAsyncUpdate();
 }
 
 int DexedAudioProcessor::getEngineType() {
