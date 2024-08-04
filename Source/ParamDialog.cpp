@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -35,6 +35,7 @@ ParamDialog::ParamDialog ()
 
     pitchRangeDn.reset (new juce::Slider ("pitchRangeDn"));
     addAndMakeVisible (pitchRangeDn.get());
+    pitchRangeDn->setExplicitFocusOrder (2);
     pitchRangeDn->setRange (0, 48, 1);
     pitchRangeDn->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchRangeDn->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -44,6 +45,7 @@ ParamDialog::ParamDialog ()
 
     pitchStep.reset (new juce::Slider ("pitchStep"));
     addAndMakeVisible (pitchStep.get());
+    pitchStep->setExplicitFocusOrder (3);
     pitchStep->setRange (0, 12, 1);
     pitchStep->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchStep->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -53,26 +55,29 @@ ParamDialog::ParamDialog ()
 
     sysexIn.reset (new juce::ComboBox ("sysexIn"));
     addAndMakeVisible (sysexIn.get());
+    sysexIn->setExplicitFocusOrder (7);
     sysexIn->setEditableText (false);
     sysexIn->setJustificationType (juce::Justification::centredLeft);
     sysexIn->setTextWhenNothingSelected (juce::String());
-    sysexIn->setTextWhenNoChoicesAvailable (translate("(no choices)"));
+    sysexIn->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
     sysexIn->addListener (this);
 
     sysexIn->setBounds (104, 244, 224, 24);
 
     sysexOut.reset (new juce::ComboBox ("sysexOut"));
     addAndMakeVisible (sysexOut.get());
+    sysexOut->setExplicitFocusOrder (8);
     sysexOut->setEditableText (false);
     sysexOut->setJustificationType (juce::Justification::centredLeft);
     sysexOut->setTextWhenNothingSelected (juce::String());
-    sysexOut->setTextWhenNoChoicesAvailable (translate("(no choices)"));
+    sysexOut->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
     sysexOut->addListener (this);
 
     sysexOut->setBounds (104, 280, 224, 24);
 
     sysexChl.reset (new juce::Slider ("sysexChl"));
     addAndMakeVisible (sysexChl.get());
+    sysexChl->setExplicitFocusOrder (9);
     sysexChl->setRange (1, 16, 1);
     sysexChl->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     sysexChl->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -82,19 +87,21 @@ ParamDialog::ParamDialog ()
 
     engineReso.reset (new juce::ComboBox ("new combo box"));
     addAndMakeVisible (engineReso.get());
+    engineReso->setExplicitFocusOrder (6);
     engineReso->setEditableText (false);
     engineReso->setJustificationType (juce::Justification::centredLeft);
     engineReso->setTextWhenNothingSelected (juce::String());
-    engineReso->setTextWhenNoChoicesAvailable (translate("(no choices)"));
-    engineReso->addItem (translate("Modern (24-bit)"), 1);
-    engineReso->addItem (translate("Mark I"), 2);
-    engineReso->addItem (translate("OPL Series"), 3);
+    engineReso->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    engineReso->addItem (TRANS ("Modern (24-bit)"), 1);
+    engineReso->addItem (TRANS ("Mark I"), 2);
+    engineReso->addItem (TRANS ("OPL Series"), 3);
     engineReso->addListener (this);
 
     engineReso->setBounds (160, 188, 168, 24);
 
     showKeyboard.reset (new LightedToggleButton ("showKeyboard"));
     addAndMakeVisible (showKeyboard.get());
+    showKeyboard->setExplicitFocusOrder (4);
     showKeyboard->setButtonText (juce::String());
     showKeyboard->addListener (this);
 
@@ -102,6 +109,7 @@ ParamDialog::ParamDialog ()
 
     whlRange.reset (new juce::Slider ("whlRange"));
     addAndMakeVisible (whlRange.get());
+    whlRange->setExplicitFocusOrder (10);
     whlRange->setRange (0, 99, 1);
     whlRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     whlRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -111,6 +119,7 @@ ParamDialog::ParamDialog ()
 
     ftRange.reset (new juce::Slider ("ftRange"));
     addAndMakeVisible (ftRange.get());
+    ftRange->setExplicitFocusOrder (14);
     ftRange->setRange (0, 99, 1);
     ftRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     ftRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -120,6 +129,7 @@ ParamDialog::ParamDialog ()
 
     brRange.reset (new juce::Slider ("brRange"));
     addAndMakeVisible (brRange.get());
+    brRange->setExplicitFocusOrder (18);
     brRange->setRange (0, 99, 1);
     brRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     brRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -129,6 +139,7 @@ ParamDialog::ParamDialog ()
 
     atRange.reset (new juce::Slider ("atRange"));
     addAndMakeVisible (atRange.get());
+    atRange->setExplicitFocusOrder (22);
     atRange->setRange (0, 99, 1);
     atRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     atRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -138,6 +149,7 @@ ParamDialog::ParamDialog ()
 
     whlEg.reset (new LightedToggleButton ("whlEg"));
     addAndMakeVisible (whlEg.get());
+    whlEg->setExplicitFocusOrder (13);
     whlEg->setButtonText (juce::String());
     whlEg->addListener (this);
 
@@ -145,6 +157,7 @@ ParamDialog::ParamDialog ()
 
     ftEg.reset (new LightedToggleButton ("ftEg"));
     addAndMakeVisible (ftEg.get());
+    ftEg->setExplicitFocusOrder (17);
     ftEg->setButtonText (juce::String());
     ftEg->addListener (this);
 
@@ -152,6 +165,7 @@ ParamDialog::ParamDialog ()
 
     brEg.reset (new LightedToggleButton ("brEg"));
     addAndMakeVisible (brEg.get());
+    brEg->setExplicitFocusOrder (21);
     brEg->setButtonText (juce::String());
     brEg->addListener (this);
 
@@ -159,6 +173,7 @@ ParamDialog::ParamDialog ()
 
     atEg.reset (new LightedToggleButton ("atEg"));
     addAndMakeVisible (atEg.get());
+    atEg->setExplicitFocusOrder (25);
     atEg->setButtonText (juce::String());
     atEg->addListener (this);
 
@@ -166,6 +181,7 @@ ParamDialog::ParamDialog ()
 
     whlAmp.reset (new LightedToggleButton ("whlAmp"));
     addAndMakeVisible (whlAmp.get());
+    whlAmp->setExplicitFocusOrder (12);
     whlAmp->setButtonText (juce::String());
     whlAmp->addListener (this);
 
@@ -173,6 +189,7 @@ ParamDialog::ParamDialog ()
 
     ftAmp.reset (new LightedToggleButton ("ftAmp"));
     addAndMakeVisible (ftAmp.get());
+    ftAmp->setExplicitFocusOrder (16);
     ftAmp->setButtonText (juce::String());
     ftAmp->addListener (this);
 
@@ -180,6 +197,7 @@ ParamDialog::ParamDialog ()
 
     brAmp.reset (new LightedToggleButton ("brAmp"));
     addAndMakeVisible (brAmp.get());
+    brAmp->setExplicitFocusOrder (20);
     brAmp->setButtonText (juce::String());
     brAmp->addListener (this);
 
@@ -187,6 +205,7 @@ ParamDialog::ParamDialog ()
 
     atAmp.reset (new LightedToggleButton ("atAmp"));
     addAndMakeVisible (atAmp.get());
+    atAmp->setExplicitFocusOrder (24);
     atAmp->setButtonText (juce::String());
     atAmp->addListener (this);
 
@@ -194,6 +213,7 @@ ParamDialog::ParamDialog ()
 
     whlPitch.reset (new LightedToggleButton ("whlPitch"));
     addAndMakeVisible (whlPitch.get());
+    whlPitch->setExplicitFocusOrder (11);
     whlPitch->setButtonText (juce::String());
     whlPitch->addListener (this);
 
@@ -201,6 +221,7 @@ ParamDialog::ParamDialog ()
 
     ftPitch.reset (new LightedToggleButton ("ftPitch"));
     addAndMakeVisible (ftPitch.get());
+    ftPitch->setExplicitFocusOrder (15);
     ftPitch->setButtonText (juce::String());
     ftPitch->addListener (this);
 
@@ -208,6 +229,7 @@ ParamDialog::ParamDialog ()
 
     brPitch.reset (new LightedToggleButton ("brPitch"));
     addAndMakeVisible (brPitch.get());
+    brPitch->setExplicitFocusOrder (19);
     brPitch->setButtonText (juce::String());
     brPitch->addListener (this);
 
@@ -215,6 +237,7 @@ ParamDialog::ParamDialog ()
 
     atPitch.reset (new LightedToggleButton ("atPitch"));
     addAndMakeVisible (atPitch.get());
+    atPitch->setExplicitFocusOrder (23);
     atPitch->setButtonText (juce::String());
     atPitch->addListener (this);
 
@@ -222,42 +245,48 @@ ParamDialog::ParamDialog ()
 
     sclButton.reset (new juce::TextButton ("scl button"));
     addAndMakeVisible (sclButton.get());
-    sclButton->setButtonText (translate("SCL"));
+    sclButton->setExplicitFocusOrder (26);
+    sclButton->setButtonText (TRANS ("SCL"));
     sclButton->addListener (this);
 
     sclButton->setBounds (448, 205, 56, 30);
 
     kbmButton.reset (new juce::TextButton ("kbm button"));
     addAndMakeVisible (kbmButton.get());
-    kbmButton->setButtonText (translate("KBM"));
+    kbmButton->setExplicitFocusOrder (27);
+    kbmButton->setButtonText (TRANS ("KBM"));
     kbmButton->addListener (this);
 
     kbmButton->setBounds (512, 205, 56, 30);
 
     showTunButton.reset (new juce::TextButton ("show tuning button"));
     addAndMakeVisible (showTunButton.get());
-    showTunButton->setButtonText (translate("Show"));
+    showTunButton->setExplicitFocusOrder (28);
+    showTunButton->setButtonText (TRANS ("Show"));
     showTunButton->addListener (this);
 
     showTunButton->setBounds (576, 205, 48, 30);
 
     resetTuningButton.reset (new juce::TextButton ("reset tuning button"));
     addAndMakeVisible (resetTuningButton.get());
-    resetTuningButton->setButtonText (translate("Reset"));
+    resetTuningButton->setExplicitFocusOrder (29);
+    resetTuningButton->setButtonText (TRANS ("Reset"));
     resetTuningButton->addListener (this);
 
     resetTuningButton->setBounds (632, 205, 48, 30);
 
     transposeScale.reset (new LightedToggleButton ("transposeScale"));
     addAndMakeVisible (transposeScale.get());
+    transposeScale->setExplicitFocusOrder (30);
     transposeScale->setButtonText (juce::String());
     transposeScale->addListener (this);
-    transposeScale->setToggleState (true, dontSendNotification);
+    transposeScale->setToggleState (true, juce::dontSendNotification);
 
     transposeScale->setBounds (592, 240, 56, 30);
 
     mpePBRange.reset (new juce::Slider ("mpePBRange"));
     addAndMakeVisible (mpePBRange.get());
+    mpePBRange->setExplicitFocusOrder (32);
     mpePBRange->setRange (0, 96, 1);
     mpePBRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     mpePBRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -267,6 +296,7 @@ ParamDialog::ParamDialog ()
 
     mpeEnabled.reset (new LightedToggleButton ("mpeEnabled"));
     addAndMakeVisible (mpeEnabled.get());
+    mpeEnabled->setExplicitFocusOrder (31);
     mpeEnabled->setButtonText (juce::String());
     mpeEnabled->addListener (this);
 
@@ -284,6 +314,7 @@ ParamDialog::ParamDialog ()
 
     pitchRangeUp.reset (new juce::Slider ("pitchRangeUp"));
     addAndMakeVisible (pitchRangeUp.get());
+    pitchRangeUp->setExplicitFocusOrder (1);
     pitchRangeUp->setRange (0, 48, 1);
     pitchRangeUp->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchRangeUp->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
@@ -293,17 +324,17 @@ ParamDialog::ParamDialog ()
 
     scalingFactor.reset (new juce::ComboBox ("scalingFactor"));
     addAndMakeVisible (scalingFactor.get());
+    scalingFactor->setExplicitFocusOrder (5);
     scalingFactor->setEditableText (false);
     scalingFactor->setJustificationType (juce::Justification::centredLeft);
     scalingFactor->setTextWhenNothingSelected (juce::String());
-    scalingFactor->setTextWhenNoChoicesAvailable (translate("(no choices)"));
-    scalingFactor->addItem (translate("100 %"), 1);
-    scalingFactor->addItem (translate("125 %"), 2);
-    scalingFactor->addItem (translate("150 %"), 3);
-    scalingFactor->addItem(translate("200 %"), 4);
-    scalingFactor->addItem(translate("300 %"), 5);
-    scalingFactor->addItem(translate("400 %"), 6);
-    scalingFactor->addSeparator();
+    scalingFactor->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
+    scalingFactor->addItem (TRANS ("100 %"), 1);
+    scalingFactor->addItem (TRANS ("125 %"), 2);
+    scalingFactor->addItem (TRANS ("150 %"), 3);
+    scalingFactor->addItem (TRANS ("200 %"), 4);
+    scalingFactor->addItem (TRANS ("300 %"), 5);
+    scalingFactor->addItem (TRANS ("400 %"), 6);
     scalingFactor->addListener (this);
 
     scalingFactor->setBounds (236, 136, 90, 24);
@@ -389,7 +420,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 16, width = 276, height = 23;
-        juce::String text (translate("Pitch Bend Range"));
+        juce::String text (TRANS ("Pitch Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -401,7 +432,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 56, width = 276, height = 23;
-        juce::String text (translate("Pitch Bend Step"));
+        juce::String text (TRANS ("Pitch Bend Step"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -413,7 +444,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 318, width = 245, height = 23;
-        juce::String text (translate("DX7 Channel"));
+        juce::String text (TRANS ("DX7 Channel"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -425,7 +456,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 190, width = 276, height = 23;
-        juce::String text (translate("Engine Resolution"));
+        juce::String text (TRANS ("Engine Resolution"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -455,7 +486,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 96, width = 276, height = 23;
-        juce::String text (translate("Show Keyboard"));
+        juce::String text (TRANS ("Show Keyboard"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -476,7 +507,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 16, width = 276, height = 23;
-        juce::String text (translate("Wheel"));
+        juce::String text (TRANS ("Wheel"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -488,7 +519,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 96, width = 276, height = 23;
-        juce::String text (translate("Breath"));
+        juce::String text (TRANS ("Breath"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -500,7 +531,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 56, width = 276, height = 23;
-        juce::String text (translate("Foot"));
+        juce::String text (TRANS ("Foot"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -512,7 +543,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 368, y = 136, width = 276, height = 23;
-        juce::String text (translate("After Touch"));
+        juce::String text (TRANS ("After Touch"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -524,7 +555,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 528, y = 163, width = 48, height = 23;
-        juce::String text (translate("PITCH"));
+        juce::String text (TRANS ("PITCH"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -536,7 +567,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 584, y = 163, width = 48, height = 23;
-        juce::String text (translate("AMP"));
+        juce::String text (TRANS ("AMP"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -548,7 +579,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 640, y = 163, width = 48, height = 23;
-        juce::String text (translate("EG BIAS"));
+        juce::String text (TRANS ("EG BIAS"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -569,7 +600,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 371, y = 208, width = 276, height = 25;
-        juce::String text (translate("Tuning"));
+        juce::String text (TRANS ("Tuning"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -581,7 +612,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 371, y = 242, width = 157, height = 25;
-        juce::String text (translate("Transposition 12 as:"));
+        juce::String text (TRANS ("Transposition 12 as:"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -602,7 +633,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 371, y = 290, width = 276, height = 27;
-        juce::String text (translate("MPE"));
+        juce::String text (TRANS ("MPE"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -614,7 +645,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 528, y = 290, width = 119, height = 27;
-        juce::String text (translate("Bend Range"));
+        juce::String text (TRANS ("Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -626,7 +657,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 555, y = 242, width = 37, height = 25;
-        juce::String text (translate("12"));
+        juce::String text (TRANS ("12"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -638,7 +669,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 659, y = 242, width = 45, height = 25;
-        juce::String text (translate("SCL"));
+        juce::String text (TRANS ("SCL"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -650,7 +681,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 147, y = 16, width = 20, height = 23;
-        juce::String text (translate("up"));
+        juce::String text (TRANS ("up"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -662,7 +693,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 240, y = 16, width = 20, height = 23;
-        juce::String text (translate("dn"));
+        juce::String text (TRANS ("dn"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -674,7 +705,7 @@ void ParamDialog::paint (juce::Graphics& g)
 
     {
         int x = 20, y = 136, width = 276, height = 23;
-        juce::String text (translate("UI Scaling"));
+        juce::String text (TRANS ("UI Scaling"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -1188,113 +1219,113 @@ BEGIN_JUCER_METADATA
           italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRangeDn" id="7409be5a8dfaa91" memberName="pitchRangeDn"
-          virtualName="" explicitFocusOrder="0" pos="264 16 72 24" min="0.0"
+          virtualName="" explicitFocusOrder="2" pos="264 16 72 24" min="0.0"
           max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchStep" id="b86af4b792e768ca" memberName="pitchStep"
-          virtualName="" explicitFocusOrder="0" pos="264 56 72 24" min="0.0"
+          virtualName="" explicitFocusOrder="3" pos="264 56 72 24" min="0.0"
           max="12.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
-            explicitFocusOrder="0" pos="104 244 224 24" editable="0" layout="33"
+            explicitFocusOrder="7" pos="104 244 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <COMBOBOX name="sysexOut" id="44730115841c2214" memberName="sysexOut" virtualName=""
-            explicitFocusOrder="0" pos="104 280 224 24" editable="0" layout="33"
+            explicitFocusOrder="8" pos="104 280 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
-          explicitFocusOrder="0" pos="264 316 72 24" min="1.0" max="16.0"
+          explicitFocusOrder="9" pos="264 316 72 24" min="1.0" max="16.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <COMBOBOX name="new combo box" id="4087ff978c3d9e8d" memberName="engineReso"
-            virtualName="" explicitFocusOrder="0" pos="160 188 168 24" editable="0"
+            virtualName="" explicitFocusOrder="6" pos="160 188 168 24" editable="0"
             layout="33" items="Modern (24-bit)&#10;Mark I&#10;OPL Series"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <TOGGLEBUTTON name="showKeyboard" id="c963d2cb8e49ffd7" memberName="showKeyboard"
-                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="264 96 56 24"
+                virtualName="LightedToggleButton" explicitFocusOrder="4" pos="264 96 56 24"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <SLIDER name="whlRange" id="3d6522f5f581e580" memberName="whlRange" virtualName=""
-          explicitFocusOrder="0" pos="448 16 72 24" min="0.0" max="99.0"
+          explicitFocusOrder="10" pos="448 16 72 24" min="0.0" max="99.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="ftRange" id="cf553f74c3fb0d12" memberName="ftRange" virtualName=""
-          explicitFocusOrder="0" pos="448 56 72 24" min="0.0" max="99.0"
+          explicitFocusOrder="14" pos="448 56 72 24" min="0.0" max="99.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="brRange" id="c4aa6814f75016a7" memberName="brRange" virtualName=""
-          explicitFocusOrder="0" pos="448 96 72 24" min="0.0" max="99.0"
+          explicitFocusOrder="18" pos="448 96 72 24" min="0.0" max="99.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="atRange" id="d0aa1ebb24284577" memberName="atRange" virtualName=""
-          explicitFocusOrder="0" pos="448 136 72 24" min="0.0" max="99.0"
+          explicitFocusOrder="22" pos="448 136 72 24" min="0.0" max="99.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="whlEg" id="d8242ae592c912a" memberName="whlEg" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="640 16 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="13" pos="640 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="ftEg" id="69d816607bd71cb0" memberName="ftEg" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="640 56 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="17" pos="640 56 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="brEg" id="ba89ae54d676983f" memberName="brEg" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="640 96 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="21" pos="640 96 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="atEg" id="371934a58ce5f1bc" memberName="atEg" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="640 136 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="25" pos="640 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="whlAmp" id="3d4e46e63c3ddd86" memberName="whlAmp" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="584 16 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="12" pos="584 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="ftAmp" id="f631892e209b094a" memberName="ftAmp" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="584 56 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="16" pos="584 56 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="brAmp" id="d0a68d37220638f1" memberName="brAmp" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="584 96 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="20" pos="584 96 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="atAmp" id="4220c7b22e7845ea" memberName="atAmp" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="584 136 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="24" pos="584 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="whlPitch" id="b7a626ec1e45af16" memberName="whlPitch" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="528 16 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="11" pos="528 16 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="ftPitch" id="1acedf6f16a5a3" memberName="ftPitch" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="528 56 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="15" pos="528 56 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="brPitch" id="23fa82533e004b96" memberName="brPitch" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="528 96 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="19" pos="528 96 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TOGGLEBUTTON name="atPitch" id="43805c6a4673e291" memberName="atPitch" virtualName="LightedToggleButton"
-                explicitFocusOrder="0" pos="528 136 56 24" buttonText="" connectedEdges="0"
+                explicitFocusOrder="23" pos="528 136 56 24" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <TEXTBUTTON name="scl button" id="7a6b689f406ae37d" memberName="sclButton"
-              virtualName="" explicitFocusOrder="0" pos="448 205 56 30" buttonText="SCL"
+              virtualName="" explicitFocusOrder="26" pos="448 205 56 30" buttonText="SCL"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="kbm button" id="181d5b67bc897076" memberName="kbmButton"
-              virtualName="" explicitFocusOrder="0" pos="512 205 56 30" buttonText="KBM"
+              virtualName="" explicitFocusOrder="27" pos="512 205 56 30" buttonText="KBM"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="show tuning button" id="565d5c630087f71" memberName="showTunButton"
-              virtualName="" explicitFocusOrder="0" pos="576 205 48 30" buttonText="Show"
+              virtualName="" explicitFocusOrder="28" pos="576 205 48 30" buttonText="Show"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="reset tuning button" id="44a4ec0c1d200987" memberName="resetTuningButton"
-              virtualName="" explicitFocusOrder="0" pos="632 205 48 30" buttonText="Reset"
+              virtualName="" explicitFocusOrder="29" pos="632 205 48 30" buttonText="Reset"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="transposeScale" id="9d4dd65775ed9e38" memberName="transposeScale"
-                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="592 240 56 30"
+                virtualName="LightedToggleButton" explicitFocusOrder="30" pos="592 240 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="1"/>
   <SLIDER name="mpePBRange" id="a13948d1cc74a51a" memberName="mpePBRange"
-          virtualName="" explicitFocusOrder="0" pos="616 291 72 24" min="0.0"
+          virtualName="" explicitFocusOrder="32" pos="616 291 72 24" min="0.0"
           max="96.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="mpeEnabled" id="e1a11d0372879dd8" memberName="mpeEnabled"
-                virtualName="LightedToggleButton" explicitFocusOrder="0" pos="448 288 56 30"
+                virtualName="LightedToggleButton" explicitFocusOrder="31" pos="448 288 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <IMAGEBUTTON name="new button" id="1c9edab9992cbeef" memberName="transposeHelp"
@@ -1304,14 +1335,14 @@ BEGIN_JUCER_METADATA
                colourNormal="0" resourceOver="" opacityOver="1.0" colourOver="0"
                resourceDown="" opacityDown="1.0" colourDown="0"/>
   <SLIDER name="pitchRangeUp" id="56a2aeddd2444bea" memberName="pitchRangeUp"
-          virtualName="" explicitFocusOrder="0" pos="168 16 72 24" min="0.0"
+          virtualName="" explicitFocusOrder="1" pos="168 16 72 24" min="0.0"
           max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <COMBOBOX name="scalingFactor" id="843af1bae988d4d6" memberName="scalingFactor"
-            virtualName="" explicitFocusOrder="0" pos="236 136 90 24" editable="0"
-            layout="33" items="100 %&#10;125 %&#10;150 %&#10;" textWhenNonSelected=""
-            textWhenNoItems="(no choices)"/>
+            virtualName="" explicitFocusOrder="5" pos="236 136 90 24" editable="0"
+            layout="33" items="100 %&#10;125 %&#10;150 %&#10;200 %&#10;300 %&#10;400 %"
+            textWhenNonSelected="" textWhenNoItems="(no choices)"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

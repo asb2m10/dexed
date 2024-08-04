@@ -243,6 +243,8 @@ void Ctrl::bind(Slider *s) {
     s->addListener(this);
     s->addMouseListener(this, true);
     s->setVelocityModeParameters (0.1, 1, 0.05, 1, ModifierKeys::shiftModifier);
+    s->textFromValueFunction = [this](double value) { return this->label + this->getValueDisplay(); };
+    s->setWantsKeyboardFocus(true);
 }
 
 void Ctrl::bind(Button *b) {
