@@ -121,11 +121,11 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;
 
-    activeCart.reset(new ProgramListBox("activepgm", 8));
+    activeCart.reset(new ProgramListBox("Active Programs Selector", 8));
     addAndMakeVisible(activeCart.get());
     activeCart->addListener(this);
 
-    browserCart.reset(new ProgramListBox("browserpgm", 2));
+    browserCart.reset(new ProgramListBox("Browser Programs Selector", 2));
     addAndMakeVisible(browserCart.get());
     browserCart->addListener(this);
 
@@ -140,6 +140,7 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     cartBrowser->addKeyListener(this);
     addAndMakeVisible(cartBrowser.get());
 
+    cartBrowser->setTitle("Cartridge file browser");
     cartBrowser->setDragAndDropDescription("Sysex Browser");
     cartBrowser->addListener(this);
 
@@ -234,8 +235,7 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
 
 void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     if ( buttonThatWasClicked == closeButton.get() ) {
-        mainWindow->startTimer(100);
-        getParentComponent()->setVisible(false);
+        hideCartridgeManager();
         return;
     }
 
@@ -411,8 +411,13 @@ void CartManager::initialFocus() {
     cartBrowser->grabKeyboardFocus();
 }
 
+void CartManager::hideCartridgeManager() {
+        mainWindow->startTimer(100);
+        getParentComponent()->setVisible(false);
+}
+
 bool CartManager::keyPressed(const KeyPress& key, Component* originatingComponent) {
-    if ( key.getKeyCode() == 13 ) {
+    if ( key.getKeyCode() == KeyPress::returnKey ) {
         File file = cartBrowser->getSelectedFile();
         if ( file.isDirectory() )
             return true;
@@ -420,6 +425,11 @@ bool CartManager::keyPressed(const KeyPress& key, Component* originatingComponen
         activeCart->setCartridge(mainWindow->processor->currentCart);
         return true;
     }
+    if ( key.getKeyCode() == KeyPress::escapeKey ) {
+        hideCartridgeManager();
+        return true;
+    }
+
     return false;
 }
 

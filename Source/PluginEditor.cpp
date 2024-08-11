@@ -115,6 +115,10 @@ void DexedAudioProcessorEditor::cartShow() {
     cartManager.initialFocus();
 }
 
+std::unique_ptr<ComponentTraverser> DexedAudioProcessorEditor::createFocusTraverser() {
+    return std::make_unique<FocusTraverser>();
+}
+
 void DexedAudioProcessorEditor::loadCart(File file) {
     Cartridge cart;
 

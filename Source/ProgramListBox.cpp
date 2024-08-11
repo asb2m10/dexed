@@ -31,6 +31,7 @@ ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name)
     dragCandidate = -1;
     readOnly = false;
     programNames.clear();
+    setTitle(name);
     setWantsKeyboardFocus(true);
     addKeyListener(this);
 }

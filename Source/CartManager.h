@@ -109,6 +109,7 @@ public:
     virtual bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
     void initialFocus();
+    void hideCartridgeManager();
 
     std::unique_ptr<ComponentTraverser> createFocusTraverser() override;
 };

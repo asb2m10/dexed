@@ -314,6 +314,10 @@ OperatorEditor::OperatorEditor ()
 
     background = lookAndFeel->imageOperator;
 
+    opSwitch->setTitle("Operator switch");
+    kbdLeftCurve->setTitle("Keyboard Left Curve");
+    kbdRightCurve->setTitle("Keyboard Right Curve");
+
     //[/Constructor]
 }
 

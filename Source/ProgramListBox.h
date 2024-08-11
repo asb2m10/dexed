@@ -69,6 +69,21 @@ public:
     void itemDropped(const SourceDetails& dragSourceDetails) override;
 
     bool keyPressed (const KeyPress& key, Component* originatingComponent) override;
+
+    struct ProgramListBoxAH : public juce::AccessibilityHandler {
+        explicit ProgramListBoxAH(ProgramListBox *s): od(s), juce::AccessibilityHandler(*s, juce::AccessibilityRole::table,
+            juce::AccessibilityActions().addAction(juce::AccessibilityActionType::focus,
+                                                            [this]() {  })) {
+        }
+
+        ProgramListBox *od;
+        JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ProgramListBoxAH);
+    };
+
+
+    std::unique_ptr< AccessibilityHandler > createAccessibilityHandler(ProgramListBox *programListBox) {
+        return std::make_unique<ProgramListBoxAH>(programListBox);
+    }
 };
 
 
