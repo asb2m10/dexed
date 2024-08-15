@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014-2024 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,6 +71,10 @@ public:
 
 class ProgramSelector : public ComboBox {
 public:
+    ProgramSelector() {
+        setWantsKeyboardFocus(true);
+        setTitle("Program selector");
+    }
     virtual void mouseDown(const MouseEvent &event) override;
     virtual void mouseEnter(const MouseEvent &event) override { accum_wheel = 0; }
     virtual void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override;

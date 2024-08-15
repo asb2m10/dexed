@@ -236,6 +236,11 @@ public:
             dest.add( normalizePgmName(getRawVoice() + ((i * 128) + 118)) );
     }
     
+    String getProgramName(int idx) {
+        jassert(idx >= 0 && idx < 32);
+        return normalizePgmName(getRawVoice() + ((idx * 128) + 118));
+    }
+
     Cartridge operator =(const Cartridge other) {
         memcpy(voiceData, other.voiceData, SYSEX_SIZE);
         memcpy(perfData, other.perfData, SYSEX_SIZE);

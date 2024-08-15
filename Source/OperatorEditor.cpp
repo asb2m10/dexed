@@ -315,6 +315,7 @@ OperatorEditor::OperatorEditor ()
     background = lookAndFeel->imageOperator;
 
     opSwitch->setTitle("Operator switch");
+    opMode->setTitle("Operator Mode");
     kbdLeftCurve->setTitle("Keyboard Left Curve");
     kbdRightCurve->setTitle("Keyboard Right Curve");
 
@@ -556,6 +557,8 @@ void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
 
     opNum << op + 1;
     internalOp = 5-op;
+    setTitle("Operator " + opNum);
+    setFocusContainerType(FocusContainerType::focusContainer);
 }
 
 void OperatorEditor::updateGain(float v) {

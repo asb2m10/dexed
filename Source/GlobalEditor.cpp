@@ -458,6 +458,9 @@ GlobalEditor::GlobalEditor ()
 
     background = lookAndFeel->imageGlobal;
     imageLight = lookAndFeel->imageLight;
+    setTitle("Global Parameters");
+    setFocusContainerType(FocusContainerType::focusContainer);
+    aboutButton->setTitle("About DEXED");
     //[/Constructor]
 }
 
