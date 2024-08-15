@@ -37,6 +37,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       cartManager(this)
 {
     setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
+    
+    setWantsKeyboardFocus(true);
+    addKeyListener(this);
 
     processor = ownerFilter;
 
@@ -511,4 +514,21 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
             "I/O error!", 
             "Related to file \'"+fn.toStdString()+"\', an unknown exception occured.");
     };
+}
+
+bool DexedAudioProcessorEditor::keyPressed(const KeyPress &key, Component *originatingComponent) {
+    if (key.getTextDescription() == "X") {
+        if (processor->octaveShift > 0) {
+            processor->octaveShift -= 1;
+            midiKeyboard.setKeyPressBaseOctave(processor->octaveShift);
+        }
+        return true;
+    } else if (key.getTextDescription() == "C") {
+        if (processor->octaveShift < 10) {
+            processor->octaveShift += 1;
+            midiKeyboard.setKeyPressBaseOctave(processor->octaveShift);
+        }
+        return true;
+    }
+    return false;
 }

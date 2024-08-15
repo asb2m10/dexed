@@ -181,6 +181,8 @@ public :
     std::unique_ptr<Ctrl> tune;
     std::unique_ptr<Ctrl> monoModeCtrl;
 
+    int octaveShift = 5;
+
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);
 
