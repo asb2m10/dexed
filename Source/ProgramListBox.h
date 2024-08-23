@@ -27,50 +27,35 @@
 class ProgramListBox;
 class ProgramListBoxListener {
 public:
-    virtual ~ProgramListBoxListener() {}
+    virtual ~ProgramListBoxListener() = default;
     virtual void programSelected(ProgramListBox *source, int pos) = 0;
     virtual void programRightClicked(ProgramListBox *source, int pos) = 0;
     virtual void programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) = 0;
 };
 
-class ProgramListBox : public Component, public DragAndDropTarget, public KeyListener {
-    ProgramListBoxListener *listener;
+class ProgramListBox : public Component, public KeyListener {
+    ProgramListBoxListener *listener;    
+    Cartridge cartContent;
+    std::unique_ptr<Component> labels[32];
+
     bool hasContent;
-    bool showPgmNumber;
     int cols, rows;
     int cellWidth, cellHeight;
-    int programPosition(int x, int y);
-    int selectedPgm;
+    int activePgm;
     
-    Cartridge cartContent;
-
-    int dragCandidate;
+    friend class ProgramLabel;
 public:
-    StringArray programNames;    
-    
+    StringArray programNames;
     bool readOnly;
     
     ProgramListBox(const String name, int numCols);
     void addListener(ProgramListBoxListener *listener);
-    void paint(Graphics &g) override;
     void resized() override;
-    void mouseDown(const MouseEvent &event) override;
-    void mouseDrag(const MouseEvent &event) override;
-    void mouseUp(const MouseEvent &event) override;
-    void setSelected(int idx);
+    void setActive(int idx);
     
     Cartridge &getCurrentCart();
     void setCartridge(Cartridge &cart);
-    
-    bool isInterestedInDragSource(const SourceDetails& dragSourceDetails) override;
-    void itemDragEnter(const SourceDetails &dragSourceDetails) override;
-    void itemDragMove(const SourceDetails &dragSourceDetails) override;
-    void itemDragExit(const SourceDetails &dragSourceDetails) override;
-    void itemDropped(const SourceDetails& dragSourceDetails) override;
-
     bool keyPressed (const KeyPress& key, Component* originatingComponent) override;
-
-    std::unique_ptr< AccessibilityHandler > createAccessibilityHandler(ProgramListBox *programListBox);
 };
 
 

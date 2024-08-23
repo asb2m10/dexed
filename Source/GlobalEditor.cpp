@@ -453,6 +453,7 @@ GlobalEditor::GlobalEditor ()
     lfoType->addItem("SINE", 5);
     lfoType->addItem("S&HOLD", 6);
     lfoType->setImage(lookAndFeel->imageLFO);
+    lfoType->setTitle("LFO Waveform");
 
     programs = programSelector.get();
 
@@ -460,6 +461,7 @@ GlobalEditor::GlobalEditor ()
     imageLight = lookAndFeel->imageLight;
     setTitle("Global Parameters");
     setFocusContainerType(FocusContainerType::focusContainer);
+    setWantsKeyboardFocus(true);
     aboutButton->setTitle("About DEXED");
     //[/Constructor]
 }

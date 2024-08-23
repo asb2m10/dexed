@@ -219,14 +219,14 @@ void CartManager::updateCartFilename() {
 
 void CartManager::programSelected(ProgramListBox *source, int pos) {
     if ( source == activeCart.get() ) {
-        browserCart->setSelected(-1);
+        browserCart->setActive(-1);
         mainWindow->processor->setCurrentProgram(pos);
         mainWindow->processor->updateHostDisplay();
     } else {
         uint8_t unpackPgm[161];
         source->getCurrentCart().unpackProgram(unpackPgm, pos);
-        activeCart->setSelected(-1);
-        browserCart->setSelected(pos);
+        activeCart->setActive(-1);
+        browserCart->setActive(pos);
         repaint();
         mainWindow->processor->updateProgramFromSysex((uint8_t *) unpackPgm);
         mainWindow->processor->updateHostDisplay();
@@ -316,8 +316,8 @@ void CartManager::fileClicked(const File& file, const MouseEvent& e) {
 
 void CartManager::setActiveProgram(int idx, String activeName) {
     if ( activeCart->programNames[idx] == activeName ) {
-        activeCart->setSelected(idx);
-        browserCart->setSelected(-1);
+        activeCart->setActive(idx);
+        browserCart->setActive(-1);
     }
     activeCart->repaint();
 }
@@ -347,7 +347,7 @@ void CartManager::selectionChanged() {
     } else {
         browserCart->readOnly = false;
     }
-    browserCart->setSelected(-1);
+    browserCart->setActive(-1);
     browserCart->setCartridge(browserSysex);
 }
 

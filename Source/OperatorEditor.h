@@ -54,6 +54,7 @@ public:
     void updateDisplay();
     void updateEnvPos(char pos);
     void mouseDown(const MouseEvent& e) override;
+    void toggleOpSwitch();
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

@@ -32,7 +32,7 @@
 /**
 */
 class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer,
-                                   public FileDragAndDropTarget {
+                                   public FileDragAndDropTarget, public KeyListener {
     MidiKeyboardComponent midiKeyboard;
     OperatorEditor operators[6];
     Colour background;
@@ -66,6 +66,8 @@ public:
     virtual bool isInterestedInFileDrag (const StringArray &files) override;
     virtual void filesDropped (const StringArray &files, int x, int y ) override;
     std::unique_ptr<ComponentTraverser> createFocusTraverser() override;
+
+    bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
     static const int WINDOW_SIZE_X = 866;
     static const int WINDOW_SIZE_Y = 674;

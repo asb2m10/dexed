@@ -37,7 +37,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       cartManager(this)
 {
     setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
-
+    setExplicitFocusOrder(1);
     processor = ownerFilter;
 
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
@@ -89,6 +89,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
 
+    addKeyListener(this);
     updateUI();
     startTimer(100);
 }
@@ -515,4 +516,35 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
             "I/O error!", 
             "Related to file \'"+fn.toStdString()+"\', an unknown exception occured.");
     };
+}
+
+bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* originatingComponent) {
+    int keycode = key.getKeyCode();
+    ModifierKeys mods = key.getModifiers();
+
+    TRACE("key pressed: %d\n", keycode);
+
+    if ( (keycode >= '1' && keycode <= '6') && mods.isCtrlDown() ) {
+        int op = keycode - '1';
+
+        if ( mods.isShiftDown() ) {
+            operators[op].toggleOpSwitch();
+            return true;
+        }
+
+        operators[op].grabKeyboardFocus();
+        return true;
+    }
+
+    if ( keycode == 'G' && mods.isCtrlDown() ) {
+        global.grabKeyboardFocus();
+        return true;
+    }
+
+    if ( keycode == 'L' && mods.isCtrlDown() ) {
+        cartShow();
+        return true;
+    }
+
+    return false;
 }

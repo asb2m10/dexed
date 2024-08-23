@@ -814,6 +814,7 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
         setDpiScaleFactor(1.0);
     else 
         setDpiScaleFactor(scaleFactor);
+        
     return editor;
 }
 

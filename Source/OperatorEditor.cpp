@@ -297,7 +297,7 @@ OperatorEditor::OperatorEditor ()
 
     light = lookAndFeel->imageLight;
     Image tmp = lookAndFeel->imageScaling;
-
+    
     kbdLeftCurve->addItem("-LN", 1);
     kbdLeftCurve->addItem("-EX", 2);
     kbdLeftCurve->addItem("+EX", 3);
@@ -313,12 +313,12 @@ OperatorEditor::OperatorEditor ()
     kbdRightCurve->setImage(tmp, posRight);
 
     background = lookAndFeel->imageOperator;
-
     opSwitch->setTitle("Operator switch");
     opMode->setTitle("Operator Mode");
     kbdLeftCurve->setTitle("Keyboard Left Curve");
     kbdRightCurve->setTitle("Keyboard Right Curve");
 
+    setWantsKeyboardFocus(true);
     //[/Constructor]
 }
 
@@ -627,6 +627,10 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
         }
 
     }
+}
+
+void OperatorEditor::toggleOpSwitch() {
+    opSwitch->setToggleState(!opSwitch->getToggleState(), dontSendNotification);
 }
 
 //[/MiscUserCode]
