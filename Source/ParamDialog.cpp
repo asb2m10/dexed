@@ -363,6 +363,75 @@ ParamDialog::ParamDialog ()
     if ( JUCEApplication::isStandaloneApp() ) {
         sysexIn->setVisible(false);
     }
+
+    // ACCESSIBLITY
+    pitchRangeUp->setTitle("Pitch Bend Range Up");
+    pitchRangeDn->setTitle("Pitch Bend Range Down");
+    pitchStep->setTitle("Pitch Bend Step");
+    sysexIn->setTitle("Sysex Input");
+    sysexOut->setTitle("Sysex Output");
+    sysexChl->setTitle("Sysex Channel");
+    engineReso->setTitle("Engine Resolution");
+    showKeyboard->setTitle("Show Keyboard");
+    whlRange->setTitle("Wheel Range");
+    ftRange->setTitle("Foot Range");
+    brRange->setTitle("Breath Range");
+    atRange->setTitle("After Touch Range");
+    whlEg->setTitle("Wheel EG");
+    ftEg->setTitle("Foot EG");
+    brEg->setTitle("Breath EG");
+    atEg->setTitle("After Touch EG");
+    whlAmp->setTitle("Wheel Amp");
+    ftAmp->setTitle("Foot Amp");
+    brAmp->setTitle("Breath Amp");
+    atAmp->setTitle("After Touch Amp");
+    whlPitch->setTitle("Wheel Pitch");
+    ftPitch->setTitle("Foot Pitch");
+    brPitch->setTitle("Breath Pitch");
+    atPitch->setTitle("After Touch Pitch");
+    sclButton->setTitle("Scale Button");
+    kbmButton->setTitle("Keyboard Mapping Button");
+    showTunButton->setTitle("Show Tuning Button");
+    resetTuningButton->setTitle("Reset Tuning Button");
+    transposeScale->setTitle("Transpose Scale");
+    mpePBRange->setTitle("MPE Pitch Bend Range");
+    mpeEnabled->setTitle("MPE Enabled");
+    transposeHelp->setTitle("Transpose Help");
+    scalingFactor->setTitle("Scaling Factor");
+
+    pitchRangeUp->setWantsKeyboardFocus(true);
+    pitchRangeDn->setWantsKeyboardFocus(true);
+    pitchStep->setWantsKeyboardFocus(true);
+    sysexIn->setWantsKeyboardFocus(true);
+    sysexOut->setWantsKeyboardFocus(true);
+    sysexChl->setWantsKeyboardFocus(true);
+    engineReso->setWantsKeyboardFocus(true);
+    showKeyboard->setWantsKeyboardFocus(true);
+    whlRange->setWantsKeyboardFocus(true);
+    ftRange->setWantsKeyboardFocus(true);
+    brRange->setWantsKeyboardFocus(true);
+    atRange->setWantsKeyboardFocus(true);
+    whlEg->setWantsKeyboardFocus(true);
+    ftEg->setWantsKeyboardFocus(true);
+    brEg->setWantsKeyboardFocus(true);
+    atEg->setWantsKeyboardFocus(true);
+    whlAmp->setWantsKeyboardFocus(true);
+    ftAmp->setWantsKeyboardFocus(true);
+    brAmp->setWantsKeyboardFocus(true);
+    atAmp->setWantsKeyboardFocus(true);
+    whlPitch->setWantsKeyboardFocus(true);
+    ftPitch->setWantsKeyboardFocus(true);
+    brPitch->setWantsKeyboardFocus(true);
+    atPitch->setWantsKeyboardFocus(true);
+    sclButton->setWantsKeyboardFocus(true);
+    kbmButton->setWantsKeyboardFocus(true);
+    showTunButton->setWantsKeyboardFocus(true);
+    resetTuningButton->setWantsKeyboardFocus(true);
+    transposeScale->setWantsKeyboardFocus(true);
+    mpePBRange->setWantsKeyboardFocus(true);
+    mpeEnabled->setWantsKeyboardFocus(true);
+    transposeHelp->setWantsKeyboardFocus(true);
+    scalingFactor->setWantsKeyboardFocus(true);
     //[/Constructor]
 }
 

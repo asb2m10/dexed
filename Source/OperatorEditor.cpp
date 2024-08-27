@@ -314,9 +314,6 @@ OperatorEditor::OperatorEditor ()
 
     background = lookAndFeel->imageOperator;
     opSwitch->setTitle("Operator switch");
-    opMode->setTitle("Operator Mode");
-    kbdLeftCurve->setTitle("Keyboard Left Curve");
-    kbdRightCurve->setTitle("Keyboard Right Curve");
 
     setWantsKeyboardFocus(true);
     //[/Constructor]

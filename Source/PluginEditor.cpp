@@ -73,8 +73,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
     // The DX7 is a badass on the bass, keep it that way
     midiKeyboard.setLowestVisibleKey(24);
-
     midiKeyboard.setBounds(4, 581, getWidth() - 8, 90);
+    midiKeyboard.setTitle("Keyboard keys");
 
     addAndMakeVisible(&global);
     global.setBounds(2,436,864,144);
@@ -522,7 +522,9 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
     int keycode = key.getKeyCode();
     ModifierKeys mods = key.getModifiers();
 
-    TRACE("key pressed: %d\n", keycode);
+    #ifdef DEXED_EVENT_DEBUG
+        TRACE("key pressed: %d\n", keycode);
+    #endif
 
     if ( (keycode >= '1' && keycode <= '6') && mods.isCtrlDown() ) {
         int op = keycode - '1';
@@ -543,6 +545,16 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
 
     if ( keycode == 'L' && mods.isCtrlDown() ) {
         cartShow();
+        return true;
+    }
+
+    if ( keycode == 'P' && mods.isCtrlDown() ) {
+        parmShow();
+        return true;
+    }
+
+    if ( key.getKeyCode() == KeyPress::escapeKey ) {
+        cartManager.hideCartridgeManager();
         return true;
     }
 

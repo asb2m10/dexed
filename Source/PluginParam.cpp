@@ -63,6 +63,7 @@ void Ctrl::bind(Slider *s) {
 void Ctrl::bind(Button *b) {
     button = b;
     updateComponent();
+    b->setTitle(label);
     b->addListener(this);
     b->addMouseListener(this, true);
 }
@@ -70,6 +71,7 @@ void Ctrl::bind(Button *b) {
 void Ctrl::bind(ComboBox *c) {
     comboBox = c;
     updateComponent();
+    c->setTitle(label);
     c->addListener(this);
     c->addMouseListener(this, true);
 }

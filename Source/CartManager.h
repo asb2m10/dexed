@@ -111,7 +111,7 @@ public:
     void initialFocus();
     void hideCartridgeManager();
 
-    std::unique_ptr<ComponentTraverser> createFocusTraverser() override;
+    std::unique_ptr< ComponentTraverser> createKeyboardFocusTraverser() override;
 };
 
 #endif  // CARTMANAGER_H_INCLUDED

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2018 Pascal Gauthier.
+ * Copyright (c) 2013-2024 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +114,8 @@ DXLookNFeel::DXLookNFeel() {
     REG_COLOUR(TreeView::backgroundColourId, background);
     REG_COLOUR(DirectoryContentsDisplayComponent::highlightColourId, fillColour);
     REG_COLOUR(DirectoryContentsDisplayComponent::textColourId, Colours::white);
+    REG_COLOUR(DialogWindow::backgroundColourId, background);
+    REG_COLOUR(ListBox::backgroundColourId, ctrlBackground);
 
     // Register ``Scrollbar::thumbColourId`` to allow its redefinion in ``DexedTheme.xml``.
     REG_COLOUR(ScrollBar::thumbColourId, background.darker());

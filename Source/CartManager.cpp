@@ -87,29 +87,47 @@ public:
     }
 
     Component* getNextComponent(Component* current) override {
-        for (int i=0;i<orders.size();i++) {
+        bool srcFound = false;
+        int i;
+
+        for (i=0;i<orders.size();i++) {
             if ( orders[i] == current ) {
-                i += 1;
-                if ( i == orders.size() )
-                    return orders.front();
-                else 
-                    return orders[i];
+                srcFound = true;
+                continue;
+            }
+
+            if ( srcFound ) {
+                ProgramLabel *label = dynamic_cast<ProgramLabel*>(orders[i]);
+                if ( label != nullptr && !label->isActive() )
+                    continue;
+                break;
             }
         }
-        return root;
+
+        if ( i == orders.size() )
+            return orders.front();
+        return orders[i];
     }
 
     Component* getPreviousComponent(Component* current) override {
-        for (int i=0;i<orders.size();i++) {
+        bool srcFound = false;
+        int i=0;
+
+        for(i=orders.size()-1;i>=0;i--) {
             if ( orders[i] == current ) {
-                i -= 1;
-                if ( i < 0 )
-                    return orders.back();
-                else 
-                    return orders[i];
+                srcFound = true;
+                continue;
+            }
+            if ( srcFound ) {
+                ProgramLabel *label = dynamic_cast<ProgramLabel*>(orders[i]);
+                if ( label != nullptr && !label->isActive() )
+                    continue;
+                break;
             }
         }
-        return root;
+        if ( i == -1 )
+            return orders.back();
+        return orders[i];
     }
 
     std::vector<Component*> getAllComponents(Component* parentComponent) override {
@@ -164,13 +182,18 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     addAndMakeVisible(activeCartName.get());
 
     focusOrder.push_back(cartBrowser.get());
-    focusOrder.push_back(activeCart.get());
-    focusOrder.push_back(browserCart.get());
+    //focusOrder.push_back(browserCart.get());
+    for(int i=0;i<32;i++) {
+        focusOrder.push_back(browserCart->getProgramComponent(i));
+    }
+    //focusOrder.push_back(activeCart.get());
+    for(int i=0;i<32;i++) {
+        focusOrder.push_back(activeCart->getProgramComponent(i));
+    }
     focusOrder.push_back(closeButton.get());
     focusOrder.push_back(loadButton.get());
     focusOrder.push_back(saveButton.get());
     focusOrder.push_back(fileMgrButton.get());
-    focusOrder.push_back(activeCartName.get());
 
 /*
  *
@@ -192,16 +215,16 @@ CartManager::~CartManager() {
     cartBrowserList.reset(NULL);
 }
 
-std::unique_ptr<ComponentTraverser> CartManager::createFocusTraverser() {
+std::unique_ptr<ComponentTraverser> CartManager::createKeyboardFocusTraverser() {
     return std::make_unique<CartBrowserFocusTraverser>(this, focusOrder);
 }
 
 void CartManager::resized() {
-    float activeSize = ((float) getWidth() - 30) / 8;
+    float activeSize = 100;
 
-    activeCart->setBounds(15, 402, activeSize * 8, 96);
-    browserCart->setBounds(activeSize * 6 + 15, 10, activeSize * 2, 384);
-    cartBrowser->setBounds(15, 10, activeSize * 6 - 1, 383);
+    activeCart->setBounds(14, 402, activeSize * 8, 96);
+    browserCart->setBounds(activeSize * 6 + 15, 10, activeSize * 2, 385);
+    cartBrowser->setBounds(14, 10, activeSize * 6 - 4, 385);
     closeButton->setBounds(4, getHeight() - 40, 70, 30);
     saveButton->setBounds(144, getHeight() - 40, 70, 30);
     loadButton->setBounds(74, getHeight() - 40, 70, 30);
@@ -425,11 +448,6 @@ bool CartManager::keyPressed(const KeyPress& key, Component* originatingComponen
         activeCart->setCartridge(mainWindow->processor->currentCart);
         return true;
     }
-    if ( key.getKeyCode() == KeyPress::escapeKey ) {
-        hideCartridgeManager();
-        return true;
-    }
-
     return false;
 }
 

@@ -453,7 +453,6 @@ GlobalEditor::GlobalEditor ()
     lfoType->addItem("SINE", 5);
     lfoType->addItem("S&HOLD", 6);
     lfoType->setImage(lookAndFeel->imageLFO);
-    lfoType->setTitle("LFO Waveform");
 
     programs = programSelector.get();
 
