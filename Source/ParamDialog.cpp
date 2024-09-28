@@ -349,6 +349,8 @@ ParamDialog::ParamDialog ()
     //[Constructor] You can add your own custom stuff here..
     pitchRangeUp->setEnabled(pitchStep->getValue() == 0);
     pitchRangeDn->setEnabled(pitchStep->getValue() == 0);
+    pitchRangeUp->grabKeyboardFocus();
+
 
     StringArray input;
     input.add("None");

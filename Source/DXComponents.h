@@ -144,6 +144,31 @@ public:
     }
 };
 
+// Simple Slider to make 10 % jumps when shift is pressed
+class DXSlider : public Slider {
+public:
+    DXSlider(const String& componentName) : Slider(componentName) {
+        setWantsKeyboardFocus(true);
+    }
+
+    bool keyPressed(const KeyPress &key) override {
+        if ( key.getModifiers().isShiftDown() ) {
+            float len = getRange().getLength() * 0.10;
+            if (key.getKeyCode() == key.upKey) {
+                setValue(getValue() + len);
+                return true;
+            }
+            if (key.getKeyCode() == key.downKey) {
+                setValue(getValue() - len);
+                return true;
+            }
+        } else {
+            return Slider::keyPressed(key);
+        }
+        return false;
+    }
+};
+
 class FocusLogger final : public juce::FocusChangeListener
 {
 public:

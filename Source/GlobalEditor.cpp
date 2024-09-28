@@ -133,7 +133,7 @@ GlobalEditor::GlobalEditor ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    lfoSpeed.reset (new juce::Slider ("lfoSpeed"));
+    lfoSpeed.reset (new DXSlider ("lfoSpeed"));
     addAndMakeVisible (lfoSpeed.get());
     lfoSpeed->setExplicitFocusOrder (14);
     lfoSpeed->setRange (0, 99, 1);
@@ -143,7 +143,7 @@ GlobalEditor::GlobalEditor ()
 
     lfoSpeed->setBounds (564, 50, 34, 34);
 
-    lfoAmDepth.reset (new juce::Slider ("lfoAmDepth"));
+    lfoAmDepth.reset (new DXSlider ("lfoAmDepth"));
     addAndMakeVisible (lfoAmDepth.get());
     lfoAmDepth->setExplicitFocusOrder (19);
     lfoAmDepth->setRange (0, 99, 1);
@@ -153,7 +153,7 @@ GlobalEditor::GlobalEditor ()
 
     lfoAmDepth->setBounds (686, 50, 34, 34);
 
-    lfoPitchDepth.reset (new juce::Slider ("lfoPitchDepth"));
+    lfoPitchDepth.reset (new DXSlider ("lfoPitchDepth"));
     addAndMakeVisible (lfoPitchDepth.get());
     lfoPitchDepth->setExplicitFocusOrder (18);
     lfoPitchDepth->setRange (0, 99, 1);
@@ -163,7 +163,7 @@ GlobalEditor::GlobalEditor ()
 
     lfoPitchDepth->setBounds (646, 50, 34, 34);
 
-    lfoDelay.reset (new juce::Slider ("lfoDelay"));
+    lfoDelay.reset (new DXSlider ("lfoDelay"));
     addAndMakeVisible (lfoDelay.get());
     lfoDelay->setExplicitFocusOrder (15);
     lfoDelay->setRange (0, 99, 1);
@@ -173,7 +173,7 @@ GlobalEditor::GlobalEditor ()
 
     lfoDelay->setBounds (603, 50, 34, 34);
 
-    cutoff.reset (new juce::Slider ("cutoff"));
+    cutoff.reset (new DXSlider ("cutoff"));
     addAndMakeVisible (cutoff.get());
     cutoff->setExplicitFocusOrder (6);
     cutoff->setRange (0, 1, 0);
@@ -183,7 +183,7 @@ GlobalEditor::GlobalEditor ()
 
     cutoff->setBounds (234, 9, 34, 34);
 
-    reso.reset (new juce::Slider ("reso"));
+    reso.reset (new DXSlider ("reso"));
     addAndMakeVisible (reso.get());
     reso->setExplicitFocusOrder (7);
     reso->setRange (0, 1, 0);
@@ -193,7 +193,7 @@ GlobalEditor::GlobalEditor ()
 
     reso->setBounds (278, 9, 34, 34);
 
-    pitchRate2.reset (new juce::Slider ("pitchRate2"));
+    pitchRate2.reset (new DXSlider ("pitchRate2"));
     addAndMakeVisible (pitchRate2.get());
     pitchRate2->setExplicitFocusOrder (24);
     pitchRate2->setRange (0, 99, 1);
@@ -203,7 +203,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate2->setBounds (767, 96, 34, 34);
 
-    pitchRate3.reset (new juce::Slider ("pitchRate3"));
+    pitchRate3.reset (new DXSlider ("pitchRate3"));
     addAndMakeVisible (pitchRate3.get());
     pitchRate3->setExplicitFocusOrder (26);
     pitchRate3->setRange (0, 99, 1);
@@ -213,7 +213,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate3->setBounds (795, 96, 35, 34);
 
-    pitchRate4.reset (new juce::Slider ("pitchRate4"));
+    pitchRate4.reset (new DXSlider ("pitchRate4"));
     addAndMakeVisible (pitchRate4.get());
     pitchRate4->setExplicitFocusOrder (28);
     pitchRate4->setRange (0, 99, 1);
@@ -223,7 +223,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate4->setBounds (823, 96, 34, 34);
 
-    pitchRate1.reset (new juce::Slider ("pitchRate1"));
+    pitchRate1.reset (new DXSlider ("pitchRate1"));
     addAndMakeVisible (pitchRate1.get());
     pitchRate1->setExplicitFocusOrder (22);
     pitchRate1->setRange (0, 99, 1);
@@ -233,7 +233,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate1->setBounds (739, 96, 34, 34);
 
-    pitchLevel2.reset (new juce::Slider ("pitchLevel2"));
+    pitchLevel2.reset (new DXSlider ("pitchLevel2"));
     addAndMakeVisible (pitchLevel2.get());
     pitchLevel2->setExplicitFocusOrder (23);
     pitchLevel2->setRange (0, 99, 1);
@@ -243,7 +243,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel2->setBounds (767, 57, 34, 34);
 
-    pitchLevel3.reset (new juce::Slider ("pitchLevel3"));
+    pitchLevel3.reset (new DXSlider ("pitchLevel3"));
     addAndMakeVisible (pitchLevel3.get());
     pitchLevel3->setExplicitFocusOrder (25);
     pitchLevel3->setRange (0, 99, 1);
@@ -253,7 +253,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel3->setBounds (795, 56, 34, 34);
 
-    pitchLevel4.reset (new juce::Slider ("pitchLevel4"));
+    pitchLevel4.reset (new DXSlider ("pitchLevel4"));
     addAndMakeVisible (pitchLevel4.get());
     pitchLevel4->setExplicitFocusOrder (27);
     pitchLevel4->setRange (0, 99, 1);
@@ -263,7 +263,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel4->setBounds (823, 56, 34, 34);
 
-    pitchLevel1.reset (new juce::Slider ("pitchLevel1"));
+    pitchLevel1.reset (new DXSlider ("pitchLevel1"));
     addAndMakeVisible (pitchLevel1.get());
     pitchLevel1->setExplicitFocusOrder (21);
     pitchLevel1->setRange (0, 99, 1);
@@ -273,7 +273,7 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel1->setBounds (739, 57, 34, 34);
 
-    transpose.reset (new juce::Slider ("transpose"));
+    transpose.reset (new DXSlider ("transpose"));
     addAndMakeVisible (transpose.get());
     transpose->setExplicitFocusOrder (9);
     transpose->setRange (0, 48, 1);
@@ -291,7 +291,7 @@ GlobalEditor::GlobalEditor ()
 
     oscSync->setBounds (650, 96, 48, 26);
 
-    pitchModSens.reset (new juce::Slider ("pitchModSens"));
+    pitchModSens.reset (new DXSlider ("pitchModSens"));
     addAndMakeVisible (pitchModSens.get());
     pitchModSens->setExplicitFocusOrder (17);
     pitchModSens->setRange (0, 7, 1);
@@ -321,7 +321,7 @@ GlobalEditor::GlobalEditor ()
 
     algoDisplay->setBounds (335, 30, 152, 91);
 
-    feedback.reset (new juce::Slider ("feedback"));
+    feedback.reset (new DXSlider ("feedback"));
     addAndMakeVisible (feedback.get());
     feedback->setExplicitFocusOrder (12);
     feedback->setRange (0, 7, 1);
@@ -331,7 +331,7 @@ GlobalEditor::GlobalEditor ()
 
     feedback->setBounds (501, 81, 34, 34);
 
-    algo.reset (new juce::Slider ("algo"));
+    algo.reset (new DXSlider ("algo"));
     addAndMakeVisible (algo.get());
     algo->setExplicitFocusOrder (11);
     algo->setRange (1, 32, 1);
@@ -347,7 +347,7 @@ GlobalEditor::GlobalEditor ()
 
     lcdDisplay->setBounds (6, 87, 140, 13);
 
-    output.reset (new juce::Slider ("output"));
+    output.reset (new DXSlider ("output"));
     addAndMakeVisible (output.get());
     output->setExplicitFocusOrder (8);
     output->setRange (0, 1, 0);
@@ -427,7 +427,7 @@ GlobalEditor::GlobalEditor ()
                             juce::Image(), 1.000f, juce::Colour (0x00000000));
     aboutButton->setBounds (8, 11, 135, 46);
 
-    tune.reset (new juce::Slider ("tune"));
+    tune.reset (new DXSlider ("tune"));
     addAndMakeVisible (tune.get());
     tune->setExplicitFocusOrder (5);
     tune->setRange (0, 1, 0);

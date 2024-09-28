@@ -50,7 +50,7 @@ OperatorEditor::OperatorEditor ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    s_egl1.reset (new juce::Slider ("egl1"));
+    s_egl1.reset (new DXSlider ("egl1"));
     addAndMakeVisible (s_egl1.get());
     s_egl1->setExplicitFocusOrder (4);
     s_egl1->setRange (0, 99, 1);
@@ -60,7 +60,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egl1->setBounds (5, 128, 34, 34);
 
-    s_egl2.reset (new juce::Slider ("egl2"));
+    s_egl2.reset (new DXSlider ("egl2"));
     addAndMakeVisible (s_egl2.get());
     s_egl2->setExplicitFocusOrder (6);
     s_egl2->setRange (0, 99, 1);
@@ -70,7 +70,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egl2->setBounds (33, 128, 34, 34);
 
-    s_egl3.reset (new juce::Slider ("egl3"));
+    s_egl3.reset (new DXSlider ("egl3"));
     addAndMakeVisible (s_egl3.get());
     s_egl3->setExplicitFocusOrder (8);
     s_egl3->setRange (0, 99, 1);
@@ -80,7 +80,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egl3->setBounds (61, 128, 34, 34);
 
-    s_egl4.reset (new juce::Slider ("egl4"));
+    s_egl4.reset (new DXSlider ("egl4"));
     addAndMakeVisible (s_egl4.get());
     s_egl4->setExplicitFocusOrder (10);
     s_egl4->setRange (0, 99, 1);
@@ -90,7 +90,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egl4->setBounds (89, 128, 34, 34);
 
-    s_egv1.reset (new juce::Slider ("egr1"));
+    s_egv1.reset (new DXSlider ("egr1"));
     addAndMakeVisible (s_egv1.get());
     s_egv1->setExplicitFocusOrder (5);
     s_egv1->setRange (0, 99, 1);
@@ -100,7 +100,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egv1->setBounds (5, 169, 34, 34);
 
-    s_egv2.reset (new juce::Slider ("egr3"));
+    s_egv2.reset (new DXSlider ("egr3"));
     addAndMakeVisible (s_egv2.get());
     s_egv2->setExplicitFocusOrder (7);
     s_egv2->setRange (0, 99, 1);
@@ -110,7 +110,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egv2->setBounds (33, 169, 34, 34);
 
-    s_egv3.reset (new juce::Slider ("egr3"));
+    s_egv3.reset (new DXSlider ("egr3"));
     addAndMakeVisible (s_egv3.get());
     s_egv3->setExplicitFocusOrder (9);
     s_egv3->setRange (0, 99, 1);
@@ -120,7 +120,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egv3->setBounds (61, 169, 34, 34);
 
-    s_egv4.reset (new juce::Slider ("egr4"));
+    s_egv4.reset (new DXSlider ("egr4"));
     addAndMakeVisible (s_egv4.get());
     s_egv4->setExplicitFocusOrder (11);
     s_egv4->setRange (0, 99, 1);
@@ -130,7 +130,7 @@ OperatorEditor::OperatorEditor ()
 
     s_egv4->setBounds (89, 169, 34, 34);
 
-    opLevel.reset (new juce::Slider ("opLevel"));
+    opLevel.reset (new DXSlider ("opLevel"));
     addAndMakeVisible (opLevel.get());
     opLevel->setExplicitFocusOrder (15);
     opLevel->setRange (0, 99, 1);
@@ -140,7 +140,7 @@ OperatorEditor::OperatorEditor ()
 
     opLevel->setBounds (245, 76, 34, 34);
 
-    opFine.reset (new juce::Slider ("opFine"));
+    opFine.reset (new DXSlider ("opFine"));
     addAndMakeVisible (opFine.get());
     opFine->setExplicitFocusOrder (3);
     opFine->setRange (0, 99, 1);
@@ -150,7 +150,7 @@ OperatorEditor::OperatorEditor ()
 
     opFine->setBounds (78, 24, 34, 34);
 
-    opCoarse.reset (new juce::Slider ("opCoarse"));
+    opCoarse.reset (new DXSlider ("opCoarse"));
     addAndMakeVisible (opCoarse.get());
     opCoarse->setExplicitFocusOrder (2);
     opCoarse->setRange (0, 31, 1);
@@ -174,7 +174,7 @@ OperatorEditor::OperatorEditor ()
 
     khzDisplay->setBounds (15, 10, 95, 10);
 
-    detune.reset (new juce::Slider ("detune"));
+    detune.reset (new DXSlider ("detune"));
     addAndMakeVisible (detune.get());
     detune->setExplicitFocusOrder (1);
     detune->setRange (-7, 7, 1);
@@ -190,7 +190,7 @@ OperatorEditor::OperatorEditor ()
 
     envDisplay->setBounds (16, 83, 94, 30);
 
-    sclLeftLevel.reset (new juce::Slider ("sclLeftLevel"));
+    sclLeftLevel.reset (new DXSlider ("sclLeftLevel"));
     addAndMakeVisible (sclLeftLevel.get());
     sclLeftLevel->setTooltip (TRANS ("Keyboard Scale Level Left Depth "));
     sclLeftLevel->setExplicitFocusOrder (16);
@@ -201,7 +201,7 @@ OperatorEditor::OperatorEditor ()
 
     sclLeftLevel->setBounds (131, 115, 34, 34);
 
-    sclRightLevel.reset (new juce::Slider ("sclRightLevel"));
+    sclRightLevel.reset (new DXSlider ("sclRightLevel"));
     addAndMakeVisible (sclRightLevel.get());
     sclRightLevel->setTooltip (TRANS ("Keyboard Scale Level Right Depth "));
     sclRightLevel->setExplicitFocusOrder (18);
@@ -212,7 +212,7 @@ OperatorEditor::OperatorEditor ()
 
     sclRightLevel->setBounds (241, 115, 34, 34);
 
-    sclLvlBrkPt.reset (new juce::Slider ("sclLvlBrkPt"));
+    sclLvlBrkPt.reset (new DXSlider ("sclLvlBrkPt"));
     addAndMakeVisible (sclLvlBrkPt.get());
     sclLvlBrkPt->setTooltip (TRANS ("Scale Level Breakpoint"));
     sclLvlBrkPt->setExplicitFocusOrder (17);
@@ -223,7 +223,7 @@ OperatorEditor::OperatorEditor ()
 
     sclLvlBrkPt->setBounds (178, 130, 54, 24);
 
-    sclRateScaling.reset (new juce::Slider ("sclRateScaling"));
+    sclRateScaling.reset (new DXSlider ("sclRateScaling"));
     addAndMakeVisible (sclRateScaling.get());
     sclRateScaling->setTooltip (TRANS ("Keyboard Rate Scaling"));
     sclRateScaling->setExplicitFocusOrder (20);
@@ -234,7 +234,7 @@ OperatorEditor::OperatorEditor ()
 
     sclRateScaling->setBounds (186, 179, 34, 34);
 
-    keyVelSens.reset (new juce::Slider ("keyVelSens"));
+    keyVelSens.reset (new DXSlider ("keyVelSens"));
     addAndMakeVisible (keyVelSens.get());
     keyVelSens->setExplicitFocusOrder (14);
     keyVelSens->setRange (0, 7, 1);
@@ -244,7 +244,7 @@ OperatorEditor::OperatorEditor ()
 
     keyVelSens->setBounds (204, 76, 34, 34);
 
-    ampModSens.reset (new juce::Slider ("ampModSens"));
+    ampModSens.reset (new DXSlider ("ampModSens"));
     addAndMakeVisible (ampModSens.get());
     ampModSens->setExplicitFocusOrder (13);
     ampModSens->setRange (0, 3, 1);
