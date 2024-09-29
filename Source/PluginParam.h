@@ -23,6 +23,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#include <juce_gui_basics/detail/juce_ButtonAccessibilityHandler.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+
 class DexedAudioProcessor;
 
 class Ctrl : public Slider::Listener, public Button::Listener, public ComboBox::Listener, public MouseListener {

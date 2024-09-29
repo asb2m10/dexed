@@ -344,7 +344,7 @@ void LcdDisplay::setSystemMsg(String msg) {
 
 void LcdDisplay::paint(Graphics &g) {
     g.setColour (Colours::white);    
-    g.drawText (paramMsg,
+    g.drawFittedText(paramMsg,
                 0, 0, 140, 14,
                 Justification::centred, false);
 }

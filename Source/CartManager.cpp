@@ -71,15 +71,79 @@ public :
     }
 };
 
+/**
+ * This is a hack to override global dexed focus traversal when the cart manager is shown. We could have used a 
+ * modal window but this would have blocked the keys and the user would not have been able to play the current
+ * selected preset. Anything that is keyboard related should be ordered in the focusOrder vector.
+ */
+class CartBrowserFocusTraverser : public KeyboardFocusTraverser {
+    std::vector<Component*> &orders;
+    Component *root;
+public:
+    CartBrowserFocusTraverser(Component *root, std::vector<Component*> &orders) : orders(orders), root(root) {}
+
+    Component* getDefaultComponent(Component* parentComponent) override {
+        return orders[0];
+    }
+
+    Component* getNextComponent(Component* current) override {
+        bool srcFound = false;
+        int i;
+
+        for (i=0;i<orders.size();i++) {
+            if ( orders[i] == current ) {
+                srcFound = true;
+                continue;
+            }
+
+            if ( srcFound ) {
+                ProgramLabel *label = dynamic_cast<ProgramLabel*>(orders[i]);
+                if ( label != nullptr && !label->isActive() )
+                    continue;
+                break;
+            }
+        }
+
+        if ( i == orders.size() )
+            return orders.front();
+        return orders[i];
+    }
+
+    Component* getPreviousComponent(Component* current) override {
+        bool srcFound = false;
+        int i=0;
+
+        for(i=orders.size()-1;i>=0;i--) {
+            if ( orders[i] == current ) {
+                srcFound = true;
+                continue;
+            }
+            if ( srcFound ) {
+                ProgramLabel *label = dynamic_cast<ProgramLabel*>(orders[i]);
+                if ( label != nullptr && !label->isActive() )
+                    continue;
+                break;
+            }
+        }
+        if ( i == -1 )
+            return orders.back();
+        return orders[i];
+    }
+
+    std::vector<Component*> getAllComponents(Component* parentComponent) override {
+        return orders;
+    }
+};
+
 CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartManager") {
     mainWindow = editor;
     cartDir = DexedAudioProcessor::dexedCartDir;
 
-    activeCart.reset(new ProgramListBox("activepgm", 8));
+    activeCart.reset(new ProgramListBox("Active Programs Selector", 8));
     addAndMakeVisible(activeCart.get());
     activeCart->addListener(this);
 
-    browserCart.reset(new ProgramListBox("browserpgm", 2));
+    browserCart.reset(new ProgramListBox("Browser Programs Selector", 2));
     addAndMakeVisible(browserCart.get());
     browserCart->addListener(this);
 
@@ -94,6 +158,7 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     cartBrowser->addKeyListener(this);
     addAndMakeVisible(cartBrowser.get());
 
+    cartBrowser->setTitle("Cartridge file browser");
     cartBrowser->setDragAndDropDescription("Sysex Browser");
     cartBrowser->addListener(this);
 
@@ -116,6 +181,20 @@ CartManager::CartManager(DexedAudioProcessorEditor *editor) : Component("CartMan
     activeCartName.reset(new CartridgeFileDisplay());
     addAndMakeVisible(activeCartName.get());
 
+    focusOrder.push_back(cartBrowser.get());
+    //focusOrder.push_back(browserCart.get());
+    for(int i=0;i<32;i++) {
+        focusOrder.push_back(browserCart->getProgramComponent(i));
+    }
+    //focusOrder.push_back(activeCart.get());
+    for(int i=0;i<32;i++) {
+        focusOrder.push_back(activeCart->getProgramComponent(i));
+    }
+    focusOrder.push_back(closeButton.get());
+    focusOrder.push_back(loadButton.get());
+    focusOrder.push_back(saveButton.get());
+    focusOrder.push_back(fileMgrButton.get());
+
 /*
  *
  * I've removed this since it only works on the DX7 II. TBC.
@@ -136,12 +215,16 @@ CartManager::~CartManager() {
     cartBrowserList.reset(NULL);
 }
 
-void CartManager::resized() {
-    float activeSize = ((float) getWidth() - 30) / 8;
+std::unique_ptr<ComponentTraverser> CartManager::createKeyboardFocusTraverser() {
+    return std::make_unique<CartBrowserFocusTraverser>(this, focusOrder);
+}
 
-    activeCart->setBounds(15, 402, activeSize * 8, 96);
-    browserCart->setBounds(activeSize * 6 + 15, 10, activeSize * 2, 384);
-    cartBrowser->setBounds(15, 10, activeSize * 6 - 1, 383);
+void CartManager::resized() {
+    float activeSize = 100;
+
+    activeCart->setBounds(14, 402, activeSize * 8, 96);
+    browserCart->setBounds(activeSize * 6 + 15, 10, activeSize * 2, 385);
+    cartBrowser->setBounds(14, 10, activeSize * 6 - 4, 385);
     closeButton->setBounds(4, getHeight() - 40, 70, 30);
     saveButton->setBounds(144, getHeight() - 40, 70, 30);
     loadButton->setBounds(74, getHeight() - 40, 70, 30);
@@ -159,14 +242,14 @@ void CartManager::updateCartFilename() {
 
 void CartManager::programSelected(ProgramListBox *source, int pos) {
     if ( source == activeCart.get() ) {
-        browserCart->setSelected(-1);
+        browserCart->setActive(-1);
         mainWindow->processor->setCurrentProgram(pos);
         mainWindow->processor->updateHostDisplay();
     } else {
         uint8_t unpackPgm[161];
         source->getCurrentCart().unpackProgram(unpackPgm, pos);
-        activeCart->setSelected(-1);
-        browserCart->setSelected(pos);
+        activeCart->setActive(-1);
+        browserCart->setActive(pos);
         repaint();
         mainWindow->processor->updateProgramFromSysex((uint8_t *) unpackPgm);
         mainWindow->processor->updateHostDisplay();
@@ -175,8 +258,7 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
 
 void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     if ( buttonThatWasClicked == closeButton.get() ) {
-        mainWindow->startTimer(100);
-        getParentComponent()->setVisible(false);
+        hideCartridgeManager();
         return;
     }
 
@@ -257,8 +339,8 @@ void CartManager::fileClicked(const File& file, const MouseEvent& e) {
 
 void CartManager::setActiveProgram(int idx, String activeName) {
     if ( activeCart->programNames[idx] == activeName ) {
-        activeCart->setSelected(idx);
-        browserCart->setSelected(-1);
+        activeCart->setActive(idx);
+        browserCart->setActive(-1);
     }
     activeCart->repaint();
 }
@@ -288,7 +370,7 @@ void CartManager::selectionChanged() {
     } else {
         browserCart->readOnly = false;
     }
-    browserCart->setSelected(-1);
+    browserCart->setActive(-1);
     browserCart->setCartridge(browserSysex);
 }
 
@@ -322,7 +404,6 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
             mainWindow->processor->sendCurrentSysexCartridge();
             break;
     }
-
 }
 
 void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) {
@@ -343,7 +424,7 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
 
         Cartridge cart;
         cart.load(file);
-        memcpy(cart.getRawVoice()+(dest*128), packedPgm, 128);
+        cart.replaceProgram(dest, packedPgm);;
         cart.saveVoice(file);
         browserCart->setCartridge(cart);
     }
@@ -353,8 +434,13 @@ void CartManager::initialFocus() {
     cartBrowser->grabKeyboardFocus();
 }
 
+void CartManager::hideCartridgeManager() {
+        mainWindow->startTimer(100);
+        getParentComponent()->setVisible(false);
+}
+
 bool CartManager::keyPressed(const KeyPress& key, Component* originatingComponent) {
-    if ( key.getKeyCode() == 13 ) {
+    if ( key.getKeyCode() == KeyPress::returnKey ) {
         File file = cartBrowser->getSelectedFile();
         if ( file.isDirectory() )
             return true;
@@ -373,5 +459,3 @@ void CartManager::showSysexConfigMsg() {
 
 // unused stuff from FileBrowserListener
 void CartManager::browserRootChanged (const File& newRoot) {}
-
-

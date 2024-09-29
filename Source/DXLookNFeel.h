@@ -29,7 +29,7 @@ public:
 };
 
 
-class DXLookNFeel : public LookAndFeel_V3 {
+class DXLookNFeel : public LookAndFeel_V4 {
     HashMap<String, int> colourMap;
 
 public:
@@ -43,14 +43,12 @@ public:
     virtual void drawRotarySlider(Graphics &g, int x, int y, int width, int height, float sliderPosProportional, float rotaryStartAngle, float rotaryEndAngle,  Slider &slider ) override;
     virtual void drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown) override;
     
-    virtual void drawLinearSliderBackground (Graphics&, int x, int y, int width, int height,
-                                     float sliderPos, float minSliderPos, float maxSliderPos,
-                                     const Slider::SliderStyle, Slider&) override;
-    virtual void drawLinearSliderThumb (Graphics&, int x, int y, int width, int height,
-                                float sliderPos, float minSliderPos, float maxSliderPos,
-                                const Slider::SliderStyle, Slider&) override;
     virtual void drawButtonBackground (Graphics&, Button&, const Colour& backgroundColour,
                                bool isMouseOverButton, bool isButtonDown) override;
+    virtual void drawLinearSlider (Graphics&, int x, int y, int width, int height,
+                                 float sliderPos, float minSliderPos, float maxSliderPos,
+                                 const Slider::SliderStyle, Slider&) override;
+
     //virtual Font getTextButtonFont(TextButton&, int buttonHeight) override;
     virtual Typeface::Ptr getTypefaceForFont(const Font &) override;
     virtual void positionComboBoxText (ComboBox& box, Label& label) override;

@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -40,7 +40,8 @@
 class ParamDialog  : public Component,
                      public juce::Slider::Listener,
                      public juce::ComboBox::Listener,
-                     public juce::Button::Listener
+                     public juce::Button::Listener,
+                     Timer
 {
 public:
     //==============================================================================
@@ -63,6 +64,7 @@ public:
     void setGeneralCallback(std::function<void(ParamDialog *)> gc ) { general_callback_ = gc; }
 
     void setIsStandardTuning(bool s);
+    void timerCallback() override;
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

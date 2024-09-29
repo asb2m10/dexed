@@ -306,7 +306,6 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         buffer.copyFrom(1, 0, channelData, numSamples, 1);
 }
 
-
 //==============================================================================
 // This creates new instances of the plugin..
 AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
@@ -815,6 +814,7 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
         setDpiScaleFactor(1.0);
     else 
         setDpiScaleFactor(scaleFactor);
+        
     return editor;
 }
 

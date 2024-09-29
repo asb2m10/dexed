@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.7
+  Created with Projucer version: 7.0.9
 
   ------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ class MidiMonitor : public Component {
     int imageHeight2;
     int imageWidth;
 
-    SharedResourcePointer<DXLookNFeel> lookAndFeel; 
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public:
     MidiMonitor(SysexComm *sysexComm) {
         midi = sysexComm;
@@ -95,7 +95,7 @@ public:
         surge->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
         surge->setJustificationType(Justification::left);
         surge->setBounds(18, 458, getWidth() - 36, 30);
-        
+
         // create a new Component to hold ''dexed'' and ''surge'' as subcomponents
         // and set this holder Component as the content component of the DialogWindow
         Component* holder = new Component();
@@ -133,8 +133,9 @@ GlobalEditor::GlobalEditor ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    lfoSpeed.reset (new juce::Slider ("lfoSpeed"));
+    lfoSpeed.reset (new DXSlider ("lfoSpeed"));
     addAndMakeVisible (lfoSpeed.get());
+    lfoSpeed->setExplicitFocusOrder (14);
     lfoSpeed->setRange (0, 99, 1);
     lfoSpeed->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoSpeed->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -142,8 +143,9 @@ GlobalEditor::GlobalEditor ()
 
     lfoSpeed->setBounds (564, 50, 34, 34);
 
-    lfoAmDepth.reset (new juce::Slider ("lfoAmDepth"));
+    lfoAmDepth.reset (new DXSlider ("lfoAmDepth"));
     addAndMakeVisible (lfoAmDepth.get());
+    lfoAmDepth->setExplicitFocusOrder (19);
     lfoAmDepth->setRange (0, 99, 1);
     lfoAmDepth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoAmDepth->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -151,8 +153,9 @@ GlobalEditor::GlobalEditor ()
 
     lfoAmDepth->setBounds (686, 50, 34, 34);
 
-    lfoPitchDepth.reset (new juce::Slider ("lfoPitchDepth"));
+    lfoPitchDepth.reset (new DXSlider ("lfoPitchDepth"));
     addAndMakeVisible (lfoPitchDepth.get());
+    lfoPitchDepth->setExplicitFocusOrder (18);
     lfoPitchDepth->setRange (0, 99, 1);
     lfoPitchDepth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoPitchDepth->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -160,8 +163,9 @@ GlobalEditor::GlobalEditor ()
 
     lfoPitchDepth->setBounds (646, 50, 34, 34);
 
-    lfoDelay.reset (new juce::Slider ("lfoDelay"));
+    lfoDelay.reset (new DXSlider ("lfoDelay"));
     addAndMakeVisible (lfoDelay.get());
+    lfoDelay->setExplicitFocusOrder (15);
     lfoDelay->setRange (0, 99, 1);
     lfoDelay->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoDelay->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -169,8 +173,9 @@ GlobalEditor::GlobalEditor ()
 
     lfoDelay->setBounds (603, 50, 34, 34);
 
-    cutoff.reset (new juce::Slider ("cutoff"));
+    cutoff.reset (new DXSlider ("cutoff"));
     addAndMakeVisible (cutoff.get());
+    cutoff->setExplicitFocusOrder (6);
     cutoff->setRange (0, 1, 0);
     cutoff->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     cutoff->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
@@ -178,8 +183,9 @@ GlobalEditor::GlobalEditor ()
 
     cutoff->setBounds (234, 9, 34, 34);
 
-    reso.reset (new juce::Slider ("reso"));
+    reso.reset (new DXSlider ("reso"));
     addAndMakeVisible (reso.get());
+    reso->setExplicitFocusOrder (7);
     reso->setRange (0, 1, 0);
     reso->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     reso->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
@@ -187,8 +193,9 @@ GlobalEditor::GlobalEditor ()
 
     reso->setBounds (278, 9, 34, 34);
 
-    pitchRate2.reset (new juce::Slider ("pitchRate2"));
+    pitchRate2.reset (new DXSlider ("pitchRate2"));
     addAndMakeVisible (pitchRate2.get());
+    pitchRate2->setExplicitFocusOrder (24);
     pitchRate2->setRange (0, 99, 1);
     pitchRate2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchRate2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -196,8 +203,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate2->setBounds (767, 96, 34, 34);
 
-    pitchRate3.reset (new juce::Slider ("pitchRate3"));
+    pitchRate3.reset (new DXSlider ("pitchRate3"));
     addAndMakeVisible (pitchRate3.get());
+    pitchRate3->setExplicitFocusOrder (26);
     pitchRate3->setRange (0, 99, 1);
     pitchRate3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchRate3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -205,8 +213,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate3->setBounds (795, 96, 35, 34);
 
-    pitchRate4.reset (new juce::Slider ("pitchRate4"));
+    pitchRate4.reset (new DXSlider ("pitchRate4"));
     addAndMakeVisible (pitchRate4.get());
+    pitchRate4->setExplicitFocusOrder (28);
     pitchRate4->setRange (0, 99, 1);
     pitchRate4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchRate4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -214,8 +223,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate4->setBounds (823, 96, 34, 34);
 
-    pitchRate1.reset (new juce::Slider ("pitchRate1"));
+    pitchRate1.reset (new DXSlider ("pitchRate1"));
     addAndMakeVisible (pitchRate1.get());
+    pitchRate1->setExplicitFocusOrder (22);
     pitchRate1->setRange (0, 99, 1);
     pitchRate1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchRate1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -223,8 +233,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchRate1->setBounds (739, 96, 34, 34);
 
-    pitchLevel2.reset (new juce::Slider ("pitchLevel2"));
+    pitchLevel2.reset (new DXSlider ("pitchLevel2"));
     addAndMakeVisible (pitchLevel2.get());
+    pitchLevel2->setExplicitFocusOrder (23);
     pitchLevel2->setRange (0, 99, 1);
     pitchLevel2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchLevel2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -232,8 +243,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel2->setBounds (767, 57, 34, 34);
 
-    pitchLevel3.reset (new juce::Slider ("pitchLevel3"));
+    pitchLevel3.reset (new DXSlider ("pitchLevel3"));
     addAndMakeVisible (pitchLevel3.get());
+    pitchLevel3->setExplicitFocusOrder (25);
     pitchLevel3->setRange (0, 99, 1);
     pitchLevel3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchLevel3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -241,8 +253,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel3->setBounds (795, 56, 34, 34);
 
-    pitchLevel4.reset (new juce::Slider ("pitchLevel4"));
+    pitchLevel4.reset (new DXSlider ("pitchLevel4"));
     addAndMakeVisible (pitchLevel4.get());
+    pitchLevel4->setExplicitFocusOrder (27);
     pitchLevel4->setRange (0, 99, 1);
     pitchLevel4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchLevel4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -250,8 +263,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel4->setBounds (823, 56, 34, 34);
 
-    pitchLevel1.reset (new juce::Slider ("pitchLevel1"));
+    pitchLevel1.reset (new DXSlider ("pitchLevel1"));
     addAndMakeVisible (pitchLevel1.get());
+    pitchLevel1->setExplicitFocusOrder (21);
     pitchLevel1->setRange (0, 99, 1);
     pitchLevel1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchLevel1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -259,8 +273,9 @@ GlobalEditor::GlobalEditor ()
 
     pitchLevel1->setBounds (739, 57, 34, 34);
 
-    transpose.reset (new juce::Slider ("transpose"));
+    transpose.reset (new DXSlider ("transpose"));
     addAndMakeVisible (transpose.get());
+    transpose->setExplicitFocusOrder (9);
     transpose->setRange (0, 48, 1);
     transpose->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     transpose->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
@@ -270,13 +285,15 @@ GlobalEditor::GlobalEditor ()
 
     oscSync.reset (new juce::ToggleButton ("oscSync"));
     addAndMakeVisible (oscSync.get());
+    oscSync->setExplicitFocusOrder (20);
     oscSync->setButtonText (juce::String());
     oscSync->addListener (this);
 
     oscSync->setBounds (650, 96, 48, 26);
 
-    pitchModSens.reset (new juce::Slider ("pitchModSens"));
+    pitchModSens.reset (new DXSlider ("pitchModSens"));
     addAndMakeVisible (pitchModSens.get());
+    pitchModSens->setExplicitFocusOrder (17);
     pitchModSens->setRange (0, 7, 1);
     pitchModSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchModSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -286,6 +303,7 @@ GlobalEditor::GlobalEditor ()
 
     lfoSync.reset (new juce::ToggleButton ("lfoSync"));
     addAndMakeVisible (lfoSync.get());
+    lfoSync->setExplicitFocusOrder (16);
     lfoSync->setButtonText (juce::String());
     lfoSync->addListener (this);
 
@@ -303,8 +321,9 @@ GlobalEditor::GlobalEditor ()
 
     algoDisplay->setBounds (335, 30, 152, 91);
 
-    feedback.reset (new juce::Slider ("feedback"));
+    feedback.reset (new DXSlider ("feedback"));
     addAndMakeVisible (feedback.get());
+    feedback->setExplicitFocusOrder (12);
     feedback->setRange (0, 7, 1);
     feedback->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     feedback->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -312,8 +331,9 @@ GlobalEditor::GlobalEditor ()
 
     feedback->setBounds (501, 81, 34, 34);
 
-    algo.reset (new juce::Slider ("algo"));
+    algo.reset (new DXSlider ("algo"));
     addAndMakeVisible (algo.get());
+    algo->setExplicitFocusOrder (11);
     algo->setRange (1, 32, 1);
     algo->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     algo->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
@@ -327,8 +347,9 @@ GlobalEditor::GlobalEditor ()
 
     lcdDisplay->setBounds (6, 87, 140, 13);
 
-    output.reset (new juce::Slider ("output"));
+    output.reset (new DXSlider ("output"));
     addAndMakeVisible (output.get());
+    output->setExplicitFocusOrder (8);
     output->setRange (0, 1, 0);
     output->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     output->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
@@ -336,9 +357,7 @@ GlobalEditor::GlobalEditor ()
 
     output->setBounds (157, 60, 34, 34);
 
-    //vuOutput.reset (new VuMeter());
-    //vuOutput.reset(new VuMeterMain(6));
-    vuOutput.reset(new VuMeterOutput);
+    vuOutput.reset (new VuMeterOutput ());
     addAndMakeVisible (vuOutput.get());
     vuOutput->setName ("vuOutput");
 
@@ -346,34 +365,39 @@ GlobalEditor::GlobalEditor ()
 
     initButton.reset (new juce::TextButton ("initButton"));
     addAndMakeVisible (initButton.get());
-    initButton->setButtonText (translate("INIT"));
+    initButton->setExplicitFocusOrder (3);
+    initButton->setButtonText (TRANS ("INIT"));
     initButton->addListener (this);
 
     initButton->setBounds (100, 111, 50, 30);
 
     parmButton.reset (new juce::TextButton ("parmButton"));
     addAndMakeVisible (parmButton.get());
-    parmButton->setButtonText (translate("PARM"));
+    parmButton->setExplicitFocusOrder (2);
+    parmButton->setButtonText (TRANS ("PARM"));
     parmButton->addListener (this);
 
     parmButton->setBounds (52, 111, 50, 30);
 
     cartButton.reset (new juce::TextButton ("cartButton"));
     addAndMakeVisible (cartButton.get());
-    cartButton->setButtonText (translate("CART"));
+    cartButton->setExplicitFocusOrder (1);
+    cartButton->setButtonText (TRANS ("CART"));
     cartButton->addListener (this);
 
     cartButton->setBounds (3, 111, 50, 30);
 
     storeButton.reset (new juce::TextButton ("storeButton"));
     addAndMakeVisible (storeButton.get());
-    storeButton->setButtonText (translate("STORE"));
+    storeButton->setExplicitFocusOrder (4);
+    storeButton->setButtonText (TRANS ("STORE"));
     storeButton->addListener (this);
 
     storeButton->setBounds (270, 109, 50, 30);
 
     monoMode.reset (new juce::ToggleButton ("monoMode"));
     addAndMakeVisible (monoMode.get());
+    monoMode->setExplicitFocusOrder (10);
     monoMode->setButtonText (juce::String());
     monoMode->addListener (this);
 
@@ -381,6 +405,7 @@ GlobalEditor::GlobalEditor ()
 
     lfoType.reset (new ComboBoxImage());
     addAndMakeVisible (lfoType.get());
+    lfoType->setExplicitFocusOrder (13);
     lfoType->setName ("lfoType");
 
     lfoType->setBounds (583, 8, 36, 26);
@@ -402,8 +427,9 @@ GlobalEditor::GlobalEditor ()
                             juce::Image(), 1.000f, juce::Colour (0x00000000));
     aboutButton->setBounds (8, 11, 135, 46);
 
-    tune.reset (new juce::Slider ("tune"));
+    tune.reset (new DXSlider ("tune"));
     addAndMakeVisible (tune.get());
+    tune->setExplicitFocusOrder (5);
     tune->setRange (0, 1, 0);
     tune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     tune->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
@@ -432,6 +458,10 @@ GlobalEditor::GlobalEditor ()
 
     background = lookAndFeel->imageGlobal;
     imageLight = lookAndFeel->imageLight;
+    setTitle("Global Parameters");
+    setFocusContainerType(FocusContainerType::focusContainer);
+    setWantsKeyboardFocus(true);
+    aboutButton->setTitle("About DEXED");
     //[/Constructor]
 }
 
@@ -791,86 +821,86 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="864" initialHeight="144">
   <BACKGROUND backgroundColour="ffffff"/>
   <SLIDER name="lfoSpeed" id="b10eaf327ab3bff5" memberName="lfoSpeed" virtualName=""
-          explicitFocusOrder="0" pos="564 50 34 34" min="0.0" max="99.0"
+          explicitFocusOrder="14" pos="564 50 34 34" min="0.0" max="99.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="lfoAmDepth" id="3e95a6206fa4a891" memberName="lfoAmDepth"
-          virtualName="" explicitFocusOrder="0" pos="686 50 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="19" pos="686 50 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="lfoPitchDepth" id="6ead769ca786c813" memberName="lfoPitchDepth"
-          virtualName="" explicitFocusOrder="0" pos="646 50 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="18" pos="646 50 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="lfoDelay" id="1fce68dc81619ef5" memberName="lfoDelay" virtualName=""
-          explicitFocusOrder="0" pos="603 50 34 34" min="0.0" max="99.0"
+          explicitFocusOrder="15" pos="603 50 34 34" min="0.0" max="99.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="cutoff" id="40531f16bb0bd225" memberName="cutoff" virtualName=""
-          explicitFocusOrder="0" pos="234 9 34 34" min="0.0" max="1.0"
+          explicitFocusOrder="6" pos="234 9 34 34" min="0.0" max="1.0"
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="reso" id="c8c13464e81a8d83" memberName="reso" virtualName=""
-          explicitFocusOrder="0" pos="278 9 34 34" min="0.0" max="1.0"
+          explicitFocusOrder="7" pos="278 9 34 34" min="0.0" max="1.0"
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="pitchRate2" id="73f386b3c91d3de4" memberName="pitchRate2"
-          virtualName="" explicitFocusOrder="0" pos="767 96 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="24" pos="767 96 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchRate3" id="187c25b24413fccf" memberName="pitchRate3"
-          virtualName="" explicitFocusOrder="0" pos="795 96 35 34" min="0.0"
+          virtualName="" explicitFocusOrder="26" pos="795 96 35 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchRate4" id="1aeb2a8fbbcbeaab" memberName="pitchRate4"
-          virtualName="" explicitFocusOrder="0" pos="823 96 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="28" pos="823 96 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchRate1" id="419d613b3fb9604e" memberName="pitchRate1"
-          virtualName="" explicitFocusOrder="0" pos="739 96 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="22" pos="739 96 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel2" id="3a355ad2221887d9" memberName="pitchLevel2"
-          virtualName="" explicitFocusOrder="0" pos="767 57 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="23" pos="767 57 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel3" id="5c5d782e8a7f3ad7" memberName="pitchLevel3"
-          virtualName="" explicitFocusOrder="0" pos="795 56 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="25" pos="795 56 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel4" id="eb900b141fbad8ff" memberName="pitchLevel4"
-          virtualName="" explicitFocusOrder="0" pos="823 56 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="27" pos="823 56 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="pitchLevel1" id="344cbe26ec9fa128" memberName="pitchLevel1"
-          virtualName="" explicitFocusOrder="0" pos="739 57 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="21" pos="739 57 34 34" min="0.0"
           max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <SLIDER name="transpose" id="7d1266b1c1534947" memberName="transpose"
-          virtualName="" explicitFocusOrder="0" pos="202 60 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="9" pos="202 60 34 34" min="0.0"
           max="48.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="0" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="oscSync" id="8f3fe641537cd00" memberName="oscSync" virtualName=""
-                explicitFocusOrder="0" pos="650 96 48 26" buttonText="" connectedEdges="0"
+                explicitFocusOrder="20" pos="650 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <SLIDER name="pitchModSens" id="904f73df85a9f886" memberName="pitchModSens"
-          virtualName="" explicitFocusOrder="0" pos="666 5 34 34" min="0.0"
+          virtualName="" explicitFocusOrder="17" pos="666 5 34 34" min="0.0"
           max="7.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="lfoSync" id="ff92bb0a5a4f7187" memberName="lfoSync" virtualName=""
-                explicitFocusOrder="0" pos="565 96 48 26" buttonText="" connectedEdges="0"
+                explicitFocusOrder="16" pos="565 96 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="pitchEnvDisplay" id="9ddaae8ef924a038" memberName="pitchEnvDisplay"
                     virtualName="" explicitFocusOrder="0" pos="751 10 93 30" class="PitchEnvDisplay"
@@ -879,39 +909,40 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="335 30 152 91" class="AlgoDisplay"
                     params=""/>
   <SLIDER name="feedback" id="4fac1940c29ab8c" memberName="feedback" virtualName=""
-          explicitFocusOrder="0" pos="501 81 34 34" min="0.0" max="7.0"
+          explicitFocusOrder="12" pos="501 81 34 34" min="0.0" max="7.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="1"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <SLIDER name="algo" id="8a226ddf9bbff752" memberName="algo" virtualName=""
-          explicitFocusOrder="0" pos="501 22 34 34" min="1.0" max="32.0"
+          explicitFocusOrder="11" pos="501 22 34 34" min="1.0" max="32.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <GENERICCOMPONENT name="lcdDisplay" id="30c7bb8f114cbbe3" memberName="lcdDisplay"
                     virtualName="" explicitFocusOrder="0" pos="6 87 140 13" class="LcdDisplay"
                     params=""/>
   <SLIDER name="output" id="7697fdd54fd1593e" memberName="output" virtualName=""
-          explicitFocusOrder="0" pos="157 60 34 34" min="0.0" max="1.0"
+          explicitFocusOrder="8" pos="157 60 34 34" min="0.0" max="1.0"
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <GENERICCOMPONENT name="vuOutput" id="dac75af912267f51" memberName="vuOutput" virtualName=""
-                    explicitFocusOrder="0" pos="6 103 140 8" class="VuMeterOutput" params=""/>
+                    explicitFocusOrder="0" pos="6 103 140 8" class="VuMeterOutput"
+                    params=""/>
   <TEXTBUTTON name="initButton" id="92b278163c42e21d" memberName="initButton"
-              virtualName="" explicitFocusOrder="0" pos="100 111 50 30" buttonText="INIT"
+              virtualName="" explicitFocusOrder="3" pos="100 111 50 30" buttonText="INIT"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="parmButton" id="d5cd6260b34be817" memberName="parmButton"
-              virtualName="" explicitFocusOrder="0" pos="52 111 50 30" buttonText="PARM"
+              virtualName="" explicitFocusOrder="2" pos="52 111 50 30" buttonText="PARM"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="cartButton" id="465a101c3a0e744" memberName="cartButton"
-              virtualName="" explicitFocusOrder="0" pos="3 111 50 30" buttonText="CART"
+              virtualName="" explicitFocusOrder="1" pos="3 111 50 30" buttonText="CART"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TEXTBUTTON name="storeButton" id="a94bec26832eb58b" memberName="storeButton"
-              virtualName="" explicitFocusOrder="0" pos="270 109 50 30" buttonText="STORE"
+              virtualName="" explicitFocusOrder="4" pos="270 109 50 30" buttonText="STORE"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="monoMode" id="e683d8cbe286367b" memberName="monoMode" virtualName=""
-                explicitFocusOrder="0" pos="249 65 48 26" buttonText="" connectedEdges="0"
+                explicitFocusOrder="10" pos="249 65 48 26" buttonText="" connectedEdges="0"
                 needsCallback="1" radioGroupId="0" state="0"/>
   <GENERICCOMPONENT name="lfoType" id="62f61dda9f76c8f" memberName="lfoType" virtualName=""
-                    explicitFocusOrder="0" pos="583 8 36 26" class="ComboBoxImage"
+                    explicitFocusOrder="13" pos="583 8 36 26" class="ComboBoxImage"
                     params=""/>
   <GENERICCOMPONENT name="programSelector" id="990bbcccae72dbe6" memberName="programSelector"
                     virtualName="" explicitFocusOrder="0" pos="153 115 112 18" class="ProgramSelector"
@@ -923,7 +954,7 @@ BEGIN_JUCER_METADATA
                opacityOver="1.0" colourOver="0" resourceDown="" opacityDown="1.0"
                colourDown="0"/>
   <SLIDER name="tune" id="d22c34aa3363a28a" memberName="tune" virtualName=""
-          explicitFocusOrder="0" pos="190 9 34 34" min="0.0" max="1.0"
+          explicitFocusOrder="5" pos="190 9 34 34" min="0.0" max="1.0"
           int="0.0" style="RotaryVerticalDrag" textBoxPos="NoTextBox" textBoxEditable="0"
           textBoxWidth="80" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
 </JUCER_COMPONENT>

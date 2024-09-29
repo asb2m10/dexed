@@ -236,12 +236,21 @@ public:
             dest.add( normalizePgmName(getRawVoice() + ((i * 128) + 118)) );
     }
     
+    String getProgramName(int idx) {
+        jassert(idx >= 0 && idx < 32);
+        return normalizePgmName(getRawVoice() + ((idx * 128) + 118));
+    }
+
     Cartridge operator =(const Cartridge other) {
         memcpy(voiceData, other.voiceData, SYSEX_SIZE);
         memcpy(perfData, other.perfData, SYSEX_SIZE);
         return *this;
     }
-    
+
+    void replaceProgram(int idx, char *src) {
+        memcpy(getRawVoice() + (idx * 128), src, 128);
+    }
+
     void unpackProgram(uint8_t *unpackPgm, int idx);
     void packProgram(uint8_t *src, int idx, String name, char *opSwitch);
 };

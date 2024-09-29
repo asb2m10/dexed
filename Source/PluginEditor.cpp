@@ -37,7 +37,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       cartManager(this)
 {
     setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
-
+    setExplicitFocusOrder(1);
     processor = ownerFilter;
 
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
@@ -73,8 +73,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
     // The DX7 is a badass on the bass, keep it that way
     midiKeyboard.setLowestVisibleKey(24);
-
     midiKeyboard.setBounds(4, 581, getWidth() - 8, 90);
+    midiKeyboard.setTitle("Keyboard keys");
 
     addAndMakeVisible(&global);
     global.setBounds(2,436,864,144);
@@ -89,6 +89,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
 
+    addKeyListener(this);
     updateUI();
     startTimer(100);
 }
@@ -113,6 +114,10 @@ void DexedAudioProcessorEditor::cartShow() {
     cartManager.updateCartFilename();
     cartManagerCover.setVisible(true);
     cartManager.initialFocus();
+}
+
+std::unique_ptr<ComponentTraverser> DexedAudioProcessorEditor::createFocusTraverser() {
+    return std::make_unique<FocusTraverser>();
 }
 
 void DexedAudioProcessorEditor::loadCart(File file) {
@@ -511,4 +516,47 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
             "I/O error!", 
             "Related to file \'"+fn.toStdString()+"\', an unknown exception occured.");
     };
+}
+
+bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* originatingComponent) {
+    int keycode = key.getKeyCode();
+    ModifierKeys mods = key.getModifiers();
+
+    #ifdef DEXED_EVENT_DEBUG
+        TRACE("key pressed: %d\n", keycode);
+    #endif
+
+    if ( (keycode >= '1' && keycode <= '6') && mods.isCtrlDown() ) {
+        int op = keycode - '1';
+
+        if ( mods.isShiftDown() ) {
+            operators[op].toggleOpSwitch();
+            return true;
+        }
+
+        operators[op].grabKeyboardFocus();
+        return true;
+    }
+
+    if ( keycode == 'G' && mods.isCtrlDown() ) {
+        global.grabKeyboardFocus();
+        return true;
+    }
+
+    if ( keycode == 'L' && mods.isCtrlDown() ) {
+        cartShow();
+        return true;
+    }
+
+    if ( keycode == 'P' && mods.isCtrlDown() ) {
+        parmShow();
+        return true;
+    }
+
+    if ( key.getKeyCode() == KeyPress::escapeKey ) {
+        cartManager.hideCartridgeManager();
+        return true;
+    }
+
+    return false;
 }

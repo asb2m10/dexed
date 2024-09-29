@@ -15,6 +15,13 @@ the original machine.
 Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa
 in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
 
+Donation
+--------
+As a maintainer of this 10 year old project, donations are welcomed. This also applies for the Apple users 
+to cover for the notarization of this software in the comming years. Thank you!
+
+https://www.paypal.com/paypalme/asb2m10
+
 Dexed Forks
 -----------
  * [MiniDexed](https://github.com/probonopd/MiniDexed) Run a DX7 bare metal from a Raspberry Pi
@@ -22,15 +29,20 @@ Dexed Forks
 
 Changelog
 ---------
+#### Version 0.9.8 (in development)
+* UI Refresh
+* Accessibility implementation (including keyboard shortcuts)
+* Mono/Poly parameter is now a plugin parameter
+* Fix Apple Logic startup issue
+
 #### Version 0.9.7
 * [MTS-ESP](https://oddsound.com/index.php) microtuning support
 * [CLAP](https://github.com/free-audio/clap) plugin support (sadly scaling is not available for now, but we are working on this)
 * Scalable UI upgrade (better resolution), optimized UI redraw
 * More accurate VU meter. Thanks @FulopNandor
-* Releases are now notarized for mac OS
+* Releases are now notarized for macOS
 * Fix for VST3 automation (again)
 * For developers: cmake is now the built system
-
 
 #### Version 0.9.6
 * Apple Silicon M1 builds

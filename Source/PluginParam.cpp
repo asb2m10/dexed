@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2017 Pascal Gauthier.
+ * Copyright (c) 2013-2024 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,129 @@ public:
         ctrl->publishValue(value);
     }
 };
+
+// ************************************************************************
+//
+Ctrl::Ctrl(String name) {
+    label << name;
+    slider = NULL;
+    button = NULL;
+    comboBox = NULL;
+}
+
+void Ctrl::bind(Slider *s) {
+    slider = s;
+    updateComponent();
+    s->addListener(this);
+    s->addMouseListener(this, true);
+    s->setVelocityModeParameters (0.1, 1, 0.05, 1, ModifierKeys::shiftModifier);
+    s->setTitle(label);
+    s->textFromValueFunction = [this](double value) { return this->getValueDisplay(); };
+    s->setWantsKeyboardFocus(true);
+}
+
+void Ctrl::bind(Button *b) {
+    button = b;
+    updateComponent();
+    b->setTitle(label);
+    b->addListener(this);
+    b->addMouseListener(this, true);
+}
+
+void Ctrl::bind(ComboBox *c) {
+    comboBox = c;
+    updateComponent();
+    c->setTitle(label);
+    c->addListener(this);
+    c->addMouseListener(this, true);
+}
+
+void Ctrl::unbind() {
+    if (slider != NULL) {
+        slider->removeListener(this);
+        slider->removeMouseListener(this);
+        slider = NULL;
+    }
+
+    if (button != NULL) {
+        button->removeListener(this);
+        button->removeMouseListener(this);
+        button = NULL;
+    }
+
+    if (comboBox != NULL) {
+        comboBox->removeListener(this);
+        comboBox->removeMouseListener(this);
+        comboBox = NULL;
+    }
+}
+
+void Ctrl::publishValueAsync(float value) {
+    CtrlUpdate *update = new CtrlUpdate(this, value);
+    update->post();
+}
+
+void Ctrl::publishValue(float value) {
+    parent->beginParameterChangeGesture(idx);
+    parent->setParameterNotifyingHost(idx, value);
+    parent->endParameterChangeGesture(idx);
+}
+
+void Ctrl::sliderValueChanged(Slider* moved) {
+    publishValue(moved->getValue());
+}
+
+void Ctrl::buttonClicked(Button* clicked) {
+    publishValue(clicked->getToggleState());
+}
+
+void Ctrl::comboBoxChanged(ComboBox* combo) {
+    publishValue((combo->getSelectedId() - 1) / combo->getNumItems());
+}
+
+void Ctrl::mouseEnter(const juce::MouseEvent &event) {
+    updateDisplayName();
+}
+
+void Ctrl::mouseDown(const juce::MouseEvent &event) {
+    if ( event.mods.isPopupMenu()) {
+        PopupMenu popup;
+
+        if ( parent->mappedMidiCC.containsValue(this) ) {
+            popup.addItem(3, "Re-Map controller to midi CC for: " + String(label));
+            popup.addSeparator();
+            popup.addItem(1, "Remove midi CC mapping for this controller");
+        } else {
+            popup.addItem(3, "Map controller to midi CC for: " + String(label));
+            popup.addSeparator();
+        }
+        popup.addItem(2, "Clear midi CC mapping");
+
+        switch(popup.show()) {
+            case 1:
+                parent->mappedMidiCC.removeValue(this);
+                parent->savePreference();
+                break;
+            case 2:
+                if ( AlertWindow::showYesNoCancelBox(AlertWindow::WarningIcon, "Confirm", "Clear midi mapping for all controller change (CC) messages?", "YES", "NO", "CANCEL") ) {
+                    parent->mappedMidiCC.clear();
+                    parent->savePreference();
+                }
+                break;
+            case 3:
+                AudioProcessorEditor *editor = parent->getActiveEditor();
+                if ( editor == NULL ) {
+                    return;
+                }
+                DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
+                dexedEditor->discoverMidiCC(this);
+                break;
+        }
+    }
+}
+
+void Ctrl::updateDisplayName() {
+}
 
 // ************************************************************************
 // Custom displays
@@ -227,124 +350,6 @@ public:
         }
     }
 };
-
-// ************************************************************************
-//
-Ctrl::Ctrl(String name) {
-    label << name;
-    slider = NULL;
-    button = NULL;
-    comboBox = NULL;
-}
-
-void Ctrl::bind(Slider *s) {
-    slider = s;
-    updateComponent();
-    s->addListener(this);
-    s->addMouseListener(this, true);
-    s->setVelocityModeParameters (0.1, 1, 0.05, 1, ModifierKeys::shiftModifier);
-}
-
-void Ctrl::bind(Button *b) {
-    button = b;
-    updateComponent();
-    b->addListener(this);
-    b->addMouseListener(this, true);
-}
-
-void Ctrl::bind(ComboBox *c) {
-    comboBox = c;
-    updateComponent();
-    c->addListener(this);
-    c->addMouseListener(this, true);
-}
-
-void Ctrl::unbind() {
-    if (slider != NULL) {
-        slider->removeListener(this);
-        slider->removeMouseListener(this);
-        slider = NULL;
-    }
-
-    if (button != NULL) {
-        button->removeListener(this);
-        button->removeMouseListener(this);
-        button = NULL;
-    }
-
-    if (comboBox != NULL) {
-        comboBox->removeListener(this);
-        comboBox->removeMouseListener(this);
-        comboBox = NULL;
-    }
-}
-
-void Ctrl::publishValueAsync(float value) {
-    CtrlUpdate *update = new CtrlUpdate(this, value);
-    update->post();
-}
-
-void Ctrl::publishValue(float value) {
-    parent->beginParameterChangeGesture(idx);
-    parent->setParameterNotifyingHost(idx, value);
-    parent->endParameterChangeGesture(idx);
-}
-
-void Ctrl::sliderValueChanged(Slider* moved) {
-    publishValue(moved->getValue());
-}
-
-void Ctrl::buttonClicked(Button* clicked) {
-    publishValue(clicked->getToggleState());
-}
-
-void Ctrl::comboBoxChanged(ComboBox* combo) {
-    publishValue((combo->getSelectedId() - 1) / combo->getNumItems());
-}
-
-void Ctrl::mouseEnter(const juce::MouseEvent &event) {
-    updateDisplayName();
-}
-
-void Ctrl::mouseDown(const juce::MouseEvent &event) {
-    if ( event.mods.isPopupMenu()) {
-        PopupMenu popup;
-
-        if ( parent->mappedMidiCC.containsValue(this) ) {
-            popup.addItem(3, "Re-Map controller to midi CC for: " + String(label));
-            popup.addSeparator();
-            popup.addItem(1, "Remove midi CC mapping for this controller");
-        } else {
-            popup.addItem(3, "Map controller to midi CC for: " + String(label));
-            popup.addSeparator();
-        }
-        popup.addItem(2, "Clear midi CC mapping");
-
-        switch(popup.show()) {
-            case 1:
-                parent->mappedMidiCC.removeValue(this);
-                parent->savePreference();
-                break;
-            case 2:
-                if ( AlertWindow::showYesNoCancelBox(AlertWindow::WarningIcon, "Confirm", "Clear midi mapping for all controller change (CC) messages?", "YES", "NO", "CANCEL") ) {
-                    parent->mappedMidiCC.clear();
-                    parent->savePreference();
-                }
-                break;
-            case 3:
-                AudioProcessorEditor *editor = parent->getActiveEditor();
-                if ( editor == NULL ) {
-                    return;
-                }
-                DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
-                dexedEditor->discoverMidiCC(this);
-                break;
-        }
-    }
-}
-
-void Ctrl::updateDisplayName() {
-}
 
 // ************************************************************************
 // CtrlFloat - control float values
