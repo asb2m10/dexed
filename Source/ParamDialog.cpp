@@ -19,6 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "Dexed.h"
+#include "DXComponents.h"
 //[/Headers]
 
 #include "ParamDialog.h"
@@ -33,7 +34,7 @@ ParamDialog::ParamDialog ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    pitchRangeDn.reset (new juce::Slider ("pitchRangeDn"));
+    pitchRangeDn.reset (new DXSlider ("pitchRangeDn"));
     addAndMakeVisible (pitchRangeDn.get());
     pitchRangeDn->setExplicitFocusOrder (2);
     pitchRangeDn->setRange (0, 48, 1);
@@ -43,7 +44,7 @@ ParamDialog::ParamDialog ()
 
     pitchRangeDn->setBounds (264, 16, 72, 24);
 
-    pitchStep.reset (new juce::Slider ("pitchStep"));
+    pitchStep.reset (new DXSlider ("pitchStep"));
     addAndMakeVisible (pitchStep.get());
     pitchStep->setExplicitFocusOrder (3);
     pitchStep->setRange (0, 12, 1);
@@ -75,7 +76,7 @@ ParamDialog::ParamDialog ()
 
     sysexOut->setBounds (104, 280, 224, 24);
 
-    sysexChl.reset (new juce::Slider ("sysexChl"));
+    sysexChl.reset (new DXSlider ("sysexChl"));
     addAndMakeVisible (sysexChl.get());
     sysexChl->setExplicitFocusOrder (9);
     sysexChl->setRange (1, 16, 1);
@@ -107,7 +108,7 @@ ParamDialog::ParamDialog ()
 
     showKeyboard->setBounds (264, 96, 56, 24);
 
-    whlRange.reset (new juce::Slider ("whlRange"));
+    whlRange.reset (new DXSlider ("whlRange"));
     addAndMakeVisible (whlRange.get());
     whlRange->setExplicitFocusOrder (10);
     whlRange->setRange (0, 99, 1);
@@ -117,7 +118,7 @@ ParamDialog::ParamDialog ()
 
     whlRange->setBounds (448, 16, 72, 24);
 
-    ftRange.reset (new juce::Slider ("ftRange"));
+    ftRange.reset (new DXSlider ("ftRange"));
     addAndMakeVisible (ftRange.get());
     ftRange->setExplicitFocusOrder (14);
     ftRange->setRange (0, 99, 1);
@@ -127,7 +128,7 @@ ParamDialog::ParamDialog ()
 
     ftRange->setBounds (448, 56, 72, 24);
 
-    brRange.reset (new juce::Slider ("brRange"));
+    brRange.reset (new DXSlider ("brRange"));
     addAndMakeVisible (brRange.get());
     brRange->setExplicitFocusOrder (18);
     brRange->setRange (0, 99, 1);
@@ -137,7 +138,7 @@ ParamDialog::ParamDialog ()
 
     brRange->setBounds (448, 96, 72, 24);
 
-    atRange.reset (new juce::Slider ("atRange"));
+    atRange.reset (new DXSlider ("atRange"));
     addAndMakeVisible (atRange.get());
     atRange->setExplicitFocusOrder (22);
     atRange->setRange (0, 99, 1);
@@ -284,7 +285,7 @@ ParamDialog::ParamDialog ()
 
     transposeScale->setBounds (592, 240, 56, 30);
 
-    mpePBRange.reset (new juce::Slider ("mpePBRange"));
+    mpePBRange.reset (new DXSlider ("mpePBRange"));
     addAndMakeVisible (mpePBRange.get());
     mpePBRange->setExplicitFocusOrder (32);
     mpePBRange->setRange (0, 96, 1);
@@ -312,7 +313,7 @@ ParamDialog::ParamDialog ()
                               juce::Image(), 1.000f, juce::Colour (0x00000000));
     transposeHelp->setBounds (500, 245, 20, 20);
 
-    pitchRangeUp.reset (new juce::Slider ("pitchRangeUp"));
+    pitchRangeUp.reset (new DXSlider ("pitchRangeUp"));
     addAndMakeVisible (pitchRangeUp.get());
     pitchRangeUp->setExplicitFocusOrder (1);
     pitchRangeUp->setRange (0, 48, 1);
@@ -349,8 +350,6 @@ ParamDialog::ParamDialog ()
     //[Constructor] You can add your own custom stuff here..
     pitchRangeUp->setEnabled(pitchStep->getValue() == 0);
     pitchRangeDn->setEnabled(pitchStep->getValue() == 0);
-    pitchRangeUp->grabKeyboardFocus();
-
 
     StringArray input;
     input.add("None");
@@ -434,6 +433,9 @@ ParamDialog::ParamDialog ()
     mpeEnabled->setWantsKeyboardFocus(true);
     transposeHelp->setWantsKeyboardFocus(true);
     scalingFactor->setWantsKeyboardFocus(true);
+
+    setWantsKeyboardFocus(true);
+    startTimer(100);
     //[/Constructor]
 }
 
@@ -478,6 +480,7 @@ ParamDialog::~ParamDialog()
 
 
     //[Destructor]. You can add your own custom destruction code here..
+    stopTimer();
     //[/Destructor]
 }
 
@@ -1203,6 +1206,13 @@ void ParamDialog::setIsStandardTuning( bool b )
         resetTuningButton->setEnabled( ! b );
 }
 
+// Force the internal component dialog to have keyboard focus. Ugly, but it is 
+// the only way I have found (including on the JUCE forum).
+void ParamDialog::timerCallback() {
+    stopTimer();
+    grabKeyboardFocus();
+}
+ 
 //[/MiscUserCode]
 
 

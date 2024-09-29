@@ -276,7 +276,7 @@ Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {
 void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int height, float sliderPosProportional,
      float rotaryStartAngle, float rotaryEndAngle,  Slider &slider ) {
      if ( imageKnob.isNull() ) {
-         LookAndFeel_V3::drawRotarySlider(g, x, y, width, height, sliderPosProportional, rotaryStartAngle, rotaryEndAngle, slider);
+         LookAndFeel_V4::drawRotarySlider(g, x, y, width, height, sliderPosProportional, rotaryStartAngle, rotaryEndAngle, slider);
          return;
      }
 
@@ -296,7 +296,7 @@ void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int he
 
 void DXLookNFeel::drawToggleButton(Graphics& g, ToggleButton& button, bool isMouseOverButton, bool isButtonDown) {
     if ( imageSwitch.isNull() ) {
-        LookAndFeel_V3::drawToggleButton(g, button, isMouseOverButton, isButtonDown);
+        LookAndFeel_V4::drawToggleButton(g, button, isMouseOverButton, isButtonDown);
         return;
     }
 
@@ -305,7 +305,7 @@ void DXLookNFeel::drawToggleButton(Graphics& g, ToggleButton& button, bool isMou
     if( lb )
     {
         if( imageSwitchLighted.isNull() ) {
-            LookAndFeel_V3::drawToggleButton(g, button, isMouseOverButton, isButtonDown);
+            LookAndFeel_V4::drawToggleButton(g, button, isMouseOverButton, isButtonDown);
             return;
         }
         g.drawImage(imageSwitchLighted, 0, 0, 48, 26, 0, button.getToggleState() ? 0 : 26, 48, 26);
@@ -317,23 +317,24 @@ void DXLookNFeel::drawToggleButton(Graphics& g, ToggleButton& button, bool isMou
 
 void DXLookNFeel::drawButtonBackground(Graphics &g, Button &button, const Colour& backgroundColour, bool isMouseOverButton, bool isButtonDown) {
     if ( imageButton.isNull() ) {
-        LookAndFeel_V3::drawButtonBackground(g, button, backgroundColour, isMouseOverButton, isButtonDown);
+        LookAndFeel_V4::drawButtonBackground(g, button, backgroundColour, isMouseOverButton, isButtonDown);
         return;
     }
 
     int w = button.getWidth();
-    
+    int l = button.getHeight();
+
                     //      dx,  dy,  dw,  dl,   sx, sy,                    sw, sl
-    g.drawImage(imageButton, 0,   0,   3,  30,    0, isButtonDown ? 30 : 0,  3, 30);
-    g.drawImage(imageButton, 3,   0, w-6,  30,    3, isButtonDown ? 30 : 0, 44, 30);
-    g.drawImage(imageButton, w-3, 0,   3,  30,   47, isButtonDown ? 30 : 0, 47, 30);
+    g.drawImage(imageButton, 0,   0,   3,  l,    0, isButtonDown ? 30 : 0,  3, 30);
+    g.drawImage(imageButton, 3,   0, w-6,  l,    3, isButtonDown ? 30 : 0, 44, 30);
+    g.drawImage(imageButton, w-3, 0,   3,  l,   47, isButtonDown ? 30 : 0, 47, 30);
 }
 
 void DXLookNFeel::drawLinearSlider (Graphics& g, int x, int y, int width, int height,
                                  float sliderPos, float minSliderPos, float maxSliderPos,
                                  const Slider::SliderStyle style, Slider& slider) {
     if ( imageSlider.isNull() ) {
-        LookAndFeel_V3::drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
+        LookAndFeel_V4::drawLinearSliderThumb(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, slider);
         return;
     }
 
@@ -351,7 +352,7 @@ void DXLookNFeel::positionComboBoxText(ComboBox& box, Label& label) {
         return;
     }
 
-    LookAndFeel_V3::positionComboBoxText(box, label);
+    LookAndFeel_V4::positionComboBoxText(box, label);
 }
 
 Colour DXLookNFeel::fillColour = Colour(77,159,151);
