@@ -127,10 +127,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     FmCore engineMsfa;
     EngineMkI engineMkI;
     EngineOpl engineOpl;
-    
-    char clipboard[161];
-    signed char clipboardContent;
-    
+
     void resolvAppDir();
     
     void unpackOpSwitch(char packOpValue);
@@ -204,7 +201,6 @@ public :
     void sendCurrentSysexProgram();
     void sendCurrentSysexCartridge();
     void sendSysexCartridge(File cart);
-    bool hasClipboardContent();
     
     //==============================================================================
     AudioProcessorEditor* createEditor();

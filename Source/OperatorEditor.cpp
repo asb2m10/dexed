@@ -599,9 +599,11 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
     if ( event.mods.isPopupMenu()) {
         PopupMenu popup;
 
+        bool hasClipboard = DexedClipboard().isOperatorData();
+
         popup.addItem(1, "Copy Operator Values");
-        popup.addItem(2, "Paste Envelope Values", processor->hasClipboardContent());
-        popup.addItem(3, "Paste Operator Values", processor->hasClipboardContent());
+        popup.addItem(2, "Paste Envelope Values", hasClipboard);
+        popup.addItem(3, "Paste Operator Values", hasClipboard);
         popup.addSeparator();
         popup.addItem(4, "Send current program to DX7");
 

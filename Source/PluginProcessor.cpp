@@ -115,8 +115,6 @@ DexedAudioProcessor::DexedAudioProcessor()
     setCurrentProgram(0);    
     nextMidi = NULL;
     midiMsg = NULL;
-
-    clipboardContent = -1;
     
     mtsClient = NULL;
     mtsClient = MTS_RegisterClient();

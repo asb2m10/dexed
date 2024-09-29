@@ -255,4 +255,62 @@ public:
     void packProgram(uint8_t *src, int idx, String name, char *opSwitch);
 };
 
+class DexedClipboard {
+    // In the future complete sysex will be supported
+    uint8_t content[SYSEX_SIZE];
+    int size = 0;
+public:
+    DexedClipboard() {
+        String text = SystemClipboard::getTextFromClipboard();
+        // For now we only support operator clipboard
+        if ( text.length() < (21*2) ) {
+            TRACE("Clipboard is empty or too small");
+            return;
+        }
+
+        CharPointer_UTF8 t = text.getCharPointer();
+        for(int i=0;i<21;i++) {
+            int high = CharacterFunctions::getHexDigitValue(t.getAndAdvance());
+            if ( high == -1 ) {
+                TRACE("Malformed clipboard data");
+                return;
+            }
+        
+            int low  = CharacterFunctions::getHexDigitValue(t.getAndAdvance());
+            if ( low == -1 ) {
+                TRACE("Malformed clipboard data");
+                return;
+            }
+
+            content[i] = (high << 4) + low;
+        }
+        size = 21;
+    }
+
+    DexedClipboard(const uint8_t *data, int s) {
+        size = s;
+        memcpy(content, data, size);
+    }
+
+    bool isOperatorData() {
+        if ( size == 21 ) 
+            return true;
+        else
+            return false;
+    }
+
+    uint8_t *getRawData() {
+        return content;
+    }
+
+    void write(String description) {
+        String clipboardValue = String::toHexString(content, size, 0);
+        if ( description.isNotEmpty() ) {
+            clipboardValue.append("\n; ", 3);
+            clipboardValue.append(description, 1024);
+        }
+        SystemClipboard::copyTextToClipboard(clipboardValue);
+    }
+};
+
 #endif  // PLUGINDATA_H_INCLUDED

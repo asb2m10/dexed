@@ -241,17 +241,25 @@ void DexedAudioProcessor::resetToInitVoice() {
 }
 
 void DexedAudioProcessor::copyToClipboard(int srcOp) {
-    memcpy(clipboard, data, 161);
-    clipboardContent = srcOp;
+    DexedClipboard clipboard(data + (srcOp *21), 21);
+    clipboard.write(String("Program: '") + getProgramName(getCurrentProgram()) + "' operator: " + String(6-srcOp));
 }
 
 void DexedAudioProcessor::pasteOpFromClipboard(int destOp) {
-    memcpy(data+(destOp*21), clipboard+(clipboardContent*21), 21);
+    DexedClipboard clipboard;
+
+    jassert(clipboard.isOperatorData());
+
+    memcpy(data+(destOp*21), clipboard.getRawData(), 21);
     triggerAsyncUpdate();
 }
 
 void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
-    memcpy(data+(destOp*21), clipboard+(clipboardContent*21), 8);
+    DexedClipboard clipboard;
+
+    jassert(clipboard.isOperatorData());
+
+    memcpy(data+(destOp*21), clipboard.getRawData(), 8);
     triggerAsyncUpdate();
 }
 
@@ -299,11 +307,6 @@ void DexedAudioProcessor::sendSysexCartridge(File cart) {
         return;
     }
     sysexComm.send(MidiMessage(syx_data, sz));
-}
-
-
-bool DexedAudioProcessor::hasClipboardContent() {
-    return clipboardContent != -1;
 }
 
 //==============================================================================

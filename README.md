@@ -33,6 +33,7 @@ Changelog
 * UI Refresh
 * Accessibility implementation (including keyboard shortcuts)
 * Mono/Poly parameter is now a plugin parameter
+* Copy/paste operator values are now text based (and system wide)
 * Fix Apple Logic startup issue
 
 #### Version 0.9.7
