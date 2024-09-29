@@ -30,10 +30,10 @@ Dexed Forks
 Changelog
 ---------
 #### Version 0.9.8 (in development)
-* Accessibility implementation
-* Cartridge Manager UI refactoring (e.g. display .syx cartridge name)
+* UI Refresh
+* Accessibility implementation (including keyboard shortcuts)
 * Mono/Poly parameter is now a plugin parameter
-* Fix Logic startup issue
+* Fix Apple Logic startup issue
 
 #### Version 0.9.7
 * [MTS-ESP](https://oddsound.com/index.php) microtuning support

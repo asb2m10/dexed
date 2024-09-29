@@ -424,7 +424,7 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
 
         Cartridge cart;
         cart.load(file);
-        memcpy(cart.getRawVoice()+(dest*128), packedPgm, 128);
+        cart.replaceProgram(dest, packedPgm);;
         cart.saveVoice(file);
         browserCart->setCartridge(cart);
     }

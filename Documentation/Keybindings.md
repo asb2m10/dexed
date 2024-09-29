@@ -9,3 +9,4 @@
 | CTRL+P                       | Open parameter dialog                      |
 | CTRL+C                       | Copy current context on clipboard as hexa  |
 | CTRL+V                       | Paste context from clipboard content       |
+| SHIFT+UP or SHIFT+DOWN       | On sliders, it steps 10 %                  |

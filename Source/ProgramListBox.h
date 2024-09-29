@@ -81,8 +81,7 @@ public:
 
     void paint(Graphics &g) override {
         if ( inDrag ) {
-            g.setColour(Colours::black);
-            g.fillRect(0,0,getWidth(), getHeight());
+            g.fillAll(DXLookNFeel::background);
             return;
         }
 
@@ -146,9 +145,7 @@ public:
             return;
     
         if (DragAndDropContainer* const dragContainer = DragAndDropContainer::findParentDragContainerFor(this)) {
-            Image snapshot (Image::ARGB, getWidth(), getHeight(), true);
-            Graphics g(snapshot);
-            paint(g);
+            ScaledImage snapshot;
             void *src = pgmListBox->cartContent.getRawVoice() + (idx*128);
             var description = var(src, 128);
             dragContainer->startDragging(description, this, snapshot, false);
@@ -193,7 +190,7 @@ public:
 
         MemoryBlock* block = dragSourceDetails.description.getBinaryData();
         if ( pgmListBox->listener != nullptr )
-            pgmListBox->listener->programDragged(pgmListBox, dest->idx, (char *)block->getData());
+            pgmListBox->listener->programDragged(pgmListBox, idx, (char *)block->getData());
 
         repaint();
     }
