@@ -29,9 +29,9 @@ Dexed Forks
 
 Changelog
 ---------
-#### Version 0.9.8 (in development)
-* UI Refresh
-* Accessibility implementation (including keyboard shortcuts)
+#### Version 0.9.8
+* Accessibility implementation (including [keyboard shortcuts](https://github.com/asb2m10/dexed/blob/master/Documentation/Keybindings.md))
+* UI component refresh
 * Mono/Poly parameter is now a plugin parameter
 * Copy/paste operator values are now text based (and system wide)
 * Fix Apple Logic startup issue
