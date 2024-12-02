@@ -139,7 +139,7 @@ cat > $TMPDIR/distribution.xml << XMLEND
     ${AU_PKG_REF}
     ${CLAP_PKG_REF}
     ${APP_PKG_REF}
-    <options require-scripts="false" customize="always" />
+    <options require-scripts="false" customize="always" hostArchitectures="x86_64,arm64"/>
     <choices-outline>
         ${VST3_CHOICE}
         ${AU_CHOICE}
