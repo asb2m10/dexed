@@ -113,7 +113,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
      * this is called from the Audio thread to tell
      * to update the UI / hostdata 
      */
-    void handleAsyncUpdate();
+    void handleAsyncUpdate() override;
     void initCtrl();
 
 	MidiMessage* nextMidi,*midiMsg;
@@ -121,7 +121,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     int midiEventPos;
 	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
     
-    void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message);
+    void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) override;
     uint32_t engineType;
     
     FmCore engineMsfa;
@@ -186,9 +186,9 @@ public :
     ~DexedAudioProcessor();
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock);
-    void releaseResources();
-    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
+    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void releaseResources() override;
+    void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
     void panic();
     bool isMonoMode() {
         return monoMode;
@@ -203,44 +203,44 @@ public :
     void sendSysexCartridge(File cart);
     
     //==============================================================================
-    AudioProcessorEditor* createEditor();
-    bool hasEditor() const;
+    AudioProcessorEditor* createEditor() override;
+    bool hasEditor() const override;
     void updateUI();
     bool peekVoiceStatus();
     int updateProgramFromSysex(const uint8 *rawdata);
     void setupStartupCart();
     
     //==============================================================================
-    const String getName() const;
-    int getNumParameters();
-    float getParameter (int index);
-    void setParameter (int index, float newValue);
-    const String getParameterName (int index);
-    const String getParameterText (int index);
+    const String getName() const override;
+    int getNumParameters() override;
+    float getParameter (int index) override;
+    void setParameter (int index, float newValue) override;
+    const String getParameterName (int index) override;
+    const String getParameterText (int index) override;
     String getParameterID (int index) override;
 
-    const String getInputChannelName (int channelIndex) const;
-    const String getOutputChannelName (int channelIndex) const;
-    bool isInputChannelStereoPair (int index) const;
-    bool isOutputChannelStereoPair (int index) const;
-    bool isBusesLayoutSupported (const BusesLayout& layouts) const;
+    const String getInputChannelName (int channelIndex) const override;
+    const String getOutputChannelName (int channelIndex) const override;
+    bool isInputChannelStereoPair (int index) const override;
+    bool isOutputChannelStereoPair (int index) const override;
+    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
 
-    bool acceptsMidi() const;
-    bool producesMidi() const;
-    bool silenceInProducesSilenceOut() const;
-    double getTailLengthSeconds() const;
+    bool acceptsMidi() const override;
+    bool producesMidi() const override;
+    bool silenceInProducesSilenceOut() const override;
+    double getTailLengthSeconds() const override;
 
     //==============================================================================
-    int getNumPrograms();
-    int getCurrentProgram();
-    void setCurrentProgram(int index);
-    const String getProgramName (int index);
-    void changeProgramName(int index, const String& newName);
-    void resetToInitVoice();
+    int getNumPrograms() override;
+    int getCurrentProgram() override;
+    void setCurrentProgram(int index) override;
+    const String getProgramName (int index) override;
+    void changeProgramName(int index, const String& newName) override;
+    void resetToInitVoice() ;
     
     //==============================================================================
-    void getStateInformation (MemoryBlock& destData);
-    void setStateInformation (const void* data, int sizeInBytes);
+    void getStateInformation (MemoryBlock& destData) override;
+    void setStateInformation (const void* data, int sizeInBytes) override;
     
     // this is kept up to date with the midi messages that arrive, and the UI component
     // registers with it so it can represent the incoming messages
