@@ -28,6 +28,7 @@
 #include "pitchenv.h"
 #include "fm_core.h"
 #include "tuning.h"
+#include "porta.h"
 #include "libMTSClient.h"
 #include <memory>
 
@@ -40,7 +41,7 @@ struct VoiceStatus {
 class Dx7Note {
 public:
     Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc);
-    void init(const uint8_t patch[156], int midinote, int velocity, int channel);
+    void init(const uint8_t patch[156], int midinote, int velocity, int channel, int srcnote, int porta, const Controllers *ctrls);
     // Note: this _adds_ to the buffer. Interesting question whether it's
     // worth it...
     void compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay,
@@ -59,6 +60,7 @@ public:
     void peekVoiceStatus(VoiceStatus &status);
     void transferState(Dx7Note& src);
     void transferSignal(Dx7Note &src);
+    void transferPortamento(Dx7Note &src);
     void oscSync();
 
     int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune);
@@ -89,6 +91,10 @@ private:
     
     const uint8_t *currentPatch;
     
+    int porta_rateindex_;
+    int porta_gliss_;
+    int32_t porta_curpitch_[6];
+
     int32_t noteLogFreq;
     double mtsFreq;
     static const int32_t mtsLogFreqToNoteLogFreq;

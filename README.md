@@ -29,6 +29,9 @@ Dexed Forks
 
 Changelog
 ---------
+#### Version 0.9.9
+* Glissendo (portamento) implementation. Thanks @jpcima
+
 #### Version 0.9.8
 * Accessibility implementation (including [keyboard shortcuts](https://github.com/asb2m10/dexed/blob/master/Documentation/Keybindings.md))
 * UI component refresh

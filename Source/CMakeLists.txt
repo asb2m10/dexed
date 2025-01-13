@@ -68,6 +68,7 @@ target_sources(${BaseTargetName} PRIVATE
         msfa/pitchenv.cc
         msfa/sin.cc
         msfa/tuning.cc
+        msfa/porta.cpp
 
     # until MTS-ESP has is own cmake project
     ../libs/MTS-ESP/Client/libMTSClient.cpp

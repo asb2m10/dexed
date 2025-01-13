@@ -35,6 +35,20 @@ const int32_t coarsemul[] = {
     81503396, 82323963, 83117622
 };
 
+int32_t midinote_to_logfreq(int midinote) {
+  //const int32_t base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
+  const int32_t base = 50857777;  // (1 << 24) * (LOG_FUNC(440) / LOG_FUNC(2) - 69/12)
+  const int32_t step = (1 << 24) / 12;
+  return base + step * midinote;
+}
+
+int32_t logfreq_round2semi(int freq) {
+  const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
+  const int step = (1 << 24) / 12;
+  const int rem = (freq - base) % step;
+  return freq - rem;
+}
+
 int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
 
     // TODO: pitch randomization
@@ -144,7 +158,7 @@ Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc)
     }
 }
 
-void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int channel) {
+void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int channel, int srcnote, int porta, const Controllers *ctrls) {
     currentPatch = patch;
     int rates[4];
     int levels[4];
@@ -185,7 +199,11 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
         int32_t freq = osc_freq(midinote, mode, coarse, fine, detune);
         opMode[op] = mode;
         basepitch_[op] = freq;
+        porta_curpitch_[op] = freq;
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
+
+        if (porta >= 0)
+            porta_curpitch_[op] = osc_freq(srcnote, mode, coarse, fine, detune);
     }
     for (int i = 0; i < 4; i++) {
         rates[i] = patch[126 + i];
@@ -198,6 +216,8 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
+    porta_rateindex_ = (porta < 128) ? porta : 127;
+    porta_gliss_ = ctrls->values_[kControllerPortamentoGlissando];
 
     // MPE default valeus
     mpePitchBend = 8192;
@@ -273,13 +293,19 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             env_[op].getsample(); // advance the envelop even if it is not playing
             params_[op].level_in = 0;
         } else {
-            //int32_t gain = pow(2, 10 + level * (1.0 / (1 << 24)));
-            
-            if ( opMode[op] )
-                params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_base);
-            else
-                params_[op].freq = Freqlut::lookup(basepitch_[op] + pitch_mod);
-            
+            int32_t basepitch = basepitch_[op];
+
+            if ( opMode[op] ) { 
+                params_[op].freq = Freqlut::lookup(basepitch + pitch_base);
+            } else {
+                if ( porta_rateindex_ >= 0 ) {
+                    basepitch = porta_curpitch_[op];
+                if ( porta_gliss_ )
+                    basepitch = logfreq_round2semi(basepitch);
+                }
+                params_[op].freq = Freqlut::lookup(basepitch + pitch_mod);
+            }
+
             int32_t level = env_[op].getsample();
             if (ampmodsens_[op] != 0) {
                 uint32_t sensamp = (uint32_t)(((uint64_t) amd_mod) * ((uint64_t) ampmodsens_[op]) >> 24);
@@ -290,6 +316,24 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
                 level -= ldiff;
             }
             params_[op].level_in = level;
+        }
+
+        // ==== PORTAMENTO ====
+        int porta = porta_rateindex_;
+        if ( porta >= 0 ) {
+            int32_t rate = Porta::rates[porta];
+            for (int op = 0; op < 6; op++) {
+                int32_t cur = porta_curpitch_[op];
+                int32_t dst = basepitch_[op];
+
+                bool going_up = cur < dst;
+                int32_t newpitch = cur + (going_up ? +rate : -rate);
+
+                if ( going_up ? (cur > dst) : (cur < dst) )
+                    newpitch = dst;
+
+                porta_curpitch_[op] = newpitch;
+            }
         }
     }
     ctrls->core->render(buf, params_, algorithm_, fb_buf_, fb_shift_);
@@ -393,6 +437,12 @@ void Dx7Note::transferSignal(Dx7Note &src) {
         params_[i].gain_out = src.params_[i].gain_out;
         params_[i].phase = src.params_[i].phase;
     }
+}
+
+void Dx7Note::transferPortamento(Dx7Note &src) {
+  for (int i = 0; i < 6; i++) {
+    porta_curpitch_[i] = src.porta_curpitch_[i];
+  }
 }
 
 void Dx7Note::oscSync() {

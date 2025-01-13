@@ -254,6 +254,7 @@ public :
     static File dexedCartDir;
 
     Value lastCCUsed;
+    int lastKeyDown;
 
     MTSClient *mtsClient;
     std::shared_ptr<TuningState> synthTuningState;

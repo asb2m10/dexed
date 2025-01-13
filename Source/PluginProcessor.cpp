@@ -31,6 +31,7 @@
 #include "msfa/exp2.h"
 #include "msfa/env.h"
 #include "msfa/pitchenv.h"
+#include "msfa/porta.h"
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
@@ -66,7 +67,6 @@
 DexedAudioProcessor::DexedAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)) {
 #ifdef DEBUG
-    
     // avoid creating the log file if it is in standalone mode
     if ( !JUCEApplication::isStandaloneApp() ) {
         Logger *tmp = Logger::getCurrentLogger();
@@ -90,7 +90,8 @@ DexedAudioProcessor::DexedAudioProcessor()
     
     vuSignal = 0;
     monoMode = 0;
-    
+    lastKeyDown = -1;
+
     resolvAppDir();
     
     initCtrl();
@@ -136,6 +137,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     Lfo::init(sampleRate);
     PitchEnv::init(sampleRate);
     Env::init_sr(sampleRate);
+    Porta::init_sr(sampleRate);
     fx.init(sampleRate);
 
     vuDecayFactor = VuMeterOutput::getDecayFactor(sampleRate);
@@ -153,6 +155,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
+    controllers.portamento_enable_cc = false;
+    controllers.portamento_cc = 0;
 	controllers.refresh(); 
 
     sustain = false;
@@ -399,6 +403,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     controllers.foot_cc = value;
                     controllers.refresh();
                     break;
+                case 5:
+                    controllers.portamento_cc = value;
+                    break;
                 case 64:
                     sustain = value > 63;
                     if (!sustain) {
@@ -409,6 +416,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                             }
                         }
                     }
+                    break;
+                case 65:
+                    controllers.portamento_enable_cc = value >= 64;
                     break;
                 case 120:
                     panic();
@@ -463,6 +473,12 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
+  
+    int32_t previousKeyDown = lastKeyDown;
+    lastKeyDown = pitch;
+    int32_t porta = -1;
+    if ( controllers.portamento_enable_cc && previousKeyDown >= 0 )
+        porta = controllers.portamento_cc;
 
     if( controllers.mpeEnabled )
     {
@@ -488,7 +504,8 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo, channel);
+            int32_t srcnote = (previousKeyDown >= 0) ? previousKeyDown : pitch;
+            voices[note].dx7_note->init(data, pitch, velo, channel, srcnote, porta, &controllers);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
             break;
