@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.9
+  Created with Projucer version: 7.0.11
 
   ------------------------------------------------------------------------------
 
@@ -20,7 +20,6 @@
 #pragma once
 
 //[Headers]     -- You can add your own extra header files here --
-#include "JuceHeader.h"
 #include "msfa/controllers.h"
 #include "SysexComm.h"
 #include <functional>
@@ -41,7 +40,7 @@ class ParamDialog  : public Component,
                      public juce::Slider::Listener,
                      public juce::ComboBox::Listener,
                      public juce::Button::Listener,
-                     Timer
+                     public juce::Timer
 {
 public:
     //==============================================================================
@@ -116,6 +115,8 @@ private:
     std::unique_ptr<juce::ImageButton> transposeHelp;
     std::unique_ptr<juce::Slider> pitchRangeUp;
     std::unique_ptr<juce::ComboBox> scalingFactor;
+    std::unique_ptr<LightedToggleButton> glissendo;
+    std::unique_ptr<juce::Slider> portamentoTm;
 
 
     //==============================================================================
