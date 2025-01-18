@@ -1150,6 +1150,9 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     mpeEnabled->setToggleState(c.mpeEnabled, dontSendNotification);
     mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
 
+    portamentoTm->setValue(c.portamento_cc);
+    glissendo->setToggleState(c.portamento_gliss_cc, dontSendNotification);
+
     StringArray inputs = MidiInput::getDevices();
     int idx = inputs.indexOf(mgr.getInput());
     idx = idx == -1 ? 0 : idx + 1;
@@ -1187,6 +1190,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     c.values_[kControllerPitchRangeUp] = pitchRangeUp->getValue();
     c.values_[kControllerPitchRangeDn] = pitchRangeDn->getValue();
     c.values_[kControllerPitchStep] = pitchStep->getValue();
+    c.values_[kControllerPortamentoGlissando] = portamentoTm->getValue();
 
     c.wheel.range = whlRange->getValue();
     c.wheel.pitch = whlPitch->getToggleState();
@@ -1212,6 +1216,10 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
     c.mpeEnabled = mpeEnabled->getToggleState();
     c.mpePitchBendRange = mpePBRange->getValue();
+
+    c.portamento_cc = portamentoTm->getValue();
+    c.portamento_enable_cc = c.portamento_cc > 0;
+    c.portamento_gliss_cc = glissendo->getToggleState();
 
     c.refresh();
 

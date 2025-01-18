@@ -26,7 +26,6 @@
 #include "Dexed.h"
 
 #include <fstream>
-using namespace ::std;
 
 uint8_t sysexChecksum(const uint8_t *sysex, int size) {
     int sum = 0;

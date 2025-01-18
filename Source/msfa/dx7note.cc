@@ -49,12 +49,15 @@ int32_t logfreq_round2semi(int freq) {
   return freq - rem;
 }
 
-int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
+int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
 
     // TODO: pitch randomization
     int32_t logfreq;
     if (mode == 0) {
-        logfreq = noteLogFreq;
+        // TODO: OH LA LA, midinote is not used since mts. This should be merged
+        // with the original portamento code.  
+        // logfreq = noteLogFreq;
+        logfreq = midinote_to_logfreq(midinote);
 
         // could use more precision, closer enough for now. those numbers comes from my DX7
         double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
@@ -202,8 +205,9 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
         porta_curpitch_[op] = freq;
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
 
-        if (porta >= 0)
+        if (porta >= 0) {
             porta_curpitch_[op] = osc_freq(srcnote, mode, coarse, fine, detune);
+        }
     }
     for (int i = 0; i < 4; i++) {
         rates[i] = patch[126 + i];
@@ -300,8 +304,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             } else {
                 if ( porta_rateindex_ >= 0 ) {
                     basepitch = porta_curpitch_[op];
-                if ( porta_gliss_ )
-                    basepitch = logfreq_round2semi(basepitch);
+                    if ( porta_gliss_ )
+                        basepitch = logfreq_round2semi(basepitch);
                 }
                 params_[op].freq = Freqlut::lookup(basepitch + pitch_mod);
             }
