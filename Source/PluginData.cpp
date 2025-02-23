@@ -276,7 +276,7 @@ void DexedAudioProcessor::sendCurrentSysexProgram() {
 
 void DexedAudioProcessor::sendCurrentSysexCartridge() {
     uint8_t raw[4104];
-    
+
     currentCart.saveVoice(raw);
     raw[2] = raw[2] | sysexComm.getChl();
     if ( sysexComm.isOutputActive() ) {
