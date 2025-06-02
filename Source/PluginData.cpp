@@ -331,7 +331,8 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("transpose12AsScale", controllers.transpose12AsScale ? 1 : 0 );
     dexedState.setAttribute("mpeEnabled", controllers.mpeEnabled ? 1 : 0 );
     dexedState.setAttribute("mpePitchBendRange", controllers.mpePitchBendRange );
-    
+    dexedState.setAttribute("monoMode", monoMode ? 1 : 0);
+
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
     dexedState.setAttribute("wheelMod", mod_cfg);
