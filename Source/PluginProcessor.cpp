@@ -608,65 +608,84 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 
     if ( ! message.isSysEx() )
         return;
-    
+
     // test if it is a Yamaha Sysex
     if ( buf[1] != 0x43 ) {
         TRACE("not a yamaha sysex %d", buf[1]);
         return;
     }
-    
+
     int substatus = buf[2] >> 4;
-    
-    if ( substatus == 0 ) {
-        // single voice dump
-        if ( buf[3] == 0 ) {
-            if ( sz < 156 ) {
-                TRACE("wrong single voice datasize %d", sz);
-                return;
+    switch(substatus) {
+        case 0 : {
+            // single voice dump
+            if ( buf[3] == 0 ) {
+                if ( sz < 156 ) {
+                    TRACE("wrong single voice datasize %d", sz);
+                    return;
+                }
+                if ( updateProgramFromSysex(buf+6) )
+                    TRACE("bad checksum when updating program from sysex message");
             }
-            if ( updateProgramFromSysex(buf+6) )
-                TRACE("bad checksum when updating program from sysex message");
-        }
-        
-        // 32 voice dump
-        if ( buf[3] == 9 ) {
-            if ( sz < 4104 ) {
-                TRACE("wrong 32 voice dump data size %d", sz);
-                return;
-            }
-            
-            Cartridge received;
-            if ( received.load(buf, sz) == 0 ) {
-                loadCartridge(received);
-                setCurrentProgram(0);
+
+            // 32 voice dump
+            if ( buf[3] == 9 ) {
+                if ( sz < 4104 ) {
+                    TRACE("wrong 32 voice dump data size %d", sz);
+                    return;
+                }
+
+                Cartridge received;
+                if ( received.load(buf, sz) == 0 ) {
+                    loadCartridge(received);
+                    setCurrentProgram(0);
+                }
             }
         }
-    } else if ( substatus == 1 ) {
-        // parameter change
-        if ( sz < 7 ) {
-           TRACE("wrong single voice datasize %d", sz);
-           return;
-        }
-        
-        uint8 offset = (buf[3] << 7) + buf[4];
-        uint8 value = buf[5];
-        
-        TRACE("parameter change message offset:%d value:%d", offset, value);
-        
-        if ( offset > 155 ) {
-            TRACE("wrong offset size");
+        break;
+        case 1 : {
+            // parameter change
+            if ( sz < 7 ) {
+            TRACE("wrong single voice datasize %d", sz);
             return;
+            }
+
+            uint8 offset = (buf[3] << 7) + buf[4];
+            uint8 value = buf[5];
+
+            TRACE("parameter change message offset:%d value:%d", offset, value);
+
+            if ( offset > 155 ) {
+                TRACE("wrong offset size");
+                return;
+            }
+
+            if ( offset == 155 ) {
+                unpackOpSwitch(value);
+            } else {
+                data[offset] = value;
+            }
         }
-        
-        if ( offset == 155 ) {
-            unpackOpSwitch(value);
-        } else {
-            data[offset] = value;
+        break;
+        case 2: {
+            if ( buf[3] == 0 ) {
+                // single voice request
+                sendCurrentSysexProgram();
+            } else if ( buf[3] == 9 ) {
+                // cart request
+                sendCurrentSysexCartridge();
+            } else {
+                TRACE("Unknown voice request: %d", buf[3]);
+            }
         }
-    } else {
-        TRACE("unknown sysex substatus: %d", substatus);
+        return;
+
+        default: {
+            TRACE("unknown sysex substatus: %d", substatus);
+        }
+        return;
     }
-    
+
     forceRefreshUI = true;
     triggerAsyncUpdate();
 }
@@ -677,7 +696,7 @@ int DexedAudioProcessor::getEngineType() {
 
 void DexedAudioProcessor::setEngineType(int tp) {
     TRACE("settings engine %d", tp);
-    
+
     switch (tp)  {
         case DEXED_ENGINE_MARKI:
             controllers.core = &engineMkI;
