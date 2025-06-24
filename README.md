@@ -162,6 +162,6 @@ Then you crate the cmake build files that are will be created in the build direc
 ~/dexed/build $ cmake --build .
 ```
 
-If you get missing header compilation errors, be sure to check the [known Linux dependencies](https://github.com/asb2m10/dexed/wiki/Linux-builds-dependencies) based on your distribution for Linux.
+If you get missing header compilation errors, be sure to check the [known Linux dependencies](https://github.com/asb2m10/dexed/wiki/Linux-build-dependencies) based on your distribution for Linux.
 
 Binaries will be found in `~/dexed/build/Source/Dexed_artefacts/*`
