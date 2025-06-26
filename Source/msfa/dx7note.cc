@@ -49,15 +49,24 @@ int32_t logfreq_round2semi(int freq) {
   return freq - rem;
 }
 
-int32_t osc_freq(int midinote, int mode, int coarse, int fine, int detune) {
+int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detune, int channel) {
 
     // TODO: pitch randomization
     int32_t logfreq;
     if (mode == 0) {
+        if (tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
+            mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, channel - 1);
+            logfreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
+        }
+        else {
+            mtsFreq = 0;
+            logfreq = tuning_state_->midinote_to_logfreq(midinote);
+        }
+
         // TODO: OH LA LA, midinote is not used since mts. This should be merged
         // with the original portamento code.  
         // logfreq = noteLogFreq;
-        logfreq = midinote_to_logfreq(midinote);
+        // logfreq = midinote_to_logfreq(midinote);
 
         // could use more precision, closer enough for now. those numbers comes from my DX7
         double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
@@ -161,22 +170,13 @@ Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc)
     }
 }
 
-void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int channel, int srcnote, int porta, const Controllers *ctrls) {
+void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int channel, const Controllers *ctrls) {
     currentPatch = patch;
     int rates[4];
     int levels[4];
     playingMidiNote = midinote;
     midiChannel = channel;
-    
-    if (tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
-        mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, channel - 1);
-        noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
-    }
-    else {
-        mtsFreq = 0;
-        noteLogFreq = tuning_state_->midinote_to_logfreq(midinote);
-    }
-    
+
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         for (int i = 0; i < 4; i++) {
@@ -199,15 +199,11 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
         int coarse = patch[off + 18];
         int fine = patch[off + 19];
         int detune = patch[off + 20];
-        int32_t freq = osc_freq(midinote, mode, coarse, fine, detune);
+        int32_t freq = osc_freq(midinote, mode, coarse, fine, detune, channel);
         opMode[op] = mode;
         basepitch_[op] = freq;
         porta_curpitch_[op] = freq;
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
-
-        if (porta >= 0) {
-            porta_curpitch_[op] = osc_freq(srcnote, mode, coarse, fine, detune);
-        }
     }
     for (int i = 0; i < 4; i++) {
         rates[i] = patch[126 + i];
@@ -220,13 +216,20 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
-    porta_rateindex_ = (porta < 128) ? porta : 127;
+    porta_rateindex_ = -1;
     porta_gliss_ = ctrls->values_[kControllerPortamentoGlissando];
 
-    // MPE default valeus
+    // MPE default values
     mpePitchBend = 8192;
     mpeTimbre = 0;
     mpePressure = 0;
+}
+
+void Dx7Note::initPortamento(int level, const Dx7Note &srcNote) {
+    porta_rateindex_ = (level < 128) ? level : 127;
+    for (int i=0;i<6;i++) {
+        porta_curpitch_[i] = srcNote.porta_curpitch_[i];
+    }
 }
 
 void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Controllers *ctrls) {
@@ -355,7 +358,7 @@ void Dx7Note::updateBasePitches()
     double f = MTS_NoteToFrequency(mtsClient, playingMidiNote, midiChannel - 1);
     if (f == mtsFreq) return;
     mtsFreq = f;
-    noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
+    //noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
     for (int op = 0; op < 6; op++)
     {
         int off = op * 21;
@@ -363,7 +366,7 @@ void Dx7Note::updateBasePitches()
         int coarse = currentPatch[off + 18];
         int fine = currentPatch[off + 19];
         int detune = currentPatch[off + 20];
-        basepitch_[op] = osc_freq(playingMidiNote, mode, coarse, fine, detune);
+        basepitch_[op] = osc_freq(playingMidiNote, mode, coarse, fine, detune, midiChannel);
     }
 }
 
@@ -374,22 +377,13 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity, int c
     playingMidiNote = midinote;
     midiChannel = channel;
     
-    if (tuning_state_->is_standard_tuning() && MTS_HasMaster(mtsClient)) {
-        mtsFreq = MTS_NoteToFrequency(mtsClient, midinote, channel - 1);
-        noteLogFreq = log(mtsFreq) * mtsLogFreqToNoteLogFreq;
-    }
-    else {
-        mtsFreq = 0;
-        noteLogFreq = tuning_state_->midinote_to_logfreq(midinote);
-    }
-    
     for (int op = 0; op < 6; op++) {
         int off = op * 21;
         int mode = patch[off + 17];
         int coarse = patch[off + 18];
         int fine = patch[off + 19];
         int detune = patch[off + 20];
-        basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune);
+        basepitch_[op] = osc_freq(midinote, mode, coarse, fine, detune, channel);
         ampmodsens_[op] = ampmodsenstab[patch[off + 14] & 3];
         opMode[op] = mode;
         
@@ -441,12 +435,6 @@ void Dx7Note::transferSignal(Dx7Note &src) {
         params_[i].gain_out = src.params_[i].gain_out;
         params_[i].phase = src.params_[i].phase;
     }
-}
-
-void Dx7Note::transferPortamento(Dx7Note &src) {
-  for (int i = 0; i < 6; i++) {
-    porta_curpitch_[i] = src.porta_curpitch_[i];
-  }
 }
 
 void Dx7Note::oscSync() {

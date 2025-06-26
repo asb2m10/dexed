@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2018 Pascal Gauthier.
+ * Copyright (c) 2013-2025 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +90,6 @@ DexedAudioProcessor::DexedAudioProcessor()
     
     vuSignal = 0;
     monoMode = 0;
-    lastKeyDown = -1;
 
     resolvAppDir();
     
@@ -144,6 +143,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = new Dx7Note(synthTuningState, mtsClient);
+        voices[note].midi_note = -1;
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
@@ -474,17 +474,10 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
         velo = ((float)velo) * 0.7874015; // 100/127
     }
   
-    int32_t previousKeyDown = lastKeyDown;
-    lastKeyDown = pitch;
-    int32_t porta = -1;
-    if ( controllers.portamento_enable_cc && previousKeyDown >= 0 )
-        porta = controllers.portamento_cc;
 
-    if( controllers.mpeEnabled )
-    {
+    if( controllers.mpeEnabled ) {
         int note = currentNote;
-        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
-        {
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i ) {
             if( voices[note].keydown && voices[note].channel == channel )
             {
                 // If we get two keydowns on the same channel we are getting information from a non-mpe device
@@ -504,10 +497,12 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            int32_t srcnote = (previousKeyDown >= 0) ? previousKeyDown : pitch;
-            voices[note].dx7_note->init(data, pitch, velo, channel, srcnote, porta, &controllers);
+            voices[note].dx7_note->init(data, pitch, velo, channel, &controllers);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
+            if ( controllers.portamento_enable_cc && voices[lastActiveVoice].midi_note != -1 ) {
+                voices[note].dx7_note->initPortamento(controllers.portamento_cc, *voices[lastActiveVoice].dx7_note);
+            }
             break;
         }
         note = (note + 1) % MAX_ACTIVE_NOTES;
@@ -533,6 +528,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     }
  
     voices[note].live = true;
+    lastActiveVoice = note;
 	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }
 
@@ -601,6 +597,7 @@ int DexedAudioProcessor::tuningTranspositionShift()
 
 void DexedAudioProcessor::panic() {
     for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+        voices[i].midi_note = -1;
         voices[i].keydown = false;
         voices[i].live = false;
         if ( voices[i].dx7_note != NULL ) {
