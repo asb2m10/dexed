@@ -344,6 +344,7 @@ ParamDialog::ParamDialog ()
     addAndMakeVisible (glissendo.get());
     glissendo->setExplicitFocusOrder (30);
     glissendo->setButtonText (juce::String());
+    glissendo->setTooltip ("Enable or disable glissando effect.");
     glissendo->addListener (this);
     glissendo->setToggleState (true, juce::dontSendNotification);
 
@@ -354,6 +355,7 @@ ParamDialog::ParamDialog ()
     portamentoTm->setExplicitFocusOrder (22);
     portamentoTm->setRange (0, 99, 1);
     portamentoTm->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    portamentoTm->setTooltip ("Adjust the portamento time.");
     portamentoTm->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
     portamentoTm->addListener (this);
 
