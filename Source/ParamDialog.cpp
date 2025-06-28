@@ -1150,7 +1150,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     mpeEnabled->setToggleState(c.mpeEnabled, dontSendNotification);
     mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
 
-    portamentoTm->setValue(c.portamento_cc);
+    portamentoTm->setValue(c.portamento_cc * 100.0f / 127.0f); // Convert from 0-127 range to 0-100%
     glissendo->setToggleState(c.portamento_gliss_cc, dontSendNotification);
 
     StringArray inputs = MidiInput::getDevices();
@@ -1190,7 +1190,6 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     c.values_[kControllerPitchRangeUp] = pitchRangeUp->getValue();
     c.values_[kControllerPitchRangeDn] = pitchRangeDn->getValue();
     c.values_[kControllerPitchStep] = pitchStep->getValue();
-    c.values_[kControllerPortamentoGlissando] = portamentoTm->getValue();
 
     c.wheel.range = whlRange->getValue();
     c.wheel.pitch = whlPitch->getToggleState();
@@ -1217,7 +1216,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     c.mpeEnabled = mpeEnabled->getToggleState();
     c.mpePitchBendRange = mpePBRange->getValue();
 
-    c.portamento_cc = portamentoTm->getValue();
+    c.portamento_cc = portamentoTm->getValue() * 127.0f / 100.0f; // Convert to 0-127 range
     c.portamento_enable_cc = c.portamento_cc > 0;
     c.portamento_gliss_cc = glissendo->getToggleState();
 
@@ -1226,6 +1225,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     if ( ! JUCEApplication::isStandaloneApp() ) {
         ret &= mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
     }
+
     ret &= mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
     mgr.setChl(sysexChl->getValue() - 1);
 

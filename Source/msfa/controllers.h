@@ -31,7 +31,6 @@ const uint8_t kControllerPitch = 128;
 const uint8_t kControllerPitchRangeUp = 129;
 const uint8_t kControllerPitchStep = 130;
 const uint8_t kControllerPitchRangeDn = 131;
-const uint8_t kControllerPortamentoGlissando = 3;
 
 class FmCore;
 

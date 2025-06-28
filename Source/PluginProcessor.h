@@ -47,9 +47,6 @@ struct ProcessorVoice {
     bool live;
 
     int mpePitchBend;
-    int mpePressure;
-    int mpeTimbre;
-    
     Dx7Note *dx7_note;
 };
 

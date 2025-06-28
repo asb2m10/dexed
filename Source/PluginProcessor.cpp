@@ -155,9 +155,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
-    controllers.portamento_enable_cc = false;
-    controllers.portamento_cc = 0;
-	controllers.refresh(); 
+	controllers.refresh();
 
     sustain = false;
     extra_buf_size = 0;
@@ -357,14 +355,15 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         {
             int i = voiceIndex;
             switch(cf0) {
-            case 0xb0:
-                voices[i].mpeTimbre = (int)buf[2];
-                voices[i].dx7_note->mpeTimbre = (int)buf[2];
-                break;
-            case 0xd0:
-                voices[i].mpePressure = (int)buf[1];
-                voices[i].dx7_note->mpePressure = (int)buf[1];
-                break;
+            // THIS IS COMMENTED SINCE mepTimbre and mpePressure is not used
+            // case 0xb0:
+            //     voices[i].mpeTimbre = (int)buf[2];
+            //     voices[i].dx7_note->mpeTimbre = (int)buf[2];
+            //     break;
+            // case 0xd0:
+            //     voices[i].mpePressure = (int)buf[1];
+            //     voices[i].dx7_note->mpePressure = (int)buf[1];
+            //     break;
             case 0xe0:
                 voices[i].mpePitchBend = (int)( buf[1] | (buf[2] << 7) );
                 voices[i].dx7_note->mpePitchBend = (int)( buf[1] | ( buf[2] << 7 ) );

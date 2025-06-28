@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Pascal Gauthier.
+ * Copyright 2016-2025 Pascal Gauthier.
  * Copyright 2012 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,13 +35,6 @@ const int32_t coarsemul[] = {
     81503396, 82323963, 83117622
 };
 
-int32_t midinote_to_logfreq(int midinote) {
-  //const int32_t base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
-  const int32_t base = 50857777;  // (1 << 24) * (LOG_FUNC(440) / LOG_FUNC(2) - 69/12)
-  const int32_t step = (1 << 24) / 12;
-  return base + step * midinote;
-}
-
 int32_t logfreq_round2semi(int freq) {
   const int base = 50857777;  // (1 << 24) * (log(440) / log(2) - 69/12)
   const int step = (1 << 24) / 12;
@@ -62,11 +55,6 @@ int32_t Dx7Note::osc_freq(int midinote, int mode, int coarse, int fine, int detu
             mtsFreq = 0;
             logfreq = tuning_state_->midinote_to_logfreq(midinote);
         }
-
-        // TODO: OH LA LA, midinote is not used since mts. This should be merged
-        // with the original portamento code.  
-        // logfreq = noteLogFreq;
-        // logfreq = midinote_to_logfreq(midinote);
 
         // could use more precision, closer enough for now. those numbers comes from my DX7
         double detuneRatio = 0.0209 * exp(-0.396 * (((float)logfreq)/(1<<24))) / 7;
@@ -217,12 +205,10 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
     porta_rateindex_ = -1;
-    porta_gliss_ = ctrls->values_[kControllerPortamentoGlissando];
+    porta_gliss_ = ctrls->portamento_gliss_cc;
 
     // MPE default values
     mpePitchBend = 8192;
-    mpeTimbre = 0;
-    mpePressure = 0;
 }
 
 void Dx7Note::initPortamento(int level, const Dx7Note &srcNote) {
@@ -293,7 +279,15 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     // ==== EG AMP MOD ====
     uint32_t amod_3 = (ctrls->eg_mod+1) << 17;
     amd_mod = max((1<<24) - amod_3, amd_mod);
-    
+
+    int32_t porta_rate = -1;
+    if ( porta_rateindex_ >= 0 ) {
+        if ( ctrls->portamento_gliss_cc )
+            porta_rate = Porta::rates_glissendo[porta_rateindex_];
+        else
+            porta_rate = Porta::rates[porta_rateindex_];
+    }
+
     // ==== OP RENDER ====
     for (int op = 0; op < 6; op++) {
         if ( ctrls->opSwitch[op] == '0' )  {
@@ -307,8 +301,8 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             } else {
                 if ( porta_rateindex_ >= 0 ) {
                     basepitch = porta_curpitch_[op];
-                    if ( porta_gliss_ )
-                        basepitch = logfreq_round2semi(basepitch);
+                     if ( porta_gliss_ )
+                         basepitch = logfreq_round2semi(basepitch);
                 }
                 params_[op].freq = Freqlut::lookup(basepitch + pitch_mod);
             }
@@ -326,15 +320,13 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
         }
 
         // ==== PORTAMENTO ====
-        int porta = porta_rateindex_;
-        if ( porta >= 0 ) {
-            int32_t rate = Porta::rates[porta];
+        if (porta_rate >= 0) {
             for (int op = 0; op < 6; op++) {
                 int32_t cur = porta_curpitch_[op];
                 int32_t dst = basepitch_[op];
 
                 bool going_up = cur < dst;
-                int32_t newpitch = cur + (going_up ? +rate : -rate);
+                int32_t newpitch = cur + (going_up ? +porta_rate : -porta_rate);
 
                 if ( going_up ? (cur > dst) : (cur < dst) )
                     newpitch = dst;

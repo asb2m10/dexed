@@ -18,18 +18,23 @@
 #include "porta.h"
 #include "synth.h"
 
-void Porta::init_sr(double sampleRate)
-{
-  // compute portamento for CC 7-bit range
+void Porta::init_sr(double sampleRate) {
+    // compute portamento for CC 7-bit range
 
-  for (uint8_t i = 0; i < 128; ++i) {
-    // number of semitones travelled
-    double sps = 350.0 * pow(2.0, -0.062 * i);  // per second
-    double spf = sps / sampleRate;              // per frame
-    double spp = spf * N;                       // per period
-    const int32_t step = (1 << 24) / 12;
-    rates[i] = (int32_t)(0.5f + step * spp);    // to pitch units
-  }
+    for (uint8_t i = 0; i < 128; ++i) {
+        // number of semitones travelled
+        double sps = 350 * pow(2.0, -0.062 * i); // per second
+        double spf = sps / sampleRate; // per frame
+        double spp = spf * N; // per period
+        const int32_t step = (1 << 24) / 12;
+        rates[i] = (int32_t) (0.5f + step * spp); // to pitch units
+
+        sps = 184.0 * pow(2.0, -0.062 * i); // per second
+        spf = sps / sampleRate; // per frame
+        spp = spf * N; // per period
+        rates_glissendo[i] = (int32_t) (0.5f + step * spp); // to pitch units
+    }
 }
 
 int32_t Porta::rates[128];
+int32_t Porta::rates_glissendo[128];

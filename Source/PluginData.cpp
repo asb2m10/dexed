@@ -415,9 +415,6 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     controllers.portamento_cc = ( root->getIntAttribute("portamento", 0) );
     controllers.portamento_enable_cc = controllers.portamento_cc > 1;
     controllers.portamento_gliss_cc = ( root->getIntAttribute("glissando", 0) );
-
-    TRACE("READING :::::: controllers.portamento_cc=%d, glissando=%d", controllers.portamento_cc, controllers.portamento_gliss_cc);
-
     controllers.refresh();
 
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
