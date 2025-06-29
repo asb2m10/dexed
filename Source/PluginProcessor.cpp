@@ -387,8 +387,6 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         case 0xb0 : {
             int ctrl = buf[1];
             int value = buf[2];
-
-
                 switch(ctrl) {
                 case 1:
                     controllers.modwheel_cc = value;
@@ -499,8 +497,9 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             voices[note].dx7_note->init(data, pitch, velo, channel, &controllers);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
-            if ( controllers.portamento_enable_cc && voices[lastActiveVoice].midi_note != -1 ) {
-                voices[note].dx7_note->initPortamento(controllers.portamento_cc, *voices[lastActiveVoice].dx7_note);
+            if ( (voices[lastActiveVoice].midi_note != -1 && controllers.portamento_enable_cc)
+               && controllers.portamento_cc > 0 ) {
+                voices[note].dx7_note->initPortamento(*voices[lastActiveVoice].dx7_note);
             }
             break;
         }

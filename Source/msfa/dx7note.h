@@ -42,7 +42,7 @@ class Dx7Note {
 public:
     Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc);
     void init(const uint8_t patch[156], int midinote, int velocity, int channel, const Controllers *ctrls);
-    void initPortamento(int level, const Dx7Note &srcNote);
+    void initPortamento(const Dx7Note &srcNote);
 
     // Note: this _adds_ to the buffer. Interesting question whether it's
     // worth it...
@@ -93,8 +93,6 @@ private:
     
     const uint8_t *currentPatch;
     
-    int porta_rateindex_;
-    int porta_gliss_;
     int32_t porta_curpitch_[6];
 
     //int32_t noteLogFreq;
