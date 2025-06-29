@@ -22,14 +22,16 @@ void Porta::init_sr(double sampleRate) {
     // compute portamento for CC 7-bit range
 
     for (uint8_t i = 0; i < 128; ++i) {
+        const int32_t step = (1 << 24) / 12;
+
         // number of semitones travelled
-        double sps = 350 * pow(2.0, -0.062 * i); // per second
+        double sps = 2100.0 * pow(2.0, -0.062 * i); // per second
         double spf = sps / sampleRate; // per frame
         double spp = spf * N; // per period
-        const int32_t step = (1 << 24) / 12;
         rates[i] = (int32_t) (0.5f + step * spp); // to pitch units
 
-        sps = 184.0 * pow(2.0, -0.062 * i); // per second
+        // glissendo seems to be slower if enabled
+        sps = 1300.0 * pow(2.0, -0.062 * i); // per second
         spf = sps / sampleRate; // per frame
         spp = spf * N; // per period
         rates_glissendo[i] = (int32_t) (0.5f + step * spp); // to pitch units
