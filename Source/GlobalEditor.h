@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.9
+  Created with Projucer version: 7.0.11
 
   ------------------------------------------------------------------------------
 
@@ -20,7 +20,6 @@
 #pragma once
 
 //[Headers]     -- You can add your own extra header files here --
-#include "JuceHeader.h"
 #include "PluginProcessor.h"
 #include "DXComponents.h"
 #include "AlgoDisplay.h"

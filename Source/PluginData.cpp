@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014-2017 Pascal Gauthier.
+ * Copyright (c) 2014-2025 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@
 #include "Dexed.h"
 
 #include <fstream>
-using namespace ::std;
 
 uint8_t sysexChecksum(const uint8_t *sysex, int size) {
     int sum = 0;
@@ -332,6 +331,8 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("mpeEnabled", controllers.mpeEnabled ? 1 : 0 );
     dexedState.setAttribute("mpePitchBendRange", controllers.mpePitchBendRange );
     dexedState.setAttribute("monoMode", monoMode ? 1 : 0);
+    dexedState.setAttribute("portamento", controllers.portamento_cc);
+    dexedState.setAttribute("glissando", controllers.portamento_gliss_cc ? 1 : 0);
 
     char mod_cfg[15];
     controllers.wheel.setConfig(mod_cfg);
@@ -402,9 +403,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     controllers.foot.parseConfig(root->getStringAttribute("footMod").toRawUTF8());
     controllers.breath.parseConfig(root->getStringAttribute("breathMod").toRawUTF8());
     controllers.at.parseConfig(root->getStringAttribute("aftertouchMod").toRawUTF8());
-    
-    controllers.refresh();
-    
+
     setEngineType(root->getIntAttribute("engineType", 1));
     monoMode = root->getIntAttribute("monoMode", 0);
     controllers.masterTune = root->getIntAttribute("masterTune", 0);
@@ -412,7 +411,12 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
 
     controllers.mpePitchBendRange = ( root->getIntAttribute("mpePitchBendRange", 24) );
     controllers.mpeEnabled = ( root->getIntAttribute("mpeEnabled", 0) != 0 );
-    
+
+    controllers.portamento_cc = ( root->getIntAttribute("portamento", 0) );
+    controllers.portamento_enable_cc = controllers.portamento_cc > 1;
+    controllers.portamento_gliss_cc = ( root->getIntAttribute("glissando", 0) );
+    controllers.refresh();
+
     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
     if ( possibleCartridge.exists() )
         activeFileCartridge = possibleCartridge;

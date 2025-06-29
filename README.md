@@ -3,7 +3,7 @@ Dexed - FM Plugin Synth
 
 Please see [Dexed User Website](https://asb2m10.github.io/dexed) for user and download information.
 
-Dexed is a multi platform, multi format plugin synth that is closely modeled on the Yamaha DX7.
+Dexed is a multi-platform, multi format plugin synth that is closely modeled on the Yamaha DX7.
 Under the hood it uses [music-synthesizer-for-android](https://github.com/google/music-synthesizer-for-android)
 for the synth engine and [JUCE](https://www.juce.com) as an application/plugin wrapper.
 
@@ -13,12 +13,12 @@ goes beyond the DX7 should and will be a fork of this project. This is to keep t
 the original machine.
 
 Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa
-in the source folder) stays on the Apache 2.0 license to able to collaborate between projects.
+in the source folder) stays on the Apache 2.0 license to be able to collaborate between projects.
 
 Donation
 --------
-As a maintainer of this 10 year old project, donations are welcomed. This also applies for the Apple users 
-to cover for the notarization of this software in the comming years. Thank you!
+As a maintainer of this 10-year-old project, donations are welcomed. This also applies for the Apple users 
+to cover for the notarization of this software in the coming years. Thank you!
 
 https://www.paypal.com/paypalme/asb2m10
 
@@ -29,6 +29,9 @@ Dexed Forks
 
 Changelog
 ---------
+#### Version 0.9.9
+* Partial portamento implementation. Thanks @jpcima
+
 #### Version 0.9.8
 * Accessibility implementation (including [keyboard shortcuts](https://github.com/asb2m10/dexed/blob/master/Documentation/Keybindings.md))
 * UI component refresh
@@ -52,7 +55,7 @@ Changelog
 * Fix hang notes on program changes
 
 #### Version 0.9.5
-* Added support for SCL/KBM microtuning
+* Added support for SCL/KBM micro tuning
 * Added initial support for MPE performance
 * Upgraded build system to use JUCE 6.0 and build from locally acquired JUCE
 * A Collection of small UI changes, including higher contrast GUI assets, better sub-window management, 
@@ -131,7 +134,6 @@ TODO - Dexed
 
 TODO - msfa
 -----------
-* Portamento implementation
 * Better Amplitude Modulation
 * Accurate live operator level envelope updates
 

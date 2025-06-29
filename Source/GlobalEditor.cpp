@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.9
+  Created with Projucer version: 7.0.11
 
   ------------------------------------------------------------------------------
 
@@ -357,7 +357,7 @@ GlobalEditor::GlobalEditor ()
 
     output->setBounds (157, 60, 34, 34);
 
-    vuOutput.reset (new VuMeterOutput ());
+    vuOutput.reset (new VuMeterOutput());
     addAndMakeVisible (vuOutput.get());
     vuOutput->setName ("vuOutput");
 

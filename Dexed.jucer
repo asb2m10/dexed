@@ -9,7 +9,7 @@
               pluginEditorRequiresKeys="0" pluginAUExportPrefix="DexedAU" pluginRTASCategory=""
               aaxIdentifier="com.yourcompany.Dexed" pluginAAXCategory="2" companyName="Digital Suburban"
               buildVST3="1" buildRTAS="0" buildAAX="0" pluginManufacturerEmail="support@yourcompany.com"
-              buildAUv3="0" pluginIsMidiEffectPlugin="0" displaySplashScreen="0"
+              buildAUv3="0" pluginIsMidiEffectPlugin="0" displaySplashScreen="1"
               reportAppUsage="0" splashScreenColour="Dark" buildStandalone="1"
               enableIAA="0" cppLanguageStandard="latest" companyCopyright="Digital Suburban"
               pluginFormats="buildAU,buildStandalone,buildVST3" pluginCharacteristicsValue="pluginIsSynth,pluginWantsMidiIn,pluginProducesMidiOut"
@@ -177,9 +177,11 @@
                vst3Folder="libs/vst3sdk" extraCompilerFlags="-I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -Wno-macro-redefined -Wno-deprecated-declarations -Wno-shorten-64-to-32 -DJUCE_MODAL_LOOPS_PERMITTED=1">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" isDebug="1" optimisation="1" targetName="Dexed"
-                       osxCompatibility="10.10 SDK" osxArchitecture="Native" enablePluginBinaryCopyStep="1"/>
+                       osxCompatibility="10.10 SDK" osxArchitecture="Native" enablePluginBinaryCopyStep="1"
+                       macOSDeploymentTarget="10.10"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Dexed"
-                       osxSDK="10.10 SDK" osxCompatibility="10.9 SDK" enablePluginBinaryCopyStep="1"/>
+                       osxSDK="10.10 SDK" osxCompatibility="10.9 SDK" enablePluginBinaryCopyStep="1"
+                       macOSBaseSDK="10.10" macOSDeploymentTarget="10.9"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
@@ -227,8 +229,8 @@
       </MODULEPATHS>
     </VS2017>
     <VS2019 targetFolder="Builds/VisualStudio2019" IPPLibrary="Parallel_Static"
-            extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -DJUCE_MODAL_LOOPS_PERMITTED=1" smallIcon="SpSpb4"
-            bigIcon="SpSpb4">
+            extraCompilerFlags="/I../../libs/tuning-library/include -I../../libs/MTS-ESP/Client -DJUCE_MODAL_LOOPS_PERMITTED=1"
+            smallIcon="SpSpb4" bigIcon="SpSpb4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="3" generateManifest="1" winArchitecture="x64"
                        debugInformationFormat="ProgramDatabase" enablePluginBinaryCopyStep="0"

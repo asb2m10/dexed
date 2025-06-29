@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2013-2018 Pascal Gauthier.
+ * Copyright (c) 2013-2025 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "msfa/exp2.h"
 #include "msfa/env.h"
 #include "msfa/pitchenv.h"
+#include "msfa/porta.h"
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
@@ -66,7 +67,6 @@
 DexedAudioProcessor::DexedAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)) {
 #ifdef DEBUG
-    
     // avoid creating the log file if it is in standalone mode
     if ( !JUCEApplication::isStandaloneApp() ) {
         Logger *tmp = Logger::getCurrentLogger();
@@ -90,7 +90,7 @@ DexedAudioProcessor::DexedAudioProcessor()
     
     vuSignal = 0;
     monoMode = 0;
-    
+
     resolvAppDir();
     
     initCtrl();
@@ -136,12 +136,14 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     Lfo::init(sampleRate);
     PitchEnv::init(sampleRate);
     Env::init_sr(sampleRate);
+    Porta::init_sr(sampleRate);
     fx.init(sampleRate);
 
     vuDecayFactor = VuMeterOutput::getDecayFactor(sampleRate);
     
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = new Dx7Note(synthTuningState, mtsClient);
+        voices[note].midi_note = -1;
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
@@ -153,7 +155,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
-	controllers.refresh(); 
+	controllers.refresh();
 
     sustain = false;
     extra_buf_size = 0;
@@ -353,14 +355,15 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         {
             int i = voiceIndex;
             switch(cf0) {
-            case 0xb0:
-                voices[i].mpeTimbre = (int)buf[2];
-                voices[i].dx7_note->mpeTimbre = (int)buf[2];
-                break;
-            case 0xd0:
-                voices[i].mpePressure = (int)buf[1];
-                voices[i].dx7_note->mpePressure = (int)buf[1];
-                break;
+            // THIS IS COMMENTED SINCE mepTimbre and mpePressure is not used
+            // case 0xb0:
+            //     voices[i].mpeTimbre = (int)buf[2];
+            //     voices[i].dx7_note->mpeTimbre = (int)buf[2];
+            //     break;
+            // case 0xd0:
+            //     voices[i].mpePressure = (int)buf[1];
+            //     voices[i].dx7_note->mpePressure = (int)buf[1];
+            //     break;
             case 0xe0:
                 voices[i].mpePitchBend = (int)( buf[1] | (buf[2] << 7) );
                 voices[i].dx7_note->mpePitchBend = (int)( buf[1] | ( buf[2] << 7 ) );
@@ -384,8 +387,6 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
         case 0xb0 : {
             int ctrl = buf[1];
             int value = buf[2];
-
-
                 switch(ctrl) {
                 case 1:
                     controllers.modwheel_cc = value;
@@ -399,6 +400,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     controllers.foot_cc = value;
                     controllers.refresh();
                     break;
+                case 5:
+                    controllers.portamento_cc = value;
+                    break;
                 case 64:
                     sustain = value > 63;
                     if (!sustain) {
@@ -409,6 +413,9 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                             }
                         }
                     }
+                    break;
+                case 65:
+                    controllers.portamento_enable_cc = value >= 64;
                     break;
                 case 120:
                     panic();
@@ -463,12 +470,11 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
+  
 
-    if( controllers.mpeEnabled )
-    {
+    if( controllers.mpeEnabled ) {
         int note = currentNote;
-        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
-        {
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i ) {
             if( voices[note].keydown && voices[note].channel == channel )
             {
                 // If we get two keydowns on the same channel we are getting information from a non-mpe device
@@ -488,9 +494,13 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             voices[note].velocity = velo;
             voices[note].sustained = sustain;
             voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo, channel);
+            voices[note].dx7_note->init(data, pitch, velo, channel, &controllers);
             if ( data[136] )
                 voices[note].dx7_note->oscSync();
+            if ( (voices[lastActiveVoice].midi_note != -1 && controllers.portamento_enable_cc)
+               && controllers.portamento_cc > 0 ) {
+                voices[note].dx7_note->initPortamento(*voices[lastActiveVoice].dx7_note);
+            }
             break;
         }
         note = (note + 1) % MAX_ACTIVE_NOTES;
@@ -516,6 +526,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     }
  
     voices[note].live = true;
+    lastActiveVoice = note;
 	//TRACE("activate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
 }
 
@@ -584,6 +595,7 @@ int DexedAudioProcessor::tuningTranspositionShift()
 
 void DexedAudioProcessor::panic() {
     for(int i=0;i<MAX_ACTIVE_NOTES;i++) {
+        voices[i].midi_note = -1;
         voices[i].keydown = false;
         voices[i].live = false;
         if ( voices[i].dx7_note != NULL ) {

@@ -48,6 +48,9 @@ bool SysexComm::setInput(String target) {
         return true;
 #endif
 
+    if ( target == inputName )
+        return true;
+
     if ( input != NULL ) {
         input->stop();
         input = NULL;
@@ -56,7 +59,11 @@ bool SysexComm::setInput(String target) {
     
     if ( listener == NULL )
         return true;
-    
+
+    if ( target == "None" || target == "" ) {
+        return true;
+    }
+
     StringArray devices = MidiInput::getDevices();
     int idx = devices.indexOf(target);
 
@@ -93,7 +100,14 @@ bool SysexComm::setOutput(String target) {
         output = NULL;
     }
     inputOutput = false;
-    
+
+    if ( target == "None" || target == "" ) {
+        return true;
+    }
+
+    if ( target == outputName )
+        return true;
+
     StringArray devices = MidiOutput::getDevices();
     int idx = devices.indexOf(target);
     

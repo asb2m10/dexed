@@ -27,10 +27,10 @@
 #endif
 
 // State of MIDI controllers
-const int kControllerPitch = 128;
-const int kControllerPitchRangeUp = 129;
-const int kControllerPitchStep = 130;
-const int kControllerPitchRangeDn = 131;
+const uint8_t kControllerPitch = 128;
+const uint8_t kControllerPitchRangeUp = 129;
+const uint8_t kControllerPitchStep = 130;
+const uint8_t kControllerPitchRangeDn = 131;
 
 class FmCore;
 
@@ -89,7 +89,10 @@ public:
     int breath_cc;
     int foot_cc;
     int modwheel_cc;
-    
+    bool portamento_enable_cc;
+    int32_t portamento_cc;
+    bool portamento_gliss_cc;
+
     int masterTune;
 
     bool transpose12AsScale = true;

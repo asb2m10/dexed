@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 7.0.9
+  Created with Projucer version: 7.0.11
 
   ------------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ ParamDialog::ParamDialog ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    pitchRangeDn.reset (new DXSlider ("pitchRangeDn"));
+    pitchRangeDn.reset (new juce::Slider ("pitchRangeDn"));
     addAndMakeVisible (pitchRangeDn.get());
     pitchRangeDn->setExplicitFocusOrder (2);
     pitchRangeDn->setRange (0, 48, 1);
@@ -44,7 +44,7 @@ ParamDialog::ParamDialog ()
 
     pitchRangeDn->setBounds (264, 16, 72, 24);
 
-    pitchStep.reset (new DXSlider ("pitchStep"));
+    pitchStep.reset (new juce::Slider ("pitchStep"));
     addAndMakeVisible (pitchStep.get());
     pitchStep->setExplicitFocusOrder (3);
     pitchStep->setRange (0, 12, 1);
@@ -76,7 +76,7 @@ ParamDialog::ParamDialog ()
 
     sysexOut->setBounds (104, 280, 224, 24);
 
-    sysexChl.reset (new DXSlider ("sysexChl"));
+    sysexChl.reset (new juce::Slider ("sysexChl"));
     addAndMakeVisible (sysexChl.get());
     sysexChl->setExplicitFocusOrder (9);
     sysexChl->setRange (1, 16, 1);
@@ -84,7 +84,7 @@ ParamDialog::ParamDialog ()
     sysexChl->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
     sysexChl->addListener (this);
 
-    sysexChl->setBounds (264, 316, 72, 24);
+    sysexChl->setBounds (252, 320, 72, 24);
 
     engineReso.reset (new juce::ComboBox ("new combo box"));
     addAndMakeVisible (engineReso.get());
@@ -108,7 +108,7 @@ ParamDialog::ParamDialog ()
 
     showKeyboard->setBounds (264, 96, 56, 24);
 
-    whlRange.reset (new DXSlider ("whlRange"));
+    whlRange.reset (new juce::Slider ("whlRange"));
     addAndMakeVisible (whlRange.get());
     whlRange->setExplicitFocusOrder (10);
     whlRange->setRange (0, 99, 1);
@@ -118,7 +118,7 @@ ParamDialog::ParamDialog ()
 
     whlRange->setBounds (448, 16, 72, 24);
 
-    ftRange.reset (new DXSlider ("ftRange"));
+    ftRange.reset (new juce::Slider ("ftRange"));
     addAndMakeVisible (ftRange.get());
     ftRange->setExplicitFocusOrder (14);
     ftRange->setRange (0, 99, 1);
@@ -128,7 +128,7 @@ ParamDialog::ParamDialog ()
 
     ftRange->setBounds (448, 56, 72, 24);
 
-    brRange.reset (new DXSlider ("brRange"));
+    brRange.reset (new juce::Slider ("brRange"));
     addAndMakeVisible (brRange.get());
     brRange->setExplicitFocusOrder (18);
     brRange->setRange (0, 99, 1);
@@ -138,7 +138,7 @@ ParamDialog::ParamDialog ()
 
     brRange->setBounds (448, 96, 72, 24);
 
-    atRange.reset (new DXSlider ("atRange"));
+    atRange.reset (new juce::Slider ("atRange"));
     addAndMakeVisible (atRange.get());
     atRange->setExplicitFocusOrder (22);
     atRange->setRange (0, 99, 1);
@@ -283,9 +283,9 @@ ParamDialog::ParamDialog ()
     transposeScale->addListener (this);
     transposeScale->setToggleState (true, juce::dontSendNotification);
 
-    transposeScale->setBounds (592, 240, 56, 30);
+    transposeScale->setBounds (576, 240, 56, 30);
 
-    mpePBRange.reset (new DXSlider ("mpePBRange"));
+    mpePBRange.reset (new juce::Slider ("mpePBRange"));
     addAndMakeVisible (mpePBRange.get());
     mpePBRange->setExplicitFocusOrder (32);
     mpePBRange->setRange (0, 96, 1);
@@ -293,7 +293,7 @@ ParamDialog::ParamDialog ()
     mpePBRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
     mpePBRange->addListener (this);
 
-    mpePBRange->setBounds (616, 291, 72, 24);
+    mpePBRange->setBounds (616, 319, 72, 24);
 
     mpeEnabled.reset (new LightedToggleButton ("mpeEnabled"));
     addAndMakeVisible (mpeEnabled.get());
@@ -301,7 +301,7 @@ ParamDialog::ParamDialog ()
     mpeEnabled->setButtonText (juce::String());
     mpeEnabled->addListener (this);
 
-    mpeEnabled->setBounds (448, 288, 56, 30);
+    mpeEnabled->setBounds (456, 320, 48, 30);
 
     transposeHelp.reset (new juce::ImageButton ("new button"));
     addAndMakeVisible (transposeHelp.get());
@@ -313,7 +313,7 @@ ParamDialog::ParamDialog ()
                               juce::Image(), 1.000f, juce::Colour (0x00000000));
     transposeHelp->setBounds (500, 245, 20, 20);
 
-    pitchRangeUp.reset (new DXSlider ("pitchRangeUp"));
+    pitchRangeUp.reset (new juce::Slider ("pitchRangeUp"));
     addAndMakeVisible (pitchRangeUp.get());
     pitchRangeUp->setExplicitFocusOrder (1);
     pitchRangeUp->setRange (0, 48, 1);
@@ -340,11 +340,32 @@ ParamDialog::ParamDialog ()
 
     scalingFactor->setBounds (236, 136, 90, 24);
 
+    glissando.reset (new LightedToggleButton ("glissando"));
+    addAndMakeVisible (glissando.get());
+    glissando->setExplicitFocusOrder (30);
+    glissando->setButtonText (juce::String());
+    glissando->setTooltip ("Enable or disable glissando effect.");
+    glissando->addListener (this);
+    glissando->setToggleState (true, juce::dontSendNotification);
+
+    glissando->setBounds (576, 276, 56, 30);
+
+    portamentoTm.reset (new juce::Slider ("portamentoTm"));
+    addAndMakeVisible (portamentoTm.get());
+    portamentoTm->setExplicitFocusOrder (22);
+    portamentoTm->setRange (0, 99, 1);
+    portamentoTm->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    portamentoTm->setTooltip ("Adjust the portamento time.");
+    portamentoTm->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
+    portamentoTm->addListener (this);
+
+    portamentoTm->setBounds (504, 276, 72, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize (710, 355);
+    setSize (710, 370);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -477,6 +498,8 @@ ParamDialog::~ParamDialog()
     transposeHelp = nullptr;
     pitchRangeUp = nullptr;
     scalingFactor = nullptr;
+    glissando = nullptr;
+    portamentoTm = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -517,7 +540,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 20, y = 318, width = 245, height = 23;
+        int x = 20, y = 319, width = 245, height = 23;
         juce::String text (TRANS ("DX7 Channel"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -571,7 +594,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 352, y = 11, width = 1, height = 330;
+        int x = 352, y = 12, width = 1, height = 349;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -664,7 +687,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 371, y = 194, width = 325, height = 1;
+        int x = 376, y = 194, width = 325, height = 1;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -697,7 +720,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 368, y = 280, width = 328, height = 1;
+        int x = 368, y = 310, width = 328, height = 1;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -706,7 +729,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 371, y = 290, width = 276, height = 27;
+        int x = 368, y = 318, width = 276, height = 27;
         juce::String text (TRANS ("MPE"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -718,7 +741,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 528, y = 290, width = 119, height = 27;
+        int x = 528, y = 318, width = 119, height = 27;
         juce::String text (TRANS ("Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -730,7 +753,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 555, y = 242, width = 37, height = 25;
+        int x = 548, y = 242, width = 37, height = 25;
         juce::String text (TRANS ("12"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -742,7 +765,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 659, y = 242, width = 45, height = 25;
+        int x = 628, y = 242, width = 45, height = 25;
         juce::String text (TRANS ("SCL"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -780,6 +803,30 @@ void ParamDialog::paint (juce::Graphics& g)
     {
         int x = 20, y = 136, width = 276, height = 23;
         juce::String text (TRANS ("UI Scaling"));
+        juce::Colour fillColour = juce::Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    juce::Justification::centredLeft, true);
+    }
+
+    {
+        int x = 371, y = 277, width = 184, height = 23;
+        juce::String text (TRANS ("Portamento Rate"));
+        juce::Colour fillColour = juce::Colours::white;
+        //[UserPaintCustomArguments] Customize the painting arguments here..
+        //[/UserPaintCustomArguments]
+        g.setColour (fillColour);
+        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.drawText (text, x, y, width, height,
+                    juce::Justification::centredLeft, true);
+    }
+
+    {
+        int x = 628, y = 274, width = 75, height = 27;
+        juce::String text (TRANS ("Glissando"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
@@ -867,6 +914,11 @@ void ParamDialog::sliderValueChanged (juce::Slider* sliderThatWasMoved)
     {
         //[UserSliderCode_pitchRangeUp] -- add your slider handling code here..
         //[/UserSliderCode_pitchRangeUp]
+    }
+    else if (sliderThatWasMoved == portamentoTm.get())
+    {
+        //[UserSliderCode_portamentoTm] -- add your slider handling code here..
+        //[/UserSliderCode_portamentoTm]
     }
 
     //[UsersliderValueChanged_Post]
@@ -1050,6 +1102,11 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 
         //[/UserButtonCode_transposeHelp]
     }
+    else if (buttonThatWasClicked == glissando.get())
+    {
+        //[UserButtonCode_glissando] -- add your button handler code here..
+        //[/UserButtonCode_glissando]
+    }
 
     //[UserbuttonClicked_Post]
     if( ! handled )
@@ -1094,6 +1151,9 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 
     mpeEnabled->setToggleState(c.mpeEnabled, dontSendNotification);
     mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
+
+    portamentoTm->setValue(c.portamento_cc * 100.0f / 127.0f); // Convert from 0-127 range to 0-100%
+    glissando->setToggleState(c.portamento_gliss_cc, dontSendNotification);
 
     StringArray inputs = MidiInput::getDevices();
     int idx = inputs.indexOf(mgr.getInput());
@@ -1158,11 +1218,16 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     c.mpeEnabled = mpeEnabled->getToggleState();
     c.mpePitchBendRange = mpePBRange->getValue();
 
+    c.portamento_cc = portamentoTm->getValue() * 127.0f / 100.0f; // Convert to 0-127 range
+    c.portamento_enable_cc = c.portamento_cc > 0;
+    c.portamento_gliss_cc = glissando->getToggleState();
+
     c.refresh();
 
     if ( ! JUCEApplication::isStandaloneApp() ) {
         ret &= mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
     }
+
     ret &= mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
     mgr.setChl(sysexChl->getValue() - 1);
 
@@ -1206,13 +1271,13 @@ void ParamDialog::setIsStandardTuning( bool b )
         resetTuningButton->setEnabled( ! b );
 }
 
-// Force the internal component dialog to have keyboard focus. Ugly, but it is 
+// Force the internal component dialog to have keyboard focus. Ugly, but it is
 // the only way I have found (including on the JUCE forum).
 void ParamDialog::timerCallback() {
     stopTimer();
     grabKeyboardFocus();
 }
- 
+
 //[/MiscUserCode]
 
 
@@ -1228,7 +1293,7 @@ BEGIN_JUCER_METADATA
 <JUCER_COMPONENT documentType="Component" className="ParamDialog" componentName=""
                  parentClasses="public Component" constructorParams="" variableInitialisers=""
                  snapPixels="4" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="710" initialHeight="355">
+                 fixedSize="1" initialWidth="710" initialHeight="370">
   <BACKGROUND backgroundColour="ff3c322f">
     <TEXT pos="20 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Range"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
@@ -1236,7 +1301,7 @@ BEGIN_JUCER_METADATA
     <TEXT pos="20 56 276 23" fill="solid: ffffffff" hasStroke="0" text="Pitch Bend Step"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="20 318 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
+    <TEXT pos="24 319 245 23" fill="solid: ffffffff" hasStroke="0" text="DX7 Channel"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <TEXT pos="20 190 276 23" fill="solid: ffffffff" hasStroke="0" text="Engine Resolution"
@@ -1247,7 +1312,7 @@ BEGIN_JUCER_METADATA
     <TEXT pos="20 96 276 23" fill="solid: ffffffff" hasStroke="0" text="Show Keyboard"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <RECT pos="352 11 1 330" fill="solid: ff000000" hasStroke="0"/>
+    <RECT pos="352 12 1 349" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="368 16 276 23" fill="solid: ffffffff" hasStroke="0" text="Wheel"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
@@ -1269,24 +1334,24 @@ BEGIN_JUCER_METADATA
     <TEXT pos="640 163 48 23" fill="solid: ffffffff" hasStroke="0" text="EG BIAS"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="36"/>
-    <RECT pos="371 194 325 1" fill="solid: ff000000" hasStroke="0"/>
+    <RECT pos="376 194 325 1" fill="solid: ff000000" hasStroke="0"/>
     <TEXT pos="371 208 276 25" fill="solid: ffffffff" hasStroke="0" text="Tuning"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <TEXT pos="371 242 157 25" fill="solid: ffffffff" hasStroke="0" text="Transposition 12 as:"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <RECT pos="368 280 328 1" fill="solid: ff000000" hasStroke="0"/>
-    <TEXT pos="371 290 276 27" fill="solid: ffffffff" hasStroke="0" text="MPE"
+    <RECT pos="368 310 328 1" fill="solid: ff000000" hasStroke="0"/>
+    <TEXT pos="368 322 276 27" fill="solid: ffffffff" hasStroke="0" text="MPE"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="528 290 119 27" fill="solid: ffffffff" hasStroke="0" text="Bend Range"
+    <TEXT pos="528 322 119 27" fill="solid: ffffffff" hasStroke="0" text="Bend Range"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="555 242 37 25" fill="solid: ffffffff" hasStroke="0" text="12"
+    <TEXT pos="548 242 37 25" fill="solid: ffffffff" hasStroke="0" text="12"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="659 242 45 25" fill="solid: ffffffff" hasStroke="0" text="SCL"
+    <TEXT pos="628 242 45 25" fill="solid: ffffffff" hasStroke="0" text="SCL"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <TEXT pos="147 16 20 23" fill="solid: ffffffff" hasStroke="0" text="up"
@@ -1296,6 +1361,12 @@ BEGIN_JUCER_METADATA
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
     <TEXT pos="20 136 276 23" fill="solid: ffffffff" hasStroke="0" text="UI Scaling"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <TEXT pos="371 277 184 23" fill="solid: ffffffff" hasStroke="0" text="Portamento Rate"
+          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+          italic="0" justification="33"/>
+    <TEXT pos="628 274 75 27" fill="solid: ffffffff" hasStroke="0" text="Glissando"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
   </BACKGROUND>
@@ -1316,7 +1387,7 @@ BEGIN_JUCER_METADATA
             explicitFocusOrder="8" pos="104 280 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
-          explicitFocusOrder="9" pos="264 316 72 24" min="1.0" max="16.0"
+          explicitFocusOrder="9" pos="252 320 72 24" min="1.0" max="16.0"
           int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
@@ -1397,16 +1468,16 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="29" pos="632 205 48 30" buttonText="Reset"
               connectedEdges="0" needsCallback="1" radioGroupId="0"/>
   <TOGGLEBUTTON name="transposeScale" id="9d4dd65775ed9e38" memberName="transposeScale"
-                virtualName="LightedToggleButton" explicitFocusOrder="30" pos="592 240 56 30"
+                virtualName="LightedToggleButton" explicitFocusOrder="30" pos="576 240 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="1"/>
   <SLIDER name="mpePBRange" id="a13948d1cc74a51a" memberName="mpePBRange"
-          virtualName="" explicitFocusOrder="32" pos="616 291 72 24" min="0.0"
+          virtualName="" explicitFocusOrder="32" pos="616 323 72 24" min="0.0"
           max="96.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
           needsCallback="1"/>
   <TOGGLEBUTTON name="mpeEnabled" id="e1a11d0372879dd8" memberName="mpeEnabled"
-                virtualName="LightedToggleButton" explicitFocusOrder="31" pos="448 288 56 30"
+                virtualName="LightedToggleButton" explicitFocusOrder="31" pos="456 320 48 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="0"/>
   <IMAGEBUTTON name="new button" id="1c9edab9992cbeef" memberName="transposeHelp"
@@ -1424,6 +1495,15 @@ BEGIN_JUCER_METADATA
             virtualName="" explicitFocusOrder="5" pos="236 136 90 24" editable="0"
             layout="33" items="100 %&#10;125 %&#10;150 %&#10;200 %&#10;300 %&#10;400 %"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
+  <TOGGLEBUTTON name="glissando" id="f531397d4cf195a6" memberName="glissando"
+                virtualName="LightedToggleButton" explicitFocusOrder="30" pos="576 272 56 30"
+                buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
+                state="1"/>
+  <SLIDER name="portamentoTm" id="12588a21a3ec6c02" memberName="portamentoTm"
+          virtualName="" explicitFocusOrder="22" pos="504 276 72 24" min="0.0"
+          max="99.0" int="1.0" style="RotaryVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="80" textBoxHeight="20" skewFactor="1.0"
+          needsCallback="1"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
