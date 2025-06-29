@@ -293,7 +293,7 @@ ParamDialog::ParamDialog ()
     mpePBRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
     mpePBRange->addListener (this);
 
-    mpePBRange->setBounds (616, 323, 72, 24);
+    mpePBRange->setBounds (616, 319, 72, 24);
 
     mpeEnabled.reset (new LightedToggleButton ("mpeEnabled"));
     addAndMakeVisible (mpeEnabled.get());
@@ -340,15 +340,15 @@ ParamDialog::ParamDialog ()
 
     scalingFactor->setBounds (236, 136, 90, 24);
 
-    glissendo.reset (new LightedToggleButton ("glissendo"));
-    addAndMakeVisible (glissendo.get());
-    glissendo->setExplicitFocusOrder (30);
-    glissendo->setButtonText (juce::String());
-    glissendo->setTooltip ("Enable or disable glissando effect.");
-    glissendo->addListener (this);
-    glissendo->setToggleState (true, juce::dontSendNotification);
+    glissando.reset (new LightedToggleButton ("glissando"));
+    addAndMakeVisible (glissando.get());
+    glissando->setExplicitFocusOrder (30);
+    glissando->setButtonText (juce::String());
+    glissando->setTooltip ("Enable or disable glissando effect.");
+    glissando->addListener (this);
+    glissando->setToggleState (true, juce::dontSendNotification);
 
-    glissendo->setBounds (576, 272, 56, 30);
+    glissando->setBounds (576, 276, 56, 30);
 
     portamentoTm.reset (new juce::Slider ("portamentoTm"));
     addAndMakeVisible (portamentoTm.get());
@@ -498,7 +498,7 @@ ParamDialog::~ParamDialog()
     transposeHelp = nullptr;
     pitchRangeUp = nullptr;
     scalingFactor = nullptr;
-    glissendo = nullptr;
+    glissando = nullptr;
     portamentoTm = nullptr;
 
 
@@ -540,7 +540,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 24, y = 319, width = 245, height = 23;
+        int x = 20, y = 319, width = 245, height = 23;
         juce::String text (TRANS ("DX7 Channel"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -729,7 +729,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 368, y = 322, width = 276, height = 27;
+        int x = 368, y = 318, width = 276, height = 27;
         juce::String text (TRANS ("MPE"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -741,7 +741,7 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 528, y = 322, width = 119, height = 27;
+        int x = 528, y = 318, width = 119, height = 27;
         juce::String text (TRANS ("Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
@@ -825,15 +825,15 @@ void ParamDialog::paint (juce::Graphics& g)
     }
 
     {
-        int x = 612, y = 274, width = 75, height = 27;
-        juce::String text (TRANS ("Glissendo"));
+        int x = 628, y = 274, width = 75, height = 27;
+        juce::String text (TRANS ("Glissando"));
         juce::Colour fillColour = juce::Colours::white;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
         g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
         g.drawText (text, x, y, width, height,
-                    juce::Justification::centredRight, true);
+                    juce::Justification::centredLeft, true);
     }
 
     //[UserPaint] Add your own custom painting code here..
@@ -1102,10 +1102,10 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 
         //[/UserButtonCode_transposeHelp]
     }
-    else if (buttonThatWasClicked == glissendo.get())
+    else if (buttonThatWasClicked == glissando.get())
     {
-        //[UserButtonCode_glissendo] -- add your button handler code here..
-        //[/UserButtonCode_glissendo]
+        //[UserButtonCode_glissando] -- add your button handler code here..
+        //[/UserButtonCode_glissando]
     }
 
     //[UserbuttonClicked_Post]
@@ -1153,7 +1153,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
 
     portamentoTm->setValue(c.portamento_cc * 100.0f / 127.0f); // Convert from 0-127 range to 0-100%
-    glissendo->setToggleState(c.portamento_gliss_cc, dontSendNotification);
+    glissando->setToggleState(c.portamento_gliss_cc, dontSendNotification);
 
     StringArray inputs = MidiInput::getDevices();
     int idx = inputs.indexOf(mgr.getInput());
@@ -1220,7 +1220,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
 
     c.portamento_cc = portamentoTm->getValue() * 127.0f / 100.0f; // Convert to 0-127 range
     c.portamento_enable_cc = c.portamento_cc > 0;
-    c.portamento_gliss_cc = glissendo->getToggleState();
+    c.portamento_gliss_cc = glissando->getToggleState();
 
     c.refresh();
 
@@ -1366,9 +1366,9 @@ BEGIN_JUCER_METADATA
     <TEXT pos="371 277 184 23" fill="solid: ffffffff" hasStroke="0" text="Portamento Rate"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
           italic="0" justification="33"/>
-    <TEXT pos="612 274 75 27" fill="solid: ffffffff" hasStroke="0" text="Glissendo"
+    <TEXT pos="628 274 75 27" fill="solid: ffffffff" hasStroke="0" text="Glissando"
           fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-          italic="0" justification="34"/>
+          italic="0" justification="33"/>
   </BACKGROUND>
   <SLIDER name="pitchRangeDn" id="7409be5a8dfaa91" memberName="pitchRangeDn"
           virtualName="" explicitFocusOrder="2" pos="264 16 72 24" min="0.0"
@@ -1495,7 +1495,7 @@ BEGIN_JUCER_METADATA
             virtualName="" explicitFocusOrder="5" pos="236 136 90 24" editable="0"
             layout="33" items="100 %&#10;125 %&#10;150 %&#10;200 %&#10;300 %&#10;400 %"
             textWhenNonSelected="" textWhenNoItems="(no choices)"/>
-  <TOGGLEBUTTON name="glissendo" id="f531397d4cf195a6" memberName="glissendo"
+  <TOGGLEBUTTON name="glissando" id="f531397d4cf195a6" memberName="glissando"
                 virtualName="LightedToggleButton" explicitFocusOrder="30" pos="576 272 56 30"
                 buttonText="" connectedEdges="0" needsCallback="1" radioGroupId="0"
                 state="1"/>

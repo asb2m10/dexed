@@ -30,13 +30,13 @@ void Porta::init_sr(double sampleRate) {
         double spp = spf * N; // per period
         rates[i] = (int32_t) (0.5f + step * spp); // to pitch units
 
-        // glissendo seems to be slower if enabled
+        // glissando seems to be slower if enabled
         sps = 1300.0 * pow(2.0, -0.062 * i); // per second
         spf = sps / sampleRate; // per frame
         spp = spf * N; // per period
-        rates_glissendo[i] = (int32_t) (0.5f + step * spp); // to pitch units
+        rates_glissando[i] = (int32_t) (0.5f + step * spp); // to pitch units
     }
 }
 
 int32_t Porta::rates[128];
-int32_t Porta::rates_glissendo[128];
+int32_t Porta::rates_glissando[128];

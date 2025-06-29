@@ -115,7 +115,7 @@ private:
     std::unique_ptr<juce::ImageButton> transposeHelp;
     std::unique_ptr<juce::Slider> pitchRangeUp;
     std::unique_ptr<juce::ComboBox> scalingFactor;
-    std::unique_ptr<LightedToggleButton> glissendo;
+    std::unique_ptr<LightedToggleButton> glissando;
     std::unique_ptr<juce::Slider> portamentoTm;
 
 

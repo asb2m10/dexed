@@ -280,7 +280,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     int porta_rate;
     if ( ctrls->portamento_enable_cc ) {
         if ( ctrls->portamento_gliss_cc )
-            porta_rate = Porta::rates_glissendo[ctrls->portamento_cc];
+            porta_rate = Porta::rates_glissando[ctrls->portamento_cc];
         else
             porta_rate = Porta::rates[ctrls->portamento_cc];
     } else {
