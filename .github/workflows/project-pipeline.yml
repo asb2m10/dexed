@@ -2,7 +2,7 @@ name: dexed-pipeline
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '*' ]
     tags:
       - '*'
   pull_request:

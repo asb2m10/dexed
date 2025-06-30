@@ -834,10 +834,14 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     
     // validate if there is really a display that can show the complete plugin size
     for (auto& display : Desktop::getInstance().getDisplays().displays) {
-        if ( display.userArea.getHeight() > rect.getHeight() && display.userArea.getWidth() > rect.getWidth() )
+        TRACE("Testing display %s with size %d x %d for Dexed Window %d x %d", display.userArea.toString().toRawUTF8(), display.userArea.getWidth(), display.userArea.getHeight(), rect.getWidth(), rect.getHeight() );
+        if ( display.userArea.getHeight() > rect.getHeight() && display.userArea.getWidth() > rect.getWidth() ) {
             displayFound = true;
+        }
     }
-    
+
+    TRACE("Status of displayFound %d for scaleFactor %f", displayFound, scaleFactor);
+
     // no display found, scaling to default value	
     if ( ! displayFound )
         setDpiScaleFactor(1.0);
