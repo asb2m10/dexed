@@ -6,7 +6,7 @@ on:
     tags:
       - '*'
   pull_request:
-    branches: [ master ]
+    branches: [ '*' ]
 
 jobs:
   build-linux:
