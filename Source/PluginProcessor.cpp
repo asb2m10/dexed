@@ -829,13 +829,17 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
         }
     }
     
-    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * scaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * scaleFactor);
+    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * scaleFactor, DexedAudioProcessorEditor::WINDOW_SIZE_Y * scaleFactor);
     bool displayFound = false;
     
     // validate if there is really a display that can show the complete plugin size
     for (auto& display : Desktop::getInstance().getDisplays().displays) {
-        TRACE("Testing display %s with size %d x %d for Dexed Window %d x %d", display.userArea.toString().toRawUTF8(), display.userArea.getWidth(), display.userArea.getHeight(), rect.getWidth(), rect.getHeight() );
-        if ( display.userArea.getHeight() > rect.getHeight() && display.userArea.getWidth() > rect.getWidth() ) {
+        float ratio = display.scale / scaleFactor;
+        int height = ratio * display.userArea.getHeight();
+        int width = ratio * display.userArea.getWidth();
+
+        TRACE("Testing Scale %f display %s with size %d x %d for Dexed Window %d x %d", ratio, display.userArea.toString().toRawUTF8(), height, width, rect.getWidth(), rect.getHeight() );
+        if ( height > rect.getHeight() && width > rect.getWidth() ) {
             displayFound = true;
         }
     }
