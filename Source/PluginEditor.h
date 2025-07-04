@@ -65,6 +65,8 @@ public:
     void tuningShow();
     void discoverMidiCC(Ctrl *ctrl);
 
+    static float getLargestScaleFactor();
+
     virtual bool isInterestedInFileDrag (const StringArray &files) override;
     virtual void filesDropped (const StringArray &files, int x, int y ) override;
     std::unique_ptr<ComponentTraverser> createFocusTraverser() override;

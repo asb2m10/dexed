@@ -2,11 +2,11 @@ name: dexed-pipeline
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '*' ]
     tags:
       - '*'
   pull_request:
-    branches: [ master ]
+    branches: [ '*' ]
 
 jobs:
   build-linux:

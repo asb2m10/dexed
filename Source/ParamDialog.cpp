@@ -24,6 +24,8 @@
 
 #include "ParamDialog.h"
 
+#include "PluginEditor.h"
+
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
@@ -331,11 +333,6 @@ ParamDialog::ParamDialog ()
     scalingFactor->setTextWhenNothingSelected (juce::String());
     scalingFactor->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
     scalingFactor->addItem (TRANS ("100 %"), 1);
-    scalingFactor->addItem (TRANS ("125 %"), 2);
-    scalingFactor->addItem (TRANS ("150 %"), 3);
-    scalingFactor->addItem (TRANS ("200 %"), 4);
-    scalingFactor->addItem (TRANS ("300 %"), 5);
-    scalingFactor->addItem (TRANS ("400 %"), 6);
     scalingFactor->addListener (this);
 
     scalingFactor->setBounds (236, 136, 90, 24);
@@ -363,6 +360,19 @@ ParamDialog::ParamDialog ()
 
 
     //[UserPreSize]
+    float maxScaling = DexedAudioProcessorEditor::getLargestScaleFactor();
+
+    if ( maxScaling >= 1.25f)
+        scalingFactor->addItem (TRANS ("125 %"), 2);
+    if ( maxScaling >= 1.5f)
+        scalingFactor->addItem (TRANS ("150 %"), 3);
+    if ( maxScaling >= 2.0f )
+        scalingFactor->addItem (TRANS ("200 %"), 4);
+    if ( maxScaling >= 3.0f )
+        scalingFactor->addItem (TRANS ("300 %"), 5);
+    if ( maxScaling >= 4.0f )
+        scalingFactor->addItem (TRANS ("400 %"), 6);
+
     //[/UserPreSize]
 
     setSize (710, 370);
