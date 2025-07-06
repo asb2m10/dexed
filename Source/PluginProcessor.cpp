@@ -427,16 +427,17 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     }
                     break;
                 default:
-                    TRACE("handle CC %d %d", ctrl, value);
-                    if ( mappedMidiCC.contains(ctrl) ) {
-                        Ctrl *linkedCtrl = mappedMidiCC[ctrl];
+                    TRACE("handle channel %d CC %d = %d", channel, ctrl, value);
+                    int channel_cc = (channel << 8) | ctrl;
+                    if ( mappedMidiCC.contains(channel_cc) ) {
+                        Ctrl *linkedCtrl = mappedMidiCC[channel_cc];
                         
                         // We are not publishing this in the DSP thread, moving that in the
                         // event thread
                         linkedCtrl->publishValueAsync((float) value / 127);
                     }
                     // this is used to notify the dialog that a CC value was received.
-                    lastCCUsed.setValue(ctrl);
+                    lastCCUsed.setValue(channel_cc);
                 }
             }
             return;
