@@ -818,33 +818,15 @@ void DexedAudioProcessor::updateUI() {
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
-    static const uint8_t HIGH_DPI_THRESHOLD = 128;
     AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
     float scaleFactor = getDpiScaleFactor();
+    float maxFactor = DexedAudioProcessorEditor::getLargestScaleFactor();
 
-    if ( scaleFactor == -1 ) {
-        if ( Desktop::getInstance().getDisplays().getPrimaryDisplay()->dpi > HIGH_DPI_THRESHOLD ) {
-            scaleFactor = 1.5;
-        } else {
-            scaleFactor = 1.0;
-        }
+    if ( scaleFactor == -1 || scaleFactor > maxFactor ) {
+        scaleFactor = maxFactor;
     }
-    
-    const juce::Rectangle<int> rect(DexedAudioProcessorEditor::WINDOW_SIZE_X * scaleFactor,DexedAudioProcessorEditor::WINDOW_SIZE_Y * scaleFactor);
-    bool displayFound = false;
-    
-    // validate if there is really a display that can show the complete plugin size
-    for (auto& display : Desktop::getInstance().getDisplays().displays) {
-        if ( display.userArea.getHeight() > rect.getHeight() && display.userArea.getWidth() > rect.getWidth() )
-            displayFound = true;
-    }
-    
-    // no display found, scaling to default value	
-    if ( ! displayFound )
-        setDpiScaleFactor(1.0);
-    else 
-        setDpiScaleFactor(scaleFactor);
-        
+
+    setDpiScaleFactor(scaleFactor);
     return editor;
 }
 

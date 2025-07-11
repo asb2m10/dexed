@@ -437,6 +437,30 @@ void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
     ccListener.runModalLoop();
 }
 
+float DexedAudioProcessorEditor::getLargestScaleFactor() {
+    constexpr float TESTING_SCALE_FACTOR[] = { 4.0f, 3.0f, 2.0f, 1.5f, 1.0f };
+
+    for (float factor: TESTING_SCALE_FACTOR) {
+        const juce::Rectangle<int> rect(WINDOW_SIZE_X * factor, WINDOW_SIZE_Y * factor);
+
+        // validate if there is really a display that can show the complete plugin size
+        for (auto& display : Desktop::getInstance().getDisplays().displays) {
+            float ratio = display.scale;
+            int height = ratio * display.userArea.getHeight();
+            int width = ratio * display.userArea.getWidth();
+
+            TRACE("Testing size %d x %d < Dexed Window %d x %d", height, width, rect.getWidth(), rect.getHeight() );
+            if ( height > rect.getHeight() && width > rect.getWidth() ) {
+                TRACE("Found factor %f for display %s with size %d x %d", factor, display.userArea.toString().toRawUTF8(), height, width );
+                return factor;
+            }
+        }
+    }
+
+    TRACE("No suitable display found, returning default scale factor 1.0");
+    return 1.0f;
+}
+
 bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)
 {
     if( files.size() != 1 ) return false;
