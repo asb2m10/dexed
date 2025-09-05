@@ -55,7 +55,7 @@ jobs:
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
 
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-14
 
     steps:
     - uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
 
     - name: Build
       run: |
-        sudo xcode-select -s '/Applications/Xcode_16.4.app/Contents/Developer'
+        sudo xcode-select -s '/Applications/Xcode_15.4.app/Contents/Developer'
         cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_FLAGS=-DDEXED_ID=${{ env.BUILD_VERSION }}
         cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
 
