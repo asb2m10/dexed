@@ -144,7 +144,7 @@ public:
     }
 };
 
-// Simple Slider to make 10 % jumps when shift is pressed
+// Simple Slider to make 10 % jumps when shift is pressed on keypress, but more precise with mouse wheel.
 class DXSlider : public Slider {
 public:
     DXSlider(const String& componentName) : Slider(componentName) {
@@ -166,6 +166,13 @@ public:
             return Slider::keyPressed(key);
         }
         return false;
+    }
+
+    void mouseWheelMove(const MouseEvent &event, const MouseWheelDetails &wheel) override {
+        auto newWheel = wheel;
+        const auto speed = event.mods.isShiftDown() ? 0.05 : 1.0;
+        newWheel.deltaY *= speed;
+        Slider::mouseWheelMove(event, newWheel);
     }
 };
 

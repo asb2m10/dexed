@@ -55,7 +55,7 @@ jobs:
           ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
 
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-14
 
     steps:
     - uses: actions/checkout@v4
