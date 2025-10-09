@@ -525,6 +525,16 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             }
         }
     }
+    else if ( !data[136] ) {
+        // if another note at the same pitch is live, transfer signal
+        // to avoid unpredictable destructive interference
+        for(int i=0; i<MAX_ACTIVE_NOTES; i++) {
+            if ( voices[i].live && voices[i].midi_note == pitch ) {
+                voices[note].dx7_note->transferSignal(*voices[i].dx7_note);
+                break;
+            }
+        }
+    }
  
     voices[note].live = true;
     lastActiveVoice = note;
