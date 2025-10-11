@@ -133,3 +133,7 @@ void FmCore::render(int32_t *output, FmOpParams *params, int algorithm, int32_t 
         param.phase += param.freq << LG_N;
     }
 }
+
+bool FmCore::isCarrier(int algorithm, int op) {
+  return (algorithms[algorithm].ops[op] & FmOperatorFlags::OUT_BUS_ADD) != 0;
+}

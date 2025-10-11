@@ -51,10 +51,7 @@ public:
     
     void keyup();
     
-    // TODO: some way of indicating end-of-note. Maybe should be a return
-    // value from the compute method? (Having a count return from keyup
-    // is also tempting, but if there's a dynamic parameter change after
-    // keyup, that won't work.
+    bool isPlaying();
     
     // PG:add the update
     void update(const uint8_t patch[156], int midinote, int velocity, int channel);
@@ -62,6 +59,7 @@ public:
     void peekVoiceStatus(VoiceStatus &status);
     void transferState(Dx7Note& src);
     void transferSignal(Dx7Note &src);
+    void transferPhase(Dx7Note &src);
     void oscSync();
 
     // We should put this as a function and not a DX7Note method
@@ -74,6 +72,7 @@ public:
     int mpeTimbre = 0;
     
 private:
+    bool initialised_;
     Env env_[6];
     FmOpParams params_[6];
     PitchEnv pitchenv_;

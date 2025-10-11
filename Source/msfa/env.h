@@ -26,6 +26,7 @@
 
 class Env {
  public:
+  Env();
 
   // The rates and levels arrays are calibrated to match the Dx7 parameters
   // (ie, value 0..99). The outlevel parameter is calibrated in microsteps
@@ -50,8 +51,10 @@ class Env {
     
   static void init_sr(double sample_rate);
   void transfer(Env &src);
-    
+  bool isActive();
+
  private:
+  bool initialised_;
 
   // PG: This code is normalized to 44100, need to put a multiplier
   // if we are not using 44100.

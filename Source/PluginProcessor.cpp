@@ -147,9 +147,11 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
         voices[note].keydown = false;
         voices[note].sustained = false;
         voices[note].live = false;
+        voices[note].keydown_seq = -1;
     }
 
     currentNote = 0;
+    nextKeydownSeq = 0;
     controllers.values_[kControllerPitch] = 0x2000;
     controllers.modwheel_cc = 0;
     controllers.foot_cc = 0;
@@ -460,6 +462,31 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
 
 #define ACT(v) (v.keydown ? v.midi_note : -1)
 
+int DexedAudioProcessor::chooseNote(uint8_t pitch) {
+    // order of preference:
+    // 1. a note that is not playing
+    // 2. a note with its key up, playing the same pitch
+    // 3. a note with its key up, playing a different pitch
+    // 4. a note with its key down, playing the same pitch
+    // 5. a note with its key down, playing a different pitch
+    // break ties by preferring note with least recent keydown
+    int bestNote = currentNote;
+    int bestScore = -1;
+    int note = currentNote;
+    for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
+        int score = 0;
+        if ( !voices[note].dx7_note->isPlaying() ) score += 4;
+        if ( !voices[note].keydown ) score += 2;
+        if ( voices[note].midi_note == pitch ) score += 1;
+        if ( (score > bestScore) || (score == bestScore && voices[note].keydown_seq < voices[bestNote].keydown_seq) ) {
+            bestNote = note;
+            bestScore = score;
+        }
+        note = (note + 1) % MAX_ACTIVE_NOTES;
+    }
+    return bestNote;
+}
+
 void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
         keyup(channel, pitch, velo);
@@ -484,29 +511,38 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             note = (note + 1) % MAX_ACTIVE_NOTES;
         }
     }
-    
-    int note = currentNote;
+
+    bool triggerLfo = true;
     for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
-        if (!voices[note].keydown) {
-            currentNote = (note + 1) % MAX_ACTIVE_NOTES;
-            lfo.keydown();  // TODO: should only do this if # keys down was 0
-            voices[note].channel = channel;
-            voices[note].midi_note = pitch;
-            voices[note].velocity = velo;
-            voices[note].sustained = sustain;
-            voices[note].keydown = true;
-            voices[note].dx7_note->init(data, pitch, velo, channel, &controllers);
-            if ( data[136] )
-                voices[note].dx7_note->oscSync();
-            if ( (voices[lastActiveVoice].midi_note != -1 && controllers.portamento_enable_cc)
-               && controllers.portamento_cc > 0 ) {
-                voices[note].dx7_note->initPortamento(*voices[lastActiveVoice].dx7_note);
-            }
+        if ( voices[i].keydown ) {
+            triggerLfo = false;
             break;
         }
-        note = (note + 1) % MAX_ACTIVE_NOTES;
     }
-    
+    if ( triggerLfo ) {
+        lfo.keydown();
+    }
+
+    int note = chooseNote(pitch);
+
+    currentNote = (note + 1) % MAX_ACTIVE_NOTES;
+    voices[note].channel = channel;
+    voices[note].midi_note = pitch;
+    voices[note].velocity = velo;
+    voices[note].sustained = sustain;
+    voices[note].keydown = true;
+    voices[note].keydown_seq = nextKeydownSeq++;
+    // to avoid click, don't sync oscillators when voice stealing
+    bool voice_steal = voices[note].dx7_note->isPlaying();
+    voices[note].dx7_note->init(data, pitch, velo, channel, &controllers);
+    if ( data[136] && !voice_steal ) {
+        voices[note].dx7_note->oscSync();
+    }
+    if ( (voices[lastActiveVoice].midi_note != -1 && controllers.portamento_enable_cc)
+       && controllers.portamento_cc > 0 ) {
+        voices[note].dx7_note->initPortamento(*voices[lastActiveVoice].dx7_note);
+    }
+
     if ( monoMode ) {
         for(int i=0; i<MAX_ACTIVE_NOTES; i++) {            
             if ( voices[i].live ) {
@@ -526,15 +562,18 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
         }
     }
     else if ( !data[136] ) {
-        // if another note at the same pitch is live, transfer signal
-        // to avoid unpredictable destructive interference
+        // if another note at the same pitch is playing, transfer phase
+        // to avoid unpredictable destructive interference. this can cause
+        // clicking when voice stealing, but we've tried to choose a voice
+        // to steal that will minimise the chances of clicking
         for(int i=0; i<MAX_ACTIVE_NOTES; i++) {
-            if ( voices[i].live && voices[i].midi_note == pitch ) {
-                voices[note].dx7_note->transferSignal(*voices[i].dx7_note);
+            if ( i != note && voices[i].dx7_note->isPlaying() && voices[i].midi_note == pitch ) {
+                voices[note].dx7_note->transferPhase(*voices[i].dx7_note);
                 break;
             }
         }
     }
+
  
     voices[note].live = true;
     lastActiveVoice = note;
