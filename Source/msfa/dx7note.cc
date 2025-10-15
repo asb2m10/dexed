@@ -21,6 +21,7 @@
 #include "freqlut.h"
 #include "exp2.h"
 #include "controllers.h"
+#include "fm_core.h"
 #include "dx7note.h"
 #include <iostream>
 #include <cmath>
@@ -152,6 +153,7 @@ const int32_t Dx7Note::mtsLogFreqToNoteLogFreq = (1 << 24) / log(2.);
 
 Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc)
 : tuning_state_(ts), mtsClient(mtsc) {
+    initialised_ = false;
     for(int op=0;op<6;op++) {
         params_[op].phase = 0;
         params_[op].gain_out = 0;
@@ -159,6 +161,7 @@ Dx7Note::Dx7Note(std::shared_ptr<TuningState> ts, MTSClient *mtsc)
 }
 
 void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int channel, const Controllers *ctrls) {
+    initialised_ = true;
     currentPatch = patch;
     int rates[4];
     int levels[4];
@@ -424,9 +427,27 @@ void Dx7Note::transferSignal(Dx7Note &src) {
     }
 }
 
+void Dx7Note::transferPhase(Dx7Note &src) {
+    for (int i=0;i<6;i++) {
+        params_[i].phase = src.params_[i].phase;
+    }
+}
+
 void Dx7Note::oscSync() {
     for (int i=0;i<6;i++) {
         params_[i].gain_out = 0;
         params_[i].phase = 0;
     }
+}
+
+// a note is playing if it's been initialised and any carrier's amp
+// envelope is active
+bool Dx7Note::isPlaying() {
+    if ( !initialised_ ) return false;
+    for (int i=0; i<6; i++) {
+        if ( FmCore::isCarrier(algorithm_, i) && env_[i].isActive() ) {
+            return true;
+        }
+    }
+    return false;
 }

@@ -48,6 +48,7 @@ class FmCore {
 public:
     virtual ~FmCore() {};
     static void dump();
+    static bool isCarrier(int algorithm, int op);
     virtual void render(int32_t *output, FmOpParams *params, int algorithm, int32_t *fb_buf, int32_t feedback_gain);
 protected:
     AlignedBuf<int32_t, N>buf_[2];

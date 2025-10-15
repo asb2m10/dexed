@@ -44,11 +44,16 @@ const int statics[] = {
 };
 #endif
 
+Env::Env() {
+    initialised_ = false;
+}
+
 void Env::init_sr(double sampleRate) {
     sr_multiplier = (44100.0 / sampleRate) * (1<<24);
 }
 
 void Env::init(const int r[4], const int l[4], int ol, int rate_scaling) {
+    initialised_ = true;
     for (int i = 0; i < 4; i++) {
         rates_[i] = r[i];
         levels_[i] = l[i];
@@ -190,3 +195,7 @@ void Env::transfer(Env &src) {
     inc_ = src.inc_;
 }
 
+// an envelope is active if it's been initialised and either it hasn't reached L4 yet or L4 > 0
+bool Env::isActive() {
+    return initialised_ && (ix_ < 4 || levels_[3] > 0);
+}

@@ -45,6 +45,7 @@ struct ProcessorVoice {
     bool keydown;
     bool sustained;
     bool live;
+    int32_t keydown_seq;
 
     int mpePitchBend;
     Dx7Note *dx7_note;
@@ -284,6 +285,8 @@ public :
         return dpiScaleFactor;
     }    
 private:
+    int chooseNote(uint8_t pitch);
+    int32_t nextKeydownSeq;;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)
 
