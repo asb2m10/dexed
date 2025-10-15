@@ -4,6 +4,12 @@ project(Dexed VERSION 0.9.9)
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
+if(NOT BUILD_ID)
+    add_definitions("-DDEXED_ID=DEVBUILD")
+else()
+    add_definitions("-DDEXED_ID=${BUILD_ID}")
+endif()
+
 #Minimum MacOS target, set globally
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
