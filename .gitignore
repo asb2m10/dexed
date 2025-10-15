@@ -10,7 +10,6 @@ Builds/VisualStudio2017/
 
 JuceLibraryCode/
 Builds/
-assets/
 products/
 
 .DS_Store

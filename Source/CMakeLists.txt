@@ -14,8 +14,8 @@ message(STATUS "Building Dexed in formats: ${DEXED_JUCE_FORMATS}")
 
 juce_add_plugin("${BaseTargetName}"
         VERSION "1.0.0"   # FORCING THIS SINCE OLDER VERSION WILL NOT BE ABLE TO SYNC PLUGIN DATA. THIS WILL GET UPDATED ONCE 1.0 is released.
-        ICON_BIG "../Resources/ui/dexedIcon.png"
-        ICON_SMALL "../Resources/ui/dexedIcon.png"
+        ICON_BIG "../assets/ui/dexedIcon.png"
+        ICON_SMALL "../assets/ui/dexedIcon.png"
         COMPANY_NAME "Digital Suburban"
         IS_SYNTH TRUE
         NEEDS_MIDI_INPUT TRUE
