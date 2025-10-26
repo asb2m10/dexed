@@ -15,6 +15,8 @@ the original machine.
 Dexed is licensed on the GPL v3. The msfa component (acronym for music synthesizer for android, see msfa
 in the source folder) stays on the Apache 2.0 license to be able to collaborate between projects.
 
+Pre-release builds are available with the [Nightly Releases](https://github.com/asb2m10/dexed/releases/tag/Nightly)
+
 Donation
 --------
 As a maintainer of this 10-year-old project, donations are welcomed. This also applies for the Apple users 
@@ -32,6 +34,11 @@ Changelog
 #### Version 0.9.9
 * Partial portamento implementation. Thanks @jpcima
 * More accurate LFO implementation. Thanks @mtarenskeen
+* Fix UI scaling resize bug
+* Avoid clicks on voice allocation issue. Thanks @akwizgran
+* Respect MIDI channel on control change mappings. Thanks @voidshine
+* Mouse wheel movement is now more precise with shift down
+* Dexed now replies to sysex "Patch Request" messages
 
 #### Version 0.9.8
 * Accessibility implementation (including [keyboard shortcuts](https://github.com/asb2m10/dexed/blob/master/Documentation/Keybindings.md))

@@ -2,133 +2,146 @@ name: dexed-pipeline
 
 on:
   push:
-    branches: [ '*' ]
+    branches:
+      - '*'
     tags:
       - '*'
   pull_request:
-    branches: [ '*' ]
+    branches: [ master ]
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
+  component_version:
+    name: "Set up version"
+    runs-on: ubuntu-latest
+    outputs:
+      build_version: ${{ steps.vers.outputs.build_version }}
+      build_type : ${{ steps.vers.outputs.build_type }}
+    steps:
+      - name: "Checkout code"
+        uses: actions/checkout@v4
+
+      - name: "Calculate version"
+        id: vers
+        run: |
+          ref=${{ github.ref }}
+
+          echo "## Creating version from '${ref}'" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$GITHUB_REF_TYPE" == "tag" ]; then
+            echo "Generating Release Version" >> $GITHUB_STEP_SUMMARY
+            export BUILD_VERSION=${GITHUB_REF_NAME:1}
+            export BUILD_TYPE=Release
+          else
+            echo "Generating Nightly Version" >> $GITHUB_STEP_SUMMARY
+            export BUILD_VERSION="$(date +%Y-%m-%d)-$(git rev-parse --short HEAD)"
+            export BUILD_TYPE=Debug
+          fi
+
+          echo "build_version=${BUILD_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "build_type=${BUILD_TYPE}" >> "$GITHUB_OUTPUT"
+
   build-linux:
     runs-on: ubuntu-latest
+    name: "Linux Build"
+    environment: default
+    if: ${{ vars.SKIP_LINUX != 'true' }}
+    needs: [ component_version ]
 
     steps:
-    - name: Install Dexed Dependencies
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update && sudo apt install libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev ccache xvfb libjack-dev
-        # sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10
-        # sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 10
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      if: runner.os == 'linux'
+      with:
+        packages: libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev ccache xvfb libjack-dev libsndfile-dev
 
     - uses: actions/checkout@v4
       with:
          submodules: recursive
 
-    - name: Set build type
-      shell: bash
-      run: |
-        if [ "$GITHUB_REF_TYPE" == "tag" ]; then
-            echo "BUILD_TYPE=Release" >> "$GITHUB_ENV"
-            echo "BUILD_VERSION=${GITHUB_REF_NAME:1}" >> "$GITHUB_ENV"
-        else
-            echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
-            echo "BUILD_VERSION=DEVBUILD" >> "$GITHUB_ENV"
-        fi
-        echo "BUILD PARM =========="
-        cat $GITHUB_ENV
-
     - name: Build
       run: |
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_FLAGS=-DDEXED_ID=${{ env.BUILD_VERSION }}
-        cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
-
-    - name: Show
-      run: ls -lR ${{github.workspace}}/build
+        cmake -S . -B ./build -DCMAKE_BUILD_TYPE=${{ needs.component_version.outputs.build_type }} -DBUILD_ID=${{ needs.component_version.outputs.build_version }} -DJUCE_COPY_PLUGIN_AFTER_BUILD=FALSE
+        cmake --build ./build --config ${{ needs.component_version.outputs.build_type }} --target installer --parallel 3
 
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: linux-bin
         path: |
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*
-
-  build-macos:
-    runs-on: macos-14
-
-    steps:
-    - uses: actions/checkout@v4
-      with:
-         submodules: recursive
-
-    - name: Set build type
-      shell: bash
-      run: |
-        if [ "$GITHUB_REF_TYPE" == "tag" ]; then
-            echo "BUILD_TYPE=Release" >> "$GITHUB_ENV"
-            echo "BUILD_VERSION=${GITHUB_REF_NAME:1}" >> "$GITHUB_ENV"
-        else
-            echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
-            echo "BUILD_VERSION=DEVBUILD" >> "$GITHUB_ENV"
-        fi
-        echo "BUILD PARM =========="
-        cat $GITHUB_ENV
-
-    - name: Build
-      run: |
-        sudo xcode-select -s '/Applications/Xcode_15.4.app/Contents/Developer'
-        cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_FLAGS=-DDEXED_ID=${{ env.BUILD_VERSION }}
-        cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
-
-    - name: Show
-      run: ls -lR ${{github.workspace}}/build
-
-    - name: Upload
-      uses: actions/upload-artifact@v4
-      with:
-        name: macos-bin
-        path: |
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/VST3/*.vst3/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/CLAP/*.clap/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/AU/*.component/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{env.BUILD_TYPE}}/Standalone/*.app/**
+          ${{github.workspace}}/build/installer/*
 
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2022
+    name: "Windows Build"
+    environment: default
+    if: ${{ vars.SKIP_WINDOWS != 'true' }}
+    needs: [ component_version ]
 
     steps:
     - uses: actions/checkout@v4
       with:
           submodules: recursive
 
-    - name: Set build type
-      shell: bash
-      run: |
-        if [ "$GITHUB_REF_TYPE" == "tag" ]; then
-            echo "BUILD_TYPE=Release" >> "$GITHUB_ENV"
-            echo "BUILD_VERSION=${GITHUB_REF_NAME:1}" >> "$GITHUB_ENV"
-        else
-            echo "BUILD_TYPE=Debug" >> "$GITHUB_ENV"
-            echo "BUILD_VERSION=$GITHUB_REF_NAME" >> "$GITHUB_ENV"
-        fi
-        echo "BUILD PARM =========="
-        cat $GITHUB_ENV
-
     - name: Build
       run: |
-          cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_CXX_FLAGS=-DDEXED_ID="${{ env.BUILD_VERSION }}"
-          cmake --build ${{github.workspace}}/build --config ${{ env.BUILD_TYPE }}
-
-    - name: Show
-      shell: cmd
-      run: dir /s ${{github.workspace}}\build
+        cmake -S . -B ./build -DCMAKE_BUILD_TYPE=${{ needs.component_version.outputs.build_type }} -DBUILD_ID=${{ needs.component_version.outputs.build_version }} -DCOPY_PLUGIN_AFTER_BUILD=FALSE
+        cmake --build ./build --config ${{ needs.component_version.outputs.build_type }} --target installer --parallel 3
 
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
         name: windows-bin
         path: |
-          ${{github.workspace}}/build/Source/*_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{ env.BUILD_TYPE }}/CLAP/*.clap/**
-          ${{github.workspace}}/build/Source/*_artefacts/${{ env.BUILD_TYPE }}/Standalone/*.exe
+          ${{github.workspace}}/build/installer/*
+
+  build-macos:
+    runs-on: macos-14
+    name: "macOS Build"
+    environment: default
+    if: ${{ vars.SKIP_MACOS != 'true' }}
+    needs: [ component_version ]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+         submodules: recursive
+
+    - uses: apple-actions/import-codesign-certs@v3
+      if: runner.os == 'macOS'
+      with:
+        p12-file-base64: ${{ secrets.MAC_CERTS_P12 }}
+        p12-password: ${{ secrets.MAC_CERT_PWD }}
+
+    - name: Build
+      run: |
+        export MAC_SIGNING_CERT="${{ secrets.MAC_SIGNING_CERT }}"
+        export MAC_INSTALLING_CERT="${{ secrets.MAC_INSTALLING_CERT }}"
+        export MAC_SIGNING_ID="${{ secrets.MAC_SIGNING_ID }}"
+        export MAC_TEAM_ID="${{ secrets.MAC_TEAM_ID }}"
+        export MAC_TEAM_PASSWORD="${{ secrets.MAC_TEAM_PASSWORD }}"
+
+        cmake -S . -B ./build -DCMAKE_BUILD_TYPE=${{ needs.component_version.outputs.build_type }} -DBUILD_ID=${{ needs.component_version.outputs.build_version }} -DJUCE_COPY_PLUGIN_AFTER_BUILD=FALSE
+        cmake --build ./build --config ${{ needs.component_version.outputs.build_type }} --target installer --parallel 3
+
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-bin
+        path: |
+          ${{github.workspace}}/build/installer/*
+
+  publish-nightly:
+    name: "Publish Nightly"
+    runs-on: ubuntu-latest
+    needs: [ build-linux, build-windows, build-macos ]
+    steps:
+      - name: "Upload to nightly"
+        uses: surge-synthesizer/sst-githubactions/upload-to-release@main
+        with:
+          tag: Nightly
+          reuse_tag: true
+          create_tag: false
+          token: ${{ secrets.GITHUB_TOKEN }}

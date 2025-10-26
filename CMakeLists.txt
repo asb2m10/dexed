@@ -1,8 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
-project(Dexed VERSION 0.9.6)
+project(Dexed VERSION 0.9.9)
 
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
+
+if(NOT BUILD_ID)
+    add_definitions("-DDEXED_ID=DEVBUILD")
+else()
+    add_definitions("-DDEXED_ID=${BUILD_ID}")
+endif()
 
 #Minimum MacOS target, set globally
 
@@ -38,12 +44,12 @@ option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
 option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
 
 add_subdirectory(libs)
-add_subdirectory(Resources)
+add_subdirectory(assets)
 add_subdirectory(Source)
 
 # uncomment to enable warnings are errors,
 # suppress warnings (or remove when fixed)
-# or add -Wall, -Wextra or specific warnings as you see fit 
+# or add -Wall, -Wextra or specific warnings as you see fit
 if (APPLE)
 target_compile_options(${PROJECT_NAME} PUBLIC
         #-Werror
@@ -64,3 +70,6 @@ target_compile_options(${PROJECT_NAME} PUBLIC
         #  replace cxxx with /wdxxx to supress them)
         )
 endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/assets/installers")
+include(installer)
