@@ -87,24 +87,22 @@ public:
 
         if ( pgmListBox->hasContent == false )
             return;
-        if ( getCurrentlyFocusedComponent() == this )
-            g.fillAll(DXLookNFeel::fillColour);
-        else {
-            if ( idx % 2 == 0 ) {
-                auto alternateColour = DXLookNFeel::lightBackground.interpolatedWith (getLookAndFeel().findColour(ListBox::textColourId), 0.75f);
-                g.fillAll(alternateColour);
-            } else {
-                auto alternateColour = DXLookNFeel::lightBackground.interpolatedWith (getLookAndFeel().findColour(ListBox::textColourId), 0.15f);
-                g.fillAll(alternateColour);
-            }
-        }
 
         if ( idx == pgmListBox->activePgm ) {
-            g.setColour(Colours::white);
+            g.setGradientFill(ColourGradient(DXLookNFeel::fillColour.brighter(3.0f), 0.0f, 0.0f, DXLookNFeel::fillColour.darker(0.5f), 0.0f, getHeight(), false));
+        } else if ( getCurrentlyFocusedComponent() == this ) {
+            g.setColour(DXLookNFeel::fillColour);
         } else {
-            g.setColour(Colours::black);
+            if ( idx % 2 == 0 ) {
+                auto alternateColour = DXLookNFeel::lightBackground.interpolatedWith (getLookAndFeel().findColour(ListBox::textColourId), 0.75f);
+                g.setColour(alternateColour);
+            } else {
+                auto alternateColour = DXLookNFeel::lightBackground.interpolatedWith (getLookAndFeel().findColour(ListBox::textColourId), 0.15f);
+                g.setColour(alternateColour);
+            }
         }
-
+        g.fillAll();
+        g.setColour(Colours::black);
         g.drawFittedText(getProgramName(), 0, 0, getWidth(), getHeight(), Justification::centred, true);
     }
 
