@@ -316,6 +316,8 @@ OperatorEditor::OperatorEditor ()
     opSwitch->setTitle("Operator switch");
 
     setWantsKeyboardFocus(true);
+
+    adsrMode = false;
     //[/Constructor]
 }
 
@@ -355,6 +357,10 @@ OperatorEditor::~OperatorEditor()
     //[/Destructor]
 }
 
+static void overrideOpLabel(Graphics& g, String text, int x, int y) {
+    g.drawText(text, x+6, y+29, 22, 12, Justification::centred, false);
+}
+
 //==============================================================================
 void OperatorEditor::paint (juce::Graphics& g)
 {
@@ -363,6 +369,21 @@ void OperatorEditor::paint (juce::Graphics& g)
     //[/UserPrePaint]
 
     //[UserPaint] Add your own custom painting code here..
+
+    if ( adsrMode ) {
+        g.setFont(Font (15.0f, Font::plain));
+
+        g.setColour(Colours::black);
+        g.setOpacity(0.8);
+        g.fillRoundedRectangle(7, 129, 112, 81, 5);
+        g.setOpacity(1.0);
+        g.setColour(Colours::white);
+
+        overrideOpLabel(g, "A", 5, 169);
+        overrideOpLabel(g, "S", 61, 128);
+        overrideOpLabel(g, "D", 61, 169);
+        overrideOpLabel(g, "R", 89, 169);
+    }
 
     if ( opSwitch->getToggleState() )
         g.setColour(Colours::white);
@@ -606,6 +627,8 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
         popup.addItem(3, "Paste Operator Values", hasClipboard);
         popup.addSeparator();
         popup.addItem(4, "Send current program to DX7");
+        popup.addSeparator();
+        popup.addItem(5, "Envelope ADSR Mode", true, adsrMode);
 
         switch(popup.show()) {
             case 1:
@@ -623,9 +646,30 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
             case 4:
                 processor->sendCurrentSysexProgram();
             break;
+
+            case 5:
+               setAdsrMode(adsrMode != true);
+               repaint();
+               break;
         }
 
     }
+}
+
+void OperatorEditor::setAdsrMode(bool mode) {
+    adsrMode = mode;
+
+    if ( mode ) {
+        s_egl1->setValue(99, NotificationType::sendNotification);
+        s_egv2->setValue(99, NotificationType::sendNotification);
+        s_egl2->setValue(99, NotificationType::sendNotification);
+        s_egl4->setValue(0, NotificationType::sendNotification);
+
+    }
+    s_egl1->setEnabled(!mode);
+    s_egl2->setEnabled(!mode);
+    s_egv2->setEnabled(!mode);
+    s_egl4->setEnabled(!mode);
 }
 
 void OperatorEditor::toggleOpSwitch() {

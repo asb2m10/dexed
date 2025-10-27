@@ -34,7 +34,6 @@
 class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer,
                                    public FileDragAndDropTarget, public KeyListener {
     MidiKeyboardComponent midiKeyboard;
-    OperatorEditor operators[6];
     Colour background;
     CartManager cartManager;
     // This cover is used to disable main window when cart manager is shown
@@ -47,7 +46,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
-    
+    OperatorEditor operators[6];
+
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
     virtual void timerCallback() override;

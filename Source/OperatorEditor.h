@@ -55,6 +55,7 @@ public:
     void updateEnvPos(char pos);
     void mouseDown(const MouseEvent& e) override;
     void toggleOpSwitch();
+    void setAdsrMode(bool mode);
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -72,6 +73,7 @@ private:
     DexedAudioProcessor *processor;
     Image background;
     std::unique_ptr<ToggleButton> opSwitch;
+    bool adsrMode;
     //[/UserVariables]
 
     //==============================================================================

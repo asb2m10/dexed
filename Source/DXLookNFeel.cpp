@@ -291,6 +291,9 @@ void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int he
      const float rx = centreX - radius - 1.0f;
      const float ry = centreY - radius - 1.0f;
 
+     if ( !slider.isEnabled() )
+        g.setOpacity(0.2f);
+
      g.drawImage(imageKnob, (int)rx, (int)ry, 2*(int)radius, 2*(int)radius, 0, frameIdx*imageKnob.getWidth(), imageKnob.getWidth(), imageKnob.getWidth());
 };
 

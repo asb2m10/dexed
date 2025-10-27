@@ -741,7 +741,9 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
         return;
     }
     editor->global.setParamMessage("");
-    
+    for(int i=0;i<6;i++) {
+        editor->operators[i].setAdsrMode(false);
+    }
     panic();
 }
 
