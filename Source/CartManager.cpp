@@ -306,6 +306,11 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
 void CartManager::fileDoubleClicked(const File& file) {
     if ( file.isDirectory() )
         return;
+    int rc = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Load Cartridge",
+                                          "This will replace the current cartridge. "
+                                          "Are you sure?");
+    if ( rc == 0 )
+        return;
     mainWindow->loadCart(file);
     activeCart->setCartridge(mainWindow->processor->currentCart);
     updateCartFilename();
