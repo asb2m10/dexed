@@ -256,6 +256,36 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
     }
 }
 
+void CartManager::programAutoCopied(ProgramListBox *source, int pos) {
+
+    ProgramListBox *otherListBox;
+
+    if ( source == activeCart.get() ) {
+        otherListBox = browserCart.get();
+    } else {
+        otherListBox = activeCart.get();
+    }
+
+    int i;
+    int foundIndex = -1;
+
+    for ( i = 0; i < otherListBox->programNames.size(); i++ ) {
+        if ( otherListBox->programNames[i] == "-         " || otherListBox->programNames[i] == "          " ) {
+            foundIndex = i;
+            break;
+        }
+    }
+
+    if ( foundIndex < 0 ){
+        AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon, "Auto Copy", "No free program slot found!");
+        return;
+    }
+
+   char *sourceSysExPointer = source->getCurrentCart().getRawVoice() + (pos*128);
+
+   programDragged(otherListBox,  foundIndex, sourceSysExPointer);   
+}
+
 void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     if ( buttonThatWasClicked == closeButton.get() ) {
         hideCartridgeManager();
