@@ -26,13 +26,17 @@
 class DexedAudioProcessorEditor;
 
 class AlgoDisplay : public Component {
+    static const int MAX_OPERATORS = 6;
+    static const int OP_NUMBER_WIDTH = 16;
+    static const int OP_NUMBER_HEIGHT = 12;
+    
     struct OperatorPosition {
         char id;
         int x, y;
         int width, height;
     };
     
-    OperatorPosition opPositions[6];
+    OperatorPosition opPositions[MAX_OPERATORS];
     int numOpPositions;
     DexedAudioProcessorEditor *editor;
     

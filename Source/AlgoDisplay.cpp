@@ -35,12 +35,12 @@ void AlgoDisplay::bind(DexedAudioProcessorEditor *edit) {
 }
 
 void AlgoDisplay::storeOpPosition(char id, int x, int y) {
-    if (numOpPositions < 6) {
+    if (numOpPositions < MAX_OPERATORS) {
         opPositions[numOpPositions].id = id;
         opPositions[numOpPositions].x = x;
         opPositions[numOpPositions].y = y;
-        opPositions[numOpPositions].width = 16;
-        opPositions[numOpPositions].height = 12;
+        opPositions[numOpPositions].width = OP_NUMBER_WIDTH;
+        opPositions[numOpPositions].height = OP_NUMBER_HEIGHT;
         numOpPositions++;
     }
 }
