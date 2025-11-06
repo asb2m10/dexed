@@ -1,0 +1,1 @@
+/home/runner/work/dexed/.codeql-scratch/dbs/cpp/working/autobuild/bin/c++ -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/juce_vst3_helper.dir/link.d CMakeFiles/juce_vst3_helper.dir/__/libs/JUCE/modules/juce_audio_plugin_client/VST3/juce_VST3ManifestHelper.cpp.o -o juce_vst3_helper  -ldl
