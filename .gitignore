@@ -20,3 +20,4 @@ build*/
 .idea
 cmake-build-*
 ignore/
+_codeql_*

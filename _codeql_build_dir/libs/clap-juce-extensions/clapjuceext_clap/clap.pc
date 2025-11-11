@@ -1,0 +1,8 @@
+prefix=/usr/local
+includedir=${prefix}/include
+
+Name: clap
+Description: The interface headers for the CLAP audio plugin API
+Version: 0.9.9
+
+Cflags: -I${includedir}
