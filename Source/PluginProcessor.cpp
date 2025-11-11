@@ -157,6 +157,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
     controllers.aftertouch_cc = 0;
+    controllers.portamento_enable_cc = false;
+    controllers.portamento_cc = 0;
 	controllers.refresh();
 
     sustain = false;
