@@ -68,7 +68,7 @@ Name: "SA"; Description: "Standalone"; Types: full custom standalone; Flags: che
 
 [Files]
 #ifdef CLAP
-Source: "{#StagedAssets}\{#Name}.clap"; DestDir: "{autocf}\CLAP\{#Publisher}\"; Components: CLAP; Flags: ignoreversion
+Source: "{#StagedAssets}\{#Name}.clap"; DestDir: "{autocf}\CLAP\"; Components: CLAP; Flags: ignoreversion
 #endif
 
 #ifdef VST3

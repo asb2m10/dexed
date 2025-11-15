@@ -39,6 +39,7 @@ Changelog
 * Respect MIDI channel on control change mappings. Thanks @voidshine
 * Mouse wheel movement is now more precise with shift down
 * Dexed now replies to sysex "Patch Request" messages
+* Active program is now easier to see
 
 #### Version 0.9.8
 * Accessibility implementation (including [keyboard shortcuts](https://github.com/asb2m10/dexed/blob/master/Documentation/Keybindings.md))
