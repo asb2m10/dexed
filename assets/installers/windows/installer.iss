@@ -101,6 +101,11 @@ Source: "{#Data}\*"; DestDir: "{code:get_data_path}"; Flags: ignoreversion recur
 [Icons]
 Name: "{group}\{#Name}"; Filename: "{app}\{#Name}.exe"; Flags: createonlyiffileexists
 
+#ifdef VST3
+[InstallDelete]
+Type: files; Name: "{autocf}\VST3\{#Name}.vst3"
+#endif VST3
+
 [Code]
 function get_data_path(Param: string): string;
 begin
