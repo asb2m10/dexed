@@ -102,7 +102,7 @@ elseif (WIN32)
                 COMMAND innosetup::compiler
                 /O"${CMAKE_BINARY_DIR}/installer" /DName="${PROJECT_NAME}"
                 /DNameCondensed="${PROJECT_NAME}" /DVersion="${VERSION_NAME}"
-                /DVST3 /DSA
+                /DVST3 /DSA /DCLAP
                 /DLicense="${CMAKE_SOURCE_DIR}/LICENSE"
                 /DStagedAssets="${DIST_DIR}"
                 /DData="${CMAKE_SOURCE_DIR}/assets/installers/windows" "$<TARGET_PROPERTY:innosetup::compiler,INSTALL_SCRIPT>"
