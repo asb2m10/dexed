@@ -19,7 +19,7 @@ ArchitecturesInstallIn64BitMode=x64
 CloseApplicationsFilter=*.exe,*.vst3
 DefaultDirName={autopf}\{#Name}\
 DefaultGroupName={#Name}
-DisableDirPage=yes
+DisableDirPage=no
 DisableProgramGroupPage=yes
 #ifdef License
 LicenseFile={#License}
