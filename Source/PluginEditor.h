@@ -64,6 +64,7 @@ public:
     void parmShow();
     void tuningShow();
     void discoverMidiCC(Ctrl *ctrl);
+    void toggleOperator(int operatorIndex);
 
     static float getLargestScaleFactor();
 
