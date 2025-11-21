@@ -871,11 +871,15 @@ void DexedAudioProcessor::updateUI() {
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
     float scaleFactor = getDpiScaleFactor();
-    float maxFactor = DexedAudioProcessorEditor::getLargestScaleFactor();
 
-    if ( scaleFactor == -1 || scaleFactor > maxFactor ) {
-        scaleFactor = maxFactor;
-    }
+    // We still have issues on some DAW reporting the scale factor...
+    // float maxFactor = DexedAudioProcessorEditor::getLargestScaleFactor();
+    //
+    // if ( scaleFactor == -1 || scaleFactor > maxFactor ) {
+    //     scaleFactor = maxFactor;
+    // }
+    if ( scaleFactor < 1.0f || scaleFactor > 4.0f )
+        scaleFactor = 1.0f;
 
     setDpiScaleFactor(scaleFactor);
     return editor;
@@ -891,6 +895,12 @@ void DexedAudioProcessor::setDpiScaleFactor(float factor) {
     
     // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
     // plugin window.
+    Desktop::getInstance().setGlobalScaleFactor(dpiScaleFactor);
+}
+
+void DexedAudioProcessor::resetScalingFactor() {
+    dpiScaleFactor = 1.0f;
+    savePreference();
     Desktop::getInstance().setGlobalScaleFactor(dpiScaleFactor);
 }
 

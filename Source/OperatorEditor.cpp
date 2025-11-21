@@ -22,6 +22,8 @@
 
 #include "OperatorEditor.h"
 
+#include "PluginEditor.h"
+
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 #ifndef M_LN10
@@ -607,6 +609,11 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
         popup.addSeparator();
         popup.addItem(4, "Send current program to DX7");
 
+        if ( processor->getDpiScaleFactor() > 1.0f ) {
+            popup.addSeparator();
+            popup.addItem(5, "Reset plugin UI scaling factor");
+        }
+
         switch(popup.show()) {
             case 1:
                 processor->copyToClipboard(internalOp);
@@ -622,6 +629,11 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
 
             case 4:
                 processor->sendCurrentSysexProgram();
+            break;
+
+            case 5:
+                processor->resetScalingFactor();
+                getParentComponent()->setSize(DexedAudioProcessorEditor::WINDOW_SIZE_X, (processor->showKeyboard ? DexedAudioProcessorEditor::WINDOW_SIZE_Y : DexedAudioProcessorEditor::WINDOW_SIZE_Y - 94));
             break;
         }
 
