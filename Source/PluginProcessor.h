@@ -131,7 +131,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     void unpackOpSwitch(char packOpValue);
     void packOpSwitch();
 
-    float dpiScaleFactor = -1;
+    float dpiScaleFactor = 1;
 
 public :
     // in MIDI units (0x4000 is neutral)
@@ -281,6 +281,8 @@ public :
     std::string currentSCLData = "";
     std::string currentKBMData = "";
     void setDpiScaleFactor(float factor);
+    void resetScalingFactor();
+
     float getDpiScaleFactor() {
         return dpiScaleFactor;
     }    

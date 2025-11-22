@@ -137,6 +137,11 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
         }
         popup.addItem(2, "Clear midi CC mapping");
 
+        if ( parent->getDpiScaleFactor() > 1.0f ) {
+            popup.addSeparator();
+            popup.addItem(5, "Reset plugin UI scaling factor");
+        }
+
         switch(popup.show()) {
             case 1:
                 parent->mappedMidiCC.removeValue(this);
@@ -148,14 +153,26 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
                     parent->savePreference();
                 }
                 break;
-            case 3:
+            case 3: {
                 AudioProcessorEditor *editor = parent->getActiveEditor();
                 if ( editor == NULL ) {
                     return;
                 }
                 DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
                 dexedEditor->discoverMidiCC(this);
-                break;
+            }
+            break;
+
+            case 5: {
+                parent->resetScalingFactor();
+                AudioProcessorEditor *editor = parent->getActiveEditor();
+                if ( editor == NULL ) {
+                    return;
+                }
+                DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
+                dexedEditor->setSize(DexedAudioProcessorEditor::WINDOW_SIZE_X, (parent->showKeyboard ? DexedAudioProcessorEditor::WINDOW_SIZE_Y : DexedAudioProcessorEditor::WINDOW_SIZE_Y - 94));
+            }
+            break;
         }
     }
 }

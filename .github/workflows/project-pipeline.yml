@@ -136,7 +136,7 @@ jobs:
   publish-nightly:
     name: "Publish Nightly"
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/heads/')
+    if: github.ref_type == 'branch'
     needs: [ build-linux, build-windows, build-macos ]
     steps:
       - name: "Upload to nightly"
