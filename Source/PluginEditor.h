@@ -66,6 +66,7 @@ public:
     void discoverMidiCC(Ctrl *ctrl);
 
     static float getLargestScaleFactor();
+    void resetScaleFactor();
 
     virtual bool isInterestedInFileDrag (const StringArray &files) override;
     virtual void filesDropped (const StringArray &files, int x, int y ) override;

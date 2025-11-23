@@ -164,13 +164,10 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
             break;
 
             case 5: {
-                parent->resetScalingFactor();
-                AudioProcessorEditor *editor = parent->getActiveEditor();
-                if ( editor == NULL ) {
-                    return;
+                auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(parent->getActiveEditor());
+                if ( editor != nullptr ) {
+                    editor->resetScaleFactor();
                 }
-                DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
-                dexedEditor->setSize(DexedAudioProcessorEditor::WINDOW_SIZE_X, (parent->showKeyboard ? DexedAudioProcessorEditor::WINDOW_SIZE_Y : DexedAudioProcessorEditor::WINDOW_SIZE_Y - 94));
             }
             break;
         }

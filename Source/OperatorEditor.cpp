@@ -523,8 +523,6 @@ void OperatorEditor::buttonClicked (juce::Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
-
-
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     parent->opCtrl[op].egLevel[0]->bind(s_egl1.get());
@@ -632,8 +630,10 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
             break;
 
             case 5:
-                processor->resetScalingFactor();
-                getParentComponent()->setSize(DexedAudioProcessorEditor::WINDOW_SIZE_X, (processor->showKeyboard ? DexedAudioProcessorEditor::WINDOW_SIZE_Y : DexedAudioProcessorEditor::WINDOW_SIZE_Y - 94));
+                auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(getParentComponent());
+                if ( editor != nullptr ) {
+                    editor->resetScaleFactor();
+                }
             break;
         }
 

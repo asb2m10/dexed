@@ -36,7 +36,6 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
       cartManager(this)
 {
-    setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
     setExplicitFocusOrder(1);
     processor = ownerFilter;
 
@@ -88,6 +87,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     addChildComponent(&cartManagerCover);
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
+
+    AudioProcessorEditor::setScaleFactor(processor->getDpiScaleFactor());
+    setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
 
     addKeyListener(this);
     updateUI();
@@ -217,12 +219,15 @@ void DexedAudioProcessorEditor::parmShow() {
                                    int tpo;
                                    float scale = this->processor->getDpiScaleFactor();
                                    bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &scale);
-                                   this->processor->setEngineType(tpo);
                                    this->processor->setDpiScaleFactor(scale);
+                                   this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
 
+
+                                   auto previousSize = this->getBounds();
+                                   this->setScaleFactor(scale);
+                                   this->setSize(previousSize.getWidth(), previousSize.getHeight());
                                    param->setSize(710, 355);
-                                   this->setSize(WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
                                    this->midiKeyboard.repaint();
 
                                    if ( ret == false ) {
@@ -459,6 +464,14 @@ float DexedAudioProcessorEditor::getLargestScaleFactor() {
 
     TRACE("No suitable display found, returning default scale factor 1.0");
     return 1.0f;
+}
+
+void DexedAudioProcessorEditor::resetScaleFactor() {
+    processor->setDpiScaleFactor(1.0);
+    processor->savePreference();
+    auto previousSize = this->getBounds();
+    setScaleFactor(1.0);
+    this->setSize(previousSize.getWidth(), previousSize.getHeight());
 }
 
 bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)

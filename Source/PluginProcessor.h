@@ -281,7 +281,6 @@ public :
     std::string currentSCLData = "";
     std::string currentKBMData = "";
     void setDpiScaleFactor(float factor);
-    void resetScalingFactor();
 
     float getDpiScaleFactor() {
         return dpiScaleFactor;
