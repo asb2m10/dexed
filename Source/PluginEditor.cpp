@@ -27,6 +27,7 @@
 #include "Dexed.h"
 #include "math.h"
 #include <fstream>
+#include <memory>
 
 #include "msfa/fm_op_kernel.h"
 
@@ -36,6 +37,8 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
       cartManager(this)
 {
+    // We have to set size at startup because the keyboard doesnt show up before being added
+    setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
     setExplicitFocusOrder(1);
     processor = ownerFilter;
 
@@ -179,10 +182,20 @@ void DexedAudioProcessorEditor::tuningShow() {
     auto dialogwindow = options.launchAsync();
 }
 
+// I don't know why closeButtonPressed is not implemented in the standard DialogWindow version.
+class DexedDialogWindow : public juce::DialogWindow {
+public:
+    DexedDialogWindow(const juce::String& title, juce::Colour backgroundColour)
+        : juce::DialogWindow(title, backgroundColour, true, false) {
+
+    }
+    void closeButtonPressed() override {
+        setVisible(false);
+    }
+};
+
 void DexedAudioProcessorEditor::parmShow() {
     int tp = processor->getEngineType();
-    DialogWindow::LaunchOptions options;
-
     auto param = new ParamDialog();
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
     param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getDpiScaleFactor());
@@ -207,13 +220,6 @@ void DexedAudioProcessorEditor::parmShow() {
                                 p->setIsStandardTuning(this->processor->synthTuningState->is_standard_tuning() );
                             } );
 
-    options.content.setOwned(param);
-    options.dialogTitle = "dexed Parameters";
-    options.dialogBackgroundColour = Colour(0xFF323E44);
-    options.escapeKeyTriggersCloseButton = true;
-    options.useNativeTitleBar = false;
-    options.resizable = false;
-
     auto generalCallback = [this](ParamDialog *param)
                                {
                                    int tpo;
@@ -222,13 +228,8 @@ void DexedAudioProcessorEditor::parmShow() {
                                    this->processor->setDpiScaleFactor(scale);
                                    this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
-
-
-                                   auto previousSize = this->getBounds();
                                    this->setScaleFactor(scale);
-                                   this->setSize(previousSize.getWidth(), previousSize.getHeight());
-                                   param->setSize(710, 355);
-                                   this->midiKeyboard.repaint();
+                                   setSize(WINDOW_SIZE_X, (this->processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
 
                                    if ( ret == false ) {
                                        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
@@ -236,7 +237,11 @@ void DexedAudioProcessorEditor::parmShow() {
                                };
     param->setGeneralCallback(generalCallback);
 
-    auto dialogWindow = options.launchAsync();
+    dexedParameterDialog = std::make_unique<DexedDialogWindow>("dexed Parameters", Colour(0xFF323E44));
+    dexedParameterDialog->setContentOwned(param, true);
+    addAndMakeVisible(dexedParameterDialog.get());
+    dexedParameterDialog->centreAroundComponent(this, param->getWidth(), param->getHeight() + dexedParameterDialog->getTitleBarHeight());
+    dexedParameterDialog->enterModalState(true,{});
 }
 
 void DexedAudioProcessorEditor::initProgram() {

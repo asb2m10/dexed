@@ -41,6 +41,7 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     Component cartManagerCover;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
+    std::unique_ptr<juce::DialogWindow> dexedParameterDialog;
     #ifdef DEXED_EVENT_DEBUG
         FocusLogger focusLogger;
     #endif
