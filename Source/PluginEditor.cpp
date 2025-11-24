@@ -445,9 +445,8 @@ float DexedAudioProcessorEditor::getLargestScaleFactor() {
 
         // validate if there is really a display that can show the complete plugin size
         for (auto& display : Desktop::getInstance().getDisplays().displays) {
-            float ratio = display.scale;
-            int height = ratio * display.userArea.getHeight();
-            int width = ratio * display.userArea.getWidth();
+            const int height = display.userArea.getHeight();
+            const int width = display.userArea.getWidth();
 
             TRACE("Testing size %d x %d < Dexed Window %d x %d", height, width, rect.getWidth(), rect.getHeight() );
             if ( height > rect.getHeight() && width > rect.getWidth() ) {
