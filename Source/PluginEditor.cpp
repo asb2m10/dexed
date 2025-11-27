@@ -91,9 +91,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
 
-    AudioProcessorEditor::setScaleFactor(processor->getDpiScaleFactor());
-    setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
-
+    AffineTransform scale = AffineTransform::scale(processor->getDpiScaleFactor());
+    setTransform(scale);
+    setSize(WINDOW_SIZE_X, (this->processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
     addKeyListener(this);
     updateUI();
     startTimer(100);
@@ -228,8 +228,10 @@ void DexedAudioProcessorEditor::parmShow() {
                                    this->processor->setDpiScaleFactor(scale);
                                    this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
-                                   this->setScaleFactor(scale);
-                                   setSize(WINDOW_SIZE_X, (this->processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
+
+                                   AffineTransform scaleAffine = AffineTransform::scale(dawScalingFactor * this->processor->getDpiScaleFactor());
+                                   setTransform(scaleAffine);
+                                   setSize(WINDOW_SIZE_X, (this->processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94)); 
 
                                    if ( ret == false ) {
                                        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
@@ -601,4 +603,9 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
     }
 
     return false;
+}
+
+void DexedAudioProcessorEditor::setScaleFactor(float newScaleFactor) {
+    dawScalingFactor = newScaleFactor;
+    AudioProcessorEditor::setScaleFactor(newScaleFactor * processor->getDpiScaleFactor());
 }

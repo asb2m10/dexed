@@ -35,6 +35,7 @@ Changelog
 * Remove automatic UI scaling, dexed will always use user settings and if UI 
   window is to big, it can be reset with the contextual menu (right click on the UI)
   by selecting the "Reset plugin UI scaling factor"
+* Fixed scaling issue with CLAP format
 
 #### Version 0.9.9
 * Partial portamento implementation. Thanks @jpcima
