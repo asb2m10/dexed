@@ -32,7 +32,7 @@ Dexed Forks
 Changelog
 ---------
 #### Version 1.0.1
-* Let DAW scale the UI and then let the user can zoom it further if needed
+* Let DAW scale the UI and then let the user zoom it further if needed
 * Fixed scaling issue with CLAP format
 * Plugin parameters dialogs are now part of the main plugin window (no more separate windows)
 

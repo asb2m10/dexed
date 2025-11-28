@@ -843,8 +843,8 @@ void DexedAudioProcessor::loadPreference() {
         controllers.at.parseConfig(prop.getValue(String("aftertouchMod")).toRawUTF8());
     }
     
-    if ( prop.containsKey( String("dpiScaleFactor") ) ) {
-        zoomFactor = prop.getDoubleValue(String("dpiScaleFactor"));
+    if ( prop.containsKey( String("zoomFactor") ) ) {
+        zoomFactor = prop.getDoubleValue(String("zoomFactor"));
     }
     
     controllers.refresh();
@@ -878,7 +878,7 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("aftertouchMod"), mod_cfg);
     
     prop.setValue(String("engineType"), (int) engineType);
-    prop.setValue(String("dpiScaleFactor"), zoomFactor);
+    prop.setValue(String("zoomFactor"), zoomFactor);
     
     prop.save();
 }

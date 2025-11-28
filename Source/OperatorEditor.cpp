@@ -630,7 +630,7 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
             break;
 
             case 5:
-                auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(getParentComponent());
+                auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(getParentComponent()->getParentComponent());
                 if ( editor != nullptr ) {
                     editor->resetZoomFactor();
                 }

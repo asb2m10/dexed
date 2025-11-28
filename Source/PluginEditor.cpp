@@ -454,29 +454,32 @@ void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
 }
 
 float DexedAudioProcessorEditor::getLargestScaleFactor() {
-    constexpr float TESTING_SCALE_FACTOR[] = { 4.0f, 3.0f, 2.0f, 1.5f, 1.0f };
+    // constexpr float TESTING_SCALE_FACTOR[] = { 4.0f, 3.0f, 2.0f, 1.5f, 1.0f };
+    //
+    // for (float factor: TESTING_SCALE_FACTOR) {
+    //     const juce::Rectangle<int> rect(WINDOW_SIZE_X * factor, WINDOW_SIZE_Y * factor);
+    //
+    //     // validate if there is really a display that can show the complete plugin size
+    //     for (auto& display : Desktop::getInstance().getDisplays().displays) {
+    //         int height = display.userArea.getHeight();
+    //         int width = display.userArea.getWidth();
+    //
+    //         TRACE("Testing size %d x %d < Dexed Window %d x %d", height, width, rect.getWidth(), rect.getHeight() );
+    //         if ( height > rect.getHeight() && width > rect.getWidth() ) {
+    //             TRACE("Found factor %f for display %s with size %d x %d", factor, display.userArea.toString().toRawUTF8(), height, width );
+    //             return factor;
+    //         }
+    //     }
+    // }
+    //
+    // TRACE("No suitable display found, returning default scale factor 1.0");
 
-    for (float factor: TESTING_SCALE_FACTOR) {
-        const juce::Rectangle<int> rect(WINDOW_SIZE_X * factor, WINDOW_SIZE_Y * factor);
-
-        // validate if there is really a display that can show the complete plugin size
-        for (auto& display : Desktop::getInstance().getDisplays().displays) {
-            int height = display.userArea.getHeight();
-            int width = display.userArea.getWidth();
-
-            TRACE("Testing size %d x %d < Dexed Window %d x %d", height, width, rect.getWidth(), rect.getHeight() );
-            if ( height > rect.getHeight() && width > rect.getWidth() ) {
-                TRACE("Found factor %f for display %s with size %d x %d", factor, display.userArea.toString().toRawUTF8(), height, width );
-                return factor;
-            }
-        }
-    }
-
-    TRACE("No suitable display found, returning default scale factor 1.0");
-    return 1.0f;
+    // For now, always return 4.0f as the maximum scale factor.
+    return 4.0f;
 }
 
 void DexedAudioProcessorEditor::resetZoomFactor() {
+    TRACE("Resetting zoom factor to 1.0");
     processor->setZoomFactor(1.0);
     processor->savePreference();
     AffineTransform scale = AffineTransform::scale(processor->getZoomFactor());
