@@ -137,7 +137,7 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
         }
         popup.addItem(2, "Clear midi CC mapping");
 
-        if ( parent->getDpiScaleFactor() > 1.0f ) {
+        if ( parent->getZoomFactor() > 1.0f ) {
             popup.addSeparator();
             popup.addItem(5, "Reset plugin UI scaling factor");
         }
@@ -166,7 +166,7 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
             case 5: {
                 auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(parent->getActiveEditor());
                 if ( editor != nullptr ) {
-                    editor->resetScaleFactor();
+                    editor->resetZoomFactor();
                 }
             }
             break;
@@ -844,7 +844,7 @@ void DexedAudioProcessor::loadPreference() {
     }
     
     if ( prop.containsKey( String("dpiScaleFactor") ) ) {
-        dpiScaleFactor = prop.getDoubleValue(String("dpiScaleFactor"));
+        zoomFactor = prop.getDoubleValue(String("dpiScaleFactor"));
     }
     
     controllers.refresh();
@@ -878,7 +878,7 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("aftertouchMod"), mod_cfg);
     
     prop.setValue(String("engineType"), (int) engineType);
-    prop.setValue(String("dpiScaleFactor"), dpiScaleFactor);
+    prop.setValue(String("dpiScaleFactor"), zoomFactor);
     
     prop.save();
 }

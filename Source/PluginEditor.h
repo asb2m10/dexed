@@ -47,6 +47,8 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     #endif
 
     float dawScalingFactor = 1.0f;
+
+    void resetSize();
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
@@ -69,7 +71,7 @@ public:
     void discoverMidiCC(Ctrl *ctrl);
 
     static float getLargestScaleFactor();
-    void resetScaleFactor();
+    void resetZoomFactor();
 
     virtual bool isInterestedInFileDrag (const StringArray &files) override;
     virtual void filesDropped (const StringArray &files, int x, int y ) override;

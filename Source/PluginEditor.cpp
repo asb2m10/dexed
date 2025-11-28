@@ -37,10 +37,11 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
       cartManager(this)
 {
-    // We have to set size at startup because the keyboard doesnt show up before being added
-    setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
-    setExplicitFocusOrder(1);
     processor = ownerFilter;
+
+    // We have to set size at startup because the keyboard doesnt show up before being added
+    resetSize();
+    setExplicitFocusOrder(1);
 
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
     background = lookAndFeel->background;
@@ -91,9 +92,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
 
-    AffineTransform scale = AffineTransform::scale(processor->getDpiScaleFactor());
+    AffineTransform scale = AffineTransform::scale(processor->getZoomFactor());
     setTransform(scale);
-    setSize(WINDOW_SIZE_X, (this->processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
+    resetSize();
     addKeyListener(this);
     updateUI();
     startTimer(100);
@@ -198,7 +199,7 @@ void DexedAudioProcessorEditor::parmShow() {
     int tp = processor->getEngineType();
     auto param = new ParamDialog();
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
-    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getDpiScaleFactor());
+    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getZoomFactor());
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
     param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
                                 switch(which)
@@ -223,15 +224,15 @@ void DexedAudioProcessorEditor::parmShow() {
     auto generalCallback = [this](ParamDialog *param)
                                {
                                    int tpo;
-                                   float scale = this->processor->getDpiScaleFactor();
+                                   float scale = this->processor->getZoomFactor();
                                    bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &scale);
-                                   this->processor->setDpiScaleFactor(scale);
+                                   this->processor->setZoomFactor(scale);
                                    this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
 
-                                   AffineTransform scaleAffine = AffineTransform::scale(dawScalingFactor * this->processor->getDpiScaleFactor());
+                                   AffineTransform scaleAffine = AffineTransform::scale(dawScalingFactor * this->processor->getZoomFactor());
                                    setTransform(scaleAffine);
-                                   setSize(WINDOW_SIZE_X, (this->processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94)); 
+                                   resetSize();
 
                                    if ( ret == false ) {
                                        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
@@ -457,9 +458,8 @@ float DexedAudioProcessorEditor::getLargestScaleFactor() {
 
         // validate if there is really a display that can show the complete plugin size
         for (auto& display : Desktop::getInstance().getDisplays().displays) {
-            float ratio = display.scale;
-            int height = ratio * display.userArea.getHeight();
-            int width = ratio * display.userArea.getWidth();
+            int height = display.userArea.getHeight();
+            int width = display.userArea.getWidth();
 
             TRACE("Testing size %d x %d < Dexed Window %d x %d", height, width, rect.getWidth(), rect.getHeight() );
             if ( height > rect.getHeight() && width > rect.getWidth() ) {
@@ -473,12 +473,11 @@ float DexedAudioProcessorEditor::getLargestScaleFactor() {
     return 1.0f;
 }
 
-void DexedAudioProcessorEditor::resetScaleFactor() {
-    processor->setDpiScaleFactor(1.0);
+void DexedAudioProcessorEditor::resetZoomFactor() {
+    processor->setZoomFactor(1.0);
     processor->savePreference();
-    auto previousSize = this->getBounds();
-    setScaleFactor(1.0);
-    this->setSize(previousSize.getWidth(), previousSize.getHeight());
+    setScaleFactor(dawScalingFactor);
+    resetSize();
 }
 
 bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)
@@ -606,6 +605,11 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
 }
 
 void DexedAudioProcessorEditor::setScaleFactor(float newScaleFactor) {
+    TRACE("scaling factor to %f", newScaleFactor);
     dawScalingFactor = newScaleFactor;
-    AudioProcessorEditor::setScaleFactor(newScaleFactor * processor->getDpiScaleFactor());
+    AudioProcessorEditor::setScaleFactor(newScaleFactor * processor->getZoomFactor());
+}
+
+void DexedAudioProcessorEditor::resetSize() {
+    setSize(WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
 }

@@ -607,7 +607,7 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
         popup.addSeparator();
         popup.addItem(4, "Send current program to DX7");
 
-        if ( processor->getDpiScaleFactor() > 1.0f ) {
+        if ( processor->getZoomFactor() > 1.0f ) {
             popup.addSeparator();
             popup.addItem(5, "Reset plugin UI scaling factor");
         }
@@ -632,7 +632,7 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
             case 5:
                 auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(getParentComponent());
                 if ( editor != nullptr ) {
-                    editor->resetScaleFactor();
+                    editor->resetZoomFactor();
                 }
             break;
         }

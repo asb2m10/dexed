@@ -873,8 +873,8 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     return editor;
 }
 
-void DexedAudioProcessor::setDpiScaleFactor(float factor) {
-    dpiScaleFactor = factor;
+void DexedAudioProcessor::setZoomFactor(float factor) {
+    zoomFactor = factor;
 }
 
 void DexedAudioProcessor::handleAsyncUpdate() {
