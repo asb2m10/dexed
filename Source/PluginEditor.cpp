@@ -43,43 +43,46 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     resetSize();
     setExplicitFocusOrder(1);
 
+
+    frameComponent.setBounds(0,0, WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
+    addAndMakeVisible(&frameComponent);
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
     background = lookAndFeel->background;
 
     // OPERATORS
-    addAndMakeVisible(&(operators[0]));
+    frameComponent.addAndMakeVisible(&(operators[0]));
     operators[0].setBounds(2, 1, 287, 218);
     operators[0].bind(processor, 0);
 
-    addAndMakeVisible(&(operators[1]));
+    frameComponent.addAndMakeVisible(&(operators[1]));
     operators[1].setBounds(290, 1, 287, 218);
     operators[1].bind(processor, 1);
 
-    addAndMakeVisible(&(operators[2]));
+    frameComponent.addAndMakeVisible(&(operators[2]));
     operators[2].setBounds(578, 1, 287, 218);
     operators[2].bind(processor, 2);
 
-    addAndMakeVisible(&(operators[3]));
+    frameComponent.addAndMakeVisible(&(operators[3]));
     operators[3].setBounds(2, 219, 287, 218);
     operators[3].bind(processor, 3);
 
-    addAndMakeVisible(&(operators[4]));
+    frameComponent.addAndMakeVisible(&(operators[4]));
     operators[4].setBounds(290, 219, 287, 218);
     operators[4].bind(processor, 4);
 
-    addAndMakeVisible(&(operators[5]));
+    frameComponent.addAndMakeVisible(&(operators[5]));
     operators[5].setBounds(578, 219, 287, 218);
     operators[5].bind(processor, 5);
 
     // add the midi keyboard component..
-    addAndMakeVisible (&midiKeyboard);
+    frameComponent.addAndMakeVisible (&midiKeyboard);
 
     // The DX7 is a badass on the bass, keep it that way
     midiKeyboard.setLowestVisibleKey(24);
     midiKeyboard.setBounds(4, 581, getWidth() - 8, 90);
     midiKeyboard.setTitle("Keyboard keys");
 
-    addAndMakeVisible(&global);
+    frameComponent.addAndMakeVisible(&global);
     global.setBounds(2,436,864,144);
     global.bind(this);
 
@@ -88,12 +91,12 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     rebuildProgramCombobox();
     global.programs->addListener(this);
 
-    addChildComponent(&cartManagerCover);
+    frameComponent.addChildComponent(&cartManagerCover);
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
 
     AffineTransform scale = AffineTransform::scale(processor->getZoomFactor());
-    setTransform(scale);
+    frameComponent.setTransform(scale);
     resetSize();
     addKeyListener(this);
     updateUI();
@@ -230,8 +233,8 @@ void DexedAudioProcessorEditor::parmShow() {
                                    this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
 
-                                   AffineTransform scaleAffine = AffineTransform::scale(dawScalingFactor * this->processor->getZoomFactor());
-                                   setTransform(scaleAffine);
+                                   AffineTransform scaleAffine = AffineTransform::scale(this->processor->getZoomFactor());
+                                   frameComponent.setTransform(scaleAffine);
                                    resetSize();
 
                                    if ( ret == false ) {
@@ -242,8 +245,8 @@ void DexedAudioProcessorEditor::parmShow() {
 
     dexedParameterDialog = std::make_unique<DexedDialogWindow>("dexed Parameters", Colour(0xFF323E44));
     dexedParameterDialog->setContentOwned(param, true);
-    addAndMakeVisible(dexedParameterDialog.get());
-    dexedParameterDialog->centreAroundComponent(this, param->getWidth(), param->getHeight() + dexedParameterDialog->getTitleBarHeight());
+    frameComponent.addAndMakeVisible(dexedParameterDialog.get());
+    dexedParameterDialog->centreAroundComponent(&frameComponent, param->getWidth(), param->getHeight() + dexedParameterDialog->getTitleBarHeight());
     dexedParameterDialog->enterModalState(true,{});
 }
 
@@ -476,7 +479,8 @@ float DexedAudioProcessorEditor::getLargestScaleFactor() {
 void DexedAudioProcessorEditor::resetZoomFactor() {
     processor->setZoomFactor(1.0);
     processor->savePreference();
-    setScaleFactor(dawScalingFactor);
+    AffineTransform scale = AffineTransform::scale(processor->getZoomFactor());
+    frameComponent.setTransform(scale);
     resetSize();
 }
 
@@ -604,12 +608,7 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
     return false;
 }
 
-void DexedAudioProcessorEditor::setScaleFactor(float newScaleFactor) {
-    TRACE("scaling factor to %f", newScaleFactor);
-    dawScalingFactor = newScaleFactor;
-    AudioProcessorEditor::setScaleFactor(newScaleFactor * processor->getZoomFactor());
-}
-
 void DexedAudioProcessorEditor::resetSize() {
-    setSize(WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
+    float factor = processor->getZoomFactor();
+    setSize(WINDOW_SIZE_X * factor, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94) * factor);
 }

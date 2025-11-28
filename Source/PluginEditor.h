@@ -46,9 +46,9 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
         FocusLogger focusLogger;
     #endif
 
-    float dawScalingFactor = 1.0f;
-
     void resetSize();
+
+    Component frameComponent;
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
@@ -76,9 +76,7 @@ public:
     virtual bool isInterestedInFileDrag (const StringArray &files) override;
     virtual void filesDropped (const StringArray &files, int x, int y ) override;
     std::unique_ptr<ComponentTraverser> createFocusTraverser() override;
-
-    virtual void setScaleFactor(float newScaleFactor) override;
-
+    
     bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
 
     static const int WINDOW_SIZE_X = 866;

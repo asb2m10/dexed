@@ -31,11 +31,10 @@ Dexed Forks
 
 Changelog
 ---------
-#### Version 0.9.10
-* Remove automatic UI scaling, dexed will always use user settings and if UI 
-  window is to big, it can be reset with the contextual menu (right click on the UI)
-  by selecting the "Reset plugin UI scaling factor"
+#### Version 1.0.1
+* Let DAW scale the UI and then let the user can zoom it further if needed
 * Fixed scaling issue with CLAP format
+* Plugin parameters dialogs are now part of the main plugin window (no more separate windows)
 
 #### Version 0.9.9
 * Partial portamento implementation. Thanks @jpcima
