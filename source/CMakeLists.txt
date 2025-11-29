@@ -46,7 +46,6 @@ target_sources(${BaseTargetName} PRIVATE
 	PluginParam.cpp
 	PluginProcessor.cpp
 
-
     engine/EngineMkI.cpp
 	engine/EngineOpl.cpp
 
@@ -63,6 +62,8 @@ target_sources(${BaseTargetName} PRIVATE
 	ui/VUMeter.cpp
 
 	midi/SysexComm.cpp
+
+	debugger/value_tree_debugger.cpp
 
     msfa/dx7note.cc
     msfa/env.cc

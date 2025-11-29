@@ -20,6 +20,7 @@
 //[Headers] You can add your own extra header files here...
 #include "PluginEditor.h"
 #include "DXLookNFeel.h"
+#include "../debugger/value_tree_debugger.h"
 //[/Headers]
 
 #include "GlobalEditor.h"
@@ -701,6 +702,15 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == aboutButton.get())
     {
         //[UserButtonCode_aboutButton] -- add your button handler code here..
+        juce::ModifierKeys modifiers = juce::ModifierKeys::getCurrentModifiers();
+
+        if ( modifiers.isCtrlDown() ) {
+            ValueTree dt;
+            ValueTreeDebugger *vtd = new ValueTreeDebugger(dt);
+            debugger.reset(vtd);
+            return;
+        }
+
         aboutBox = std::make_unique<AboutBox>();
         getParentComponent()->addAndMakeVisible(aboutBox.get());
         aboutBox->centreWithSize(aboutBox->getWidth(), aboutBox->getHeight());
