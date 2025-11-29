@@ -34,9 +34,9 @@
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
-#include "SysexComm.h"
-#include "EngineMkI.h"
-#include "EngineOpl.h"
+#include "midi/SysexComm.h"
+#include "engine/EngineMkI.h"
+#include "engine/EngineOpl.h"
 
 struct ProcessorVoice {
     int channel;

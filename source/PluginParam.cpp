@@ -23,7 +23,7 @@
 
 #include "PluginParam.h"
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
+#include "ui/PluginEditor.h"
 #include "Dexed.h"
 
 // Async updater

@@ -37,38 +37,44 @@ clap_juce_extensions_plugin(TARGET ${BaseTargetName}
 
 juce_generate_juce_header(${PROJECT_NAME})
 
-include_directories(../libs/MTS-ESP/Client)
+include_directories(../libs/MTS-ESP/Client .)
 
 target_sources(${BaseTargetName} PRIVATE
-	AlgoDisplay.cpp
-	CartManager.cpp
-	DXComponents.cpp
-	DXLookNFeel.cpp
-	EngineMkI.cpp
-	EngineOpl.cpp
-	GlobalEditor.cpp
-	OperatorEditor.cpp
-	ParamDialog.cpp
+
 	PluginData.cpp
-	PluginEditor.cpp
 	PluginFx.cpp
 	PluginParam.cpp
 	PluginProcessor.cpp
-	ProgramListBox.cpp
-	SysexComm.cpp
-	TuningShow.cpp
-	VUMeter.cpp
-        msfa/dx7note.cc
-        msfa/env.cc
-        msfa/exp2.cc
-        msfa/fm_core.cc
-        msfa/fm_op_kernel.cc
-        msfa/freqlut.cc
-        msfa/lfo.cc
-        msfa/pitchenv.cc
-        msfa/sin.cc
-        msfa/tuning.cc
-        msfa/porta.cpp
+
+
+    engine/EngineMkI.cpp
+	engine/EngineOpl.cpp
+
+    ui/PluginEditor.cpp
+    ui/AlgoDisplay.cpp
+	ui/CartManager.cpp
+	ui/DXComponents.cpp
+	ui/DXLookNFeel.cpp
+    ui/GlobalEditor.cpp
+	ui/OperatorEditor.cpp
+	ui/ProgramListBox.cpp
+    ui/ParamDialog.cpp
+    ui/TuningShow.cpp
+	ui/VUMeter.cpp
+
+	midi/SysexComm.cpp
+
+    msfa/dx7note.cc
+    msfa/env.cc
+    msfa/exp2.cc
+    msfa/fm_core.cc
+    msfa/fm_op_kernel.cc
+    msfa/freqlut.cc
+    msfa/lfo.cc
+    msfa/pitchenv.cc
+    msfa/sin.cc
+    msfa/tuning.cc
+    msfa/porta.cpp
 
     # until MTS-ESP has is own cmake project
     ../libs/MTS-ESP/Client/libMTSClient.cpp

@@ -18,18 +18,16 @@
  *
  */
 
-#include "PluginProcessor.h"
 #include "PluginEditor.h"
-#include "GlobalEditor.h"
 #include "ParamDialog.h"
-#include "SysexComm.h"
+#include "midi/SysexComm.h"
 #include "TuningShow.h"
 #include "Dexed.h"
 #include "math.h"
 #include <fstream>
 #include <memory>
 
-#include "msfa/fm_op_kernel.h"
+#include "../msfa/fm_op_kernel.h"
 
 //==============================================================================
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)

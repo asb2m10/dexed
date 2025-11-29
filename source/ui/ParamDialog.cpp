@@ -18,7 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "Dexed.h"
+#include "../Dexed.h"
 #include "DXComponents.h"
 //[/Headers]
 

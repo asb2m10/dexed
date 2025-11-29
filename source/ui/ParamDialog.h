@@ -21,7 +21,7 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "msfa/controllers.h"
-#include "SysexComm.h"
+#include "midi/SysexComm.h"
 #include <functional>
 #include "DXLookNFeel.h"
 //[/Headers]

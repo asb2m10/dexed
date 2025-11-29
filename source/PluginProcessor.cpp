@@ -22,7 +22,7 @@
 #include <bitset>
 
 #include "PluginProcessor.h"
-#include "PluginEditor.h"
+#include "ui/PluginEditor.h"
 
 #include "Dexed.h"
 #include "msfa/synth.h"
