@@ -870,28 +870,11 @@ void DexedAudioProcessor::updateUI() {
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {
     AudioProcessorEditor* editor = new DexedAudioProcessorEditor (this);
-    float scaleFactor = getDpiScaleFactor();
-    float maxFactor = DexedAudioProcessorEditor::getLargestScaleFactor();
-
-    if ( scaleFactor == -1 || scaleFactor > maxFactor ) {
-        scaleFactor = maxFactor;
-    }
-
-    setDpiScaleFactor(scaleFactor);
     return editor;
 }
 
-void DexedAudioProcessor::setDpiScaleFactor(float factor) {
-    // Currently the clap juce wrapper doesn't work with this deprecated scale factor direct set so
-    if ( is_clap ) {
-        dpiScaleFactor = 1.0;
-        return;
-    }
-    dpiScaleFactor = factor;
-    
-    // The scale factor needs to be done after object creation otherwise Bitwig, Live and REAPER can't render the
-    // plugin window.
-    Desktop::getInstance().setGlobalScaleFactor(dpiScaleFactor);
+void DexedAudioProcessor::setZoomFactor(float factor) {
+    zoomFactor = factor;
 }
 
 void DexedAudioProcessor::handleAsyncUpdate() {

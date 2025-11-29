@@ -78,7 +78,7 @@ public:
     std::unique_ptr<juce::HyperlinkButton> dexed; // changed to std::unique_ptr from juce::ScopedPointer
     std::unique_ptr<juce::HyperlinkButton> surge; // changed to std::unique_ptr from juce::ScopedPointer
 
-    AboutBox(Component *parent) : DialogWindow("About", Colour(0xFF000000), true),
+    AboutBox() : DialogWindow("About", Colour(0xFF000000), true),
         dexed(std::make_unique<juce::HyperlinkButton>("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"))),
         surge(std::make_unique<juce::HyperlinkButton>("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")))
     {
@@ -86,7 +86,7 @@ public:
         setAlwaysOnTop(true);
         logo_png = ImageCache::getFromMemory(BinaryData::dexedlogo_png, BinaryData::dexedlogo_pngSize);
         setSize(logo_png.getWidth() + 8, 500);
-        centreAroundComponent(parent, getWidth(), getHeight());
+        //centreAroundComponent(parent, getWidth(), getHeight());
 
         dexed->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
         dexed->setJustificationType(Justification::left);
@@ -701,8 +701,10 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == aboutButton.get())
     {
         //[UserButtonCode_aboutButton] -- add your button handler code here..
-        AboutBox about(this->getParentComponent());
-        about.runModalLoop();
+        aboutBox = std::make_unique<AboutBox>();
+        getParentComponent()->addAndMakeVisible(aboutBox.get());
+        aboutBox->centreWithSize(aboutBox->getWidth(), aboutBox->getHeight());
+        aboutBox->enterModalState(true,{});
         //[/UserButtonCode_aboutButton]
     }
 

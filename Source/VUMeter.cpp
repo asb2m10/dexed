@@ -29,14 +29,14 @@ VuMeterBase::VuMeterBase(int maxdB) {
         // set log-free faster index calculationg function
         ampToStripeIndex = &VuMeterBase::ampToStripeIndex_le;
         indexBiasMindB2 = ampTodB21_le(dB2ToAmp((float)mindB));
-DBG("VuMeterBase::VuMeterBase(): Little Endian Float System identified");
+//DBG("VuMeterBase::VuMeterBase(): Little Endian Float System identified");
     }
     else if (u.b4[0] == 0x40 && u.b4[1] == 0x08) {
         // a Big Endian system identified
         // set log-free faster index calculationg function
         ampToStripeIndex = &VuMeterBase::ampToStripeIndex_be;
         indexBiasMindB2 = ampTodB21_be(dB2ToAmp((float)mindB));
-DBG("VuMeterBase::VuMeterBase(): Big Endian Float System identified");
+//DBG("VuMeterBase::VuMeterBase(): Big Endian Float System identified");
     }
     else {
         // the endianess of floats is not identified;
@@ -44,7 +44,7 @@ DBG("VuMeterBase::VuMeterBase(): Big Endian Float System identified");
         ampToStripeIndex = &VuMeterBase::ampToStripeIndex_log;
         minamp = dB10ToAmp((float)mindB);
         maxamp = dB10ToAmp((float)maxdB);
-DBG("VuMeterBase::VuMeterBase(): Unidentified Endian Float System");
+//DBG("VuMeterBase::VuMeterBase(): Unidentified Endian Float System");
     }
 }
 
@@ -207,7 +207,7 @@ VuStripesSingleton::~VuStripesSingleton() {
     destroyStripes(tricolorVuMeterStripes);
     // release memblks reserved for images of tricolor stripes
     destroyStripes(solidVuMeterStripes);
-DBG("VuStripesSingleton::~VuStripesSingleton() called");
+//DBG("VuStripesSingleton::~VuStripesSingleton() called");
 }
 
 VuStripesSingleton::VuStripesSingleton() {
@@ -215,7 +215,7 @@ VuStripesSingleton::VuStripesSingleton() {
     createStripes(solidVuMeterStripes, false);
     // create tricolor single stripes
     createStripes(tricolorVuMeterStripes, true);
-DBG("VuStripesSingleton::VuStripesSingleton() called");
+//DBG("VuStripesSingleton::VuStripesSingleton() called");
 }
 
 
@@ -334,7 +334,7 @@ void VuStripesSingleton::createStripes(juce::Image** array, bool tricolor) {
             juce::Graphics gimgCurrent(*imgCurrent);
             gimgCurrent.drawImageAt(brightLED, xStart, 0, false);
 
-            // store this stripe having number of ÿÿiStripe`` bright LEDs
+            // store this stripe having number of ï¿½ï¿½iStripe`` bright LEDs
             array[iStripe] = imgCurrent;
 
             // use this image as source in the next loop

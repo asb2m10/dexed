@@ -41,9 +41,14 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     Component cartManagerCover;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
+    std::unique_ptr<juce::DialogWindow> dexedParameterDialog;
     #ifdef DEXED_EVENT_DEBUG
         FocusLogger focusLogger;
     #endif
+
+    void resetSize();
+
+    Component frameComponent;
 public:
     DexedAudioProcessor *processor;
     GlobalEditor global;
@@ -66,6 +71,7 @@ public:
     void discoverMidiCC(Ctrl *ctrl);
 
     static float getLargestScaleFactor();
+    void resetZoomFactor();
 
     virtual bool isInterestedInFileDrag (const StringArray &files) override;
     virtual void filesDropped (const StringArray &files, int x, int y ) override;

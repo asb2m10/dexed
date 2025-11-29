@@ -22,6 +22,8 @@
 
 #include "OperatorEditor.h"
 
+#include "PluginEditor.h"
+
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 #ifndef M_LN10
@@ -521,8 +523,6 @@ void OperatorEditor::buttonClicked (juce::Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
-
-
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
     parent->opCtrl[op].egLevel[0]->bind(s_egl1.get());
@@ -607,6 +607,11 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
         popup.addSeparator();
         popup.addItem(4, "Send current program to DX7");
 
+        if ( processor->getZoomFactor() > 1.0f ) {
+            popup.addSeparator();
+            popup.addItem(5, "Reset plugin UI scaling factor");
+        }
+
         switch(popup.show()) {
             case 1:
                 processor->copyToClipboard(internalOp);
@@ -622,6 +627,13 @@ void OperatorEditor::mouseDown(const MouseEvent &event) {
 
             case 4:
                 processor->sendCurrentSysexProgram();
+            break;
+
+            case 5:
+                auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(getParentComponent()->getParentComponent());
+                if ( editor != nullptr ) {
+                    editor->resetZoomFactor();
+                }
             break;
         }
 

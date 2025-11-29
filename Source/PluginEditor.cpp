@@ -27,6 +27,7 @@
 #include "Dexed.h"
 #include "math.h"
 #include <fstream>
+#include <memory>
 
 #include "msfa/fm_op_kernel.h"
 
@@ -36,47 +37,52 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
       cartManager(this)
 {
-    setSize(WINDOW_SIZE_X, (ownerFilter->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
-    setExplicitFocusOrder(1);
     processor = ownerFilter;
 
+    // We have to set size at startup because the keyboard doesnt show up before being added
+    resetSize();
+    setExplicitFocusOrder(1);
+
+
+    frameComponent.setBounds(0,0, WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
+    addAndMakeVisible(&frameComponent);
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);
     background = lookAndFeel->background;
 
     // OPERATORS
-    addAndMakeVisible(&(operators[0]));
+    frameComponent.addAndMakeVisible(&(operators[0]));
     operators[0].setBounds(2, 1, 287, 218);
     operators[0].bind(processor, 0);
 
-    addAndMakeVisible(&(operators[1]));
+    frameComponent.addAndMakeVisible(&(operators[1]));
     operators[1].setBounds(290, 1, 287, 218);
     operators[1].bind(processor, 1);
 
-    addAndMakeVisible(&(operators[2]));
+    frameComponent.addAndMakeVisible(&(operators[2]));
     operators[2].setBounds(578, 1, 287, 218);
     operators[2].bind(processor, 2);
 
-    addAndMakeVisible(&(operators[3]));
+    frameComponent.addAndMakeVisible(&(operators[3]));
     operators[3].setBounds(2, 219, 287, 218);
     operators[3].bind(processor, 3);
 
-    addAndMakeVisible(&(operators[4]));
+    frameComponent.addAndMakeVisible(&(operators[4]));
     operators[4].setBounds(290, 219, 287, 218);
     operators[4].bind(processor, 4);
 
-    addAndMakeVisible(&(operators[5]));
+    frameComponent.addAndMakeVisible(&(operators[5]));
     operators[5].setBounds(578, 219, 287, 218);
     operators[5].bind(processor, 5);
 
     // add the midi keyboard component..
-    addAndMakeVisible (&midiKeyboard);
+    frameComponent.addAndMakeVisible (&midiKeyboard);
 
     // The DX7 is a badass on the bass, keep it that way
     midiKeyboard.setLowestVisibleKey(24);
     midiKeyboard.setBounds(4, 581, getWidth() - 8, 90);
     midiKeyboard.setTitle("Keyboard keys");
 
-    addAndMakeVisible(&global);
+    frameComponent.addAndMakeVisible(&global);
     global.setBounds(2,436,864,144);
     global.bind(this);
 
@@ -85,10 +91,13 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     rebuildProgramCombobox();
     global.programs->addListener(this);
 
-    addChildComponent(&cartManagerCover);
+    frameComponent.addChildComponent(&cartManagerCover);
     cartManagerCover.addChildComponent(&cartManager);
     cartManager.setVisible(true);
 
+    AffineTransform scale = AffineTransform::scale(processor->getZoomFactor());
+    frameComponent.setTransform(scale);
+    resetSize();
     addKeyListener(this);
     updateUI();
     startTimer(100);
@@ -177,13 +186,23 @@ void DexedAudioProcessorEditor::tuningShow() {
     auto dialogwindow = options.launchAsync();
 }
 
+// I don't know why closeButtonPressed is not implemented in the standard DialogWindow version.
+class DexedDialogWindow : public juce::DialogWindow {
+public:
+    DexedDialogWindow(const juce::String& title, juce::Colour backgroundColour)
+        : juce::DialogWindow(title, backgroundColour, true, false) {
+
+    }
+    void closeButtonPressed() override {
+        setVisible(false);
+    }
+};
+
 void DexedAudioProcessorEditor::parmShow() {
     int tp = processor->getEngineType();
-    DialogWindow::LaunchOptions options;
-
     auto param = new ParamDialog();
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
-    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getDpiScaleFactor());
+    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getZoomFactor());
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
     param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
                                 switch(which)
@@ -205,25 +224,18 @@ void DexedAudioProcessorEditor::parmShow() {
                                 p->setIsStandardTuning(this->processor->synthTuningState->is_standard_tuning() );
                             } );
 
-    options.content.setOwned(param);
-    options.dialogTitle = "dexed Parameters";
-    options.dialogBackgroundColour = Colour(0xFF323E44);
-    options.escapeKeyTriggersCloseButton = true;
-    options.useNativeTitleBar = false;
-    options.resizable = false;
-
     auto generalCallback = [this](ParamDialog *param)
                                {
                                    int tpo;
-                                   float scale = this->processor->getDpiScaleFactor();
+                                   float scale = this->processor->getZoomFactor();
                                    bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &scale);
+                                   this->processor->setZoomFactor(scale);
                                    this->processor->setEngineType(tpo);
-                                   this->processor->setDpiScaleFactor(scale);
                                    this->processor->savePreference();
 
-                                   param->setSize(710, 355);
-                                   this->setSize(WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
-                                   this->midiKeyboard.repaint();
+                                   AffineTransform scaleAffine = AffineTransform::scale(this->processor->getZoomFactor());
+                                   frameComponent.setTransform(scaleAffine);
+                                   resetSize();
 
                                    if ( ret == false ) {
                                        AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Midi Interface", "Error opening midi ports");
@@ -231,7 +243,11 @@ void DexedAudioProcessorEditor::parmShow() {
                                };
     param->setGeneralCallback(generalCallback);
 
-    auto dialogWindow = options.launchAsync();
+    dexedParameterDialog = std::make_unique<DexedDialogWindow>("dexed Parameters", Colour(0xFF323E44));
+    dexedParameterDialog->setContentOwned(param, true);
+    frameComponent.addAndMakeVisible(dexedParameterDialog.get());
+    dexedParameterDialog->centreAroundComponent(&frameComponent, param->getWidth(), param->getHeight() + dexedParameterDialog->getTitleBarHeight());
+    dexedParameterDialog->enterModalState(true,{});
 }
 
 void DexedAudioProcessorEditor::initProgram() {
@@ -438,27 +454,37 @@ void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
 }
 
 float DexedAudioProcessorEditor::getLargestScaleFactor() {
-    constexpr float TESTING_SCALE_FACTOR[] = { 4.0f, 3.0f, 2.0f, 1.5f, 1.0f };
+    // constexpr float TESTING_SCALE_FACTOR[] = { 4.0f, 3.0f, 2.0f, 1.5f, 1.0f };
+    //
+    // for (float factor: TESTING_SCALE_FACTOR) {
+    //     const juce::Rectangle<int> rect(WINDOW_SIZE_X * factor, WINDOW_SIZE_Y * factor);
+    //
+    //     // validate if there is really a display that can show the complete plugin size
+    //     for (auto& display : Desktop::getInstance().getDisplays().displays) {
+    //         int height = display.userArea.getHeight();
+    //         int width = display.userArea.getWidth();
+    //
+    //         TRACE("Testing size %d x %d < Dexed Window %d x %d", height, width, rect.getWidth(), rect.getHeight() );
+    //         if ( height > rect.getHeight() && width > rect.getWidth() ) {
+    //             TRACE("Found factor %f for display %s with size %d x %d", factor, display.userArea.toString().toRawUTF8(), height, width );
+    //             return factor;
+    //         }
+    //     }
+    // }
+    //
+    // TRACE("No suitable display found, returning default scale factor 1.0");
 
-    for (float factor: TESTING_SCALE_FACTOR) {
-        const juce::Rectangle<int> rect(WINDOW_SIZE_X * factor, WINDOW_SIZE_Y * factor);
+    // For now, always return 4.0f as the maximum scale factor.
+    return 4.0f;
+}
 
-        // validate if there is really a display that can show the complete plugin size
-        for (auto& display : Desktop::getInstance().getDisplays().displays) {
-            float ratio = display.scale;
-            int height = ratio * display.userArea.getHeight();
-            int width = ratio * display.userArea.getWidth();
-
-            TRACE("Testing size %d x %d < Dexed Window %d x %d", height, width, rect.getWidth(), rect.getHeight() );
-            if ( height > rect.getHeight() && width > rect.getWidth() ) {
-                TRACE("Found factor %f for display %s with size %d x %d", factor, display.userArea.toString().toRawUTF8(), height, width );
-                return factor;
-            }
-        }
-    }
-
-    TRACE("No suitable display found, returning default scale factor 1.0");
-    return 1.0f;
+void DexedAudioProcessorEditor::resetZoomFactor() {
+    TRACE("Resetting zoom factor to 1.0");
+    processor->setZoomFactor(1.0);
+    processor->savePreference();
+    AffineTransform scale = AffineTransform::scale(processor->getZoomFactor());
+    frameComponent.setTransform(scale);
+    resetSize();
 }
 
 bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)
@@ -583,4 +609,9 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
     }
 
     return false;
+}
+
+void DexedAudioProcessorEditor::resetSize() {
+    float factor = processor->getZoomFactor();
+    setSize(WINDOW_SIZE_X * factor, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94) * factor);
 }

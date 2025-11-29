@@ -84,6 +84,8 @@ private:
 
     Image background;
     Image imageLight;
+
+    std::unique_ptr<Component> aboutBox;
     //[/UserVariables]
 
     //==============================================================================

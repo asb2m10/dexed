@@ -137,6 +137,11 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
         }
         popup.addItem(2, "Clear midi CC mapping");
 
+        if ( parent->getZoomFactor() > 1.0f ) {
+            popup.addSeparator();
+            popup.addItem(5, "Reset plugin UI scaling factor");
+        }
+
         switch(popup.show()) {
             case 1:
                 parent->mappedMidiCC.removeValue(this);
@@ -148,14 +153,23 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
                     parent->savePreference();
                 }
                 break;
-            case 3:
+            case 3: {
                 AudioProcessorEditor *editor = parent->getActiveEditor();
                 if ( editor == NULL ) {
                     return;
                 }
                 DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
                 dexedEditor->discoverMidiCC(this);
-                break;
+            }
+            break;
+
+            case 5: {
+                auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(parent->getActiveEditor());
+                if ( editor != nullptr ) {
+                    editor->resetZoomFactor();
+                }
+            }
+            break;
         }
     }
 }
@@ -829,8 +843,8 @@ void DexedAudioProcessor::loadPreference() {
         controllers.at.parseConfig(prop.getValue(String("aftertouchMod")).toRawUTF8());
     }
     
-    if ( prop.containsKey( String("dpiScaleFactor") ) ) {
-        dpiScaleFactor = prop.getDoubleValue(String("dpiScaleFactor"));
+    if ( prop.containsKey( String("zoomFactor") ) ) {
+        zoomFactor = prop.getDoubleValue(String("zoomFactor"));
     }
     
     controllers.refresh();
@@ -864,7 +878,7 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("aftertouchMod"), mod_cfg);
     
     prop.setValue(String("engineType"), (int) engineType);
-    prop.setValue(String("dpiScaleFactor"), dpiScaleFactor);
+    prop.setValue(String("zoomFactor"), zoomFactor);
     
     prop.save();
 }
