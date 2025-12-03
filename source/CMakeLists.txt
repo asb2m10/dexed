@@ -63,6 +63,8 @@ target_sources(${BaseTargetName} PRIVATE
 
 	midi/SysexComm.cpp
 
+	parameter/Parameters.cpp
+
 	debugger/value_tree_debugger.cpp
 
     msfa/dx7note.cc

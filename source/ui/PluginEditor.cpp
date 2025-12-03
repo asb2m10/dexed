@@ -41,7 +41,6 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     resetSize();
     setExplicitFocusOrder(1);
 
-
     frameComponent.setBounds(0,0, WINDOW_SIZE_X, (processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94));
     addAndMakeVisible(&frameComponent);
     lookAndFeel->setDefaultLookAndFeel(lookAndFeel);

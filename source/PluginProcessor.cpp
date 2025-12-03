@@ -23,6 +23,7 @@
 
 #include "PluginProcessor.h"
 #include "ui/PluginEditor.h"
+#include "parameter/Model.h"
 
 #include "Dexed.h"
 #include "msfa/synth.h"
@@ -65,17 +66,15 @@
 
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor()
-    : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)) {
+    : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)),
+      parameters (*this, nullptr, IDs::parameters, createParameterLayout()) {
 #ifdef DEBUG
-    // avoid creating the log file if it is in standalone mode
-    if ( !JUCEApplication::isStandaloneApp() ) {
-        Logger *tmp = Logger::getCurrentLogger();
-        if ( tmp == NULL ) {
-            Logger::setCurrentLogger(FileLogger::createDateStampedLogger("Dexed", "DebugSession-", "log", "DexedAudioProcessor Created"));
-        }
-    }
     TRACE("Hi");
 #endif
+    rootVt = ValueTree(IDs::root);
+    rootVt.addChild(parameters.state, -1, nullptr);
+    applyValueTreeAttributes();
+    rootVt.addListener(this);
 
     Exp2::init();
     Tanh::init();
@@ -1057,3 +1056,14 @@ void DexedAudioProcessor::applyKBMMapping(std::string kbmcontents) {
         }
     }
 }
+
+void DexedAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) {
+    if ( treeWhosePropertyHasChanged.hasType(IDs::offset) ) {
+        int offset = treeWhosePropertyHasChanged.getProperty(IDs::offset);
+        int displayValue = treeWhosePropertyHasChanged.getProperty(IDs::displayValue, 0);
+        int value = treeWhosePropertyHasChanged.getProperty(IDs::value);
+        setDxValue(offset, value + displayValue);
+        return;
+    }
+}
+

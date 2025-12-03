@@ -25,6 +25,8 @@
 
 #include "GlobalEditor.h"
 
+#include "parameter/Model.h"
+
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 
@@ -469,6 +471,8 @@ GlobalEditor::GlobalEditor ()
 GlobalEditor::~GlobalEditor()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
+    attachments->disconnect();
+
     //[/Destructor_pre]
 
     lfoSpeed = nullptr;
@@ -705,8 +709,7 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
         juce::ModifierKeys modifiers = juce::ModifierKeys::getCurrentModifiers();
 
         if ( modifiers.isCtrlDown() ) {
-            ValueTree dt;
-            ValueTreeDebugger *vtd = new ValueTreeDebugger(dt);
+            ValueTreeDebugger *vtd = new ValueTreeDebugger(processor->rootVt);
             debugger.reset(vtd);
             return;
         }
@@ -728,6 +731,26 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 
 void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor = edit->processor;
+    attachments = std::make_unique<AttachmentHelper>(processor->parameters);
+
+    attachments->add(algo.get(), IDs::algorithm.name);
+
+    algoDisplay->algo = (char *) &(processor->data[134]);
+    pitchEnvDisplay->pvalues = &(processor->data[126]);
+
+    algoDisplay->opStatus = processor->controllers.opSwitch;
+
+    editor = edit;
+
+#ifdef IMPLEMENT_MidiMonitor
+    midiMonitor = std::make_unique<MidiMonitor>(&(processor->sysexComm));
+    addAndMakeVisible(*midiMonitor);
+    midiMonitor->setBounds(110, 10, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
+#endif //IMPLEMENT_MidiMonitor
+
+    repaint();
+
+    /*
 	processor->algo->bind(algo.get());
 	processor->lfoRate->bind(lfoSpeed.get());
 	processor->lfoDelay->bind(lfoDelay.get());
@@ -752,21 +775,7 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor->output->bind(output.get());
     processor->tune->bind(tune.get());
     processor->monoModeCtrl->bind(monoMode.get());
-
-    algoDisplay->algo = (char *) &(processor->data[134]);
-    pitchEnvDisplay->pvalues = &(processor->data[126]);
-
-    algoDisplay->opStatus = processor->controllers.opSwitch;
-
-    editor = edit;
-
-#ifdef IMPLEMENT_MidiMonitor
-    midiMonitor = std::make_unique<MidiMonitor>(&(processor->sysexComm));
-    addAndMakeVisible(*midiMonitor);
-    midiMonitor->setBounds(110, 10, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
-#endif //IMPLEMENT_MidiMonitor
-
-    repaint();
+*/
 }
 
 void GlobalEditor::setSystemMessage(String msg) {

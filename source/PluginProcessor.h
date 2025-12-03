@@ -67,11 +67,14 @@ const int MAX_SCL_KBM_FILE_SIZE = 16384;
 //==============================================================================
 /**
 */
-class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback, public clap_juce_extensions::clap_properties
+class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback, public clap_juce_extensions::clap_properties,
+    juce::ValueTree::Listener
 {
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
     int currentNote;
+    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    void applyValueTreeAttributes();
 
     // The original DX7 had one single LFO. Later units had an LFO per note.
     Lfo lfo;
@@ -134,6 +137,12 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     float zoomFactor = 1;
 
 public :
+    juce::AudioProcessorValueTreeState parameters;
+    juce::ValueTree rootVt;
+
+    virtual void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged,
+                                                   const Identifier& property);
+
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
     StringArray programNames;
@@ -210,12 +219,12 @@ public :
     
     //==============================================================================
     const String getName() const override;
-    int getNumParameters() override;
-    float getParameter (int index) override;
-    void setParameter (int index, float newValue) override;
-    const String getParameterName (int index) override;
-    const String getParameterText (int index) override;
-    String getParameterID (int index) override;
+    // int getNumParameters() override;
+    // float getParameter (int index) override;
+    // void setParameter (int index, float newValue) override;
+    // const String getParameterName (int index) override;
+    // const String getParameterText (int index) override;
+    // String getParameterID (int index) override;
 
     const String getInputChannelName (int channelIndex) const override;
     const String getOutputChannelName (int channelIndex) const override;

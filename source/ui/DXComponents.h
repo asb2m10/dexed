@@ -200,4 +200,31 @@ public:
     }
 };
 
+class AttachmentHelper {
+    AudioProcessorValueTreeState &vts;
+
+    std::vector<std::unique_ptr<AudioProcessorValueTreeState::SliderAttachment>> sliderAttachments;
+    std::vector<std::unique_ptr<AudioProcessorValueTreeState::ButtonAttachment>> buttonAttachments;
+    std::vector<std::unique_ptr<AudioProcessorValueTreeState::ComboBoxAttachment>> comboBoxAttachments;
+public:
+    AttachmentHelper(AudioProcessorValueTreeState &vts) : vts(vts) {
+    }
+
+    void add(Component *component, const String &paramID) {
+        if ( auto slider = dynamic_cast<Slider *>(component) ) {
+            sliderAttachments.push_back(std::make_unique<AudioProcessorValueTreeState::SliderAttachment>(vts, paramID, *slider));
+        } else if ( auto button = dynamic_cast<Button *>(component) ) {
+            buttonAttachments.push_back(std::make_unique<AudioProcessorValueTreeState::ButtonAttachment>(vts, paramID, *button));
+        } else if ( auto comboBox = dynamic_cast<ComboBox *>(component) ) {
+            comboBoxAttachments.push_back(std::make_unique<AudioProcessorValueTreeState::ComboBoxAttachment>(vts, paramID, *comboBox));
+        }
+    }
+
+    void disconnect() {
+        sliderAttachments.clear();
+        buttonAttachments.clear();
+        comboBoxAttachments.clear();
+    }
+};
+
 #endif  // DXCOMPONENTS_H_INCLUDED

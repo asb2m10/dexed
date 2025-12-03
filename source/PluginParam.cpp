@@ -710,6 +710,7 @@ void DexedAudioProcessor::unbindUI() {
 }
 
 //==============================================================================
+/*
 int DexedAudioProcessor::getNumParameters() {
     return ctrl.size();
 }
@@ -723,6 +724,7 @@ void DexedAudioProcessor::setParameter(int index, float newValue) {
     forceRefreshUI = true;
     ctrl[index]->setValueHost(newValue);
 }
+*/
 
 int DexedAudioProcessor::getNumPrograms() {
     return 32;
@@ -768,6 +770,7 @@ const String DexedAudioProcessor::getProgramName(int index) {
 void DexedAudioProcessor::changeProgramName(int index, const String& newName) {
 }
 
+/*
 const String DexedAudioProcessor::getParameterName(int index) {
     return ctrl[index]->label;
 }
@@ -778,7 +781,7 @@ const String DexedAudioProcessor::getParameterText(int index) {
 
 String DexedAudioProcessor::getParameterID(int index) {
     return getParameterName(index);
-}
+}*/
 
 void DexedAudioProcessor::loadPreference() {
     File propFile = DexedAudioProcessor::dexedAppDir.getChildFile("Dexed.xml");

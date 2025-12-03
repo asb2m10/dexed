@@ -124,6 +124,8 @@ private:
     std::unique_ptr<juce::ImageButton> aboutButton;
     std::unique_ptr<juce::Slider> tune;
 
+    std::unique_ptr<AttachmentHelper> attachments;
+
     std::unique_ptr<juce::DocumentWindow> debugger;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GlobalEditor)
