@@ -31,6 +31,20 @@ public:
 };
 
 
+class AttrParameterDxSwitch : public juce::AudioParameterBool, public ParamAttributes {
+public:
+    AttrParameterDxSwitch(const MetaParameterID &paramID, int offset)
+        : juce::AudioParameterBool(paramID.parameter(), paramID.displayName(), false),
+            ParamAttributes(Attributes { { IDs::offset, offset } } ) {}
+};
+
+class AttrParameterDxChoice : public juce::AudioParameterChoice, public ParamAttributes {
+public:
+    AttrParameterDxChoice(const MetaParameterID &paramID, const juce::StringArray &choices, int offset)
+        : juce::AudioParameterChoice(paramID.parameter(), paramID.displayName(), choices, 0),
+            ParamAttributes(Attributes { { IDs::offset, offset } } ) {}
+};
+
 juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout params;
 
@@ -40,6 +54,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createP
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f),
         1.0f));
 
+    // DX7 EMULATED PARAMETERS
+    // --------------------------------------------------------------------------------------------------
     // GLOBAL PARAMETERS
     // -------------------------------------------
 
@@ -47,6 +63,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createP
         Attributes{ { IDs::displayValue, -1 }, { IDs::offset, 134 } } ));
 
     params.add(std::make_unique<AttrParameterDx>(IDs::feedback, 8, 135));
+    params.add(std::make_unique<AttrParameterDx>(IDs::lfoRate, 99, 137));
+    params.add(std::make_unique<AttrParameterDx>(IDs::lfoDelay, 99, 138));
+    params.add(std::make_unique<AttrParameterDx>(IDs::lfoPitchDepth, 1, 139));
+    params.add(std::make_unique<AttrParameterDx>(IDs::lfoAmpDepth, 1, 140));
+    params.add(std::make_unique<AttrParameterDxSwitch>(IDs::lfoKeySync, 141));
+
+    juce::StringArray lfoWaveformChoices = { "TRIANGLE", "SAW DOWN", "SAW UP", "SQUARE", "SINE" };
+    params.add(std::make_unique<AttrParameterDxChoice>(IDs::lfoWaveform, lfoWaveformChoices, 142));
 
     // OPERATOR PARAMETERS
     // -------------------------------------------
@@ -64,6 +88,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createP
         }
         params.add(std::move(group));
     }
+
     return params;
 }
 

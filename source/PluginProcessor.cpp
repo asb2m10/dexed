@@ -1058,7 +1058,7 @@ void DexedAudioProcessor::applyKBMMapping(std::string kbmcontents) {
 }
 
 void DexedAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) {
-    if ( treeWhosePropertyHasChanged.hasType(IDs::offset) ) {
+    if ( treeWhosePropertyHasChanged.hasProperty(IDs::offset) ) {
         int offset = treeWhosePropertyHasChanged.getProperty(IDs::offset);
         int displayValue = treeWhosePropertyHasChanged.getProperty(IDs::displayValue, 0);
         int value = treeWhosePropertyHasChanged.getProperty(IDs::value);
