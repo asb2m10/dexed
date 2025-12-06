@@ -37,6 +37,7 @@
 #include "midi/SysexComm.h"
 #include "engine/EngineMkI.h"
 #include "engine/EngineOpl.h"
+#include "parameter/DexedApvts.h"
 
 struct ProcessorVoice {
     int channel;
@@ -73,7 +74,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
     int currentNote;
-    static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     void applyValueTreeAttributes();
 
     // The original DX7 had one single LFO. Later units had an LFO per note.
@@ -136,8 +136,10 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
 
     float zoomFactor = 1;
 
+    void mapParameters();
+
 public :
-    juce::AudioProcessorValueTreeState parameters;
+    DexedApvts parameters;
     juce::ValueTree rootVt;
 
     virtual void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged,

@@ -67,7 +67,7 @@
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)),
-      parameters (*this, nullptr, IDs::parameters, createParameterLayout()) {
+      parameters (*this, nullptr) {
 #ifdef DEBUG
     TRACE("Hi");
 #endif

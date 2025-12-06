@@ -2,50 +2,14 @@
 #include "Model.h"
 #include "PluginProcessor.h"
 
-using Attributes = std::vector<std::pair<juce::Identifier, int>>;
-
-struct ParamAttributes {
-    Attributes attributes;
-    ParamAttributes(const Attributes &attributes) :
-        attributes(attributes) {
+class ParameterDx : public juce::AudioParameterInt {
+public:
+    ParameterDx(const MetaParameterID &paramID, int steps)
+        : juce::AudioParameterInt(paramID.parameter(), paramID.displayName(), 0, steps, 0) {
     }
 };
 
-class AttrParameterInt : public juce::AudioParameterInt, public ParamAttributes {
-public:
-    AttrParameterInt(const juce::ParameterID& paramID, const juce::String& paramName, int minValue,
-                   int maxValue, const Attributes &attributes)
-        : juce::AudioParameterInt(paramID, paramName, minValue, maxValue, minValue),
-            ParamAttributes(attributes) {}
-};
-
-class AttrParameterDx : public juce::AudioParameterInt, public ParamAttributes {
-public:
-    AttrParameterDx(const juce::ParameterID& paramID, const juce::String& paramName, int steps, int offset)
-        : juce::AudioParameterInt(paramID, paramName, 0, steps, 0),
-            ParamAttributes(Attributes { { IDs::offset, offset }} ) {}
-
-    AttrParameterDx(const MetaParameterID &paramID, int steps, int offset)
-        : juce::AudioParameterInt(paramID.parameter(), paramID.displayName(), 0, steps, 0),
-            ParamAttributes(Attributes { { IDs::offset, offset }} ) {}
-};
-
-
-class AttrParameterDxSwitch : public juce::AudioParameterBool, public ParamAttributes {
-public:
-    AttrParameterDxSwitch(const MetaParameterID &paramID, int offset)
-        : juce::AudioParameterBool(paramID.parameter(), paramID.displayName(), false),
-            ParamAttributes(Attributes { { IDs::offset, offset } } ) {}
-};
-
-class AttrParameterDxChoice : public juce::AudioParameterChoice, public ParamAttributes {
-public:
-    AttrParameterDxChoice(const MetaParameterID &paramID, const juce::StringArray &choices, int offset)
-        : juce::AudioParameterChoice(paramID.parameter(), paramID.displayName(), choices, 0),
-            ParamAttributes(Attributes { { IDs::offset, offset } } ) {}
-};
-
-juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createParameterLayout() {
+juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout params;
 
     params.add(std::make_unique<juce::AudioParameterFloat> (
@@ -59,18 +23,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createP
     // GLOBAL PARAMETERS
     // -------------------------------------------
 
-    params.add(std::make_unique<AttrParameterInt>(IDs::algorithm.parameter(), IDs::algorithm.displayName(), 1, 32,
-        Attributes{ { IDs::displayValue, -1 }, { IDs::offset, 134 } } ));
-
-    params.add(std::make_unique<AttrParameterDx>(IDs::feedback, 8, 135));
-    params.add(std::make_unique<AttrParameterDx>(IDs::lfoRate, 99, 137));
-    params.add(std::make_unique<AttrParameterDx>(IDs::lfoDelay, 99, 138));
-    params.add(std::make_unique<AttrParameterDx>(IDs::lfoPitchDepth, 1, 139));
-    params.add(std::make_unique<AttrParameterDx>(IDs::lfoAmpDepth, 1, 140));
-    params.add(std::make_unique<AttrParameterDxSwitch>(IDs::lfoKeySync, 141));
+    params.add(std::make_unique<AudioParameterInt>(IDs::algorithm.parameter(), IDs::algorithm.displayName(), 1, 32, 1));
+    params.add(std::make_unique<ParameterDx>(IDs::feedback, 8));
+    params.add(std::make_unique<ParameterDx>(IDs::lfoRate, 99));
+    params.add(std::make_unique<ParameterDx>(IDs::lfoDelay, 99));
+    params.add(std::make_unique<ParameterDx>(IDs::lfoPitchDepth, 1));
+    params.add(std::make_unique<ParameterDx>(IDs::lfoAmpDepth, 1));
+    params.add(std::make_unique<AudioParameterBool>(IDs::lfoKeySync.parameter(), IDs::lfoKeySync.displayName(), false));
 
     juce::StringArray lfoWaveformChoices = { "TRIANGLE", "SAW DOWN", "SAW UP", "SQUARE", "SINE" };
-    params.add(std::make_unique<AttrParameterDxChoice>(IDs::lfoWaveform, lfoWaveformChoices, 142));
+    params.add(std::make_unique<AudioParameterChoice>(IDs::lfoWaveform.parameter(), IDs::lfoWaveform.displayName(), lfoWaveformChoices, 0));
 
     // OPERATOR PARAMETERS
     // -------------------------------------------
@@ -80,11 +42,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createP
         auto group = std::make_unique<juce::AudioProcessorParameterGroup>(opName, opName, "|");
         int opTarget = (5-i) * 21;
 
-        group->addChild(std::make_unique<AttrParameterDx>(IDs::outputLevel.op(i), 99, opTarget + 16));
+        group->addChild(std::make_unique<ParameterDx>(IDs::outputLevel.op(i), 99));
 
         for (int j=0; j<4; j++) {
-            group->addChild(std::make_unique<AttrParameterDx>(IDs::egRate.op(i, j), 99, opTarget + j));
-            group->addChild(std::make_unique<AttrParameterDx>(IDs::egLevel.op(i, j), 99, opTarget + j + 4));
+            group->addChild(std::make_unique<ParameterDx>(IDs::egRate.op(i, j), 99));
+            group->addChild(std::make_unique<ParameterDx>(IDs::egLevel.op(i, j), 99));
         }
         params.add(std::move(group));
     }
@@ -92,17 +54,27 @@ juce::AudioProcessorValueTreeState::ParameterLayout DexedAudioProcessor::createP
     return params;
 }
 
-void DexedAudioProcessor::applyValueTreeAttributes() {
-    for (auto child : parameters.state ) {
-        juce::String name = child.getProperty(IDs::id).toString();
 
-        ParamAttributes *attrParam = dynamic_cast<ParamAttributes*>(parameters.getParameter(name));
-        if (attrParam != nullptr) {
-            for (auto &attr : attrParam->attributes) {
-                juce::Identifier attrID = attr.first;
-                int attrValue = attr.second;
-                child.setProperty(attrID, attrValue, nullptr);
-            }
-        }
-    }
+void DexedAudioProcessor::mapParameters() {
+
+}
+
+DexedApvts::DexedApvts(juce::AudioProcessor& processorToConnectTo, juce::UndoManager* undoManagerToUse) :
+ juce::AudioProcessorValueTreeState (processorToConnectTo, undoManagerToUse, IDs::root,
+        createParameterLayout()) {
+}
+
+void DexedAudioProcessor::applyValueTreeAttributes() {
+//     for (auto child : parameters.state ) {
+//         juce::String name = child.getProperty(IDs::id).toString();
+//
+//         ParamAttributes *attrParam = dynamic_cast<ParamAttributes*>(parameters.getParameter(name));
+//         if (attrParam != nullptr) {
+//             for (auto &attr : attrParam->attributes) {
+//                 juce::Identifier attrID = attr.first;
+//                 int attrValue = attr.second;
+//                 child.setProperty(attrID, attrValue, nullptr);
+//             }
+//         }
+//     }
 }

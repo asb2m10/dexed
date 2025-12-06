@@ -46,6 +46,8 @@ target_sources(${BaseTargetName} PRIVATE
 	PluginParam.cpp
 	PluginProcessor.cpp
 
+	core/Cartridge.cpp
+
     engine/EngineMkI.cpp
 	engine/EngineOpl.cpp
 
