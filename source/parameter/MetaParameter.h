@@ -3,8 +3,12 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 
 struct MetaParameterID {
-    const juce::String name;
-    MetaParameterID(juce::String name) : name(name) {}
+    juce::String name;
+    const int pos = 0;
+    const int displayOffset = 0;
+
+    MetaParameterID(juce::String name) : name(name), pos(0), displayOffset(0) {}
+    MetaParameterID(juce::String name, int pos, int displayOffset) : name(name), pos(pos), displayOffset(displayOffset) {}
 
     juce::ParameterID parameter() const {
         // For now it is all parameterID with 0 as the version
@@ -15,12 +19,8 @@ struct MetaParameterID {
         return MetaParameterID(juce::String("op" + juce::String(op+1) + name));
     }
 
-    MetaParameterID op(int op, int idx) const {
-        return MetaParameterID(juce::String("op" + juce::String(op+1) + name + juce::String(idx+1)));
-    }
-
     MetaParameterID idx(int idx) const {
-        return MetaParameterID(name + juce::String(idx+1));
+        return MetaParameterID(name + juce::String(idx), pos + idx, displayOffset);
     }
 
     juce::String displayName() const {

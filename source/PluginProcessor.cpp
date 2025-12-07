@@ -73,8 +73,9 @@ DexedAudioProcessor::DexedAudioProcessor()
 #endif
     rootVt = ValueTree(IDs::root);
     rootVt.addChild(parameters.state, -1, nullptr);
-    applyValueTreeAttributes();
     rootVt.addListener(this);
+
+    mapParameters();
 
     Exp2::init();
     Tanh::init();

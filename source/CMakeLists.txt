@@ -66,6 +66,7 @@ target_sources(${BaseTargetName} PRIVATE
 	midi/SysexComm.cpp
 
 	parameter/Parameters.cpp
+	parameter/ParametersMapper.cpp
 
 	debugger/value_tree_debugger.cpp
 

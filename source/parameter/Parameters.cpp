@@ -45,8 +45,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
         group->addChild(std::make_unique<ParameterDx>(IDs::outputLevel.op(i), 99));
 
         for (int j=0; j<4; j++) {
-            group->addChild(std::make_unique<ParameterDx>(IDs::egRate.op(i, j), 99));
-            group->addChild(std::make_unique<ParameterDx>(IDs::egLevel.op(i, j), 99));
+            group->addChild(std::make_unique<ParameterDx>(IDs::egRate.op(i).idx(j), 99));
+            group->addChild(std::make_unique<ParameterDx>(IDs::egLevel.op(i).idx(j), 99));
         }
         params.add(std::move(group));
     }
@@ -54,13 +54,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     return params;
 }
 
-
-void DexedAudioProcessor::mapParameters() {
-
-}
-
 DexedApvts::DexedApvts(juce::AudioProcessor& processorToConnectTo, juce::UndoManager* undoManagerToUse) :
- juce::AudioProcessorValueTreeState (processorToConnectTo, undoManagerToUse, IDs::root,
+ juce::AudioProcessorValueTreeState (processorToConnectTo, undoManagerToUse, IDs::parameters,
         createParameterLayout()) {
 }
 
