@@ -142,9 +142,6 @@ public :
     DexedApvts parameters;
     juce::ValueTree rootVt;
 
-    virtual void valueTreePropertyChanged (ValueTree& treeWhosePropertyHasChanged,
-                                                   const Identifier& property);
-
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
     StringArray programNames;

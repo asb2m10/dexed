@@ -437,7 +437,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                         
                         // We are not publishing this in the DSP thread, moving that in the
                         // event thread
-                        linkedCtrl->publishValueAsync((float) value / 127);
+                        //linkedCtrl->publishValueAsync((float) value / 127);
                     }
                     // this is used to notify the dialog that a CC value was received.
                     lastCCUsed.setValue(channel_cc);
@@ -1057,13 +1057,4 @@ void DexedAudioProcessor::applyKBMMapping(std::string kbmcontents) {
     }
 }
 
-void DexedAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) {
-    if ( treeWhosePropertyHasChanged.hasProperty(IDs::offset) ) {
-        int offset = treeWhosePropertyHasChanged.getProperty(IDs::offset);
-        int displayValue = treeWhosePropertyHasChanged.getProperty(IDs::displayValue, 0);
-        int value = treeWhosePropertyHasChanged.getProperty(IDs::value);
-        setDxValue(offset, value + displayValue);
-        return;
-    }
-}
 

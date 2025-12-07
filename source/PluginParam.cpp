@@ -36,7 +36,6 @@ public:
         this->value = value;
     }
     void messageCallback() {
-        ctrl->publishValue(value);
     }
 };
 
@@ -96,31 +95,27 @@ void Ctrl::unbind() {
     }
 }
 
-void Ctrl::publishValueAsync(float value) {
-    CtrlUpdate *update = new CtrlUpdate(this, value);
-    update->post();
-}
 
-void Ctrl::publishValue(float value) {
-    parent->beginParameterChangeGesture(idx);
-    parent->setParameterNotifyingHost(idx, value);
-    parent->endParameterChangeGesture(idx);
-}
+// void Ctrl::publishValue(float value) {
+//     parent->beginParameterChangeGesture(idx);
+//     parent->setParameterNotifyingHost(idx, value);
+//     parent->endParameterChangeGesture(idx);
+// }
 
 void Ctrl::sliderValueChanged(Slider* moved) {
-    publishValue(moved->getValue());
+//    publishValue(moved->getValue());
 }
 
 void Ctrl::buttonClicked(Button* clicked) {
-    publishValue(clicked->getToggleState());
+//    publishValue(clicked->getToggleState());
 }
 
 void Ctrl::comboBoxChanged(ComboBox* combo) {
-    publishValue((combo->getSelectedId() - 1) / combo->getNumItems());
+    //publishValue((combo->getSelectedId() - 1) / combo->getNumItems());
 }
 
 void Ctrl::mouseEnter(const juce::MouseEvent &event) {
-    updateDisplayName();
+    //updateDisplayName();
 }
 
 void Ctrl::mouseDown(const juce::MouseEvent &event) {
@@ -172,9 +167,6 @@ void Ctrl::mouseDown(const juce::MouseEvent &event) {
             break;
         }
     }
-}
-
-void Ctrl::updateDisplayName() {
 }
 
 // ************************************************************************
@@ -301,7 +293,7 @@ public :
             *value = '0';
         else
             *value = '1';
-        updateDisplayName();
+        //updateDisplayName();
         
         // the value is based on the controller
         parent->setDxValue(155, -1);
@@ -328,14 +320,6 @@ public :
                 button->setToggleState(true, dontSendNotification);
             }
         }
-    }
-    
-    void updateDisplayName() {
-        DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
-        if ( editor == NULL ) {
-            return;
-        }
-        editor->global.setParamMessage(getValueDisplay());
     }
 };
 
@@ -434,32 +418,17 @@ String CtrlDX::getValueDisplay() {
     return ret;
 }
 
-void CtrlDX::updateDisplayName() {
-    DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) parent->getActiveEditor();
-    if ( editor == NULL ) {
-        return;
-    }
-    String msg;
-    msg << label << " = " << getValueDisplay();
-    editor->global.setParamMessage(msg);
-}
-
-
-void CtrlDX::publishValue(float value) {
-    Ctrl::publishValue(value / steps);
-    updateDisplayName();
-}
 
 void CtrlDX::sliderValueChanged(Slider* moved) {
-    publishValue(((int) moved->getValue() - displayValue));
+    //publishValue(((int) moved->getValue() - displayValue));
 }
 
 void CtrlDX::comboBoxChanged(ComboBox* combo) {
-    publishValue(combo->getSelectedId() - 1);
+    //publishValue(combo->getSelectedId() - 1);
 }
 
 void CtrlDX::buttonClicked(Button *button) {
-    publishValue((int) button->getToggleState());
+    //publishValue((int) button->getToggleState());
 }
 
 void CtrlDX::updateComponent() {
@@ -750,14 +719,7 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     lfo.reset(data + 137);
     currentProgram = index;
     triggerAsyncUpdate();
-    
-    // reset parameter display
-    DexedAudioProcessorEditor *editor = (DexedAudioProcessorEditor *) getActiveEditor();
-    if ( editor == NULL ) {
-        return;
-    }
-    editor->global.setParamMessage("");
-    
+
     panic();
 }
 

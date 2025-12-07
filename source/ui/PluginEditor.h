@@ -49,10 +49,11 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     void resetSize();
 
     Component frameComponent;
+    GlobalEditor global;
+
 public:
     DexedAudioProcessor *processor;
-    GlobalEditor global;
-    
+
     DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
     ~DexedAudioProcessorEditor();
     virtual void timerCallback() override;
