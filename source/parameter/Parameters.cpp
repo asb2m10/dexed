@@ -27,7 +27,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     params.add(std::make_unique<ParameterDx>(IDs::feedback, 8));
     params.add(std::make_unique<ParameterDx>(IDs::lfoRate, 99));
     params.add(std::make_unique<ParameterDx>(IDs::lfoDelay, 99));
-    params.add(std::make_unique<ParameterDx>(IDs::lfoPitchDepth, 1));
+    params.add(std::make_unique<ParameterDx>(IDs::lfoPmDepth, 1));
     params.add(std::make_unique<ParameterDx>(IDs::lfoAmpDepth, 1));
     params.add(std::make_unique<AudioParameterBool>(IDs::lfoKeySync.parameter(), IDs::lfoKeySync.displayName(), false));
 

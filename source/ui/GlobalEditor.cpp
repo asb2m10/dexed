@@ -733,21 +733,6 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     processor = edit->processor;
     attachments = std::make_unique<AttachmentHelper>(processor->parameters);
 
-    attachments->add(algo.get(), IDs::algorithm.name);
-    attachments->add(feedback.get(), IDs::feedback.name);
-    attachments->add(lfoSpeed.get(), IDs::lfoRate.name);
-    attachments->add(lfoDelay.get(), IDs::lfoDelay.name);
-    attachments->add(lfoType.get(), IDs::lfoWaveform.name);
-    attachments->add(lfoAmDepth.get(), IDs::lfoAmpDepth.name);
-    attachments->add(lfoPitchDepth.get(), IDs::lfoPitchDepth.name);
-    attachments->add(lfoSync.get(), IDs::lfoKeySync.name);
-    attachments->add(oscSync.get(), IDs::oscSync.name);
-    attachments->add(transpose.get(), IDs::transpose.name);
-    attachments->add(pitchModSens.get(), IDs::pitchModSens.name);
-    attachments->add(output.get(), IDs::output.name);
-    attachments->add(tune.get(), IDs::tune.name);
-    attachments->add(monoMode.get(), IDs::monoMode.name);
-
     algoDisplay->algo = (char *) &(processor->data[134]);
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 

@@ -3,17 +3,27 @@
 #include "core/Program.h"
 #include <vector>
 
-#define APPLY_OP(idx)             \
-    IDs::outputLevel.op((idx)),     \
-    IDs::on.op((idx))
-    // IDs::egRate.op(idx).idx(0),   \
-    // IDs::egRate.op(idx).idx(1),   \
-    // IDs::egRate.op(idx).idx(2),   \
-    // IDs::egRate.op(idx).idx(3),   \
-    // IDs::egLevel.op(idx).idx(0),   \
-    // IDs::egLevel.op(idx).idx(1),   \
-    // IDs::egLevel.op(idx).idx(2),   \
-    // IDs::egLevel.op(idx).idx(3)
+#define APPLY_OP(i)              \
+    IDs::egRate.op(i).idx(0),    \
+    IDs::egRate.op(i).idx(1),    \
+    IDs::egRate.op(i).idx(2),    \
+    IDs::egRate.op(i).idx(3),    \
+    IDs::egLevel.op(i).idx(0),   \
+    IDs::egLevel.op(i).idx(1),   \
+    IDs::egLevel.op(i).idx(2),   \
+    IDs::egLevel.op(i).idx(3),   \
+    IDs::breakpoint.op(i),       \
+    IDs::lScaleDepth.op(i),      \
+    IDs::rScaleDepth.op(i),      \
+    IDs::rateScaling.op(i),      \
+    IDs::aModSens.op(i),         \
+    IDs::keyVelocity.op(i),      \
+    IDs::outputLevel.op(i),      \
+    IDs::mode.op(i),             \
+    IDs::frequencyCoarse.op(i),  \
+    IDs::frequencyFine.op(i),    \
+    IDs::detune.op(i),           \
+    IDs::on.op(i)                \
 
 static const std::vector<MetaParameterID> dxParameters = {
     APPLY_OP(0),
@@ -27,7 +37,7 @@ static const std::vector<MetaParameterID> dxParameters = {
     IDs::feedback,
     IDs::lfoRate,
     IDs::lfoDelay,
-    IDs::lfoPitchDepth,
+    IDs::lfoPmDepth,
     IDs::lfoAmpDepth,
     IDs::lfoKeySync,
     IDs::lfoWaveform,
@@ -39,7 +49,6 @@ static const std::vector<MetaParameterID> dxParameters = {
     IDs::pitchEgRate.idx(1),
     IDs::pitchEgRate.idx(2),
     IDs::pitchEgRate.idx(3),
-
 };
 
 void DexedAudioProcessor::mapParameters() {
