@@ -16,7 +16,7 @@
     IDs::lScaleDepth.op(i),      \
     IDs::rScaleDepth.op(i),      \
     IDs::rateScaling.op(i),      \
-    IDs::aModSens.op(i),         \
+    IDs::ampModeSens.op(i),      \
     IDs::keyVelocity.op(i),      \
     IDs::outputLevel.op(i),      \
     IDs::mode.op(i),             \
@@ -61,7 +61,6 @@ void DexedAudioProcessor::mapParameters() {
 }
 
 void Program::applyToParameters(const juce::AudioProcessorValueTreeState &apvts) const {
-
     for (const auto &param : dxParameters) {
         RangedAudioParameter *parameter = apvts.getParameter(param.name);
         if ( parameter != nullptr ) {

@@ -115,11 +115,11 @@ void AlgoDisplay::displayOp(Graphics &g, char id, int x, int y, char link, char 
     
 }
 
-void AlgoDisplay::paint(Graphics &g) {    
+void AlgoDisplay::paint(Graphics &g) {
     g.setColour(DXLookNFeel::fillColour);
     g.fillRect(1, 3, 20, 15);
     String n = String(*algo +1);
-    
+
     g.setColour(Colours::white);
     g.drawText(n, 1, 3, 20, 15, Justification::centred, true);
     

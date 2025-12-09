@@ -23,7 +23,7 @@ namespace IDs {
             DECLARE_METADX(pitchModSens, 143, 0)
             DECLARE_METADX(pitchEgRate, 126, 0)
             DECLARE_METADX(pitchEgLevel, 138, 0)
-            DECLARE_METADX(transpose, 144, 0)
+            DECLARE_METADX(transpose, 144, -24)
 
                 // Parameters based on operators (1-6)
                 DECLARE_METADX(egRate, 0, 0)
@@ -34,7 +34,7 @@ namespace IDs {
                 DECLARE_METADX(lKeyScale, 11, 0)
                 DECLARE_METADX(rKeyScale, 12, 0)
                 DECLARE_METADX(rateScaling, 13, 0)
-                DECLARE_METADX(aModSens, 14, 0)
+                DECLARE_METADX(ampModeSens, 14, 0)
                 DECLARE_METADX(keyVelocity, 15, 0)
                 DECLARE_METADX(outputLevel, 16, 0)
                 DECLARE_METADX(mode, 17, 0)
@@ -47,6 +47,8 @@ namespace IDs {
             DECLARE_META(tune)
             DECLARE_META(monoMode)
             DECLARE_META(masteTuneAdj)
+            DECLARE_META(cutoff)
+            DECLARE_META(resonance)
 
         // This should be public for parameter attributes
         DECLARE_ID(id)

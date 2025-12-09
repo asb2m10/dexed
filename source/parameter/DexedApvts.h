@@ -3,7 +3,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 
 class ParameterCallback final : private juce::AudioProcessorParameter::Listener {
-    RangedAudioParameter &parameter;
+    juce::RangedAudioParameter &parameter;
     const std::function<void(float)> func;
 public:
     ParameterCallback(juce::RangedAudioParameter &parameter, const std::function<void(float)> funcIn) :

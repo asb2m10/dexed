@@ -131,315 +131,252 @@ public:
 //[/MiscUserDefs]
 
 //==============================================================================
-GlobalEditor::GlobalEditor ()
-{
-    //[Constructor_pre] You can add your own custom stuff here..
-    //[/Constructor_pre]
+GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processor) {
+    binder = std::make_unique<AudioComponentContainer>(*this, processor.parameters);
 
-    lfoSpeed.reset (new DXSlider ("lfoSpeed"));
-    addAndMakeVisible (lfoSpeed.get());
+    algoDisplay.reset (new AlgoDisplay());
+    algoDisplay->algo = (char *) &(processor.data[134]);
+    addAndMakeVisible(algoDisplay.get());
+    algoDisplay->setName("algoDisplay");
+    algoDisplay->setBounds(335, 30, 152, 91);
+    algoDisplay->opStatus = processor.controllers.opSwitch;
+
+    auto algo = std::make_unique<DXSlider>(IDs::algorithm.name);
+    algo->setExplicitFocusOrder (11);
+    algo->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    algo->setTextBoxStyle(juce::Slider::NoTextBox, true, 80, 20);
+    algo->setBounds(501, 22, 34, 34);
+    algo->onValueChange = [this]() {
+        algoDisplay->repaint();
+    };
+    binder->addAndAttach(std::move(algo));
+
+    auto feedback = std::make_unique<DXSlider>(IDs::feedback.name);
+    feedback->setExplicitFocusOrder (12);
+    feedback->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    feedback->setTextBoxStyle(juce::Slider::NoTextBox, true, 80, 20);
+    feedback->setBounds(501, 81, 34, 34);
+    binder->addAndAttach(std::move(feedback));
+
+    auto lfoSpeed = std::make_unique<DXSlider>(IDs::lfoRate.name);
     lfoSpeed->setExplicitFocusOrder (14);
-    lfoSpeed->setRange (0, 99, 1);
     lfoSpeed->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoSpeed->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    lfoSpeed->addListener (this);
-
     lfoSpeed->setBounds (564, 50, 34, 34);
+    binder->addAndAttach(std::move(lfoSpeed));
 
-    lfoAmDepth.reset (new DXSlider ("lfoAmDepth"));
-    addAndMakeVisible (lfoAmDepth.get());
+    auto lfoAmDepth = std::make_unique<DXSlider>(IDs::lfoAmpDepth.name);
     lfoAmDepth->setExplicitFocusOrder (19);
-    lfoAmDepth->setRange (0, 99, 1);
     lfoAmDepth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoAmDepth->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    lfoAmDepth->addListener (this);
-
     lfoAmDepth->setBounds (686, 50, 34, 34);
+    binder->addAndAttach(std::move(lfoAmDepth));
 
-    lfoPitchDepth.reset (new DXSlider ("lfoPitchDepth"));
-    addAndMakeVisible (lfoPitchDepth.get());
+    auto lfoPitchDepth = std::make_unique<DXSlider>(IDs::lfoPmDepth.name);
     lfoPitchDepth->setExplicitFocusOrder (18);
-    lfoPitchDepth->setRange (0, 99, 1);
     lfoPitchDepth->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoPitchDepth->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    lfoPitchDepth->addListener (this);
-
     lfoPitchDepth->setBounds (646, 50, 34, 34);
+    binder->addAndAttach(std::move(lfoPitchDepth));
 
-    lfoDelay.reset (new DXSlider ("lfoDelay"));
-    addAndMakeVisible (lfoDelay.get());
+    auto lfoDelay = std::make_unique<DXSlider>(IDs::lfoDelay.name);
     lfoDelay->setExplicitFocusOrder (15);
-    lfoDelay->setRange (0, 99, 1);
     lfoDelay->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     lfoDelay->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    lfoDelay->addListener (this);
-
     lfoDelay->setBounds (603, 50, 34, 34);
+    binder->addAndAttach(std::move(lfoDelay));
 
-    cutoff.reset (new DXSlider ("cutoff"));
-    addAndMakeVisible (cutoff.get());
-    cutoff->setExplicitFocusOrder (6);
-    cutoff->setRange (0, 1, 0);
-    cutoff->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    cutoff->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    cutoff->addListener (this);
-
-    cutoff->setBounds (234, 9, 34, 34);
-
-    reso.reset (new DXSlider ("reso"));
-    addAndMakeVisible (reso.get());
-    reso->setExplicitFocusOrder (7);
-    reso->setRange (0, 1, 0);
-    reso->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    reso->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    reso->addListener (this);
-
-    reso->setBounds (278, 9, 34, 34);
-
-    pitchRate2.reset (new DXSlider ("pitchRate2"));
-    addAndMakeVisible (pitchRate2.get());
-    pitchRate2->setExplicitFocusOrder (24);
-    pitchRate2->setRange (0, 99, 1);
-    pitchRate2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchRate2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchRate2->addListener (this);
-
-    pitchRate2->setBounds (767, 96, 34, 34);
-
-    pitchRate3.reset (new DXSlider ("pitchRate3"));
-    addAndMakeVisible (pitchRate3.get());
-    pitchRate3->setExplicitFocusOrder (26);
-    pitchRate3->setRange (0, 99, 1);
-    pitchRate3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchRate3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchRate3->addListener (this);
-
-    pitchRate3->setBounds (795, 96, 35, 34);
-
-    pitchRate4.reset (new DXSlider ("pitchRate4"));
-    addAndMakeVisible (pitchRate4.get());
-    pitchRate4->setExplicitFocusOrder (28);
-    pitchRate4->setRange (0, 99, 1);
-    pitchRate4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchRate4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchRate4->addListener (this);
-
-    pitchRate4->setBounds (823, 96, 34, 34);
-
-    pitchRate1.reset (new DXSlider ("pitchRate1"));
-    addAndMakeVisible (pitchRate1.get());
-    pitchRate1->setExplicitFocusOrder (22);
-    pitchRate1->setRange (0, 99, 1);
+    auto pitchRate1 = std::make_unique<DXSlider>(IDs::pitchEgRate.idx(0).name);
+    pitchRate1->setExplicitFocusOrder (23);
     pitchRate1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchRate1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchRate1->addListener (this);
-
     pitchRate1->setBounds (739, 96, 34, 34);
+    binder->addAndAttach(std::move(pitchRate1));
 
-    pitchLevel2.reset (new DXSlider ("pitchLevel2"));
-    addAndMakeVisible (pitchLevel2.get());
-    pitchLevel2->setExplicitFocusOrder (23);
-    pitchLevel2->setRange (0, 99, 1);
-    pitchLevel2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchLevel2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchLevel2->addListener (this);
+    auto pitchRate2 = std::make_unique<DXSlider>(IDs::pitchEgRate.idx(1).name);
+    pitchRate2->setExplicitFocusOrder (24);
+    pitchRate2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchRate2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    pitchRate2->setBounds (767, 96, 34, 34);
+    binder->addAndAttach(std::move(pitchRate2));
 
-    pitchLevel2->setBounds (767, 57, 34, 34);
+    auto pitchRate3 = std::make_unique<DXSlider>(IDs::pitchEgRate.idx(2).name);
+    pitchRate3->setExplicitFocusOrder (26);
+    pitchRate3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchRate3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    pitchRate3->setBounds (795, 96, 35, 34);
+    binder->addAndAttach(std::move(pitchRate3));
 
-    pitchLevel3.reset (new DXSlider ("pitchLevel3"));
-    addAndMakeVisible (pitchLevel3.get());
-    pitchLevel3->setExplicitFocusOrder (25);
-    pitchLevel3->setRange (0, 99, 1);
-    pitchLevel3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchLevel3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchLevel3->addListener (this);
+    auto pitchRate4 = std::make_unique<DXSlider>(IDs::pitchEgRate.idx(3).name);
+    pitchRate4->setExplicitFocusOrder (28);
+    pitchRate4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchRate4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    pitchRate4->setBounds (823, 96, 34, 34);
+    binder->addAndAttach(std::move(pitchRate4));
 
-    pitchLevel3->setBounds (795, 56, 34, 34);
-
-    pitchLevel4.reset (new DXSlider ("pitchLevel4"));
-    addAndMakeVisible (pitchLevel4.get());
-    pitchLevel4->setExplicitFocusOrder (27);
-    pitchLevel4->setRange (0, 99, 1);
-    pitchLevel4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchLevel4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchLevel4->addListener (this);
-
-    pitchLevel4->setBounds (823, 56, 34, 34);
-
-    pitchLevel1.reset (new DXSlider ("pitchLevel1"));
-    addAndMakeVisible (pitchLevel1.get());
+    auto pitchLevel1 = std::make_unique<DXSlider>(IDs::pitchEgLevel.idx(0).name);
     pitchLevel1->setExplicitFocusOrder (21);
-    pitchLevel1->setRange (0, 99, 1);
     pitchLevel1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchLevel1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchLevel1->addListener (this);
-
     pitchLevel1->setBounds (739, 57, 34, 34);
+    binder->addAndAttach(std::move(pitchLevel1));
 
-    transpose.reset (new DXSlider ("transpose"));
-    addAndMakeVisible (transpose.get());
+    auto pitchLevel2 = std::make_unique<DXSlider>(IDs::pitchEgLevel.idx(1).name);
+    pitchLevel2->setExplicitFocusOrder (23);
+    pitchLevel2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchLevel2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    pitchLevel2->setBounds (767, 57, 34, 34);
+    binder->addAndAttach(std::move(pitchLevel2));
+
+    auto pitchLevel3 = std::make_unique<DXSlider>(IDs::pitchEgLevel.idx(2).name);
+    pitchLevel3->setExplicitFocusOrder (25);
+    pitchLevel3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchLevel3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    pitchLevel3->setBounds (795, 56, 34, 34);
+    binder->addAndAttach(std::move(pitchLevel3));
+
+    auto pitchLevel4 = std::make_unique<DXSlider>(IDs::pitchEgLevel.idx(3).name);
+    pitchLevel4->setExplicitFocusOrder (27);
+    pitchLevel4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    pitchLevel4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    pitchLevel4->setBounds (823, 56, 34, 34);
+    binder->addAndAttach(std::move(pitchLevel4));
+
+    auto cutoff = std::make_unique<DXSlider>(IDs::cutoff.name);
+    cutoff->setExplicitFocusOrder(6);
+    cutoff->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    cutoff->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
+    cutoff->setBounds (234, 9, 34, 34);
+    binder->addAndAttach(std::move(cutoff));
+
+    auto reso = std::make_unique<DXSlider>(IDs::resonance.name);
+    reso->setExplicitFocusOrder(7);
+    reso->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    reso->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
+    reso->setBounds (278, 9, 34, 34);
+    binder->addAndAttach(std::move(reso));
+
+    auto transpose = std::make_unique<DXSlider>(IDs::transpose.name);
     transpose->setExplicitFocusOrder (9);
-    transpose->setRange (0, 48, 1);
     transpose->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     transpose->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    transpose->addListener (this);
-
     transpose->setBounds (202, 60, 34, 34);
+    binder->addAndAttach(std::move(transpose));
 
-    oscSync.reset (new juce::ToggleButton ("oscSync"));
-    addAndMakeVisible (oscSync.get());
-    oscSync->setExplicitFocusOrder (20);
-    oscSync->setButtonText (juce::String());
-    oscSync->addListener (this);
-
-    oscSync->setBounds (650, 96, 48, 26);
-
-    pitchModSens.reset (new DXSlider ("pitchModSens"));
-    addAndMakeVisible (pitchModSens.get());
-    pitchModSens->setExplicitFocusOrder (17);
-    pitchModSens->setRange (0, 7, 1);
+    pitchModSens = std::make_unique<DXSlider>(IDs::pitchModSens.name);
+    pitchModSens->setExplicitFocusOrder(17);
     pitchModSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchModSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    pitchModSens->addListener (this);
-
     pitchModSens->setBounds (666, 5, 34, 34);
+    binder->addAndAttach(std::move(pitchModSens));
 
-    lfoSync.reset (new juce::ToggleButton ("lfoSync"));
-    addAndMakeVisible (lfoSync.get());
-    lfoSync->setExplicitFocusOrder (16);
+    auto output = std::make_unique<DXSlider>(IDs::output.name);
+    output->setExplicitFocusOrder (8);
+    output->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    output->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
+    output->setBounds (157, 60, 34, 34);
+    binder->addAndAttach(std::move(output));
+
+    auto tune = std::make_unique<DXSlider>(IDs::tune.name);
+    tune->setExplicitFocusOrder (5);
+    tune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    tune->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
+    tune->setBounds (190, 9, 34, 34);
+    binder->addAndAttach(std::move(tune));
+
+    lfoType.reset (new ComboBoxImage());
+    addAndMakeVisible (lfoType.get());
+    lfoType->setExplicitFocusOrder (13);
+    lfoType->setName ("lfoType");
+    lfoType->setBounds (583, 8, 36, 26);
+
+    // EVENT DRIVEN COMPONENTS
+
+    monoMode = std::make_unique<juce::ToggleButton>(IDs::monoMode.name);
+    monoMode->setExplicitFocusOrder(10);
+    monoMode->setButtonText (juce::String());
+    monoMode->setBounds (249, 65, 48, 26);
+    monoMode->onStateChange = [this]() {
+        repaint();
+    };
+    binder->attach(monoMode.get());
+    addAndMakeVisible(monoMode.get());
+
+    lfoSync = std::make_unique<juce::ToggleButton>(IDs::lfoKeySync.name);
+    lfoSync->setExplicitFocusOrder(16);
     lfoSync->setButtonText (juce::String());
-    lfoSync->addListener (this);
-
     lfoSync->setBounds (565, 96, 48, 26);
+    lfoSync->onStateChange = [this]() {
+        repaint();
+    };
+    binder->attach(lfoSync.get());
+    addAndMakeVisible(lfoSync.get());
+
+    oscSync = std::make_unique<juce::ToggleButton>(IDs::oscKeySync.name);
+    oscSync->setExplicitFocusOrder(20);
+    oscSync->setButtonText (juce::String());
+    oscSync->setBounds (650, 96, 48, 26);
+    lfoSync->onStateChange = [this]() {
+        repaint();
+    };
+    binder->attach(oscSync.get());
+    addAndMakeVisible(oscSync.get());
+
+    // EXTRA COMPONENTS
 
     pitchEnvDisplay.reset (new PitchEnvDisplay());
     addAndMakeVisible (pitchEnvDisplay.get());
     pitchEnvDisplay->setName ("pitchEnvDisplay");
-
     pitchEnvDisplay->setBounds (751, 10, 93, 30);
-
-    algoDisplay.reset (new AlgoDisplay());
-    addAndMakeVisible (algoDisplay.get());
-    algoDisplay->setName ("algoDisplay");
-
-    algoDisplay->setBounds (335, 30, 152, 91);
-
-    feedback.reset (new DXSlider ("feedback"));
-    addAndMakeVisible (feedback.get());
-    feedback->setExplicitFocusOrder (12);
-    feedback->setRange (0, 7, 1);
-    feedback->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    feedback->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    feedback->addListener (this);
-
-    feedback->setBounds (501, 81, 34, 34);
-
-    algo.reset (new DXSlider ("algo"));
-    addAndMakeVisible (algo.get());
-    algo->setExplicitFocusOrder (11);
-    algo->setRange (1, 32, 1);
-    algo->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    algo->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    algo->addListener (this);
-
-    algo->setBounds (501, 22, 34, 34);
 
     lcdDisplay.reset (new LcdDisplay());
     addAndMakeVisible (lcdDisplay.get());
     lcdDisplay->setName ("lcdDisplay");
-
     lcdDisplay->setBounds (6, 87, 140, 13);
-
-    output.reset (new DXSlider ("output"));
-    addAndMakeVisible (output.get());
-    output->setExplicitFocusOrder (8);
-    output->setRange (0, 1, 0);
-    output->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    output->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    output->addListener (this);
-
-    output->setBounds (157, 60, 34, 34);
 
     vuOutput.reset (new VuMeterOutput());
     addAndMakeVisible (vuOutput.get());
     vuOutput->setName ("vuOutput");
-
     vuOutput->setBounds (6, 103, 140, 8);
 
     initButton.reset (new juce::TextButton ("initButton"));
     addAndMakeVisible (initButton.get());
     initButton->setExplicitFocusOrder (3);
     initButton->setButtonText (TRANS ("INIT"));
-    initButton->addListener (this);
-
     initButton->setBounds (100, 111, 50, 30);
 
     parmButton.reset (new juce::TextButton ("parmButton"));
     addAndMakeVisible (parmButton.get());
     parmButton->setExplicitFocusOrder (2);
     parmButton->setButtonText (TRANS ("PARM"));
-    parmButton->addListener (this);
-
     parmButton->setBounds (52, 111, 50, 30);
 
     cartButton.reset (new juce::TextButton ("cartButton"));
     addAndMakeVisible (cartButton.get());
     cartButton->setExplicitFocusOrder (1);
     cartButton->setButtonText (TRANS ("CART"));
-    cartButton->addListener (this);
-
     cartButton->setBounds (3, 111, 50, 30);
 
     storeButton.reset (new juce::TextButton ("storeButton"));
     addAndMakeVisible (storeButton.get());
     storeButton->setExplicitFocusOrder (4);
     storeButton->setButtonText (TRANS ("STORE"));
-    storeButton->addListener (this);
-
     storeButton->setBounds (270, 109, 50, 30);
-
-    monoMode.reset (new juce::ToggleButton ("monoMode"));
-    addAndMakeVisible (monoMode.get());
-    monoMode->setExplicitFocusOrder (10);
-    monoMode->setButtonText (juce::String());
-    monoMode->addListener (this);
-
-    monoMode->setBounds (249, 65, 48, 26);
-
-    lfoType.reset (new ComboBoxImage());
-    addAndMakeVisible (lfoType.get());
-    lfoType->setExplicitFocusOrder (13);
-    lfoType->setName ("lfoType");
-
-    lfoType->setBounds (583, 8, 36, 26);
 
     programSelector.reset (new ProgramSelector());
     addAndMakeVisible (programSelector.get());
     programSelector->setName ("programSelector");
-
     programSelector->setBounds (153, 115, 112, 18);
 
     aboutButton.reset (new juce::ImageButton ("aboutButton"));
     addAndMakeVisible (aboutButton.get());
     aboutButton->setButtonText (juce::String());
     aboutButton->addListener (this);
-
     aboutButton->setImages (false, true, false,
                             juce::Image(), 1.000f, juce::Colour (0x00000000),
                             juce::Image(), 1.000f, juce::Colour (0x00000000),
                             juce::Image(), 1.000f, juce::Colour (0x00000000));
     aboutButton->setBounds (8, 11, 135, 46);
-
-    tune.reset (new DXSlider ("tune"));
-    addAndMakeVisible (tune.get());
-    tune->setExplicitFocusOrder (5);
-    tune->setRange (0, 1, 0);
-    tune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    tune->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    tune->addListener (this);
-
-    tune->setBounds (190, 9, 34, 34);
-
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -465,40 +402,32 @@ GlobalEditor::GlobalEditor ()
     setFocusContainerType(FocusContainerType::focusContainer);
     setWantsKeyboardFocus(true);
     aboutButton->setTitle("About DEXED");
+
+    pitchEnvDisplay->pvalues = &(processor.data[126]);
+
+#ifdef IMPLEMENT_MidiMonitor
+    midiMonitor = std::make_unique<MidiMonitor>(&(processor->sysexComm));
+    addAndMakeVisible(*midiMonitor);
+    midiMonitor->setBounds(110, 10, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
+#endif //IMPLEMENT_MidiMonitor
+
+
     //[/Constructor]
 }
 
 GlobalEditor::~GlobalEditor()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    attachments->disconnect();
+    binder->freeAttachments();
 
     //[/Destructor_pre]
 
-    lfoSpeed = nullptr;
-    lfoAmDepth = nullptr;
-    lfoPitchDepth = nullptr;
-    lfoDelay = nullptr;
-    cutoff = nullptr;
-    reso = nullptr;
-    pitchRate2 = nullptr;
-    pitchRate3 = nullptr;
-    pitchRate4 = nullptr;
-    pitchRate1 = nullptr;
-    pitchLevel2 = nullptr;
-    pitchLevel3 = nullptr;
-    pitchLevel4 = nullptr;
-    pitchLevel1 = nullptr;
     transpose = nullptr;
     oscSync = nullptr;
     pitchModSens = nullptr;
-    lfoSync = nullptr;
     pitchEnvDisplay = nullptr;
     algoDisplay = nullptr;
-    feedback = nullptr;
-    algo = nullptr;
     lcdDisplay = nullptr;
-    output = nullptr;
     vuOutput = nullptr;
     initButton = nullptr;
     parmButton = nullptr;
@@ -508,8 +437,6 @@ GlobalEditor::~GlobalEditor()
     lfoType = nullptr;
     programSelector = nullptr;
     aboutButton = nullptr;
-    tune = nullptr;
-
 
     //[Destructor]. You can add your own custom destruction code here..
     //[/Destructor]
@@ -540,176 +467,18 @@ void GlobalEditor::resized()
 
 void GlobalEditor::sliderValueChanged (juce::Slider* sliderThatWasMoved)
 {
-    //[UsersliderValueChanged_Pre]
-    //[/UsersliderValueChanged_Pre]
-
-    if (sliderThatWasMoved == lfoSpeed.get())
-    {
-        //[UserSliderCode_lfoSpeed] -- add your slider handling code here..
-        //[/UserSliderCode_lfoSpeed]
-    }
-    else if (sliderThatWasMoved == lfoAmDepth.get())
-    {
-        //[UserSliderCode_lfoAmDepth] -- add your slider handling code here..
-        //[/UserSliderCode_lfoAmDepth]
-    }
-    else if (sliderThatWasMoved == lfoPitchDepth.get())
-    {
-        //[UserSliderCode_lfoPitchDepth] -- add your slider handling code here..
-        //[/UserSliderCode_lfoPitchDepth]
-    }
-    else if (sliderThatWasMoved == lfoDelay.get())
-    {
-        //[UserSliderCode_lfoDelay] -- add your slider handling code here..
-        //[/UserSliderCode_lfoDelay]
-    }
-    else if (sliderThatWasMoved == cutoff.get())
-    {
-        //[UserSliderCode_cutoff] -- add your slider handling code here..
-        //[/UserSliderCode_cutoff]
-    }
-    else if (sliderThatWasMoved == reso.get())
-    {
-        //[UserSliderCode_reso] -- add your slider handling code here..
-        //[/UserSliderCode_reso]
-    }
-    else if (sliderThatWasMoved == pitchRate2.get())
-    {
-        //[UserSliderCode_pitchRate2] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchRate2]
-    }
-    else if (sliderThatWasMoved == pitchRate3.get())
-    {
-        //[UserSliderCode_pitchRate3] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchRate3]
-    }
-    else if (sliderThatWasMoved == pitchRate4.get())
-    {
-        //[UserSliderCode_pitchRate4] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchRate4]
-    }
-    else if (sliderThatWasMoved == pitchRate1.get())
-    {
-        //[UserSliderCode_pitchRate1] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchRate1]
-    }
-    else if (sliderThatWasMoved == pitchLevel2.get())
-    {
-        //[UserSliderCode_pitchLevel2] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchLevel2]
-    }
-    else if (sliderThatWasMoved == pitchLevel3.get())
-    {
-        //[UserSliderCode_pitchLevel3] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchLevel3]
-    }
-    else if (sliderThatWasMoved == pitchLevel4.get())
-    {
-        //[UserSliderCode_pitchLevel4] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchLevel4]
-    }
-    else if (sliderThatWasMoved == pitchLevel1.get())
-    {
-        //[UserSliderCode_pitchLevel1] -- add your slider handling code here..
-        pitchEnvDisplay->repaint();
-        //[/UserSliderCode_pitchLevel1]
-    }
-    else if (sliderThatWasMoved == transpose.get())
-    {
-        //[UserSliderCode_transpose] -- add your slider handling code here..
-        //[/UserSliderCode_transpose]
-    }
-    else if (sliderThatWasMoved == pitchModSens.get())
-    {
-        //[UserSliderCode_pitchModSens] -- add your slider handling code here..
-        //[/UserSliderCode_pitchModSens]
-    }
-    else if (sliderThatWasMoved == feedback.get())
-    {
-        //[UserSliderCode_feedback] -- add your slider handling code here..
-        //[/UserSliderCode_feedback]
-    }
-    else if (sliderThatWasMoved == algo.get())
-    {
-        //[UserSliderCode_algo] -- add your slider handling code here..
-        algoDisplay->repaint();
-        //[/UserSliderCode_algo]
-    }
-    else if (sliderThatWasMoved == output.get())
-    {
-        //[UserSliderCode_output] -- add your slider handling code here..
-        //[/UserSliderCode_output]
-    }
-    else if (sliderThatWasMoved == tune.get())
-    {
-        //[UserSliderCode_tune] -- add your slider handling code here..
-        //[/UserSliderCode_tune]
-    }
-
-    //[UsersliderValueChanged_Post]
-    //[/UsersliderValueChanged_Post]
 }
 
 void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 {
-    //[UserbuttonClicked_Pre]
-    //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == oscSync.get())
-    {
-        //[UserButtonCode_oscSync] -- add your button handler code here..
-        repaint();
-        //[/UserButtonCode_oscSync]
-    }
-    else if (buttonThatWasClicked == lfoSync.get())
-    {
-        //[UserButtonCode_lfoSync] -- add your button handler code here..
-        repaint();
-        //[/UserButtonCode_lfoSync]
-    }
-    else if (buttonThatWasClicked == initButton.get())
-    {
-        //[UserButtonCode_initButton] -- add your button handler code here..
-        editor->initProgram();
-        //[/UserButtonCode_initButton]
-    }
-    else if (buttonThatWasClicked == parmButton.get())
-    {
-        //[UserButtonCode_parmButton] -- add your button handler code here..
-        editor->parmShow();
-        //[/UserButtonCode_parmButton]
-    }
-    else if (buttonThatWasClicked == cartButton.get())
-    {
-        //[UserButtonCode_cartButton] -- add your button handler code here..
-        editor->cartShow();
-        //[/UserButtonCode_cartButton]
-    }
-    else if (buttonThatWasClicked == storeButton.get())
-    {
-        //[UserButtonCode_storeButton] -- add your button handler code here..
-        editor->storeProgram();
-        //[/UserButtonCode_storeButton]
-    }
-    else if (buttonThatWasClicked == monoMode.get())
-    {
-        //[UserButtonCode_monoMode] -- add your button handler code here..
-        //[/UserButtonCode_monoMode]
-    }
-    else if (buttonThatWasClicked == aboutButton.get())
+    if (buttonThatWasClicked == aboutButton.get())
     {
         //[UserButtonCode_aboutButton] -- add your button handler code here..
         juce::ModifierKeys modifiers = juce::ModifierKeys::getCurrentModifiers();
 
         if ( modifiers.isCtrlDown() ) {
-            ValueTreeDebugger *vtd = new ValueTreeDebugger(processor->rootVt);
+            ValueTreeDebugger *vtd = new ValueTreeDebugger(processor.rootVt);
             debugger.reset(vtd);
             return;
         }
@@ -720,61 +489,11 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
         aboutBox->enterModalState(true,{});
         //[/UserButtonCode_aboutButton]
     }
-
-    //[UserbuttonClicked_Post]
-    //[/UserbuttonClicked_Post]
 }
 
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-
-void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
-    processor = edit->processor;
-    attachments = std::make_unique<AttachmentHelper>(processor->parameters);
-
-    algoDisplay->algo = (char *) &(processor->data[134]);
-    pitchEnvDisplay->pvalues = &(processor->data[126]);
-
-    algoDisplay->opStatus = processor->controllers.opSwitch;
-
-    editor = edit;
-
-#ifdef IMPLEMENT_MidiMonitor
-    midiMonitor = std::make_unique<MidiMonitor>(&(processor->sysexComm));
-    addAndMakeVisible(*midiMonitor);
-    midiMonitor->setBounds(110, 10, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
-#endif //IMPLEMENT_MidiMonitor
-
-    repaint();
-
-    /*
-	processor->algo->bind(algo.get());
-	processor->lfoRate->bind(lfoSpeed.get());
-	processor->lfoDelay->bind(lfoDelay.get());
-	processor->lfoWaveform->bind(lfoType.get());
-	processor->lfoAmpDepth->bind(lfoAmDepth.get());
-	processor->lfoPitchDepth->bind(lfoPitchDepth.get());
-    processor->lfoSync->bind(lfoSync.get());
-    processor->oscSync->bind(oscSync.get());
-    processor->transpose->bind(transpose.get());
-    processor->feedback->bind(feedback.get());
-    processor->pitchModSens->bind(pitchModSens.get());
-    processor->pitchEgLevel[0]->bind(pitchLevel1.get());
-    processor->pitchEgLevel[1]->bind(pitchLevel2.get());
-    processor->pitchEgLevel[2]->bind(pitchLevel3.get());
-    processor->pitchEgLevel[3]->bind(pitchLevel4.get());
-    processor->pitchEgRate[0]->bind(pitchRate1.get());
-    processor->pitchEgRate[1]->bind(pitchRate2.get());
-    processor->pitchEgRate[2]->bind(pitchRate3.get());
-    processor->pitchEgRate[3]->bind(pitchRate4.get());
-    processor->fxCutoff->bind(cutoff.get());
-    processor->fxReso->bind(reso.get());
-    processor->output->bind(output.get());
-    processor->tune->bind(tune.get());
-    processor->monoModeCtrl->bind(monoMode.get());
-*/
-}
 
 void GlobalEditor::setSystemMessage(String msg) {
     lcdDisplay->setSystemMsg(msg);
@@ -802,10 +521,6 @@ void GlobalEditor::updateVu(float f) {
 #endif //IMPLEMENT_MidiMonitor
 }
 
-void GlobalEditor::setMonoState(bool state)  {
-    monoMode->setToggleState(state ? Button::buttonDown : Button::buttonNormal, dontSendNotification);
-}
-
 void GlobalEditor::mouseDown(const MouseEvent &e) {
     if ( e.mods.isPopupMenu()) {
         PopupMenu popup;
@@ -815,7 +530,7 @@ void GlobalEditor::mouseDown(const MouseEvent &e) {
         switch( p )
         {
         case 1:
-           processor->sendCurrentSysexProgram();
+           processor.sendCurrentSysexProgram();
            break;
         default:
             break;

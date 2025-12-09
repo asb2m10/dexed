@@ -33,7 +33,7 @@
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-      cartManager(this)
+      cartManager(this), global(*ownerFilter)
 {
     processor = ownerFilter;
 
@@ -81,9 +81,11 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
     frameComponent.addAndMakeVisible(&global);
     global.setBounds(2,436,864,144);
-    global.bind(this);
 
-    global.setMonoState(processor->isMonoMode());
+    global.cartButton->onClick = [this]() { cartShow(); };
+    global.parmButton->onClick = [this]() { parmShow(); };
+    global.initButton->onClick = [this]() { initProgram(); };
+    global.storeButton->onClick = [this]() { storeProgram(); };
 
     rebuildProgramCombobox();
     global.programs->addListener(this);

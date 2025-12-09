@@ -26,6 +26,8 @@
 #include "ProgramListBox.h"
 #include "PluginData.h"
 
+class DexedAudioProcessorEditor;
+
 class CartridgeFileDisplay : public Component {
     File file;
     float clickableArea = 0;

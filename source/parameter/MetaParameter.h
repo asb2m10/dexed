@@ -16,7 +16,7 @@ struct MetaParameterID {
     }
 
     MetaParameterID op(int op) const {
-        return MetaParameterID(juce::String("op" + juce::String(op+1) + name));
+        return MetaParameterID(juce::String("op" + juce::String(op+1) + name), pos + (5-op) * 21, displayOffset);
     }
 
     MetaParameterID idx(int idx) const {

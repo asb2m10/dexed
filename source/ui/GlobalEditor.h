@@ -23,44 +23,29 @@
 #include "PluginProcessor.h"
 #include "DXComponents.h"
 #include "AlgoDisplay.h"
+#include "util/AudioComponentContainer.h"
 
 #ifdef IMPLEMENT_MidiMonitor
 #include "SysexComm.h"
 #endif // IMPLEMENT_MidiMonitor
 
-class DexedAudioProcessorEditor;
-//[/Headers]
 
-
-
-//==============================================================================
-/**
-                                                                    //[Comments]
-    An auto-generated component, created by the Introjucer.
-
-    Describe your class and how it works here!
-                                                                    //[/Comments]
-*/
 class GlobalEditor  : public Component,
                       public juce::Slider::Listener,
                       public juce::Button::Listener
 {
 public:
     //==============================================================================
-    GlobalEditor ();
+    GlobalEditor (DexedAudioProcessor &processor);
     ~GlobalEditor() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void bind(DexedAudioProcessorEditor *processor);
     void setSystemMessage(String msg);
     void setParamMessage(String msg);
     void updatePitchPos(int pos);
     void updateVu(float v);
     void updateDisplay();
-    void repaintMsg();
-
-    void setMonoState(bool state);
     ProgramSelector *programs;
 
 #ifdef IMPLEMENT_MidiMonitor
@@ -75,12 +60,15 @@ public:
     void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
     void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
-
+    // TODO: put accessor methods here to get to buttons/sliders if needed
+    std::unique_ptr<juce::TextButton> initButton;
+    std::unique_ptr<juce::TextButton> parmButton;
+    std::unique_ptr<juce::TextButton> cartButton;
+    std::unique_ptr<juce::TextButton> storeButton;
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    DexedAudioProcessorEditor *editor;
-    DexedAudioProcessor *processor;
+    DexedAudioProcessor &processor;
 
     Image background;
     Image imageLight;
@@ -89,20 +77,6 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<juce::Slider> lfoSpeed;
-    std::unique_ptr<juce::Slider> lfoAmDepth;
-    std::unique_ptr<juce::Slider> lfoPitchDepth;
-    std::unique_ptr<juce::Slider> lfoDelay;
-    std::unique_ptr<juce::Slider> cutoff;
-    std::unique_ptr<juce::Slider> reso;
-    std::unique_ptr<juce::Slider> pitchRate2;
-    std::unique_ptr<juce::Slider> pitchRate3;
-    std::unique_ptr<juce::Slider> pitchRate4;
-    std::unique_ptr<juce::Slider> pitchRate1;
-    std::unique_ptr<juce::Slider> pitchLevel2;
-    std::unique_ptr<juce::Slider> pitchLevel3;
-    std::unique_ptr<juce::Slider> pitchLevel4;
-    std::unique_ptr<juce::Slider> pitchLevel1;
     std::unique_ptr<juce::Slider> transpose;
     std::unique_ptr<juce::ToggleButton> oscSync;
     std::unique_ptr<juce::Slider> pitchModSens;
@@ -110,21 +84,16 @@ private:
     std::unique_ptr<PitchEnvDisplay> pitchEnvDisplay;
     std::unique_ptr<AlgoDisplay> algoDisplay;
     std::unique_ptr<juce::Slider> feedback;
-    std::unique_ptr<juce::Slider> algo;
     std::unique_ptr<LcdDisplay> lcdDisplay;
     std::unique_ptr<juce::Slider> output;
     std::unique_ptr<VuMeterOutput> vuOutput;
-    std::unique_ptr<juce::TextButton> initButton;
-    std::unique_ptr<juce::TextButton> parmButton;
-    std::unique_ptr<juce::TextButton> cartButton;
-    std::unique_ptr<juce::TextButton> storeButton;
     std::unique_ptr<juce::ToggleButton> monoMode;
     std::unique_ptr<ComboBoxImage> lfoType;
     std::unique_ptr<ProgramSelector> programSelector;
     std::unique_ptr<juce::ImageButton> aboutButton;
     std::unique_ptr<juce::Slider> tune;
 
-    std::unique_ptr<AttachmentHelper> attachments;
+    std::unique_ptr<AudioComponentContainer> binder;
 
     std::unique_ptr<juce::DocumentWindow> debugger;
     //==============================================================================
