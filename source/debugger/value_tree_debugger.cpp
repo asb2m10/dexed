@@ -23,6 +23,8 @@ using namespace juce;
 
 /** Display a tree. */
 class ValueTreeDebuggerMain : public Component {
+    LookAndFeel_V4 defaultLookAndFeel_V4;
+
 public:
     class PropertyEditor : public PropertyPanel {
     public:
@@ -45,16 +47,16 @@ public:
                 TextPropertyComponent* tpc;
 
                 if (v.getValue().isObject() || v.getValue().isBinaryData()) {
-                    tpc = new TextPropertyComponent (noEditValue, name.toString(), maxChars, false);
+                    tpc = new TextPropertyComponent(noEditValue, name.toString(), maxChars, false);
                     tpc->setEnabled (false);
                 } else {
-                    tpc = new TextPropertyComponent (v, name.toString(), maxChars, false);
+                    tpc = new TextPropertyComponent(v, name.toString(), maxChars, false);
                 }
 
-                pc.add (tpc);
+                pc.add(tpc);
             }
 
-            addProperties (pc);
+            addProperties(pc);
         }
 
     private:
@@ -209,26 +211,29 @@ public:
     };
 
     ValueTreeDebuggerMain() : layoutResizer (&layout, 1, false) {
-        layout.setItemLayout (0, -0.1, -0.9, -0.6);
-        layout.setItemLayout (1, 5, 5, 5);
-        layout.setItemLayout (2, -0.1, -0.9, -0.4);
+        layout.setItemLayout(0, -0.1, -0.9, -0.6);
+        layout.setItemLayout(1, 5, 5, 5);
+        layout.setItemLayout(2, -0.1, -0.9, -0.4);
 
-        setSize (800, 500);
-        addAndMakeVisible (treeView);
-        addAndMakeVisible (propertyEditor);
-        addAndMakeVisible (layoutResizer);
+        setSize(800, 500);
+        setLookAndFeel(&defaultLookAndFeel_V4);
+
+        addAndMakeVisible(treeView);
+        addAndMakeVisible(propertyEditor);
+        addAndMakeVisible(layoutResizer);
     }
 
     ~ValueTreeDebuggerMain() {
-        treeView.setRootItem (nullptr);
+        treeView.setRootItem(nullptr);
+        setLookAndFeel(nullptr);
     }
 
     void resized() override {
         Component* comps[] = { &treeView, &layoutResizer, &propertyEditor };
-        layout.layOutComponents (comps, 3, 0, 0, getWidth(), getHeight(), true, true);
+        layout.layOutComponents(comps, 3, 0, 0, getWidth(), getHeight(), true, true);
     }
 
-    void setTree (ValueTree newTree) {
+    void setTree(ValueTree newTree) {
         if (!newTree.isValid()) {
             treeView.setRootItem (nullptr);
         } else if (tree != newTree) {
@@ -251,12 +256,12 @@ public:
 
 
 ValueTreeDebugger::ValueTreeDebugger() : 
-    DocumentWindow ("Value Tree Debugger", Colours::lightgrey, DocumentWindow::allButtons) {
+    DocumentWindow("Value Tree Debugger", Colours::lightgrey, DocumentWindow::allButtons) {
     construct();
 }
 
 ValueTreeDebugger::ValueTreeDebugger(ValueTree & tree) :
-    DocumentWindow ("Value Tree Debugger", Colours::lightgrey, DocumentWindow::allButtons) {
+    DocumentWindow("Value Tree Debugger", Colours::lightgrey, DocumentWindow::allButtons) {
     construct();
     setSource(tree);
 }

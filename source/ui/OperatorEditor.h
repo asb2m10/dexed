@@ -22,9 +22,9 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
-#include "DXComponents.h"
-#include "DXLookNFeel.h"
-#include "VUMeter.h"
+#include "component/DXComponents.h"
+#include "component/VUMeter.h"
+#include "component/EnvDisplay.h"
 //[/Headers]
 
 

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014, 2017 Pascal Gauthier.
+ * Copyright (c) 2014, 2025 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,18 +19,12 @@
  */
 
 #include "AlgoDisplay.h"
-#include "DXLookNFeel.h"
-#include "Dexed.h"
+#include "../DXLookNFeel.h"
 
-AlgoDisplay::AlgoDisplay() {
-    static char tmpAlgo = 0;
-    algo = &tmpAlgo;
-}
-
-void AlgoDisplay::displayOp(Graphics &g, char id, int x, int y, char link, char fb) {
+void AlgoDisplay::displayOp(juce::Graphics &g, char id, int x, int y, char link, char fb) {
     const int LINE_SZ = 3;
     String t(id);
-    bool opOn = opStatus[6-id] == '1';
+    bool opOn = opSwitch[id-1].get();
     
     x *= 25;
     x += 3;
@@ -118,12 +112,12 @@ void AlgoDisplay::displayOp(Graphics &g, char id, int x, int y, char link, char 
 void AlgoDisplay::paint(Graphics &g) {
     g.setColour(DXLookNFeel::fillColour);
     g.fillRect(1, 3, 20, 15);
-    String n = String(*algo +1);
+    int algo = algoValue.get();
 
     g.setColour(Colours::white);
-    g.drawText(n, 1, 3, 20, 15, Justification::centred, true);
+    g.drawText(juce::String(algo), 1, 3, 20, 15, Justification::centred, true);
     
-    switch(*algo) {
+    switch(algo-1) {
         case 0:
             displayOp(g, 6, 3, 0, 0, 1);
             displayOp(g, 5, 3, 1, 0, 0);

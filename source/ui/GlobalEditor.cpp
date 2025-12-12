@@ -134,12 +134,10 @@ public:
 GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processor) {
     binder = std::make_unique<AudioComponentContainer>(*this, processor.parameters);
 
-    algoDisplay.reset (new AlgoDisplay());
-    algoDisplay->algo = (char *) &(processor.data[134]);
+    algoDisplay.reset (new AlgoDisplay(processor.parameters));
     addAndMakeVisible(algoDisplay.get());
     algoDisplay->setName("algoDisplay");
     algoDisplay->setBounds(335, 30, 152, 91);
-    algoDisplay->opStatus = processor.controllers.opSwitch;
 
     auto algo = std::make_unique<DXSlider>(IDs::algorithm.name);
     algo->setExplicitFocusOrder (11);
@@ -324,7 +322,7 @@ GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processo
 
     // EXTRA COMPONENTS
 
-    pitchEnvDisplay.reset (new PitchEnvDisplay());
+    pitchEnvDisplay.reset (new PitchEnvDisplay(processor.parameters));
     addAndMakeVisible (pitchEnvDisplay.get());
     pitchEnvDisplay->setName ("pitchEnvDisplay");
     pitchEnvDisplay->setBounds (751, 10, 93, 30);
@@ -402,8 +400,6 @@ GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processo
     setFocusContainerType(FocusContainerType::focusContainer);
     setWantsKeyboardFocus(true);
     aboutButton->setTitle("About DEXED");
-
-    pitchEnvDisplay->pvalues = &(processor.data[126]);
 
 #ifdef IMPLEMENT_MidiMonitor
     midiMonitor = std::make_unique<MidiMonitor>(&(processor->sysexComm));

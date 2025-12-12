@@ -21,8 +21,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "PluginProcessor.h"
-#include "DXComponents.h"
-#include "AlgoDisplay.h"
+#include "component/DXComponents.h"
+#include "component/AlgoDisplay.h"
 #include "util/AudioComponentContainer.h"
 
 #ifdef IMPLEMENT_MidiMonitor

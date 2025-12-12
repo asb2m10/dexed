@@ -24,11 +24,9 @@
 
 #include "Dexed.h"
 #include "DXComponents.h"
-#include "DXLookNFeel.h"
+#include "../DXLookNFeel.h"
 #include "PluginProcessor.h"
-#include "msfa/pitchenv.h"
-
-static char TMP_LEVEL_PTR[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+#include "EnvDisplay.h"
 
 static float EG_rate_rise_duration[128] = {
     38.00000 ,34.96000 ,31.92000 ,28.88000 ,25.84000 ,
@@ -157,7 +155,7 @@ static double getDuration(int p_rate, int p_level_l, int p_level_r) {
 }
 
 EnvDisplay::EnvDisplay() {
-    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
+   // pvalues = { 0, 0, 0, 0, 0, 0, 0, 0 };
 }
 
 void EnvDisplay::paint(Graphics &g) {
@@ -249,72 +247,6 @@ void EnvDisplay::paint(Graphics &g) {
     g.drawText(len, 5, 1, 72, 14, Justification::left, true);
 }
 
-PitchEnvDisplay::PitchEnvDisplay() {
-    pvalues = (uint8_t *) &TMP_LEVEL_PTR;
-    vPos = 0;
-}
-
-void PitchEnvDisplay::paint(Graphics &g) {
-    g.setColour(Colours::white);
-    
-    uint8_t *levels = pvalues + 4;
-    uint8_t *rates = pvalues;
-    
-    float dist[4];
-    float total = 0;
-    
-    int old = pitchenv_tab[levels[3]] + 128;
-    
-    // find the scale
-    for(int i=0;i<4;i++) {
-        int nw = pitchenv_tab[levels[i]] + 128;
-        dist[i] = ((float)abs(nw - old)) / pitchenv_rate[rates[i]];
-        total += dist[i];
-        old = nw;
-    }
-    
-    if ( total < 0.00001 ) {
-        dist[0] = dist[1] = dist[2] = dist[3] = 1;
-        total = 4;
-    }
-        
-    float ratio =  96 / total;
-
-    Path p;
-    p.startNewSubPath(0, 32);
-
-    int x = 0;
-    int y = 25 - (pitchenv_tab[levels[3]] + 128) / 10;
-    p.lineTo(0,y);
-
-    int dx = x;
-    int dy = y;
-
-    int i;
-    for(i=0;i<4;i++) {
-        if ( vPos == i ) {
-            dx = x;
-            dy = y;
-        }
-
-        x = dist[i] * ratio + x;
-        y = 25 - (pitchenv_tab[levels[i]] + 128) / 10;
-        p.lineTo(x, y);
-    }
-    
-    if ( vPos == i ) {
-        dx = x;
-        dy = y;
-    }
-
-    p.lineTo(96,32);
-    p.lineTo(0, 32);
-    g.setColour(DXLookNFeel::fillColour);
-    g.fillPath(p);
-
-    g.setColour(Colours::white);
-    g.fillEllipse(dx-2, dy-2, 4, 4);
-}
 /*
 void VuMeter::paint(Graphics &g) {
     Image myStrip = ImageCache::getFromMemory(BinaryData::Meter_140x8_png, BinaryData::Meter_140x8_pngSize);

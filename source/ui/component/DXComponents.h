@@ -91,15 +91,6 @@ public:
     void paint(Graphics &g);
 };
 
-class PitchEnvDisplay : public Component {
-    char rvalues[8];
-public:
-    PitchEnvDisplay();
-    uint8_t *pvalues;
-    char vPos;
-    void paint(Graphics &g);
-};
-
 class LcdDisplay : public Component {
 public:
     LcdDisplay();

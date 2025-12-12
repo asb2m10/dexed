@@ -19,7 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "../Dexed.h"
-#include "DXComponents.h"
+#include "component/DXComponents.h"
 //[/Headers]
 
 #include "ParamDialog.h"

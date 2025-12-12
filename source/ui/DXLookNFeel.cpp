@@ -22,7 +22,7 @@
 #include <stdint.h>
 
 #include "DXLookNFeel.h"
-#include "DXComponents.h"
+#include "component/DXComponents.h"
 #include "Dexed.h"
 #include "PluginProcessor.h"
 

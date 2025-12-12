@@ -23,7 +23,7 @@
 
 #include "JuceHeader.h"
 #include "PluginData.h"
-#include "DXLookNFeel.h"
+#include "../DXLookNFeel.h"
 
 class ProgramListBox;
 class ProgramListBoxListener {

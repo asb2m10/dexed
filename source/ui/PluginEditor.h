@@ -24,7 +24,7 @@
 #include "PluginProcessor.h"
 #include "OperatorEditor.h"
 #include "GlobalEditor.h"
-#include "DXComponents.h"
+#include "component/DXComponents.h"
 #include "DXLookNFeel.h"
 #include "CartManager.h"
 

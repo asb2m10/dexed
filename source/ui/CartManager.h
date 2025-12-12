@@ -23,7 +23,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginData.h"
-#include "ProgramListBox.h"
+#include "component/ProgramListBox.h"
 #include "PluginData.h"
 
 class DexedAudioProcessorEditor;
@@ -59,7 +59,7 @@ public:
     }
 };
 
-class CartManager  : public Component, public Button::Listener, public DragAndDropContainer, public FileBrowserListener
+class CartManager : public Component, public Button::Listener, public DragAndDropContainer, public FileBrowserListener
     , public ProgramListBoxListener, public KeyListener {
     std::unique_ptr<TextButton> newButton;
     std::unique_ptr<TextButton> loadButton;

@@ -20,8 +20,6 @@
 
 #include "ProgramListBox.h"
 #include "PluginData.h"
-#include "DXLookNFeel.h"
-#include "Dexed.h"
 
 ProgramListBox::ProgramListBox(const String name, int numCols) : Component(name) {
     cols = numCols;

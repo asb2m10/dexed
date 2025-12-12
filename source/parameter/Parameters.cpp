@@ -92,7 +92,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
         group->addChild(std::make_unique<ParameterDx>(IDs::rateScaling.op(i), 7));
         group->addChild(std::make_unique<ParameterDx>(IDs::ampModeSens.op(i), 3));
         group->addChild(std::make_unique<ParameterDx>(IDs::keyVelocity.op(i), 7));
-        group->addChild(std::make_unique<AudioParameterBool>(IDs::on.op(i).parameter(), opName + "switch", false));        group->addChild(std::make_unique<ParameterDx>(IDs::outputLevel.op(i), 99));
+        group->addChild(std::make_unique<AudioParameterBool>(IDs::on.op(i).parameter(), opName + "switch", true));
+        group->addChild(std::make_unique<ParameterDx>(IDs::outputLevel.op(i), 99));
 
         params.add(std::move(group));
     }
