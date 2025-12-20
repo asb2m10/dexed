@@ -155,7 +155,8 @@ static double getDuration(int p_rate, int p_level_l, int p_level_r) {
 }
 
 EnvDisplay::EnvDisplay() {
-   // pvalues = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    static uint8_t empty[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    pvalues = empty;
 }
 
 void EnvDisplay::paint(Graphics &g) {

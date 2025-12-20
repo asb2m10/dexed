@@ -17,18 +17,10 @@
   ==============================================================================
 */
 
-//[Headers] You can add your own extra header files here...
-#include "PluginEditor.h"
+#include "GlobalEditor.h"
 #include "DXLookNFeel.h"
 #include "../debugger/value_tree_debugger.h"
-//[/Headers]
-
-#include "GlobalEditor.h"
-
 #include "parameter/Model.h"
-
-
-//[MiscUserDefs] You can add your own user definitions and misc code here...
 
 /**
  * Ugly but useful midi monitor to know if you are really sending/receiving something from the DX7
@@ -131,8 +123,9 @@ public:
 //[/MiscUserDefs]
 
 //==============================================================================
-GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processor) {
+GlobalEditor::GlobalEditor(DexedAudioProcessor &processor, juce::Component *parent) : processor(processor) {
     binder = std::make_unique<AudioComponentContainer>(*this, processor.parameters);
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 
     algoDisplay.reset (new AlgoDisplay(processor.parameters));
     addAndMakeVisible(algoDisplay.get());
@@ -261,7 +254,7 @@ GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processo
     transpose->setBounds (202, 60, 34, 34);
     binder->addAndAttach(std::move(transpose));
 
-    pitchModSens = std::make_unique<DXSlider>(IDs::pitchModSens.name);
+    auto pitchModSens = std::make_unique<DXSlider>(IDs::pitchModSens.name);
     pitchModSens->setExplicitFocusOrder(17);
     pitchModSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     pitchModSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
@@ -285,8 +278,10 @@ GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processo
     lfoType.reset (new ComboBoxImage());
     addAndMakeVisible (lfoType.get());
     lfoType->setExplicitFocusOrder (13);
-    lfoType->setName ("lfoType");
+    lfoType->setName (IDs::lfoWaveform.name);
     lfoType->setBounds (583, 8, 36, 26);
+    binder->attach(lfoType.get());
+    lfoType->setImage(lookAndFeel->imageLFO);
 
     // EVENT DRIVEN COMPONENTS
 
@@ -327,10 +322,9 @@ GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processo
     pitchEnvDisplay->setName ("pitchEnvDisplay");
     pitchEnvDisplay->setBounds (751, 10, 93, 30);
 
-    lcdDisplay.reset (new LcdDisplay());
-    addAndMakeVisible (lcdDisplay.get());
-    lcdDisplay->setName ("lcdDisplay");
-    lcdDisplay->setBounds (6, 87, 140, 13);
+    observer = std::make_unique<ParameterObserver>(parent, processor.parameters);
+    addAndMakeVisible (observer.get());
+    observer->setBounds (6, 87, 140, 13);
 
     vuOutput.reset (new VuMeterOutput());
     addAndMakeVisible (vuOutput.get());
@@ -383,15 +377,6 @@ GlobalEditor::GlobalEditor (DexedAudioProcessor &processor) : processor(processo
 
 
     //[Constructor] You can add your own custom stuff here..
-    SharedResourcePointer<DXLookNFeel> lookAndFeel;
-    lfoType->addItem("TRIANGLE", 1);
-    lfoType->addItem("SAW DOWN", 2);
-    lfoType->addItem("SAW UP", 3);
-    lfoType->addItem("SQUARE", 4);
-    lfoType->addItem("SINE", 5);
-    lfoType->addItem("S&HOLD", 6);
-    lfoType->setImage(lookAndFeel->imageLFO);
-
     programs = programSelector.get();
 
     background = lookAndFeel->imageGlobal;
@@ -420,10 +405,8 @@ GlobalEditor::~GlobalEditor()
 
     transpose = nullptr;
     oscSync = nullptr;
-    pitchModSens = nullptr;
     pitchEnvDisplay = nullptr;
     algoDisplay = nullptr;
-    lcdDisplay = nullptr;
     vuOutput = nullptr;
     initButton = nullptr;
     parmButton = nullptr;
@@ -490,15 +473,6 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-
-void GlobalEditor::setSystemMessage(String msg) {
-    lcdDisplay->setSystemMsg(msg);
-}
-
-void GlobalEditor::setParamMessage(String msg) {
-    lcdDisplay->paramMsg = msg;
-    lcdDisplay->repaint();
-}
 
 void GlobalEditor::updateDisplay() {
     repaint();

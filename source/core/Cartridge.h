@@ -1,6 +1,7 @@
 #pragma once
 
 #include <juce_core/juce_core.h>
+#include "Program.h"
 #include "Dexed.h"
 
 #define SYSEX_HEADER { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 }
@@ -27,8 +28,6 @@ public:
         memcpy(voiceData, cpy.voiceData, SYSEX_SIZE);
         memcpy(perfData, cpy.perfData, SYSEX_SIZE);
     }
-
-    static juce::String normalizePgmName(const char *sysexName);
 
     int load(juce::File f) {
         std::unique_ptr<juce::FileInputStream> fis = f.createInputStream();
@@ -77,12 +76,12 @@ public:
     void getProgramNames(juce::StringArray &dest) {
         dest.clear();
         for (int i = 0; i < 32; i++)
-            dest.add( normalizePgmName(getRawVoice() + ((i * 128) + 118)) );
+            dest.add( Program::normalizePgmName(getRawVoice() + ((i * 128) + 118)) );
     }
 
     juce::String getProgramName(int idx) {
         jassert(idx >= 0 && idx < 32);
-        return normalizePgmName(getRawVoice() + ((idx * 128) + 118));
+        return Program::normalizePgmName(getRawVoice() + ((idx * 128) + 118));
     }
 
     Cartridge operator =(const Cartridge other) {

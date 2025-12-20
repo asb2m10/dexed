@@ -38,6 +38,7 @@
 #include "engine/EngineMkI.h"
 #include "engine/EngineOpl.h"
 #include "parameter/DexedApvts.h"
+#include "core/Program.h"
 
 struct ProcessorVoice {
     int channel;
@@ -74,7 +75,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
     int currentNote;
-    void applyValueTreeAttributes();
 
     // The original DX7 had one single LFO. Later units had an LFO per note.
     Lfo lfo;
@@ -87,11 +87,6 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
     int extra_buf_size;
 
     int currentProgram;
-    
-    /**
-     * The last time the state was save, to be able to bypass a VST host bug.
-     */
-    long lastStateSave;
     
     /**
      * Plugin fx (the filter)
@@ -115,7 +110,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
      * to update the UI / hostdata 
      */
     void handleAsyncUpdate() override;
-    void initCtrl();
+    //void initCtrl();
 
 	MidiMessage* nextMidi,*midiMsg;
 	bool hasMidiMessage;
@@ -141,6 +136,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
 public :
     DexedApvts parameters;
     juce::ValueTree rootVt;
+    Program activeProgram;
 
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
@@ -161,28 +157,28 @@ public :
     
     HashMap<int, Ctrl*> mappedMidiCC;
     
-    Array<Ctrl*> ctrl;
-
-    OperatorCtrl opCtrl[6];
-    std::unique_ptr<CtrlDX> pitchEgRate[4];
-    std::unique_ptr<CtrlDX> pitchEgLevel[4];
-    std::unique_ptr<CtrlDX> pitchModSens;
-    std::unique_ptr<CtrlDX> algo;
-    std::unique_ptr<CtrlDX> oscSync;
-    std::unique_ptr<CtrlDX> feedback;
-    std::unique_ptr<CtrlDX> lfoRate;
-    std::unique_ptr<CtrlDX> lfoDelay;
-    std::unique_ptr<CtrlDX> lfoAmpDepth;
-    std::unique_ptr<CtrlDX> lfoPitchDepth;
-    std::unique_ptr<CtrlDX> lfoWaveform;
-    std::unique_ptr<CtrlDX> lfoSync;
-    std::unique_ptr<CtrlDX> transpose;
-
-    std::unique_ptr<CtrlFloat> fxCutoff;
-    std::unique_ptr<CtrlFloat> fxReso;
-    std::unique_ptr<CtrlFloat> output;
-    std::unique_ptr<Ctrl> tune;
-    std::unique_ptr<Ctrl> monoModeCtrl;
+    // Array<Ctrl*> ctrl;
+    //
+    // OperatorCtrl opCtrl[6];
+    // std::unique_ptr<CtrlDX> pitchEgRate[4];
+    // std::unique_ptr<CtrlDX> pitchEgLevel[4];
+    // std::unique_ptr<CtrlDX> pitchModSens;
+    // std::unique_ptr<CtrlDX> algo;
+    // std::unique_ptr<CtrlDX> oscSync;
+    // std::unique_ptr<CtrlDX> feedback;
+    // std::unique_ptr<CtrlDX> lfoRate;
+    // std::unique_ptr<CtrlDX> lfoDelay;
+    // std::unique_ptr<CtrlDX> lfoAmpDepth;
+    // std::unique_ptr<CtrlDX> lfoPitchDepth;
+    // std::unique_ptr<CtrlDX> lfoWaveform;
+    // std::unique_ptr<CtrlDX> lfoSync;
+    // std::unique_ptr<CtrlDX> transpose;
+    //
+    // std::unique_ptr<CtrlFloat> fxCutoff;
+    // std::unique_ptr<CtrlFloat> fxReso;
+    // std::unique_ptr<CtrlFloat> output;
+    // std::unique_ptr<Ctrl> tune;
+    // std::unique_ptr<Ctrl> monoModeCtrl;
 
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);
@@ -251,7 +247,7 @@ public :
     // this is kept up to date with the midi messages that arrive, and the UI component
     // registers with it so it can represent the incoming messages
     MidiKeyboardState keyboardState;
-    void unbindUI();
+    //void unbindUI();
 
     void loadPreference();
     void savePreference();

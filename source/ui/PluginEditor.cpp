@@ -33,7 +33,7 @@
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-      cartManager(this), global(*ownerFilter)
+      cartManager(this), global(*ownerFilter, this)
 {
     processor = ownerFilter;
 
@@ -47,29 +47,16 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     background = lookAndFeel->background;
 
     // OPERATORS
-    frameComponent.addAndMakeVisible(&(operators[0]));
-    operators[0].setBounds(2, 1, 287, 218);
-    operators[0].bind(processor, 0);
-
-    frameComponent.addAndMakeVisible(&(operators[1]));
-    operators[1].setBounds(290, 1, 287, 218);
-    operators[1].bind(processor, 1);
-
-    frameComponent.addAndMakeVisible(&(operators[2]));
-    operators[2].setBounds(578, 1, 287, 218);
-    operators[2].bind(processor, 2);
-
-    frameComponent.addAndMakeVisible(&(operators[3]));
-    operators[3].setBounds(2, 219, 287, 218);
-    operators[3].bind(processor, 3);
-
-    frameComponent.addAndMakeVisible(&(operators[4]));
-    operators[4].setBounds(290, 219, 287, 218);
-    operators[4].bind(processor, 4);
-
-    frameComponent.addAndMakeVisible(&(operators[5]));
-    operators[5].setBounds(578, 219, 287, 218);
-    operators[5].bind(processor, 5);
+    for (int i=0;i<6;i++) {
+        operators[i] = std::make_unique<OperatorEditor>(*processor, i);
+        frameComponent.addAndMakeVisible(operators[i].get());
+    }
+    operators[0]->setBounds(2, 1, 287, 218);
+    operators[1]->setBounds(290, 1, 287, 218);
+    operators[2]->setBounds(578, 1, 287, 218);
+    operators[3]->setBounds(2, 219, 287, 218);
+    operators[4]->setBounds(290, 219, 287, 218);
+    operators[5]->setBounds(578, 219, 287, 218);
 
     // add the midi keyboard component..
     frameComponent.addAndMakeVisible (&midiKeyboard);
@@ -79,9 +66,9 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     midiKeyboard.setBounds(4, 581, getWidth() - 8, 90);
     midiKeyboard.setTitle("Keyboard keys");
 
+    // The global component
     frameComponent.addAndMakeVisible(&global);
     global.setBounds(2,436,864,144);
-
     global.cartButton->onClick = [this]() { cartShow(); };
     global.parmButton->onClick = [this]() { parmShow(); };
     global.initButton->onClick = [this]() { initProgram(); };
@@ -104,7 +91,6 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
 
 DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
     stopTimer();
-    processor->unbindUI();
     setLookAndFeel(nullptr);
 }
 
@@ -278,21 +264,18 @@ void DexedAudioProcessorEditor::timerCallback() {
 
         int amp = processor->voiceStatus.amp[5 - i] - amp_min;
         if (amp <= 0) amp = 0;
-        operators[i].updateGain(amp * one_per_amp_diff);
+        operators[i]->updateGain(amp * one_per_amp_diff);
 
 
-        operators[i].updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
+        operators[i]->updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);
     global.updateVu(processor->vuSignal);
 }
 
 void DexedAudioProcessorEditor::updateUI() {
-    for(int i=0;i<processor->ctrl.size();i++) {
-        processor->ctrl[i]->updateComponent();
-    }
     for(int i=0;i<6;i++) {
-        operators[i].updateDisplay();
+        operators[i]->updateDisplay();
     }
     rebuildProgramCombobox();
     global.updateDisplay();
@@ -312,7 +295,7 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
 
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
 
-    String name = Cartridge::normalizePgmName((const char *) processor->data+145);
+    String name = processor->activeProgram.getProgramName();
     cartManager.setActiveProgram(processor->getCurrentProgram(), name);
     if ( name != processor->getProgramName(processor->getCurrentProgram()) )
         global.programs->setText("**. " + name, dontSendNotification);
@@ -321,7 +304,7 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
 }
 
 void DexedAudioProcessorEditor::storeProgram() {
-    String currentName = Cartridge::normalizePgmName((const char *) processor->data+145);
+    String currentName = processor->activeProgram.getProgramName();
     Cartridge destSysex = processor->currentCart;
     File *externalFile = NULL;
 
@@ -579,11 +562,11 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
         int op = keycode - '1';
 
         if ( mods.isShiftDown() ) {
-            operators[op].toggleOpSwitch();
+            operators[op]->toggleOpSwitch();
             return true;
         }
 
-        operators[op].grabKeyboardFocus();
+        operators[op]->grabKeyboardFocus();
         return true;
     }
 

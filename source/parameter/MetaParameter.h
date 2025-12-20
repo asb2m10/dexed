@@ -24,13 +24,15 @@ struct MetaParameterID {
     }
 
     juce::String displayName() const {
-        juce::String ret = name;
+        juce::String ret;
         for (int i = 0; i < name.length(); ++i) {
             if (i > 0 && name[i] >= 'A' && name[i] <= 'Z') {
                 ret += " ";
             }
             ret += name[i];
         }
-        return ret.toUpperCase();
+        return ret;
     }
 };
+
+extern const std::vector<MetaParameterID> dxParameters;

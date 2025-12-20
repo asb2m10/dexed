@@ -27,30 +27,28 @@
 #include "component/DXComponents.h"
 #include "DXLookNFeel.h"
 #include "CartManager.h"
+#include "component/ParameterObserver.h"
 
 //==============================================================================
 /**
 */
 class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer,
                                    public FileDragAndDropTarget, public KeyListener {
+    Component frameComponent;
     MidiKeyboardComponent midiKeyboard;
-    OperatorEditor operators[6];
+
+    GlobalEditor global;
+    std::unique_ptr<OperatorEditor> operators[6];
     Colour background;
+
     CartManager cartManager;
+
     // This cover is used to disable main window when cart manager is shown
     Component cartManagerCover;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
     std::unique_ptr<juce::DialogWindow> dexedParameterDialog;
-    #ifdef DEXED_EVENT_DEBUG
-        FocusLogger focusLogger;
-    #endif
-
     void resetSize();
-
-    Component frameComponent;
-    GlobalEditor global;
-
 public:
     DexedAudioProcessor *processor;
 
@@ -82,6 +80,11 @@ public:
 
     static const int WINDOW_SIZE_X = 866;
     static const int WINDOW_SIZE_Y = 674;
+
+private:
+#ifdef DEXED_EVENT_DEBUG
+    FocusLogger focusLogger;
+#endif
 };
 
 

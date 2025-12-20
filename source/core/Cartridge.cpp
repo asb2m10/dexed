@@ -34,35 +34,6 @@ uint8_t normparm(uint8_t value, char max, int id) {
     return ((float)value)/255 * max;
 }
 
-juce::String Cartridge::normalizePgmName(const char *sysexName) {
-    char buffer[11];
-
-    memcpy(buffer, sysexName, 10);
-
-    for (int j = 0; j < 10; j++) {
-        char c = (unsigned char) buffer[j];
-        c &= 0x7F; // strip don't care most-significant bit from name
-        switch (c) {
-            case 92:
-                c = 'Y';
-                break; /* yen */
-            case 126:
-                c = '>';
-                break; /* >> */
-            case 127:
-                c = '<';
-                break; /* << */
-            default:
-                if (c < 32 || c > 127)
-                    c = 32;
-                break;
-        }
-        buffer[j] = c;
-    }
-    buffer[10] = 0;
-
-    return juce::String(buffer);
-}
 
 int Cartridge::load(const uint8_t *stream, int size) {
     const uint8_t *pos = stream;

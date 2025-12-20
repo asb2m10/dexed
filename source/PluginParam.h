@@ -52,7 +52,6 @@ public:
     virtual void setValueHost(float f) = 0;
     virtual float getValueHost() = 0;
     virtual String getValueDisplay() = 0;
-    virtual void updateComponent() = 0;
 
     void comboBoxChanged (ComboBox* combo);
     void sliderValueChanged (Slider* moved);

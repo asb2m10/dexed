@@ -56,8 +56,10 @@ target_sources(${BaseTargetName} PRIVATE
 	PluginFx.cpp
 	PluginParam.cpp
 	PluginProcessor.cpp
+	Tuning.cpp
 
 	core/Cartridge.cpp
+	core/Program.cpp
 
     engine/EngineMkI.cpp
 	engine/EngineOpl.cpp
@@ -76,8 +78,9 @@ target_sources(${BaseTargetName} PRIVATE
 	ui/component/VUMeter.cpp
 
 	midi/SysexComm.cpp
+	midi/PluginMidi.cpp
 
-	parameter/Parameters.cpp
+	parameter/DexedApvts.cpp
 	parameter/ParametersMapper.cpp
 
 	debugger/value_tree_debugger.cpp

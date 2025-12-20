@@ -85,19 +85,7 @@ void DexedAudioProcessor::setupStartupCart() {
 }
 
 void DexedAudioProcessor::resetToInitVoice() {
-    const char init_voice[] =
-      { 99, 99, 99, 99, 99, 99, 99, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 7,
-        99, 99, 99, 99, 99, 99, 99, 00, 0, 0, 0, 0, 0, 0, 0, 0, 99, 0, 1, 0, 7,
-        99, 99, 99, 99, 50, 50, 50, 50, 0, 0, 1, 35, 0, 0, 0, 1, 0, 3, 24,
-        73, 78, 73, 84, 32, 86, 79, 73, 67, 69 };
-    
-    for(int i=0;i<sizeof(init_voice);i++) {
-        data[i] = init_voice[i];
-    }
+    activeProgram.applyInitialProgram();
     unpackOpSwitch(0x3F);
     panic();
     triggerAsyncUpdate();
@@ -330,30 +318,28 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     
     mappedMidiCC.clear();
     XmlElement *midiCC = root->getChildByName("midiCC");
-    if ( midiCC != nullptr ) {
-        XmlElement *ccMapping = midiCC->getFirstChildElement();
-        while (ccMapping != nullptr) {
-            int cc = ccMapping->getIntAttribute("cc", -1);
-            String target = ccMapping->getStringAttribute("target", "");
-            if ( target.isNotEmpty() && cc != -1 ) {
-                for(int i=0;i<ctrl.size();i++) {
-                    if ((cc >> 8) == 0) {
-                        // Simple migration logic lets old mappings without channel
-                        // work on channel 1.
-                        cc |= 1 << 8;
-                    }
-                    if ( ctrl[i]->label == target) {
-                        TRACE("mapping CC=%d to %s", cc, target.toRawUTF8());
-                        mappedMidiCC.set(cc, ctrl[i]);
-                        break;
-                    }
-                }
-            }
-            ccMapping = ccMapping->getNextElement();
-        }
-    }
-    
-    lastStateSave = (long) time(NULL);    
+    // if ( midiCC != nullptr ) {
+    //     XmlElement *ccMapping = midiCC->getFirstChildElement();
+    //     while (ccMapping != nullptr) {
+    //         int cc = ccMapping->getIntAttribute("cc", -1);
+    //         String target = ccMapping->getStringAttribute("target", "");
+    //         if ( target.isNotEmpty() && cc != -1 ) {
+    //             for(int i=0;i<ctrl.size();i++) {
+    //                 if ((cc >> 8) == 0) {
+    //                     // Simple migration logic lets old mappings without channel
+    //                     // work on channel 1.
+    //                     cc |= 1 << 8;
+    //                 }
+    //                 if ( ctrl[i]->label == target) {
+    //                     TRACE("mapping CC=%d to %s", cc, target.toRawUTF8());
+    //                     mappedMidiCC.set(cc, ctrl[i]);
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //         ccMapping = ccMapping->getNextElement();
+    //     }
+    // }
     TRACE("setting VST STATE");
     panic();
     updateUI();

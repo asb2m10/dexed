@@ -19,11 +19,13 @@
 
 #pragma once
 
-//[Headers]     -- You can add your own extra header files here --
 #include "PluginProcessor.h"
 #include "component/DXComponents.h"
 #include "component/AlgoDisplay.h"
+#include "component/EnvDisplay.h"
+#include "component/VUMeter.h"
 #include "util/AudioComponentContainer.h"
+#include "component/ParameterObserver.h"
 
 #ifdef IMPLEMENT_MidiMonitor
 #include "SysexComm.h"
@@ -36,13 +38,11 @@ class GlobalEditor  : public Component,
 {
 public:
     //==============================================================================
-    GlobalEditor (DexedAudioProcessor &processor);
+    GlobalEditor (DexedAudioProcessor &processor, juce::Component *parent);
     ~GlobalEditor() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    void setSystemMessage(String msg);
-    void setParamMessage(String msg);
     void updatePitchPos(int pos);
     void updateVu(float v);
     void updateDisplay();
@@ -69,6 +69,7 @@ public:
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     DexedAudioProcessor &processor;
+    std::unique_ptr<ParameterObserver> observer;
 
     Image background;
     Image imageLight;
@@ -79,13 +80,9 @@ private:
     //==============================================================================
     std::unique_ptr<juce::Slider> transpose;
     std::unique_ptr<juce::ToggleButton> oscSync;
-    std::unique_ptr<juce::Slider> pitchModSens;
     std::unique_ptr<juce::ToggleButton> lfoSync;
     std::unique_ptr<PitchEnvDisplay> pitchEnvDisplay;
     std::unique_ptr<AlgoDisplay> algoDisplay;
-    std::unique_ptr<juce::Slider> feedback;
-    std::unique_ptr<LcdDisplay> lcdDisplay;
-    std::unique_ptr<juce::Slider> output;
     std::unique_ptr<VuMeterOutput> vuOutput;
     std::unique_ptr<juce::ToggleButton> monoMode;
     std::unique_ptr<ComboBoxImage> lfoType;

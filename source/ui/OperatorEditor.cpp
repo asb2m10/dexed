@@ -21,9 +21,9 @@
 //[/Headers]
 
 #include "OperatorEditor.h"
-
 #include "PluginEditor.h"
-
+#include "component/OperatorDisplay.h"
+#include "util/ContextMenuAdapter.h"
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 #ifndef M_LN10
@@ -46,315 +46,195 @@ public :
 
 //[/MiscUserDefs]
 
+
+class OperatorContextMenu : public ContextMenuAdapter {
+    int op;
+public:
+    OperatorContextMenu(DexedAudioProcessor &processor, int op) : ContextMenuAdapter(processor), op(op) {
+    }
+
+    void addSpecificItems(PopupMenu &menu, juce::Component *source) override {
+        menu.addItem(1, "Copy Operator Values");
+        menu.addItem(2, "Paste Envelope Values", DexedClipboard().isOperatorData());
+        menu.addItem(3, "Paste Operator Values", DexedClipboard().isOperatorData());
+        menu.addSeparator();
+    }
+};
+
 //==============================================================================
-OperatorEditor::OperatorEditor ()
-{
-    //[Constructor_pre] You can add your own custom stuff here..
-    //[/Constructor_pre]
+OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : processor(processor), internalOp(num) {
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 
-    s_egl1.reset (new DXSlider ("egl1"));
-    addAndMakeVisible (s_egl1.get());
-    s_egl1->setExplicitFocusOrder (4);
-    s_egl1->setRange (0, 99, 1);
-    s_egl1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egl1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egl1->addListener (this);
+    binder = std::make_unique<AudioComponentContainer>(*this, processor.parameters);
+    opNum << num + 1;
+    internalOp = 5-num;
+    setTitle("Operator " + opNum);
+    setFocusContainerType(FocusContainerType::focusContainer);
 
-    s_egl1->setBounds (5, 128, 34, 34);
+    std::unique_ptr<DXSlider> eglevel[4];
+    std::unique_ptr<DXSlider> egrate[4];
+    for (int i=0; i<4; i++) {
+        eglevel[i] = std::make_unique<DXSlider>(IDs::egLevel.op(num).idx(i).name);
+        egrate[i] = std::make_unique<DXSlider>(IDs::egRate.op(num).idx(i).name);
+        eglevel[i]->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+        eglevel[i]->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+        egrate[i]->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+        egrate[i]->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    }
 
-    s_egl2.reset (new DXSlider ("egl2"));
-    addAndMakeVisible (s_egl2.get());
-    s_egl2->setExplicitFocusOrder (6);
-    s_egl2->setRange (0, 99, 1);
-    s_egl2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egl2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egl2->addListener (this);
+    eglevel[0]->setExplicitFocusOrder (4);
+    eglevel[0]->setBounds (5, 128, 34, 34);
+    binder->addAndAttach(std::move(eglevel[0]));
+    eglevel[1]->setExplicitFocusOrder (6);
+    eglevel[1]->setBounds (33, 128, 34, 34);
+    binder->addAndAttach(std::move(eglevel[1]));
+    eglevel[2]->setExplicitFocusOrder (8);
+    eglevel[2]->setBounds (61, 128, 34, 34);
+    binder->addAndAttach(std::move(eglevel[2]));
+    eglevel[3]->setExplicitFocusOrder (10);
+    eglevel[3]->setBounds (89, 128, 34, 34);
+    binder->addAndAttach(std::move(eglevel[3]));
+    egrate[0]->setExplicitFocusOrder (5);
+    egrate[0]->setBounds (5, 169, 34, 34);
+    binder->addAndAttach(std::move(egrate[0]));
+    egrate[1]->setExplicitFocusOrder (7);
+    egrate[1]->setBounds (33, 169, 34, 34);
+    binder->addAndAttach(std::move(egrate[1]));
+    egrate[2]->setExplicitFocusOrder (9);
+    egrate[2]->setBounds (61, 169, 34, 34);
+    binder->addAndAttach(std::move(egrate[2]));
+    egrate[3]->setExplicitFocusOrder (11);
+    egrate[3]->setBounds (89, 169, 34, 34);
+    binder->addAndAttach(std::move(egrate[3]));
 
-    s_egl2->setBounds (33, 128, 34, 34);
-
-    s_egl3.reset (new DXSlider ("egl3"));
-    addAndMakeVisible (s_egl3.get());
-    s_egl3->setExplicitFocusOrder (8);
-    s_egl3->setRange (0, 99, 1);
-    s_egl3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egl3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egl3->addListener (this);
-
-    s_egl3->setBounds (61, 128, 34, 34);
-
-    s_egl4.reset (new DXSlider ("egl4"));
-    addAndMakeVisible (s_egl4.get());
-    s_egl4->setExplicitFocusOrder (10);
-    s_egl4->setRange (0, 99, 1);
-    s_egl4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egl4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egl4->addListener (this);
-
-    s_egl4->setBounds (89, 128, 34, 34);
-
-    s_egv1.reset (new DXSlider ("egr1"));
-    addAndMakeVisible (s_egv1.get());
-    s_egv1->setExplicitFocusOrder (5);
-    s_egv1->setRange (0, 99, 1);
-    s_egv1->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egv1->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egv1->addListener (this);
-
-    s_egv1->setBounds (5, 169, 34, 34);
-
-    s_egv2.reset (new DXSlider ("egr3"));
-    addAndMakeVisible (s_egv2.get());
-    s_egv2->setExplicitFocusOrder (7);
-    s_egv2->setRange (0, 99, 1);
-    s_egv2->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egv2->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egv2->addListener (this);
-
-    s_egv2->setBounds (33, 169, 34, 34);
-
-    s_egv3.reset (new DXSlider ("egr3"));
-    addAndMakeVisible (s_egv3.get());
-    s_egv3->setExplicitFocusOrder (9);
-    s_egv3->setRange (0, 99, 1);
-    s_egv3->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egv3->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egv3->addListener (this);
-
-    s_egv3->setBounds (61, 169, 34, 34);
-
-    s_egv4.reset (new DXSlider ("egr4"));
-    addAndMakeVisible (s_egv4.get());
-    s_egv4->setExplicitFocusOrder (11);
-    s_egv4->setRange (0, 99, 1);
-    s_egv4->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    s_egv4->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    s_egv4->addListener (this);
-
-    s_egv4->setBounds (89, 169, 34, 34);
-
-    opLevel.reset (new DXSlider ("opLevel"));
-    addAndMakeVisible (opLevel.get());
+    auto opLevel = std::make_unique<DXSlider>(IDs::outputLevel.op(num).name);
     opLevel->setExplicitFocusOrder (15);
-    opLevel->setRange (0, 99, 1);
     opLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     opLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    opLevel->addListener (this);
-
     opLevel->setBounds (245, 76, 34, 34);
+    binder->addAndAttach(std::move(opLevel));
 
-    opFine.reset (new DXSlider ("opFine"));
-    addAndMakeVisible (opFine.get());
+    auto opFine = std::make_unique<DXSlider>(IDs::frequencyFine.op(num).name);
     opFine->setExplicitFocusOrder (3);
-    opFine->setRange (0, 99, 1);
-    opFine->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    opFine->setSliderStyle  (juce::Slider::RotaryVerticalDrag);
     opFine->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    opFine->addListener (this);
-
     opFine->setBounds (78, 24, 34, 34);
+    binder->addAndAttach(std::move(opFine));
 
-    opCoarse.reset (new DXSlider ("opCoarse"));
-    addAndMakeVisible (opCoarse.get());
+    auto opCoarse = std::make_unique<DXSlider>(IDs::frequencyCoarse.op(num).name);
     opCoarse->setExplicitFocusOrder (2);
-    opCoarse->setRange (0, 31, 1);
     opCoarse->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     opCoarse->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    opCoarse->addListener (this);
-
     opCoarse->setBounds (43, 24, 34, 34);
+    binder->addAndAttach(std::move(opCoarse));
 
-    khzDisplay.reset (new juce::Label ("khz",
-                                       TRANS ("1,000 kHz")));
-    addAndMakeVisible (khzDisplay.get());
-    khzDisplay->setFont (juce::Font (12.60f, juce::Font::plain).withTypefaceStyle ("Regular"));
-    khzDisplay->setJustificationType (juce::Justification::centred);
-    khzDisplay->setEditable (false, false, false);
-    khzDisplay->setColour (juce::Label::backgroundColourId, juce::Colour (0x6a000000));
-    khzDisplay->setColour (juce::Label::textColourId, juce::Colours::white);
-    khzDisplay->setColour (juce::Label::outlineColourId, juce::Colour (0x00000000));
-    khzDisplay->setColour (juce::TextEditor::textColourId, juce::Colours::black);
-    khzDisplay->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
-
-    khzDisplay->setBounds (15, 10, 95, 10);
-
-    detune.reset (new DXSlider ("detune"));
-    addAndMakeVisible (detune.get());
+    auto detune = std::make_unique<DXSlider>(IDs::detune.op(num).name);
     detune->setExplicitFocusOrder (1);
-    detune->setRange (-7, 7, 1);
     detune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     detune->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    detune->addListener (this);
-
     detune->setBounds (6, 24, 34, 34);
+    binder->addAndAttach(std::move(detune));
+
+    auto sclLeftLevel = std::make_unique<DXSlider>(IDs::lScaleDepth.op(num).name);
+    sclLeftLevel->setTooltip (TRANS ("Keyboard Scale Level Left Depth "));
+    sclLeftLevel->setExplicitFocusOrder (16);
+    sclLeftLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sclLeftLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    sclLeftLevel->setBounds (131, 115, 34, 34);
+    binder->addAndAttach(std::move(sclLeftLevel));
+
+    auto sclRightLevel = std::make_unique<DXSlider>(IDs::rScaleDepth.op(num).name);
+    sclRightLevel->setTooltip (TRANS ("Keyboard Scale Level Right Depth "));
+    sclRightLevel->setExplicitFocusOrder (18);
+    sclRightLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sclRightLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    sclRightLevel->setBounds (241, 115, 34, 34);
+    binder->addAndAttach(std::move(sclRightLevel));
+
+    auto sclLvlBrkPt = std::make_unique<DXSlider>(IDs::breakpoint.op(num).name);
+    sclLvlBrkPt->setTooltip (TRANS ("Scale Level Breakpoint"));
+    sclLvlBrkPt->setExplicitFocusOrder (17);
+    sclLvlBrkPt->setBounds (178, 130, 54, 24);
+    binder->addAndAttach(std::move(sclLvlBrkPt));
+
+    auto sclRateScaling = std::make_unique<DXSlider>(IDs::rateScaling.op(num).name);
+    sclRateScaling->setTooltip (TRANS ("Keyboard Rate Scaling"));
+    sclRateScaling->setExplicitFocusOrder (20);
+    sclRateScaling->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    sclRateScaling->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    sclRateScaling->setBounds (186, 179, 34, 34);
+    binder->addAndAttach(std::move(sclRateScaling));
+
+    auto keyVelSens = std::make_unique<DXSlider>(IDs::keyVelocity.op(num).name);
+    keyVelSens->setExplicitFocusOrder (14);
+    keyVelSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    keyVelSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    keyVelSens->setBounds (204, 76, 34, 34);
+    binder->addAndAttach(std::move(keyVelSens));
+
+    auto ampModeSens = std::make_unique<DXSlider>(IDs::ampModeSens.op(num).name);
+    ampModeSens->setExplicitFocusOrder (13);
+    ampModeSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
+    ampModeSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+    ampModeSens->setBounds (140, 76, 34, 34);
+    binder->addAndAttach(std::move(ampModeSens));
+
+    auto opMode = std::make_unique<juce::ToggleButton>(IDs::mode.op(num).name);
+    opMode->setExplicitFocusOrder (12);
+    opMode->setButtonText (juce::String());
+    opMode->setBounds (146, 19, 48, 26);
+    binder->addAndAttach(std::move(opMode));
+
+    auto kbdLeftCurve = std::make_unique<ComboBoxImage>();
+    kbdLeftCurve->setExplicitFocusOrder (19);
+    kbdLeftCurve->setBounds (128, 170, 36, 26);
+    binder->attach(kbdLeftCurve.get());
+    int posLeft[] = {0,5,4,3};
+    kbdLeftCurve->setImage(lookAndFeel->imageScaling, posLeft);
+    binder->add(std::move(kbdLeftCurve));
+
+    auto kbdRightCurve = std::make_unique<ComboBoxImage>();
+    kbdRightCurve->setExplicitFocusOrder (21);
+    kbdRightCurve->setBounds (240, 170, 36, 26);
+    binder->attach(kbdRightCurve.get());
+    int posRight[] = {3,2,1,0};
+    kbdRightCurve->setImage(lookAndFeel->imageScaling, posRight);
+    binder->add(std::move(kbdRightCurve));
 
     envDisplay.reset (new EnvDisplay());
     addAndMakeVisible (envDisplay.get());
     envDisplay->setName ("envDisplay");
-
     envDisplay->setBounds (16, 83, 94, 30);
-
-    sclLeftLevel.reset (new DXSlider ("sclLeftLevel"));
-    addAndMakeVisible (sclLeftLevel.get());
-    sclLeftLevel->setTooltip (TRANS ("Keyboard Scale Level Left Depth "));
-    sclLeftLevel->setExplicitFocusOrder (16);
-    sclLeftLevel->setRange (0, 99, 1);
-    sclLeftLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sclLeftLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    sclLeftLevel->addListener (this);
-
-    sclLeftLevel->setBounds (131, 115, 34, 34);
-
-    sclRightLevel.reset (new DXSlider ("sclRightLevel"));
-    addAndMakeVisible (sclRightLevel.get());
-    sclRightLevel->setTooltip (TRANS ("Keyboard Scale Level Right Depth "));
-    sclRightLevel->setExplicitFocusOrder (18);
-    sclRightLevel->setRange (0, 99, 1);
-    sclRightLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sclRightLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    sclRightLevel->addListener (this);
-
-    sclRightLevel->setBounds (241, 115, 34, 34);
-
-    sclLvlBrkPt.reset (new DXSlider ("sclLvlBrkPt"));
-    addAndMakeVisible (sclLvlBrkPt.get());
-    sclLvlBrkPt->setTooltip (TRANS ("Scale Level Breakpoint"));
-    sclLvlBrkPt->setExplicitFocusOrder (17);
-    sclLvlBrkPt->setRange (0, 99, 1);
-    sclLvlBrkPt->setSliderStyle (juce::Slider::LinearHorizontal);
-    sclLvlBrkPt->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    sclLvlBrkPt->addListener (this);
-
-    sclLvlBrkPt->setBounds (178, 130, 54, 24);
-
-    sclRateScaling.reset (new DXSlider ("sclRateScaling"));
-    addAndMakeVisible (sclRateScaling.get());
-    sclRateScaling->setTooltip (TRANS ("Keyboard Rate Scaling"));
-    sclRateScaling->setExplicitFocusOrder (20);
-    sclRateScaling->setRange (0, 7, 1);
-    sclRateScaling->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sclRateScaling->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    sclRateScaling->addListener (this);
-
-    sclRateScaling->setBounds (186, 179, 34, 34);
-
-    keyVelSens.reset (new DXSlider ("keyVelSens"));
-    addAndMakeVisible (keyVelSens.get());
-    keyVelSens->setExplicitFocusOrder (14);
-    keyVelSens->setRange (0, 7, 1);
-    keyVelSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    keyVelSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    keyVelSens->addListener (this);
-
-    keyVelSens->setBounds (204, 76, 34, 34);
-
-    ampModSens.reset (new DXSlider ("ampModSens"));
-    addAndMakeVisible (ampModSens.get());
-    ampModSens->setExplicitFocusOrder (13);
-    ampModSens->setRange (0, 3, 1);
-    ampModSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    ampModSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    ampModSens->addListener (this);
-
-    ampModSens->setBounds (140, 76, 34, 34);
 
     vu.reset (new VuMeter());
     addAndMakeVisible (vu.get());
     vu->setName ("vu");
-
     vu->setBounds (132, 52, 140, 8);
 
-    opMode.reset (new juce::ToggleButton ("opMode"));
-    addAndMakeVisible (opMode.get());
-    opMode->setExplicitFocusOrder (12);
-    opMode->setButtonText (juce::String());
-    opMode->addListener (this);
-
-    opMode->setBounds (146, 19, 48, 26);
-
-    kbdLeftCurve.reset (new ComboBoxImage());
-    addAndMakeVisible (kbdLeftCurve.get());
-    kbdLeftCurve->setExplicitFocusOrder (19);
-    kbdLeftCurve->setName ("kbdLeftCurve");
-
-    kbdLeftCurve->setBounds (128, 170, 36, 26);
-
-    kbdRightCurve.reset (new ComboBoxImage());
-    addAndMakeVisible (kbdRightCurve.get());
-    kbdRightCurve->setExplicitFocusOrder (21);
-    kbdRightCurve->setName ("kbdRightCurve");
-
-    kbdRightCurve->setBounds (240, 170, 36, 26);
-
-
-    //[UserPreSize]
     opSwitch.reset(new OperatorSwitch());
-    opSwitch->addListener(this);
     addAndMakeVisible(opSwitch.get());
-    //[/UserPreSize]
 
     setSize (287, 218);
 
-
-    //[Constructor] You can add your own custom stuff here..
-    SharedResourcePointer<DXLookNFeel> lookAndFeel;
-
     light = lookAndFeel->imageLight;
-    Image tmp = lookAndFeel->imageScaling;
-    
-    kbdLeftCurve->addItem("-LN", 1);
-    kbdLeftCurve->addItem("-EX", 2);
-    kbdLeftCurve->addItem("+EX", 3);
-    kbdLeftCurve->addItem("+LN", 4);
-    int posLeft[] = {0,5,4,3};
-    kbdLeftCurve->setImage(tmp, posLeft);
-
-    kbdRightCurve->addItem("-LN", 1);
-    kbdRightCurve->addItem("-EX", 2);
-    kbdRightCurve->addItem("+EX", 3);
-    kbdRightCurve->addItem("+LN", 4);
-    int posRight[] = {3,2,1,0};
-    kbdRightCurve->setImage(tmp, posRight);
-
     background = lookAndFeel->imageOperator;
     opSwitch->setTitle("Operator switch");
 
+    khzDisplay.reset (new juce::Label ("khz",
+                                       TRANS ("1,000 kHz")));
+    addAndMakeVisible (khzDisplay.get());
+    khzDisplay->setBounds (15, 10, 95, 10);
+
+    //contextCallback = std::make_unique<ContextListener>(processor, internalOp);
+    //addMouseListener(contextCallback.get(), true);
     setWantsKeyboardFocus(true);
-    //[/Constructor]
 }
 
-OperatorEditor::~OperatorEditor()
-{
-    //[Destructor_pre]. You can add your own custom destruction code here..
-    //[/Destructor_pre]
-
-    s_egl1 = nullptr;
-    s_egl2 = nullptr;
-    s_egl3 = nullptr;
-    s_egl4 = nullptr;
-    s_egv1 = nullptr;
-    s_egv2 = nullptr;
-    s_egv3 = nullptr;
-    s_egv4 = nullptr;
-    opLevel = nullptr;
-    opFine = nullptr;
-    opCoarse = nullptr;
+OperatorEditor::~OperatorEditor() {
     khzDisplay = nullptr;
-    detune = nullptr;
     envDisplay = nullptr;
-    sclLeftLevel = nullptr;
-    sclRightLevel = nullptr;
-    sclLvlBrkPt = nullptr;
-    sclRateScaling = nullptr;
-    keyVelSens = nullptr;
-    ampModSens = nullptr;
     vu = nullptr;
-    opMode = nullptr;
-    kbdLeftCurve = nullptr;
-    kbdRightCurve = nullptr;
-
-
-    //[Destructor]. You can add your own custom destruction code here..
     opSwitch = nullptr;
-    //[/Destructor]
 }
 
 //==============================================================================
@@ -374,13 +254,12 @@ void OperatorEditor::paint (juce::Graphics& g)
     g.setFont(Font (30.00f, Font::plain));
     g.drawText(opNum, 250, 14, 30, 30, Justification::centred, true);
 
-    bool state = opMode->getToggleState();
+    //bool state = opMode->getToggleState();
 
     // 129 x 24
-    g.drawImage(light, 127, 24, 14, 14, 0, state ? 0 : 28, 28, 28);
+    //    g.drawImage(light, 127, 24, 14, 14, 0, state ? 0 : 28, 28, 28);
     // 199 x 24
-    g.drawImage(light, 198, 24, 14, 14, 0, !state ? 0 : 28, 28, 28);
-    //[/UserPaint]
+    // g.drawImage(light, 198, 24, 14, 14, 0, !state ? 0 : 28, 28, 28);
 }
 
 void OperatorEditor::resized()
@@ -393,164 +272,33 @@ void OperatorEditor::resized()
     //[/UserResized]
 }
 
-void OperatorEditor::sliderValueChanged (juce::Slider* sliderThatWasMoved)
-{
-    //[UsersliderValueChanged_Pre]
-    //[/UsersliderValueChanged_Pre]
-
-    if (sliderThatWasMoved == s_egl1.get())
-    {
-        //[UserSliderCode_s_egl1] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egl1]
-    }
-    else if (sliderThatWasMoved == s_egl2.get())
-    {
-        //[UserSliderCode_s_egl2] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egl2]
-    }
-    else if (sliderThatWasMoved == s_egl3.get())
-    {
-        //[UserSliderCode_s_egl3] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egl3]
-    }
-    else if (sliderThatWasMoved == s_egl4.get())
-    {
-        //[UserSliderCode_s_egl4] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egl4]
-    }
-    else if (sliderThatWasMoved == s_egv1.get())
-    {
-        //[UserSliderCode_s_egv1] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egv1]
-    }
-    else if (sliderThatWasMoved == s_egv2.get())
-    {
-        //[UserSliderCode_s_egv2] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egv2]
-    }
-    else if (sliderThatWasMoved == s_egv3.get())
-    {
-        //[UserSliderCode_s_egv3] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egv3]
-    }
-    else if (sliderThatWasMoved == s_egv4.get())
-    {
-        //[UserSliderCode_s_egv4] -- add your slider handling code here..
-        envDisplay->repaint();
-        //[/UserSliderCode_s_egv4]
-    }
-    else if (sliderThatWasMoved == opLevel.get())
-    {
-        //[UserSliderCode_opLevel] -- add your slider handling code here..
-        //[/UserSliderCode_opLevel]
-    }
-    else if (sliderThatWasMoved == opFine.get())
-    {
-        //[UserSliderCode_opFine] -- add your slider handling code here..
-        updateDisplay();
-        //[/UserSliderCode_opFine]
-    }
-    else if (sliderThatWasMoved == opCoarse.get())
-    {
-        //[UserSliderCode_opCoarse] -- add your slider handling code here..
-        updateDisplay();
-        //[/UserSliderCode_opCoarse]
-    }
-    else if (sliderThatWasMoved == detune.get())
-    {
-        //[UserSliderCode_detune] -- add your slider handling code here..
-        updateDisplay();
-        //[/UserSliderCode_detune]
-    }
-    else if (sliderThatWasMoved == sclLeftLevel.get())
-    {
-        //[UserSliderCode_sclLeftLevel] -- add your slider handling code here..
-        //[/UserSliderCode_sclLeftLevel]
-    }
-    else if (sliderThatWasMoved == sclRightLevel.get())
-    {
-        //[UserSliderCode_sclRightLevel] -- add your slider handling code here..
-        //[/UserSliderCode_sclRightLevel]
-    }
-    else if (sliderThatWasMoved == sclLvlBrkPt.get())
-    {
-        //[UserSliderCode_sclLvlBrkPt] -- add your slider handling code here..
-        //[/UserSliderCode_sclLvlBrkPt]
-    }
-    else if (sliderThatWasMoved == sclRateScaling.get())
-    {
-        //[UserSliderCode_sclRateScaling] -- add your slider handling code here..
-        //[/UserSliderCode_sclRateScaling]
-    }
-    else if (sliderThatWasMoved == keyVelSens.get())
-    {
-        //[UserSliderCode_keyVelSens] -- add your slider handling code here..
-        //[/UserSliderCode_keyVelSens]
-    }
-    else if (sliderThatWasMoved == ampModSens.get())
-    {
-        //[UserSliderCode_ampModSens] -- add your slider handling code here..
-        //[/UserSliderCode_ampModSens]
-    }
-
-    //[UsersliderValueChanged_Post]
-    //[/UsersliderValueChanged_Post]
-}
-
-void OperatorEditor::buttonClicked (juce::Button* buttonThatWasClicked)
-{
-    //[UserbuttonClicked_Pre]
-    //[/UserbuttonClicked_Pre]
-
-    if (buttonThatWasClicked == opMode.get())
-    {
-        //[UserButtonCode_opMode] -- add your button handler code here..
-        repaint();
-        //[/UserButtonCode_opMode]
-    }
-
-    //[UserbuttonClicked_Post]
-    if (buttonThatWasClicked == opSwitch.get()) {
-        this->processor->forceRefreshUI = true;
-    }
-    //[/UserbuttonClicked_Post]
-}
-
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
-    parent->opCtrl[op].egLevel[0]->bind(s_egl1.get());
-    parent->opCtrl[op].egLevel[1]->bind(s_egl2.get());
-    parent->opCtrl[op].egLevel[2]->bind(s_egl3.get());
-    parent->opCtrl[op].egLevel[3]->bind(s_egl4.get());
-    parent->opCtrl[op].egRate[0]->bind(s_egv1.get());
-    parent->opCtrl[op].egRate[1]->bind(s_egv2.get());
-    parent->opCtrl[op].egRate[2]->bind(s_egv3.get());
-    parent->opCtrl[op].egRate[3]->bind(s_egv4.get());
-    parent->opCtrl[op].level->bind(opLevel.get());
-    parent->opCtrl[op].opMode->bind(opMode.get());
-    parent->opCtrl[op].fine->bind(opFine.get());
-    parent->opCtrl[op].coarse->bind(opCoarse.get());
-    parent->opCtrl[op].detune->bind(detune.get());
-    parent->opCtrl[op].sclBrkPt->bind(sclLvlBrkPt.get());
-    parent->opCtrl[op].sclLeftCurve->bind(kbdLeftCurve.get());
-    parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve.get());
-    parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel.get());
-    parent->opCtrl[op].sclRightDepth->bind(sclRightLevel.get());
-    parent->opCtrl[op].sclRate->bind(sclRateScaling.get());
-    parent->opCtrl[op].ampModSens->bind(ampModSens.get());
-    parent->opCtrl[op].velModSens->bind(keyVelSens.get());
-    parent->opCtrl[op].opSwitch->bind(opSwitch.get());
-
-    int offset = parent->opCtrl[op].egRate[0]->getOffset();
-    envDisplay->pvalues = &(parent->data[offset]);
-    processor = parent;
+    // parent->opCtrl[op].egLevel[0]->bind(s_egl1.get());
+    // parent->opCtrl[op].egLevel[1]->bind(s_egl2.get());
+    // parent->opCtrl[op].egLevel[2]->bind(s_egl3.get());
+    // parent->opCtrl[op].egLevel[3]->bind(s_egl4.get());
+    // parent->opCtrl[op].egRate[0]->bind(s_egv1.get());
+    // parent->opCtrl[op].egRate[1]->bind(s_egv2.get());
+    // parent->opCtrl[op].egRate[2]->bind(s_egv3.get());
+    // parent->opCtrl[op].egRate[3]->bind(s_egv4.get());
+    // parent->opCtrl[op].level->bind(opLevel.get());
+    // parent->opCtrl[op].opMode->bind(opMode.get());
+    // parent->opCtrl[op].fine->bind(opFine.get());
+    // parent->opCtrl[op].coarse->bind(opCoarse.get());
+    // parent->opCtrl[op].detune->bind(detune.get());
+    // parent->opCtrl[op].sclBrkPt->bind(sclLvlBrkPt.get());
+    // parent->opCtrl[op].sclLeftCurve->bind(kbdLeftCurve.get());
+    // parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve.get());
+    // parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel.get());
+    // parent->opCtrl[op].sclRightDepth->bind(sclRightLevel.get());
+    // parent->opCtrl[op].sclRate->bind(sclRateScaling.get());
+    // parent->opCtrl[op].ampModSens->bind(ampModSens.get());
+    // parent->opCtrl[op].velModSens->bind(keyVelSens.get());
+    // parent->opCtrl[op].opSwitch->bind(opSwitch.get());
+    //
+    // int offset = parent->opCtrl[op].egRate[0]->getOffset();
+    // //envDisplay->pvalues = &(parent->data[offset]);
 
     opNum << op + 1;
     internalOp = 5-op;
@@ -564,29 +312,6 @@ void OperatorEditor::updateGain(float v) {
 }
 
 void OperatorEditor::updateDisplay() {
-    float freq = opCoarse->getValue();
-    float fine = opFine->getValue();
-    String txtFreq;
-
-    if (opMode->getToggleState() == 0) {
-        if ( freq == 0 )
-            freq = 0.5;
-        txtFreq << "f = " << (freq + (freq * (fine/100)));
-    } else {
-        freq = pow(10,((int)freq)&3);
-        freq = freq * exp(M_LN10*(fine/100));
-        txtFreq << freq << " Hz";
-    }
-
-    int det = detune->getValue();
-    if ( det != 0 ) {
-        if ( det > 0 )
-            txtFreq << " +" << det;
-        else
-            txtFreq << " " << det;
-    }
-    khzDisplay->setText(txtFreq, dontSendNotification);
-    repaint();
 }
 
 
@@ -596,48 +321,7 @@ void OperatorEditor::updateEnvPos(char pos) {
 }
 
 void OperatorEditor::mouseDown(const MouseEvent &event) {
-    if ( event.mods.isPopupMenu()) {
-        PopupMenu popup;
 
-        bool hasClipboard = DexedClipboard().isOperatorData();
-
-        popup.addItem(1, "Copy Operator Values");
-        popup.addItem(2, "Paste Envelope Values", hasClipboard);
-        popup.addItem(3, "Paste Operator Values", hasClipboard);
-        popup.addSeparator();
-        popup.addItem(4, "Send current program to DX7");
-
-        if ( processor->getZoomFactor() > 1.0f ) {
-            popup.addSeparator();
-            popup.addItem(5, "Reset plugin UI scaling factor");
-        }
-
-        switch(popup.show()) {
-            case 1:
-                processor->copyToClipboard(internalOp);
-            break;
-
-            case 2:
-                processor->pasteEnvFromClipboard(internalOp);
-            break;
-
-            case 3:
-                processor->pasteOpFromClipboard(internalOp);
-            break;
-
-            case 4:
-                processor->sendCurrentSysexProgram();
-            break;
-
-            case 5:
-                auto *editor = dynamic_cast<DexedAudioProcessorEditor*>(getParentComponent()->getParentComponent());
-                if ( editor != nullptr ) {
-                    editor->resetZoomFactor();
-                }
-            break;
-        }
-
-    }
 }
 
 void OperatorEditor::toggleOpSwitch() {

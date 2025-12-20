@@ -19,13 +19,13 @@
 
 #pragma once
 
-//[Headers]     -- You can add your own extra header files here --
 #include "JuceHeader.h"
 #include "PluginProcessor.h"
 #include "component/DXComponents.h"
 #include "component/VUMeter.h"
 #include "component/EnvDisplay.h"
-//[/Headers]
+#include "util/AudioComponentContainer.h"
+#include "component/ParameterObserver.h"
 
 
 
@@ -37,13 +37,11 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class OperatorEditor  : public Component,
-                        public juce::Slider::Listener,
-                        public juce::Button::Listener
-{
+
+class OperatorEditor  : public Component {
 public:
     //==============================================================================
-    OperatorEditor ();
+    OperatorEditor (DexedAudioProcessor &processor, int num);
     ~OperatorEditor() override;
 
     //==============================================================================
@@ -59,48 +57,25 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
-    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
-    void buttonClicked (juce::Button* buttonThatWasClicked) override;
-
-
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    String opNum;
+    DexedAudioProcessor &processor;
     int internalOp;
+
+    std::unique_ptr<juce::MouseListener> contextCallback;
+    String opNum;
     Image light;
-    DexedAudioProcessor *processor;
     Image background;
     std::unique_ptr<ToggleButton> opSwitch;
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<juce::Slider> s_egl1;
-    std::unique_ptr<juce::Slider> s_egl2;
-    std::unique_ptr<juce::Slider> s_egl3;
-    std::unique_ptr<juce::Slider> s_egl4;
-    std::unique_ptr<juce::Slider> s_egv1;
-    std::unique_ptr<juce::Slider> s_egv2;
-    std::unique_ptr<juce::Slider> s_egv3;
-    std::unique_ptr<juce::Slider> s_egv4;
-    std::unique_ptr<juce::Slider> opLevel;
-    std::unique_ptr<juce::Slider> opFine;
-    std::unique_ptr<juce::Slider> opCoarse;
     std::unique_ptr<juce::Label> khzDisplay;
-    std::unique_ptr<juce::Slider> detune;
     std::unique_ptr<EnvDisplay> envDisplay;
-    std::unique_ptr<juce::Slider> sclLeftLevel;
-    std::unique_ptr<juce::Slider> sclRightLevel;
-    std::unique_ptr<juce::Slider> sclLvlBrkPt;
-    std::unique_ptr<juce::Slider> sclRateScaling;
-    std::unique_ptr<juce::Slider> keyVelSens;
-    std::unique_ptr<juce::Slider> ampModSens;
     std::unique_ptr<VuMeter> vu;
-    std::unique_ptr<juce::ToggleButton> opMode;
-    std::unique_ptr<ComboBoxImage> kbdLeftCurve;
-    std::unique_ptr<ComboBoxImage> kbdRightCurve;
 
-
+    std::unique_ptr<AudioComponentContainer> binder;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OperatorEditor)
 };
