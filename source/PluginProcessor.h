@@ -39,6 +39,7 @@
 #include "engine/EngineOpl.h"
 #include "parameter/DexedApvts.h"
 #include "core/Program.h"
+#include "util/CommandFifo.h"
 
 struct ProcessorVoice {
     int channel;
@@ -69,7 +70,7 @@ const int MAX_SCL_KBM_FILE_SIZE = 16384;
 //==============================================================================
 /**
 */
-class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback, public clap_juce_extensions::clap_properties,
+class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, public clap_juce_extensions::clap_properties,
     juce::ValueTree::Listener
 {
     static const int MAX_ACTIVE_NOTES = 16;
@@ -97,20 +98,14 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
      * This flag is used in the audio thread to know if the voice has changed
      * and needs to be updated.
      */
-    bool refreshVoice;
+    juce::Atomic<bool> refreshVoice { false };
+
     bool normalizeDxVelocity;
     bool sendSysexChange;
     
     void processMidiMessage(const MidiMessage *msg);
     void keydown(uint8_t chan, uint8_t pitch, uint8_t velo);
     void keyup(uint8_t, uint8_t pitch, uint8_t velo);
-    
-    /**
-     * this is called from the Audio thread to tell
-     * to update the UI / hostdata 
-     */
-    void handleAsyncUpdate() override;
-    //void initCtrl();
 
 	MidiMessage* nextMidi,*midiMsg;
 	bool hasMidiMessage;
@@ -147,8 +142,12 @@ public :
     SysexComm sysexComm;
     VoiceStatus voiceStatus;
     File activeFileCartridge;
-    
-    bool forceRefreshUI;
+
+    /**
+     * This flag indicates the UI to refresh itself
+     */
+    juce::Atomic<bool> refreshUI { false };
+
     float vuSignal;
     double vuDecayFactor = 0.999361; // (for 48 kHz sampling rate)
     bool showKeyboard;
@@ -156,36 +155,13 @@ public :
     void setEngineType(int rs);
     
     HashMap<int, Ctrl*> mappedMidiCC;
-    
-    // Array<Ctrl*> ctrl;
-    //
-    // OperatorCtrl opCtrl[6];
-    // std::unique_ptr<CtrlDX> pitchEgRate[4];
-    // std::unique_ptr<CtrlDX> pitchEgLevel[4];
-    // std::unique_ptr<CtrlDX> pitchModSens;
-    // std::unique_ptr<CtrlDX> algo;
-    // std::unique_ptr<CtrlDX> oscSync;
-    // std::unique_ptr<CtrlDX> feedback;
-    // std::unique_ptr<CtrlDX> lfoRate;
-    // std::unique_ptr<CtrlDX> lfoDelay;
-    // std::unique_ptr<CtrlDX> lfoAmpDepth;
-    // std::unique_ptr<CtrlDX> lfoPitchDepth;
-    // std::unique_ptr<CtrlDX> lfoWaveform;
-    // std::unique_ptr<CtrlDX> lfoSync;
-    // std::unique_ptr<CtrlDX> transpose;
-    //
-    // std::unique_ptr<CtrlFloat> fxCutoff;
-    // std::unique_ptr<CtrlFloat> fxReso;
-    // std::unique_ptr<CtrlFloat> output;
-    // std::unique_ptr<Ctrl> tune;
-    // std::unique_ptr<Ctrl> monoModeCtrl;
 
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);
 
     //==============================================================================
     DexedAudioProcessor();
-    ~DexedAudioProcessor();
+    ~DexedAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -214,12 +190,6 @@ public :
     
     //==============================================================================
     const String getName() const override;
-    // int getNumParameters() override;
-    // float getParameter (int index) override;
-    // void setParameter (int index, float newValue) override;
-    // const String getParameterName (int index) override;
-    // const String getParameterText (int index) override;
-    // String getParameterID (int index) override;
 
     const String getInputChannelName (int channelIndex) const override;
     const String getOutputChannelName (int channelIndex) const override;
@@ -247,7 +217,6 @@ public :
     // this is kept up to date with the midi messages that arrive, and the UI component
     // registers with it so it can represent the incoming messages
     MidiKeyboardState keyboardState;
-    //void unbindUI();
 
     void loadPreference();
     void savePreference();
@@ -287,7 +256,9 @@ public :
     void setZoomFactor(float factor);
     float getZoomFactor() {
         return zoomFactor;
-    }    
+    }
+
+    CommandFifo<DexedAudioProcessor> commandFifo;
 private:
     int chooseNote(uint8_t pitch);
     int32_t nextKeydownSeq;;

@@ -63,7 +63,6 @@ private:
     DexedAudioProcessor &processor;
     int internalOp;
 
-    std::unique_ptr<juce::MouseListener> contextCallback;
     String opNum;
     Image light;
     Image background;
@@ -71,7 +70,6 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<juce::Label> khzDisplay;
     std::unique_ptr<EnvDisplay> envDisplay;
     std::unique_ptr<VuMeter> vu;
 

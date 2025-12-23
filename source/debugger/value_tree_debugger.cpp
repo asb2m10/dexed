@@ -80,7 +80,7 @@ public:
             return t.getNumChildren() > 0;
         }
 
-        void itemOpennessChanged (bool isNowOpen) {
+        void itemOpennessChanged(bool isNowOpen) {
             if (isNowOpen) updateSubItems();
         }
 
@@ -96,7 +96,7 @@ public:
                 restoreOpennessState (*openness.get());
         }
 
-        void paintItem (Graphics& g, int w, int h) {
+        void paintItem(Graphics& g, int w, int h) {
             Font font;
             Font smallFont (11.0);
 

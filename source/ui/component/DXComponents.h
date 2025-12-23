@@ -83,22 +83,6 @@ private:
 };
 //==============================================================================
 
-class EnvDisplay : public Component {
-public:
-    EnvDisplay();
-    uint8_t *pvalues;
-    char vPos;    
-    void paint(Graphics &g);
-};
-
-class LcdDisplay : public Component {
-public:
-    LcdDisplay();
-    void setSystemMsg(String msg);
-    String paramMsg;
-    void paint(Graphics &g);    
-};
-
 class ComboBoxImage : public ComboBox {
     Image items;
     int itemHeight;

@@ -22,7 +22,7 @@
 
 #include "OperatorEditor.h"
 #include "PluginEditor.h"
-#include "component/OperatorDisplay.h"
+#include "component/OperatorDetails.h"
 #include "util/ContextMenuAdapter.h"
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
@@ -186,6 +186,7 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     binder->addAndAttach(std::move(opMode));
 
     auto kbdLeftCurve = std::make_unique<ComboBoxImage>();
+    kbdLeftCurve->setName(IDs::lKeyScale.op(internalOp).name);
     kbdLeftCurve->setExplicitFocusOrder (19);
     kbdLeftCurve->setBounds (128, 170, 36, 26);
     binder->attach(kbdLeftCurve.get());
@@ -194,6 +195,7 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     binder->add(std::move(kbdLeftCurve));
 
     auto kbdRightCurve = std::make_unique<ComboBoxImage>();
+    kbdRightCurve->setName(IDs::rKeyScale.op(internalOp).name);
     kbdRightCurve->setExplicitFocusOrder (21);
     kbdRightCurve->setBounds (240, 170, 36, 26);
     binder->attach(kbdRightCurve.get());
@@ -201,9 +203,12 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     kbdRightCurve->setImage(lookAndFeel->imageScaling, posRight);
     binder->add(std::move(kbdRightCurve));
 
-    envDisplay.reset (new EnvDisplay());
+    auto operatorDetails = std::make_unique<OperatorDetails>(processor.parameters, num);
+    operatorDetails->setBounds(15, 10, 95, 10);
+    binder->add(std::move(operatorDetails));
+
+    envDisplay = std::make_unique<EnvDisplay>(processor.parameters, num);
     addAndMakeVisible (envDisplay.get());
-    envDisplay->setName ("envDisplay");
     envDisplay->setBounds (16, 83, 94, 30);
 
     vu.reset (new VuMeter());
@@ -220,18 +225,12 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     background = lookAndFeel->imageOperator;
     opSwitch->setTitle("Operator switch");
 
-    khzDisplay.reset (new juce::Label ("khz",
-                                       TRANS ("1,000 kHz")));
-    addAndMakeVisible (khzDisplay.get());
-    khzDisplay->setBounds (15, 10, 95, 10);
-
     //contextCallback = std::make_unique<ContextListener>(processor, internalOp);
     //addMouseListener(contextCallback.get(), true);
     setWantsKeyboardFocus(true);
 }
 
 OperatorEditor::~OperatorEditor() {
-    khzDisplay = nullptr;
     envDisplay = nullptr;
     vu = nullptr;
     opSwitch = nullptr;

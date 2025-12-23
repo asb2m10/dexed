@@ -137,9 +137,6 @@ GlobalEditor::GlobalEditor(DexedAudioProcessor &processor, juce::Component *pare
     algo->setSliderStyle(juce::Slider::RotaryVerticalDrag);
     algo->setTextBoxStyle(juce::Slider::NoTextBox, true, 80, 20);
     algo->setBounds(501, 22, 34, 34);
-    algo->onValueChange = [this]() {
-        algoDisplay->repaint();
-    };
     binder->addAndAttach(std::move(algo));
 
     auto feedback = std::make_unique<DXSlider>(IDs::feedback.name);

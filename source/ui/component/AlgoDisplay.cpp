@@ -113,7 +113,6 @@ void AlgoDisplay::paint(Graphics &g) {
     g.setColour(DXLookNFeel::fillColour);
     g.fillRect(1, 3, 20, 15);
     int algo = algoValue.get();
-
     g.setColour(Colours::white);
     g.drawText(juce::String(algo), 1, 3, 20, 15, Justification::centred, true);
     

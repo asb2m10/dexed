@@ -86,7 +86,7 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     resetSize();
     addKeyListener(this);
     updateUI();
-    startTimer(100);
+    startTimer(20);
 }
 
 DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
@@ -245,9 +245,9 @@ void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChange
 }
 
 void DexedAudioProcessorEditor::timerCallback() {
-    if ( processor->forceRefreshUI ) {
-        processor->forceRefreshUI = false;
+    if ( processor->refreshUI.compareAndSetBool(false, true) ) {
         updateUI();
+        TRACE("OK\n");
     }
 
     if ( ! processor->peekVoiceStatus() )
@@ -265,8 +265,6 @@ void DexedAudioProcessorEditor::timerCallback() {
         int amp = processor->voiceStatus.amp[5 - i] - amp_min;
         if (amp <= 0) amp = 0;
         operators[i]->updateGain(amp * one_per_amp_diff);
-
-
         operators[i]->updateEnvPos(processor->voiceStatus.ampStep[5 - i]);
     }
     global.updatePitchPos(processor->voiceStatus.pitchStep);

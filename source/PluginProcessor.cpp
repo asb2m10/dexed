@@ -198,13 +198,12 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     int numSamples = buffer.getNumSamples();
     int i;
     
-    if ( refreshVoice ) {
+    if ( ! refreshVoice.compareAndSetBool(false, true) ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
                 voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity, voices[i].channel);
         }
         lfo.reset(data + 137);
-        refreshVoice = false;
     }
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, numSamples, true);
@@ -609,10 +608,6 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
 
 void DexedAudioProcessor::setZoomFactor(float factor) {
     zoomFactor = factor;
-}
-
-void DexedAudioProcessor::handleAsyncUpdate() {
-    updateUI();
 }
 
 void dexed_trace(const char *source, const char *fmt, ...) {

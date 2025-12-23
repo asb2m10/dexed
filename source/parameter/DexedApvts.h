@@ -12,19 +12,13 @@ public:
 
     /**
      * Maps a parameter to a callback function that will be called when the parameter value changes.
+     * Use this for the audio thread.
      */
     void mapTo(juce::String paramId, const std::function<void(float)> &func);
 
     /**
-     * Attaches a CachedValue to in the ValueTreeState parameter, usually for UI components.
+     * This holds a ValueTree for each parameter name to add persistent listeners if needed.
+     * Use this for the UI thread.
      */
-    template <typename T>
-    void attachTo(juce::String paramId, juce::CachedValue<T> &cache) {
-        for (auto param : state) {
-            if (param.getProperty(IDs::id) == paramId) {
-                cache.referTo(param, IDs::value, nullptr);
-                return;
-            }
-        }
-    }
+    std::unordered_map<juce::String, juce::ValueTree> nameMapping;
 };

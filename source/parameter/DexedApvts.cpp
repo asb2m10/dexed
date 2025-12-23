@@ -7,13 +7,13 @@ class ParameterDx : public juce::AudioParameterInt {
 public:
     ParameterDx(const MetaParameterID &paramID, int steps)
         : juce::AudioParameterInt(paramID.parameter(), paramID.displayName(), 0, steps, 0) {
-        TRACE("TO %s", paramID.displayName().toRawUTF8());
     }
 };
 
 class ParameterCallback : public juce::AudioProcessorParameter::Listener {
     juce::RangedAudioParameter &parameter;
     const std::function<void(float)> func;
+
 public:
     ParameterCallback(juce::RangedAudioParameter &parameter, const std::function<void(float)> funcIn) :
         parameter(parameter), func(funcIn) {
@@ -110,8 +110,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
         group->addChild(std::make_unique<ParameterDx>(IDs::breakpoint.op(i), 99));
         group->addChild(std::make_unique<ParameterDx>(IDs::lScaleDepth.op(i), 99));
         group->addChild(std::make_unique<ParameterDx>(IDs::rScaleDepth.op(i), 99));
-        group->addChild(std::make_unique<ParameterDx>(IDs::lKeyScale.op(i), 3));
-        group->addChild(std::make_unique<ParameterDx>(IDs::rKeyScale.op(i), 3));
+
+        juce::StringArray keyScaleChoices = { "-LN", "-EX", "+EX", "+LN" };
+        group->addChild(std::make_unique<AudioParameterChoice>(IDs::lKeyScale.op(i).parameter(), IDs::lKeyScale.op(i).displayName(), keyScaleChoices, 0));
+        group->addChild(std::make_unique<AudioParameterChoice>(IDs::rKeyScale.op(i).parameter(), IDs::rKeyScale.op(i).displayName(), keyScaleChoices, 0));
+
         group->addChild(std::make_unique<ParameterDx>(IDs::rateScaling.op(i), 7));
         group->addChild(std::make_unique<ParameterDx>(IDs::ampModeSens.op(i), 3));
         group->addChild(std::make_unique<ParameterDx>(IDs::keyVelocity.op(i), 7));
@@ -127,6 +130,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
 DexedApvts::DexedApvts(juce::AudioProcessor& processorToConnectTo, juce::UndoManager* undoManagerToUse) :
  juce::AudioProcessorValueTreeState (processorToConnectTo, undoManagerToUse, IDs::parameters,
         createParameterLayout()) {
+    for (auto param : state) {
+        const String name = param.getProperty(IDs::id);
+        nameMapping.emplace(name, param);
+    }
 }
 
 void DexedApvts::mapTo(juce::String paramId, const std::function<void(float)> &func) {

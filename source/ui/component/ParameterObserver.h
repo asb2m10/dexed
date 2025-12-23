@@ -20,8 +20,6 @@ public:
     }
 
     void refresh() {
-        // if ( ! dirty.compareAndSetBool(false, true) )
-        //     return;
         repaint();
     }
 

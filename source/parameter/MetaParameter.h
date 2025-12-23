@@ -35,4 +35,7 @@ struct MetaParameterID {
     }
 };
 
+/**
+ * This contains the list (in order) of all DX parameters. They are 1-to-1 mapped to sysex data.
+ */
 extern const std::vector<MetaParameterID> dxParameters;

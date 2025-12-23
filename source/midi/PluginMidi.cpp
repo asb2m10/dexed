@@ -239,6 +239,5 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
         return;
     }
 
-    forceRefreshUI = true;
-    triggerAsyncUpdate();
+    /** TODO: reset parameters */
 }

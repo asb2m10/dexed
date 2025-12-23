@@ -11,6 +11,8 @@ namespace IDs {
         DECLARE_ID(version)
 
         DECLARE_ID(parameters)
+            DECLARE_METADX(pitchEgRate, 126, 0)
+            DECLARE_METADX(pitchEgLevel, 130, 0)
             DECLARE_METADX(algorithm, 134, -1)
             DECLARE_METADX(feedback, 135, 0)
             DECLARE_METADX(oscKeySync, 136, 0)
@@ -21,8 +23,6 @@ namespace IDs {
             DECLARE_METADX(lfoKeySync, 141, 0)
             DECLARE_METADX(lfoWaveform, 142, 0)
             DECLARE_METADX(pitchModSens, 143, 0)
-            DECLARE_METADX(pitchEgRate, 126, 0)
-            DECLARE_METADX(pitchEgLevel, 138, 0)
             DECLARE_METADX(transpose, 144, -24)
 
                 // Parameters based on operators (1-6)

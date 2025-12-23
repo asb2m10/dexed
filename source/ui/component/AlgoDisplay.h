@@ -23,20 +23,28 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "parameter/DexedApvts.h"
 #include "parameter/Model.h"
+#include "util/CacheValueCallback.h"
 #include "Dexed.h"
 
 class AlgoDisplay : public juce::Component {
-    juce::CachedValue<int> algoValue;
-    juce::CachedValue<bool> opSwitch[6];
+    CachedValueCallback<int> algoValue;
+    CachedValueCallback<bool> opSwitch[6];
 
     void displayOp(juce::Graphics &g, char id, int x, int y, char link, char fb);
 public:
     AlgoDisplay(DexedApvts &apvts) {
-        apvts.attachTo(IDs::algorithm.name, algoValue);
-        for(int i=0;i<6;i++) {
-            apvts.attachTo(IDs::on.op(i).name, opSwitch[i]);
+        algoValue.referTo(apvts.nameMapping[IDs::algorithm.name], IDs::value, nullptr);
+        algoValue.callback = [this]() {
+            repaint();
+        };
+
+        for (int i=0;i<6;i++) {
+            opSwitch[i].referTo(apvts.nameMapping[IDs::on.op(i).name], IDs::value, nullptr);
+            opSwitch[i].callback = [this]() {
+                repaint();
+            };
         }
     }
-    
+
     void paint(juce::Graphics &g) override;
 };

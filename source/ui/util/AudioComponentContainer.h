@@ -52,6 +52,8 @@ public:
                for ( int i = 0; i < choices.size(); ++i ) {
                     comboBox->addItem(choices[i], i + 1);
                 }
+            } else {
+                jassertfalse;
             }
             comboBoxAttachments.push_back(std::make_unique<Apvts::ComboBoxAttachment>(apvts, component->getName(), *comboBox));
             return;

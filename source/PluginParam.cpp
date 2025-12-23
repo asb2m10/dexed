@@ -438,14 +438,12 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
         packOpSwitch();
         v = data[155];
     } else if ( data[offset] != v ) {
-        TRACE("setting dx offset=%d v=%d", offset, v);
         data[offset] = v;
     } else {
-        TRACE("ignoring dx7 same values %d %d", offset, v);
         return;
     }
 
-    refreshVoice = true;
+    refreshVoice.set(true);
 
     // MIDDLE C (transpose)
     if (offset == 144)
@@ -500,8 +498,7 @@ void DexedAudioProcessor::setCurrentProgram(int index) {
     activeProgram.pushToParameters(parameters);
     lfo.reset(data + 137);
     currentProgram = index;
-    triggerAsyncUpdate();
-
+    /** TODO: reset parameters */
     panic();
 }
 
@@ -513,19 +510,6 @@ const String DexedAudioProcessor::getProgramName(int index) {
 
 void DexedAudioProcessor::changeProgramName(int index, const String& newName) {
 }
-
-/*
-const String DexedAudioProcessor::getParameterName(int index) {
-    return ctrl[index]->label;
-}
-
-const String DexedAudioProcessor::getParameterText(int index) {
-    return ctrl[index]->getValueDisplay();
-}
-
-String DexedAudioProcessor::getParameterID(int index) {
-    return getParameterName(index);
-}*/
 
 void DexedAudioProcessor::loadPreference() {
     File propFile = DexedAudioProcessor::dexedAppDir.getChildFile("Dexed.xml");

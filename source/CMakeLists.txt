@@ -82,6 +82,7 @@ target_sources(${BaseTargetName} PRIVATE
 
 	parameter/DexedApvts.cpp
 	parameter/ParametersMapper.cpp
+	parameter/State.cpp
 
 	debugger/value_tree_debugger.cpp
 
