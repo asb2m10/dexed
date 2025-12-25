@@ -48,12 +48,25 @@ const std::vector<MetaParameterID> dxParameters = {
 };
 
 void DexedAudioProcessor::mapParameters() {
+    // We set the 154 parameters
     for (const auto &param : dxParameters) {
         parameters.mapTo(param.name, [this, param](float newValue) {
             if ( parameters.pushToParameterInProgress )
                 return;
             uint8_t value = static_cast<uint8_t>(newValue) + param.displayOffset;
             setDxValue(param.pos, value);
+        });
+    }
+
+    // Handle operator ON switches
+    for (int i=0; i<6; i++) {
+        parameters.mapTo( IDs::on.op(i).name, [this, i](float newValue) {
+            if ( newValue > 0.5f ) {
+                activeProgram[IDs::on.pos] |= (1U << (5-i));
+            } else {
+                activeProgram[IDs::on.pos] &= ~(1U << (5-i));
+            }
+            refreshVoice.set(true);
         });
     }
 }

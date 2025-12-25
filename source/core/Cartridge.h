@@ -7,8 +7,7 @@
 #define SYSEX_HEADER { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 }
 #define SYSEX_SIZE 4104
 
-uint8_t sysexChecksum(const uint8_t *sysex, int size);
-void exportSysexPgm(uint8_t *dest, uint8_t *src);
+void exportSysexPgm(uint8_t *dest, const uint8_t *src);
 
 class Cartridge {
     uint8_t voiceData[SYSEX_SIZE];
@@ -68,6 +67,7 @@ public:
         return (char *) voiceData + 6;
     }
 
+    // Convert this to JUCE blob
     char *getVoiceSysex() {
         setHeader();
         return (char *) voiceData;
@@ -90,10 +90,9 @@ public:
         return *this;
     }
 
-    void replaceProgram(int idx, char *src) {
+    void setPackedProgram(int idx, char *src) {
         memcpy(getRawVoice() + (idx * 128), src, 128);
     }
 
-    void unpackProgram(uint8_t *unpackPgm, int idx);
-    void packProgram(uint8_t *src, int idx, juce::String name, char *opSwitch);
+    Program unpackProgram(int idx);
 };

@@ -67,7 +67,7 @@
 //==============================================================================
 DexedAudioProcessor::DexedAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)),
-      parameters (*this, nullptr), activeProgram(data) {
+      parameters (*this, nullptr) {
     rootVt = ValueTree(IDs::root);
     rootVt.addChild(parameters.state, -1, nullptr);
     rootVt.addListener(this);
@@ -161,7 +161,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     keyboardState.reset();
     
-    lfo.reset(data + 137);
+    lfo.reset(activeProgram.getParameters(137));
     
     nextMidi = new MidiMessage(0xF0);
 	midiMsg = new MidiMessage(0xF0);
@@ -192,7 +192,6 @@ void DexedAudioProcessor::releaseResources() {
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
-
     juce::ScopedNoDenormals noDenormals;
 
     int numSamples = buffer.getNumSamples();
@@ -201,9 +200,9 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     if ( ! refreshVoice.compareAndSetBool(false, true) ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
-                voices[i].dx7_note->update(data, voices[i].midi_note, voices[i].velocity, voices[i].channel);
+                voices[i].dx7_note->update(activeProgram.getRawData(), voices[i].midi_note, voices[i].velocity, voices[i].channel);
         }
-        lfo.reset(data + 137);
+        lfo.reset(activeProgram.getParameters(137));
     }
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, numSamples, true);
@@ -384,8 +383,8 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     voices[note].keydown_seq = nextKeydownSeq++;
     // to avoid click, don't sync oscillators when voice stealing
     bool voice_steal = voices[note].dx7_note->isPlaying();
-    voices[note].dx7_note->init(data, pitch, velo, channel, &controllers);
-    if ( data[136] && !voice_steal ) {
+    voices[note].dx7_note->init(activeProgram.getRawData(), pitch, velo, channel, &controllers);
+    if ( activeProgram[IDs::oscKeySync.pos] && !voice_steal ) {
         voices[note].dx7_note->oscSync();
     }
     if ( (voices[lastActiveVoice].midi_note != -1 && controllers.portamento_enable_cc)
@@ -411,7 +410,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
             }
         }
     }
-    else if ( !data[136] ) {
+    else if ( !activeProgram[IDs::oscKeySync.pos] ) {
         // if another note at the same pitch is playing, transfer phase
         // to avoid unpredictable destructive interference. this can cause
         // clicking when voice stealing, but we've tried to choose a voice
@@ -608,6 +607,13 @@ AudioProcessorEditor* DexedAudioProcessor::createEditor() {
 
 void DexedAudioProcessor::setZoomFactor(float factor) {
     zoomFactor = factor;
+}
+
+void DexedAudioProcessor::applyProgram(const Program &program) {
+    panic();
+    activeProgram = program;
+    activeProgram.pushToParameters(parameters);
+    lfo.reset(activeProgram.getParameters(IDs::lfoRate.pos));
 }
 
 void dexed_trace(const char *source, const char *fmt, ...) {

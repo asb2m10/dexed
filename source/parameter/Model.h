@@ -24,6 +24,7 @@ namespace IDs {
             DECLARE_METADX(lfoWaveform, 142, 0)
             DECLARE_METADX(pitchModSens, 143, 0)
             DECLARE_METADX(transpose, 144, -24)
+            DECLARE_METADX(on, 155, 0)
 
                 // Parameters based on operators (1-6)
                 DECLARE_METADX(egRate, 0, 0)
@@ -41,7 +42,6 @@ namespace IDs {
                 DECLARE_METADX(frequencyCoarse, 18, 0)
                 DECLARE_METADX(frequencyFine, 19, 0)
                 DECLARE_METADX(detune, 20, 7)
-                DECLARE_META(on)
 
             DECLARE_META(output)
             DECLARE_META(tune)

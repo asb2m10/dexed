@@ -32,32 +32,27 @@ void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
     currentCart.getProgramNames(programNames);
 }
 
-void DexedAudioProcessor::packOpSwitch() {
-    char value = (controllers.opSwitch[5] == '1') << 5;
-    value += (controllers.opSwitch[4] == '1') << 4;
-    value += (controllers.opSwitch[3] == '1') << 3;
-    value += (controllers.opSwitch[2] == '1') << 2;
-    value += (controllers.opSwitch[1] == '1') << 1;
-    value += (controllers.opSwitch[0] == '1');
-    data[155] = value;
-}
-
-void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
-    controllers.opSwitch[5] = ((packOpValue >> 5) &1) + 48;
-    controllers.opSwitch[4] = ((packOpValue >> 4) &1) + 48;
-    controllers.opSwitch[3] = ((packOpValue >> 3) &1) + 48;
-    controllers.opSwitch[2] = ((packOpValue >> 2) &1) + 48;
-    controllers.opSwitch[1] = ((packOpValue >> 1) &1) + 48;
-    controllers.opSwitch[0] = (packOpValue &1) + 48;
-}
+// void DexedAudioProcessor::packOpSwitch() {
+//     char value = (controllers.opSwitch[5] == '1') << 5;
+//     value += (controllers.opSwitch[4] == '1') << 4;
+//     value += (controllers.opSwitch[3] == '1') << 3;
+//     value += (controllers.opSwitch[2] == '1') << 2;
+//     value += (controllers.opSwitch[1] == '1') << 1;
+//     value += (controllers.opSwitch[0] == '1');
+//     //data[155] = value;
+// }
+//
+// void DexedAudioProcessor::unpackOpSwitch(char packOpValue) {
+//     controllers.opSwitch[5] = ((packOpValue >> 5) &1) + 48;
+//     controllers.opSwitch[4] = ((packOpValue >> 4) &1) + 48;
+//     controllers.opSwitch[3] = ((packOpValue >> 3) &1) + 48;
+//     controllers.opSwitch[2] = ((packOpValue >> 2) &1) + 48;
+//     controllers.opSwitch[1] = ((packOpValue >> 1) &1) + 48;
+//     controllers.opSwitch[0] = (packOpValue &1) + 48;
+// }
 
 int DexedAudioProcessor::updateProgramFromSysex(const uint8_t *rawdata) {
-    panic();
-    memcpy(data, rawdata, 155);
-    unpackOpSwitch(0x3F);
-    lfo.reset(data + 137);
-    /** TODO: reset parameters */
-
+    applyProgram(Program(rawdata));
     if (sysexChecksum(rawdata, 155) != rawdata[155]) // rawdata[155] is a checksum in a sysex dump
         return 1; // just return 1 if the checksum doesn't match, might be normal if it is loaded from a cartridge
     return 0;
@@ -86,14 +81,11 @@ void DexedAudioProcessor::setupStartupCart() {
 }
 
 void DexedAudioProcessor::resetToInitVoice() {
-    activeProgram.applyInitialProgram();
-    unpackOpSwitch(0x3F);
-    panic();
-    /** TODO: reset parameters */
+    applyProgram(Program::initialProgram());
 }
 
 void DexedAudioProcessor::copyToClipboard(int srcOp) {
-    DexedClipboard clipboard(data + (srcOp *21), 21);
+    DexedClipboard clipboard(activeProgram.getParameters(srcOp *21), 21);
     clipboard.write(String("Program: '") + getProgramName(getCurrentProgram()) + "' operator: " + String(6-srcOp));
 }
 
@@ -102,7 +94,7 @@ void DexedAudioProcessor::pasteOpFromClipboard(int destOp) {
 
     jassert(clipboard.isOperatorData());
 
-    memcpy(data+(destOp*21), clipboard.getRawData(), 21);
+    // memcpy(data+(destOp*21), clipboard.getRawData(), 21);
     /** TODO: reset parameters */
 }
 
@@ -111,18 +103,13 @@ void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
 
     jassert(clipboard.isOperatorData());
 
-    memcpy(data+(destOp*21), clipboard.getRawData(), 8);
+    // memcpy(data+(destOp*21), clipboard.getRawData(), 8);
     /** TODO: reset parameters */
 }
 
 void DexedAudioProcessor::sendCurrentSysexProgram() {
-    uint8_t raw[163];
-    
-    packOpSwitch();
-    exportSysexPgm(raw, data);
-    raw[2] = raw[2] | sysexComm.getChl();
     if ( sysexComm.isOutputActive() ) {
-        sysexComm.send(MidiMessage(raw, 163));
+        sysexComm.send(activeProgram.toMidiMessage(sysexComm.getChl()));
     }
 }
 

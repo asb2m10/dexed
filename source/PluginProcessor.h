@@ -121,12 +121,13 @@ class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, pu
 
     void resolvAppDir();
     
-    void unpackOpSwitch(char packOpValue);
-    void packOpSwitch();
+    // void unpackOpSwitch(char packOpValue);
+    // void packOpSwitch();
 
     float zoomFactor = 1;
 
     void mapParameters();
+    void setDxValue(int offset, int v);
 
 public :
     DexedApvts parameters;
@@ -137,7 +138,6 @@ public :
     Controllers controllers;
     StringArray programNames;
     Cartridge currentCart;
-    uint8_t data[161];
 
     SysexComm sysexComm;
     VoiceStatus voiceStatus;
@@ -157,7 +157,6 @@ public :
     HashMap<int, Ctrl*> mappedMidiCC;
 
     void loadCartridge(Cartridge &cart);
-    void setDxValue(int offset, int v);
 
     //==============================================================================
     DexedAudioProcessor();
@@ -227,12 +226,22 @@ public :
     Value lastCCUsed;
     int lastActiveVoice = 0;
 
+    void setZoomFactor(float factor);
+    float getZoomFactor() {
+        return zoomFactor;
+    }
+
+    CommandFifo<DexedAudioProcessor> commandFifo;
+
+    void applyProgram(const Program &program);
+
+    // TUNING STUFF ====================================================
     MTSClient *mtsClient;
     std::shared_ptr<TuningState> synthTuningState;
 
     // holds the previous working tuning state;
-    // used to restore tuning state when there was a problem 
-    // with loading/applying a new .SCL and/or .KBM file 
+    // used to restore tuning state when there was a problem
+    // with loading/applying a new .SCL and/or .KBM file
     std::shared_ptr<TuningState> synthTuningStateLast;
 
     // Prompt for a file
@@ -246,19 +255,14 @@ public :
     // Load from text
     void applySCLTuning(std::string scld);
     void applyKBMMapping(std::string kbmd);
-    
+
     void retuneToStandard();
     void resetTuning(std::shared_ptr<TuningState> t);
     int tuningTranspositionShift();
-    
+
     std::string currentSCLData = "";
     std::string currentKBMData = "";
-    void setZoomFactor(float factor);
-    float getZoomFactor() {
-        return zoomFactor;
-    }
-
-    CommandFifo<DexedAudioProcessor> commandFifo;
+    // TUNING STUFF ====================================================
 private:
     int chooseNote(uint8_t pitch);
     int32_t nextKeydownSeq;;

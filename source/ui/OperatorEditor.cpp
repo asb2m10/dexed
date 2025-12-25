@@ -34,12 +34,12 @@ class OperatorSwitch : public ToggleButton {
     Image image;
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public :
-    OperatorSwitch() : ToggleButton("opSwitch") {
+    OperatorSwitch(juce::String name) : ToggleButton(name) {
         image = lookAndFeel->imageSwitchOperator;
         setSize(32, 32);
     }
 
-    void paintButton (Graphics& g, bool isMouseOverButton, bool isButtonDown) {
+    void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) {
         g.drawImage(image, 0, 0, 32, 32, 0, getToggleState() ? 0 : 64, 64, 64);
     }
 };
@@ -207,6 +207,12 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     operatorDetails->setBounds(15, 10, 95, 10);
     binder->add(std::move(operatorDetails));
 
+    opSwitch = std::make_unique<OperatorSwitch>(IDs::on.op(5-internalOp).name);
+    addAndMakeVisible(opSwitch.get());
+    opSwitch->setTitle("Operator switch");
+    opSwitch->setBounds(226, 13, 64, 32);
+    binder->attach(opSwitch.get());
+
     envDisplay = std::make_unique<EnvDisplay>(processor.parameters, num);
     addAndMakeVisible (envDisplay.get());
     envDisplay->setBounds (16, 83, 94, 30);
@@ -216,14 +222,8 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     vu->setName ("vu");
     vu->setBounds (132, 52, 140, 8);
 
-    opSwitch.reset(new OperatorSwitch());
-    addAndMakeVisible(opSwitch.get());
-
-    setSize (287, 218);
-
     light = lookAndFeel->imageLight;
     background = lookAndFeel->imageOperator;
-    opSwitch->setTitle("Operator switch");
 
     //contextCallback = std::make_unique<ContextListener>(processor, internalOp);
     //addMouseListener(contextCallback.get(), true);
@@ -233,7 +233,6 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
 OperatorEditor::~OperatorEditor() {
     envDisplay = nullptr;
     vu = nullptr;
-    opSwitch = nullptr;
 }
 
 //==============================================================================
@@ -267,38 +266,11 @@ void OperatorEditor::resized()
     //[/UserPreResize]
 
     //[UserResized] Add your own custom resize handling here..
-    opSwitch->setBounds(226, 13, 64, 32);
     //[/UserResized]
 }
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
-    // parent->opCtrl[op].egLevel[0]->bind(s_egl1.get());
-    // parent->opCtrl[op].egLevel[1]->bind(s_egl2.get());
-    // parent->opCtrl[op].egLevel[2]->bind(s_egl3.get());
-    // parent->opCtrl[op].egLevel[3]->bind(s_egl4.get());
-    // parent->opCtrl[op].egRate[0]->bind(s_egv1.get());
-    // parent->opCtrl[op].egRate[1]->bind(s_egv2.get());
-    // parent->opCtrl[op].egRate[2]->bind(s_egv3.get());
-    // parent->opCtrl[op].egRate[3]->bind(s_egv4.get());
-    // parent->opCtrl[op].level->bind(opLevel.get());
-    // parent->opCtrl[op].opMode->bind(opMode.get());
-    // parent->opCtrl[op].fine->bind(opFine.get());
-    // parent->opCtrl[op].coarse->bind(opCoarse.get());
-    // parent->opCtrl[op].detune->bind(detune.get());
-    // parent->opCtrl[op].sclBrkPt->bind(sclLvlBrkPt.get());
-    // parent->opCtrl[op].sclLeftCurve->bind(kbdLeftCurve.get());
-    // parent->opCtrl[op].sclRightCurve->bind(kbdRightCurve.get());
-    // parent->opCtrl[op].sclLeftDepth->bind(sclLeftLevel.get());
-    // parent->opCtrl[op].sclRightDepth->bind(sclRightLevel.get());
-    // parent->opCtrl[op].sclRate->bind(sclRateScaling.get());
-    // parent->opCtrl[op].ampModSens->bind(ampModSens.get());
-    // parent->opCtrl[op].velModSens->bind(keyVelSens.get());
-    // parent->opCtrl[op].opSwitch->bind(opSwitch.get());
-    //
-    // int offset = parent->opCtrl[op].egRate[0]->getOffset();
-    // //envDisplay->pvalues = &(parent->data[offset]);
-
     opNum << op + 1;
     internalOp = 5-op;
     setTitle("Operator " + opNum);

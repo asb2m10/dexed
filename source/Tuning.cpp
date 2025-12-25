@@ -2,11 +2,12 @@
 
 int DexedAudioProcessor::tuningTranspositionShift()
 {
+    int transpose = activeProgram[IDs::transpose.pos];
     if( synthTuningState->is_standard_tuning() || ! controllers.transpose12AsScale )
-        return data[144] - 24;
+        return transpose - 24;
     else
     {
-        int d144 = data[144];
+        int d144 = transpose;
         if( d144 % 12 == 0 )
         {
             int oct = (d144 - 24) / 12;
@@ -14,7 +15,7 @@ int DexedAudioProcessor::tuningTranspositionShift()
             return res;
         }
         else
-            return data[144] - 24;
+            return transpose - 24;
     }
 }
 

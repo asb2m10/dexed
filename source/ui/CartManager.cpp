@@ -246,13 +246,11 @@ void CartManager::programSelected(ProgramListBox *source, int pos) {
         mainWindow->processor->setCurrentProgram(pos);
         mainWindow->processor->updateHostDisplay();
     } else {
-        uint8_t unpackPgm[161];
-        source->getCurrentCart().unpackProgram(unpackPgm, pos);
+        Program program = source->getCurrentCart().unpackProgram(pos);
         activeCart->setActive(-1);
         browserCart->setActive(pos);
         repaint();
-        mainWindow->processor->updateProgramFromSysex((uint8_t *) unpackPgm);
-        mainWindow->processor->updateHostDisplay();
+        mainWindow->processor->applyProgram(program);
     }
 }
 
@@ -383,23 +381,23 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
         menu.addItem(1010, "Send current sysex cartridge to DX7");
 
     switch(menu.show())  {
-        case 1000:
-            uint8_t unpackPgm[161];
+        case 1000: {
+            Program program;
 
             if ( source == activeCart.get() ) {
-                mainWindow->processor->currentCart.unpackProgram(unpackPgm, pos);
+                program = mainWindow->processor->currentCart.unpackProgram(pos);
             } else {
-                source->getCurrentCart().unpackProgram(unpackPgm, pos);
+                program = source->getCurrentCart().unpackProgram(pos);
             }
 
             if ( mainWindow->processor->sysexComm.isOutputActive() ) {
                 uint8_t msg[163];
-                exportSysexPgm(msg, unpackPgm);
+                exportSysexPgm(msg, program.getRawData());
                 msg[2] |= mainWindow->processor->sysexComm.getChl();
                 mainWindow->processor->sysexComm.send(MidiMessage(msg, 163));
             }
             break;
-
+        }
         case 1010:
             mainWindow->processor->sendCurrentSysexCartridge();
             break;
@@ -424,7 +422,7 @@ void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *pa
 
         Cartridge cart;
         cart.load(file);
-        cart.replaceProgram(dest, packedPgm);;
+        cart.setPackedProgram(dest, packedPgm);;
         cart.saveVoice(file);
         browserCart->setCartridge(cart);
     }

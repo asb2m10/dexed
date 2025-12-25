@@ -213,11 +213,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
                 return;
             }
 
-            if ( offset == 155 ) {
-                unpackOpSwitch(value);
-            } else {
-                data[offset] = value;
-            }
+            setDxValue(offset, value);
         }
         break;
         case 2: {

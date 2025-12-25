@@ -293,7 +293,7 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
 
     global.programs->setSelectedId(processor->getCurrentProgram()+1, dontSendNotification);
 
-    String name = processor->activeProgram.getProgramName();
+    String name = processor->activeProgram.getName();
     cartManager.setActiveProgram(processor->getCurrentProgram(), name);
     if ( name != processor->getProgramName(processor->getCurrentProgram()) )
         global.programs->setText("**. " + name, dontSendNotification);
@@ -302,7 +302,7 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
 }
 
 void DexedAudioProcessorEditor::storeProgram() {
-    String currentName = processor->activeProgram.getProgramName();
+    String currentName = processor->activeProgram.getName();
     Cartridge destSysex = processor->currentCart;
     File *externalFile = NULL;
 
@@ -369,7 +369,8 @@ void DexedAudioProcessorEditor::storeProgram() {
             }
 
             if ( externalFile == NULL ) {
-                processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
+                // TODO: build something in the processor to do this...
+                // processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
                 rebuildProgramCombobox();
                 processor->setCurrentProgram(programNum);
                 processor->updateHostDisplay();
@@ -388,7 +389,8 @@ void DexedAudioProcessorEditor::storeProgram() {
                     processor->activeFileCartridge = destination;
                 }
             } else {
-                destSysex.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
+                // TODO: build something in the processor to do this...
+                // destSysex.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
                 if ( ! destSysex.saveVoice(*externalFile)) {
                     AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
                 }

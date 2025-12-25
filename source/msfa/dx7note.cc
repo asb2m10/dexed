@@ -207,6 +207,7 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
+    opSwitch_ = patch[155];
 
     // MPE default values
     mpePitchBend = 8192;
@@ -292,7 +293,7 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
 
     // ==== OP RENDER ====
     for (int op = 0; op < 6; op++) {
-        if ( ctrls->opSwitch[op] == '0' )  {
+        if ( ! (opSwitch_ & (1U << op) ) ) {
             env_[op].getsample(); // advance the envelop even if it is not playing
             params_[op].level_in = 0;
         } else {
@@ -399,6 +400,7 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity, int c
     pitchmoddepth_ = (patch[139] * 165) >> 6;
     pitchmodsens_ = pitchmodsenstab[patch[143] & 7];
     ampmoddepth_ = (patch[140] * 165) >> 6;
+    opSwitch_ = patch[155];
 }
 
 void Dx7Note::peekVoiceStatus(VoiceStatus &status) {

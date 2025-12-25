@@ -28,25 +28,18 @@
 #include "PluginProcessor.h"
 #include "EnvDisplay.h"
 
-/*
-void VuMeter::paint(Graphics &g) {
-    Image myStrip = ImageCache::getFromMemory(BinaryData::Meter_140x8_png, BinaryData::Meter_140x8_pngSize);
-    
-    g.drawImage(myStrip, 0, 0, 140, 8, 0, 0, 140, 8);
-        
-    if ( v <= 0 )
-        return;
-    
-    const int totalBlocks = 46;
-    int numBlocks = roundToInt(totalBlocks * v);
+static void comboBoxPopupMenuFinishedCallback(int result, ComboBoxImage* combo) {
+    if (combo != nullptr) {
+        combo->hidePopup();
 
-    if ( numBlocks > 46 )
-        numBlocks = totalBlocks;
-    int brkpoint = numBlocks * 3 + 2;
-    
-    g.drawImage(myStrip, 0, 0, brkpoint, 8, 0, 8, brkpoint, 8);
+        if (result != 0)
+            combo->setSelectedId (result);
+    }
 }
-*/
+
+ComboBoxImage::ComboBoxImage() {
+    itemPos[0] = -1;
+}
 
 void ComboBoxImage::paint(Graphics &g) {
     int idx = getSelectedItemIndex();
@@ -56,19 +49,6 @@ void ComboBoxImage::paint(Graphics &g) {
     }
     
     g.drawImage(items, 0, 0, items.getWidth(), itemHeight, 0, idx * itemHeight, items.getWidth(), itemHeight);
-}
-
-ComboBoxImage::ComboBoxImage() {
-    itemPos[0] = -1;
-}
-
-static void comboBoxPopupMenuFinishedCallback(int result, ComboBoxImage* combo) {
-    if (combo != nullptr) {
-        combo->hidePopup();
-        
-        if (result != 0)
-            combo->setSelectedId (result);
-    }
 }
 
 void ComboBoxImage::showPopup() {
@@ -163,7 +143,6 @@ void ProgramSelector::mouseWheelMove(const MouseEvent &event, const MouseWheelDe
         setSelectedItemIndex(c);
     }
 }
-
 
 void ProgramSelector::paint(Graphics &g) {
     int x = getWidth();

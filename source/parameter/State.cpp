@@ -17,7 +17,7 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     dexedState.setAttribute("currentProgram", currentProgram);
     dexedState.setAttribute("engineType", (int) engineType);
     dexedState.setAttribute("masterTune", controllers.masterTune);
-    dexedState.setAttribute("opSwitch", controllers.opSwitch);
+    //dexedState.setAttribute("opSwitch", controllers.opSwitch);
     dexedState.setAttribute("transpose12AsScale", controllers.transpose12AsScale ? 1 : 0 );
     dexedState.setAttribute("mpeEnabled", controllers.mpeEnabled ? 1 : 0 );
     dexedState.setAttribute("mpePitchBendRange", controllers.mpePitchBendRange );
@@ -48,8 +48,8 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
         dexedState.setAttribute("activeFileCartridge", activeFileCartridge.getFullPathName());
 
     NamedValueSet blobSet;
-    blobSet.set("sysex", var((void *) currentCart.getVoiceSysex(), 4104));
-    blobSet.set("program", var((void *) &data, 161));
+    //blobSet.set("sysex", var((void *) currentCart.getVoiceSysex(), 4104));
+    blobSet.set("program", var((void *) activeProgram.getUnpackedData(), 161));
 
     blobSet.copyToXmlAttributes(*dexedBlob);
 
@@ -84,11 +84,11 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
 
     String opSwitchValue = root->getStringAttribute("opSwitch");
     //TRACE("opSwitch value %s", opSwitchValue.toRawUTF8());
-    if ( opSwitchValue.length() != 6 ) {
-        strcpy(controllers.opSwitch, "111111");
-    } else {
-        strncpy(controllers.opSwitch, opSwitchValue.toRawUTF8(), 6);
-    }
+    // if ( opSwitchValue.length() != 6 ) {
+    //     strcpy(controllers.opSwitch, "111111");
+    // } else {
+    //     strncpy(controllers.opSwitch, opSwitchValue.toRawUTF8(), 6);
+    // }
 
     controllers.wheel.parseConfig(root->getStringAttribute("wheelMod").toRawUTF8());
     controllers.foot.parseConfig(root->getStringAttribute("footMod").toRawUTF8());
@@ -154,7 +154,8 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     Cartridge cart;
     cart.load((uint8 *)sysex_blob.getBinaryData()->getData(), 4104);
     loadCartridge(cart);
-    memcpy(data, program.getBinaryData()->getData(), 161);
+    // TODO: load program data into 'data'
+    //memcpy(activeProgram.getUnpackedData(), program.getBinaryData()->getData(), Program::PROGRAM_SIZE);
 
     mappedMidiCC.clear();
     XmlElement *midiCC = root->getChildByName("midiCC");

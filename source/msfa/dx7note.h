@@ -32,6 +32,8 @@
 #include "libMTSClient.h"
 #include <memory>
 
+#define IS_BIT_SET(var, pos) ((var) & (1U << (pos)))
+
 struct VoiceStatus {
     uint32_t amp[6];
     char ampStep[6];
@@ -81,6 +83,7 @@ private:
     int32_t fb_shift_;
     int32_t ampmodsens_[6];
     int32_t opMode[6];
+    uint8_t opSwitch_;
 
     uint8_t playingMidiNote; // We need this for scale aware pitch bend
     uint8_t midiChannel;

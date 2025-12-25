@@ -293,7 +293,7 @@ public :
         //updateDisplayName();
         
         // the value is based on the controller
-        parent->setDxValue(155, -1);
+        //parent->setDxValue(155, -1);
     }
     
     float getValueHost() {
@@ -391,12 +391,12 @@ void CtrlDX::setValueHost(float f) {
 }
 
 void CtrlDX::setValue(int v) {
-    TRACE("setting value idx=%d dxOffset=%d v=%d", idx, dxOffset, v);
-    dxValue = v;
-    if (dxOffset >= 0) {
-        if (parent != NULL)
-            parent->setDxValue(dxOffset, dxValue);
-    }
+    // TRACE("setting value idx=%d dxOffset=%d v=%d", idx, dxOffset, v);
+    // dxValue = v;
+    // if (dxOffset >= 0) {
+    //     if (parent != NULL)
+    //         parent->setDxValue(dxOffset, dxValue);
+    // }
 }
 
 int CtrlDX::getValue() {
@@ -432,13 +432,8 @@ void DexedAudioProcessor::setDxValue(int offset, int v) {
     if (offset < 0)
         return;
 
-    if ( offset == 155 ) {
-        // used on op switch that are not part of a Sysex packed cartridge, we render it
-        // ourselves.
-        packOpSwitch();
-        v = data[155];
-    } else if ( data[offset] != v ) {
-        data[offset] = v;
+    if ( activeProgram[offset] != v ) {
+        activeProgram[offset] = v;
     } else {
         return;
     }
@@ -488,18 +483,10 @@ int DexedAudioProcessor::getCurrentProgram() {
 }
 
 void DexedAudioProcessor::setCurrentProgram(int index) {
-    TRACE("setting program %d state", index);
-
-    panic();
-    
     index = index > 31 ? 31 : index;
-    currentCart.unpackProgram(data, index);
-    unpackOpSwitch(0x3F);
-    activeProgram.pushToParameters(parameters);
-    lfo.reset(data + 137);
+    Program program = currentCart.unpackProgram(index);
+    applyProgram(program);
     currentProgram = index;
-    /** TODO: reset parameters */
-    panic();
 }
 
 const String DexedAudioProcessor::getProgramName(int index) {
