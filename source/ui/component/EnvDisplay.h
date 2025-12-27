@@ -1,11 +1,11 @@
 #pragma once
 
 #include "parameter/DexedApvts.h"
-#include "parameter/Model.h"
+#include "../util/CachedParameter.h"
 
 class EnvDisplay : public juce::Component {
-    juce::CachedValue<int> rates[4];
-    juce::CachedValue<int> levels[4];
+    CachedParameter<int> rates[4];
+    CachedParameter<int> levels[4];
 public:
     char vPos = 0;
 
@@ -14,8 +14,8 @@ public:
 };
 
 class PitchEnvDisplay : public juce::Component {
-    juce::CachedValue<int> rates[4];
-    juce::CachedValue<int> levels[4];
+    CachedParameter<int> rates[4];
+    CachedParameter<int> levels[4];
 public:
     char vPos = 0;
 

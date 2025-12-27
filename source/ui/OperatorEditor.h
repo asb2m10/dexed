@@ -73,6 +73,7 @@ private:
     std::unique_ptr<EnvDisplay> envDisplay;
     std::unique_ptr<VuMeter> vu;
 
+    std::unique_ptr<juce::MouseListener> contextMenuAdapter;
     std::unique_ptr<AudioComponentContainer> binder;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OperatorEditor)

@@ -1,4 +1,5 @@
 #include "Program.h"
+#include "parameter/Model.h"
 #include "Dexed.h"
 
 Program::Program(const juce::MidiMessage message) {

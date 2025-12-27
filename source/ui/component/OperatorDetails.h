@@ -1,27 +1,29 @@
-#include "util/CacheValueCallback.h"
+#pragma once
+
+#include "../util/CachedParameter.h"
 #include "parameter/DexedApvts.h"
 
 class OperatorDetails : public juce::Component {
-    CachedValueCallback<int> opFine, opCoarse, detune, opMode;
+    CachedParameter<int> opFine, opCoarse, detune, opMode;
     String message;
 public:
     OperatorDetails(DexedApvts &apvts, int opNum) {
-        opFine.referTo(apvts.nameMapping[IDs::frequencyFine.op(opNum).name], IDs::value, nullptr);
+        opFine.referTo(apvts, IDs::frequencyFine.op(opNum).name);
         opFine.callback = [this]() {
             updateDisplay();
         };
 
-        opCoarse.referTo(apvts.nameMapping[IDs::frequencyCoarse.op(opNum).name], IDs::value, nullptr);
+        opCoarse.referTo(apvts, IDs::frequencyCoarse.op(opNum).name);
         opCoarse.callback = [this]() {
             updateDisplay();
         };
 
-        detune.referTo(apvts.nameMapping[IDs::detune.op(opNum).name], IDs::value, nullptr);
+        detune.referTo(apvts, IDs::detune.op(opNum).name);
         detune.callback = [this]() {
             updateDisplay();
         };
 
-        opMode.referTo(apvts.nameMapping[IDs::mode.op(opNum).name], IDs::value, nullptr);
+        opMode.referTo(apvts, IDs::mode.op(opNum).name);
         opMode.callback = [this]() {
             updateDisplay();
         };

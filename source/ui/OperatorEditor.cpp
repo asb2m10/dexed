@@ -1,45 +1,24 @@
-/*
-  ==============================================================================
 
-  This is an automatically generated GUI class created by the Projucer!
-
-  Be careful when adding custom code to these files, as only the code within
-  the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
-  and re-saved.
-
-  Created with Projucer version: 7.0.9
-
-  ------------------------------------------------------------------------------
-
-  The Projucer is part of the JUCE library.
-  Copyright (c) 2020 - Raw Material Software Limited.
-
-  ==============================================================================
-*/
-
-//[Headers] You can add your own extra header files here...
-//[/Headers]
 
 #include "OperatorEditor.h"
 #include "PluginEditor.h"
 #include "component/OperatorDetails.h"
 #include "util/ContextMenuAdapter.h"
 
-//[MiscUserDefs] You can add your own user definitions and misc code here...
 #ifndef M_LN10
 #define M_LN10 2.30258509299404568402
 #endif
 
 class OperatorSwitch : public ToggleButton {
     Image image;
-    SharedResourcePointer<DXLookNFeel> lookAndFeel;
 public :
     OperatorSwitch(juce::String name) : ToggleButton(name) {
+        SharedResourcePointer<DXLookNFeel> lookAndFeel;
         image = lookAndFeel->imageSwitchOperator;
         setSize(32, 32);
     }
 
-    void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) {
+    void paintButton(Graphics& g, bool isMouseOverButton, bool isButtonDown) override {
         g.drawImage(image, 0, 0, 32, 32, 0, getToggleState() ? 0 : 64, 64, 64);
     }
 };
@@ -217,22 +196,22 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     addAndMakeVisible (envDisplay.get());
     envDisplay->setBounds (16, 83, 94, 30);
 
-    vu.reset (new VuMeter());
+    vu = std::make_unique<VuMeter>();
     addAndMakeVisible (vu.get());
-    vu->setName ("vu");
     vu->setBounds (132, 52, 140, 8);
 
     light = lookAndFeel->imageLight;
     background = lookAndFeel->imageOperator;
 
-    //contextCallback = std::make_unique<ContextListener>(processor, internalOp);
-    //addMouseListener(contextCallback.get(), true);
+    contextMenuAdapter = std::make_unique<OperatorContextMenu>(processor, internalOp);
+    addMouseListener(contextMenuAdapter.get(), true);
     setWantsKeyboardFocus(true);
 }
 
 OperatorEditor::~OperatorEditor() {
     envDisplay = nullptr;
     vu = nullptr;
+    contextMenuAdapter = nullptr;
 }
 
 //==============================================================================

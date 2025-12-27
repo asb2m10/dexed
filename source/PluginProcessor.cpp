@@ -68,9 +68,7 @@
 DexedAudioProcessor::DexedAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)),
       parameters (*this, nullptr) {
-    rootVt = ValueTree(IDs::root);
-    rootVt.addChild(parameters.state, -1, nullptr);
-    rootVt.addListener(this);
+    parameters.rootVt.addListener(this);
 
     mapParameters();
 
@@ -107,7 +105,9 @@ DexedAudioProcessor::DexedAudioProcessor()
     for (int note = 0; note < MAX_ACTIVE_NOTES; ++note) {
         voices[note].dx7_note = NULL;
     }
-    setCurrentProgram(0);    
+
+    setupStartupCart();
+    setCurrentProgram(0);
     nextMidi = NULL;
     midiMsg = NULL;
     
@@ -586,18 +586,6 @@ const String DexedAudioProcessor::getName() const {
 //==============================================================================
 bool DexedAudioProcessor::hasEditor() const {
     return true; // (change this to false if you choose to not supply an editor)
-}
-
-void DexedAudioProcessor::updateUI() {
-    // notify host something has changed
-    updateHostDisplay();
- 
-    AudioProcessorEditor *editor = getActiveEditor();
-    if ( editor == NULL ) {
-        return;
-    }
-	DexedAudioProcessorEditor *dexedEditor = (DexedAudioProcessorEditor *) editor;
-    dexedEditor->updateUI();
 }
 
 AudioProcessorEditor* DexedAudioProcessor::createEditor() {

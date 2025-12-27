@@ -1,4 +1,5 @@
 #include "PluginProcessor.h"
+#include "parameter/Model.h"
 
 int DexedAudioProcessor::tuningTranspositionShift()
 {

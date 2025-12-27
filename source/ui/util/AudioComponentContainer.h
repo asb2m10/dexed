@@ -1,7 +1,7 @@
 #pragma once
 
 #include <juce_audio_processors/juce_audio_processors.h>
-#include "../component/ParameterObserver.h"
+#include "CachedParameter.h"
 
 /**
  * Quick and dirty container to manage audio components and their attachments.
@@ -25,6 +25,10 @@ public:
         components.push_back(std::move(comp));
     }
 
+    /**
+     * Attaches a component by using the component name as parameter ID.
+     * @param component
+     */
     void attach(juce::Component *component) {
         juce::RangedAudioParameter *param = apvts.getParameter(component->getName());
         if ( param == nullptr ) {
@@ -63,6 +67,9 @@ public:
         jassertfalse;
     }
 
+    /** Adds a component and attaches it.
+     * @param component
+     */
     void addAndAttach(std::unique_ptr<juce::Component> component) {
         parent.addAndMakeVisible(component.get());
         attach(component.get());

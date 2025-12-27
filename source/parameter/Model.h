@@ -24,7 +24,7 @@ namespace IDs {
             DECLARE_METADX(lfoWaveform, 142, 0)
             DECLARE_METADX(pitchModSens, 143, 0)
             DECLARE_METADX(transpose, 144, -24)
-            DECLARE_METADX(on, 155, 0)
+            DECLARE_METADX(on, 155, 0)  // Packed binary flags for operators
 
                 // Parameters based on operators (1-6)
                 DECLARE_METADX(egRate, 0, 0)
@@ -46,7 +46,7 @@ namespace IDs {
             DECLARE_META(output)
             DECLARE_META(tune)
             DECLARE_META(monoMode)
-            DECLARE_META(masteTuneAdj)
+            DECLARE_META(masterTuneAdj)
             DECLARE_META(cutoff)
             DECLARE_META(resonance)
 

@@ -21,6 +21,7 @@
 #include "DXLookNFeel.h"
 #include "../debugger/value_tree_debugger.h"
 #include "parameter/Model.h"
+#include "ui/util/ContextMenuAdapter.h"
 
 /**
  * Ugly but useful midi monitor to know if you are really sending/receiving something from the DX7
@@ -121,6 +122,18 @@ public:
     }
 };
 //[/MiscUserDefs]
+
+class OperatorContextMenu : public ContextMenuAdapter {
+public:
+    OperatorContextMenu(DexedAudioProcessor &processor) : ContextMenuAdapter(processor) {
+    }
+
+    void addSpecificItems(PopupMenu &menu, juce::Component *source) override {
+        menu.addItem(1, "Copy Pitch Env Values");
+        menu.addItem(2, "Paste Envelope Values", DexedClipboard().isOperatorData());
+        menu.addSeparator();
+    }
+};
 
 //==============================================================================
 GlobalEditor::GlobalEditor(DexedAudioProcessor &processor, juce::Component *parent) : processor(processor) {
@@ -357,15 +370,26 @@ GlobalEditor::GlobalEditor(DexedAudioProcessor &processor, juce::Component *pare
     programSelector->setName ("programSelector");
     programSelector->setBounds (153, 115, 112, 18);
 
-    aboutButton.reset (new juce::ImageButton ("aboutButton"));
-    addAndMakeVisible (aboutButton.get());
-    aboutButton->setButtonText (juce::String());
-    aboutButton->addListener (this);
-    aboutButton->setImages (false, true, false,
+    aboutButton.reset(new juce::ImageButton ("aboutButton"));
+    addAndMakeVisible(aboutButton.get());
+    aboutButton->setButtonText(juce::String());
+    aboutButton->onClick = [this]() {
+        juce::ModifierKeys modifiers = juce::ModifierKeys::getCurrentModifiers();
+        if ( modifiers.isAltDown() ) {
+            ValueTreeDebugger *vtd = new ValueTreeDebugger(this->processor.parameters.rootVt);
+            debugger.reset(vtd);
+            return;
+        }
+        aboutBox = std::make_unique<AboutBox>();
+        getParentComponent()->addAndMakeVisible(aboutBox.get());
+        aboutBox->centreWithSize(aboutBox->getWidth(), aboutBox->getHeight());
+        aboutBox->enterModalState(true,{});
+    };
+    aboutButton->setImages(false, true, false,
                             juce::Image(), 1.000f, juce::Colour (0x00000000),
                             juce::Image(), 1.000f, juce::Colour (0x00000000),
                             juce::Image(), 1.000f, juce::Colour (0x00000000));
-    aboutButton->setBounds (8, 11, 135, 46);
+    aboutButton->setBounds(8, 11, 135, 46);
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -389,6 +413,8 @@ GlobalEditor::GlobalEditor(DexedAudioProcessor &processor, juce::Component *pare
     midiMonitor->setBounds(110, 10, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
 #endif //IMPLEMENT_MidiMonitor
 
+    contextMenuAdapter = std::make_unique<OperatorContextMenu>(processor);
+    addMouseListener(contextMenuAdapter.get(), true);
 
     //[/Constructor]
 }
@@ -454,7 +480,7 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
         juce::ModifierKeys modifiers = juce::ModifierKeys::getCurrentModifiers();
 
         if ( modifiers.isCtrlDown() ) {
-            ValueTreeDebugger *vtd = new ValueTreeDebugger(processor.rootVt);
+            ValueTreeDebugger *vtd = new ValueTreeDebugger(processor.parameters.rootVt);
             debugger.reset(vtd);
             return;
         }
@@ -488,22 +514,6 @@ void GlobalEditor::updateVu(float f) {
 #endif //IMPLEMENT_MidiMonitor
 }
 
-void GlobalEditor::mouseDown(const MouseEvent &e) {
-    if ( e.mods.isPopupMenu()) {
-        PopupMenu popup;
-        popup.addItem(1, "Send current program to DX7");
-
-        auto p = popup.show();
-        switch( p )
-        {
-        case 1:
-           processor.sendCurrentSysexProgram();
-           break;
-        default:
-            break;
-        }
-    }
-}
 //[/MiscUserCode]
 
 

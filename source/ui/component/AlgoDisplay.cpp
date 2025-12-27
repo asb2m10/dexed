@@ -24,7 +24,7 @@
 void AlgoDisplay::displayOp(juce::Graphics &g, char id, int x, int y, char link, char fb) {
     const int LINE_SZ = 3;
     String t(id);
-    bool opOn = opSwitch[id-1].get();
+    bool opOn = opSwitch[id-1];
     
     x *= 25;
     x += 3;
@@ -112,7 +112,7 @@ void AlgoDisplay::displayOp(juce::Graphics &g, char id, int x, int y, char link,
 void AlgoDisplay::paint(Graphics &g) {
     g.setColour(DXLookNFeel::fillColour);
     g.fillRect(1, 3, 20, 15);
-    int algo = algoValue.get();
+    int algo = algoValue;
     g.setColour(Colours::white);
     g.drawText(juce::String(algo), 1, 3, 20, 15, Justification::centred, true);
     

@@ -32,8 +32,6 @@
 #include "libMTSClient.h"
 #include <memory>
 
-#define IS_BIT_SET(var, pos) ((var) & (1U << (pos)))
-
 struct VoiceStatus {
     uint32_t amp[6];
     char ampStep[6];

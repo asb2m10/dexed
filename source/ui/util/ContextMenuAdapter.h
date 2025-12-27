@@ -15,23 +15,25 @@ public:
         if ( !event.mods.isPopupMenu())
             return;
 
-            PopupMenu popup;
-            juce::Component *source = event.eventComponent;
+        PopupMenu popup;
+        juce::Component *source = event.eventComponent;
 
         if ( processor.parameters.getParameter(source->getName()) != nullptr ) {
-                popup.addItem(7, "Assign parameter to Midi CC...");
-                popup.addSeparator();
+            popup.addItem(7, "Assign parameter [" + source->getTitle() + "] to Midi CC...");
+            popup.addSeparator();
         }
 
         addSpecificItems(popup, source);
-
         popup.addItem(4, "Send current program to DX7");
 
-            if ( processor.getZoomFactor() > 1.0f ) {
-                popup.addSeparator();
-                popup.addItem(5, "Reset plugin UI scaling factor");
-            }
+        if ( processor.getZoomFactor() > 1.0f ) {
+            popup.addSeparator();
+            popup.addItem(5, "Reset plugin UI scaling factor");
         }
+
+        auto options = juce::PopupMenu::Options();
+        popup.showMenuAsync(options);
+    }
 };
 
 

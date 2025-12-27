@@ -1,5 +1,6 @@
 #include "EnvDisplay.h"
 #include "../DXLookNFeel.h"
+#include "parameter/Model.h"
 #include "msfa/pitchenv.h"
 
 static float EG_rate_rise_duration[128] = {
@@ -130,8 +131,8 @@ static double getDuration(int p_rate, int p_level_l, int p_level_r) {
 
 EnvDisplay::EnvDisplay(DexedApvts &apvts, int op) {
     for (int i=0; i<4; i++) {
-        rates[i].referTo(apvts.nameMapping[IDs::egRate.op(op).idx(i).name], IDs::value, nullptr);
-        levels[i].referTo(apvts.nameMapping[IDs::egLevel.op(op).idx(i).name], IDs::value, nullptr);
+        rates[i].referTo(apvts, IDs::egRate.op(op).idx(i).name);
+        levels[i].referTo(apvts, IDs::egLevel.op(op).idx(i).name);
     }
 }
 
@@ -224,8 +225,8 @@ void EnvDisplay::paint(Graphics &g) {
 
 PitchEnvDisplay::PitchEnvDisplay(DexedApvts &apvts) {
     for (int i=0; i<4; i++) {
-        rates[i].referTo(apvts.nameMapping[IDs::pitchEgRate.idx(i).name], IDs::value, nullptr);
-        levels[i].referTo(apvts.nameMapping[IDs::pitchEgLevel.idx(i).name], IDs::value, nullptr);
+        rates[i].referTo(apvts, IDs::pitchEgRate.idx(i).name);
+        levels[i].referTo(apvts, IDs::pitchEgLevel.idx(i).name);
     }
 }
 
@@ -239,7 +240,7 @@ void PitchEnvDisplay::paint(Graphics &g) {
 
     // find the scale
     for(int i=0;i<4;i++) {
-        int nw = pitchenv_tab[levels[i].get()] + 128;
+        int nw = pitchenv_tab[levels[i]] + 128;
         dist[i] = ((float)abs(nw - old)) / pitchenv_rate[rates[i]];
         total += dist[i];
         old = nw;

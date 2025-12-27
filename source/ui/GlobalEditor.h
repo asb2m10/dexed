@@ -52,7 +52,6 @@ public:
     std::unique_ptr<Component> midiMonitor;
 #endif //IMPLEMENT_MidiMonitor
 
-    void mouseDown(const MouseEvent& e) override;
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -92,6 +91,7 @@ private:
 
     std::unique_ptr<AudioComponentContainer> binder;
 
+    std::unique_ptr<juce::MouseListener> contextMenuAdapter;
     std::unique_ptr<juce::DocumentWindow> debugger;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GlobalEditor)

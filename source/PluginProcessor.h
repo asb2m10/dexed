@@ -131,7 +131,6 @@ class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, pu
 
 public :
     DexedApvts parameters;
-    juce::ValueTree rootVt;
     Program activeProgram;
 
     // in MIDI units (0x4000 is neutral)
@@ -182,7 +181,6 @@ public :
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
-    void updateUI();
     bool peekVoiceStatus();
     int updateProgramFromSysex(const uint8 *rawdata);
     void setupStartupCart();

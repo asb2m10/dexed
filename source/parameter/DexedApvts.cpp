@@ -80,7 +80,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
 
     params.add(std::make_unique<AudioParameterBool>(IDs::monoMode.parameter(), IDs::monoMode.displayName(), false));
     params.add(std::make_unique<juce::AudioParameterFloat> (
-        IDs::masteTuneAdj.parameter(),
+        IDs::masterTuneAdj.parameter(),
         "Master Tune Adj",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f),
         0.5f));
@@ -130,10 +130,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
 DexedApvts::DexedApvts(juce::AudioProcessor& processorToConnectTo, juce::UndoManager* undoManagerToUse) :
  juce::AudioProcessorValueTreeState (processorToConnectTo, undoManagerToUse, IDs::parameters,
         createParameterLayout()) {
-    for (auto param : state) {
-        const String name = param.getProperty(IDs::id);
-        nameMapping.emplace(name, param);
-    }
+    rootVt = ValueTree(IDs::root);
+    rootVt.addChild(state, -1, nullptr);
+    rootVt.setProperty(IDs::version, "1.1.0", nullptr);
 }
 
 void DexedApvts::mapTo(juce::String paramId, const std::function<void(float)> &func) {
