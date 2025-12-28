@@ -108,9 +108,7 @@ DexedAudioProcessor::DexedAudioProcessor()
 
     setupStartupCart();
     setCurrentProgram(0);
-    nextMidi = NULL;
-    midiMsg = NULL;
-    
+
     mtsClient = NULL;
     mtsClient = MTS_RegisterClient();
 }
@@ -162,9 +160,6 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     keyboardState.reset();
     
     lfo.reset(activeProgram.getParameters(137));
-    
-    nextMidi = new MidiMessage(0xF0);
-	midiMsg = new MidiMessage(0xF0);
 }
 
 void DexedAudioProcessor::releaseResources() {
@@ -181,14 +176,6 @@ void DexedAudioProcessor::releaseResources() {
     }
 
     keyboardState.reset();
-    if ( nextMidi != NULL ) {
-        delete nextMidi;
-        nextMidi = NULL;
-    }
-    if ( midiMsg != NULL ) {
-        delete midiMsg;
-        midiMsg = NULL;
-    }
 }
 
 void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& midiMessages) {
@@ -206,10 +193,8 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     }
 
     keyboardState.processNextMidiBuffer(midiMessages, 0, numSamples, true);
-    
-    MidiBuffer::Iterator it(midiMessages);
-    hasMidiMessage = it.getNextEvent(*nextMidi,midiEventPos);
 
+    juce::MidiBufferIterator it = midiMessages.begin(), end = midiMessages.end();
     float *channelData = buffer.getWritePointer(0);
   
     // flush first events
@@ -225,18 +210,14 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         extra_buf_size -= numSamples;
         
         // flush the events, they will be process in the next cycle
-        while(getNextEvent(&it, numSamples)) {
-            processMidiMessage(midiMsg);
-        }
+        processMidiMessages(it, end, numSamples);
     } else {
         for (; i < numSamples; i += N) {
             AlignedBuf<int32_t, N> audiobuf;
             float sumbuf[N];
-            
-            while(getNextEvent(&it, i)) {
-                processMidiMessage(midiMsg);
-            }
-            
+
+            processMidiMessages(it, end, i);
+
             for (int j = 0; j < N; ++j) {
                 audiobuf.get()[j] = 0;
                 sumbuf[j] = 0;
@@ -280,11 +261,8 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         }
         extra_buf_size = i - numSamples;
     }
-    
-    while(getNextEvent(&it, numSamples)) {
-        processMidiMessage(midiMsg);
-    }
 
+    processMidiMessages(it, end, numSamples);
     fx.process(channelData, numSamples);
 
     for(i=0; i<numSamples; i++) {

@@ -1,12 +1,13 @@
 #include "PluginProcessor.h"
 
-bool DexedAudioProcessor::getNextEvent(MidiBuffer::Iterator* iter,const int samplePos) {
-	if (hasMidiMessage && midiEventPos <= samplePos) {
-		*midiMsg = *nextMidi;
-		hasMidiMessage = iter->getNextEvent(*nextMidi, midiEventPos);
-		return true;
-	}
-	return false;
+void DexedAudioProcessor::processMidiMessages(MidiBufferIterator &cur, MidiBufferIterator &end, int samplePos) {
+    for(;cur != end;++cur) {
+        juce::MidiMessageMetadata meta = *cur;
+        if ( samplePos > meta.samplePosition )
+            return;
+        const MidiMessage message = meta.getMessage();
+        processMidiMessage(&message);
+    }
 }
 
 void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {

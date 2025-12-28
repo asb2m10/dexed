@@ -64,30 +64,32 @@ bool SysexComm::setInput(String target) {
         return true;
     }
 
-    StringArray devices = MidiInput::getDevices();
-    int idx = devices.indexOf(target);
 
-    if ( idx == -1 ) {
-        TRACE("device %s not found", target.toRawUTF8());
-        inputName = "";
-        if ( target == "None" || target == "" )
-            return true;
-        return false;
-    }
-
-    input = MidiInput::openDevice(idx, listener);
-    if ( input == NULL ) {
-        TRACE("unable to open %s", target.toRawUTF8());
-        return false;
-    }
-
-    inputName = target;
-    TRACE("sysex %s opened", target.toRawUTF8());
-    input->start();
-    
-    if ( output )
-        inputOutput = true;
-    
+    // TODO: refactor this since JUCE 8
+    // StringArray devices = MidiInput::getDevices();
+    // int idx = devices.indexOf(target);
+    //
+    // if ( idx == -1 ) {
+    //     TRACE("device %s not found", target.toRawUTF8());
+    //     inputName = "";
+    //     if ( target == "None" || target == "" )
+    //         return true;
+    //     return false;
+    // }
+    //
+    // input = MidiInput::openDevice(idx, listener);
+    // if ( input == NULL ) {
+    //     TRACE("unable to open %s", target.toRawUTF8());
+    //     return false;
+    // }
+    //
+    // inputName = target;
+    // TRACE("sysex %s opened", target.toRawUTF8());
+    // input->start();
+    //
+    // if ( output )
+    //     inputOutput = true;
+    //
     return true;
 }
 
@@ -108,29 +110,30 @@ bool SysexComm::setOutput(String target) {
     if ( target == outputName )
         return true;
 
-    StringArray devices = MidiOutput::getDevices();
-    int idx = devices.indexOf(target);
-    
-    if ( idx == -1 ) {
-        TRACE("device %s not found", target.toRawUTF8());
-        outputName = "";
-        if ( target == "None" || target == "" )
-            return true;
-        return false;
-    }
-    
-    output = MidiOutput::openDevice(idx);
-    if ( output == NULL ) {
-        TRACE("unable to open %s", target.toRawUTF8());
-        return false;
-    }
-
-    outputName = target;
-    
-    if ( input )
-        inputOutput = true;
-    
-    TRACE("sysex %s opened", target.toRawUTF8());
+    // TODO: refactor this since JUCE 8
+    // StringArray devices = MidiOutput::getDevices();
+    // int idx = devices.indexOf(target);
+    //
+    // if ( idx == -1 ) {
+    //     TRACE("device %s not found", target.toRawUTF8());
+    //     outputName = "";
+    //     if ( target == "None" || target == "" )
+    //         return true;
+    //     return false;
+    // }
+    //
+    // output = MidiOutput::openDevice(idx);
+    // if ( output == NULL ) {
+    //     TRACE("unable to open %s", target.toRawUTF8());
+    //     return false;
+    // }
+    //
+    // outputName = target;
+    //
+    // if ( input )
+    //     inputOutput = true;
+    //
+    // TRACE("sysex %s opened", target.toRawUTF8());
     return true;
 }
 

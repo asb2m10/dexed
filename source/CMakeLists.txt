@@ -13,7 +13,7 @@ endif()
 message(STATUS "Building Dexed in formats: ${DEXED_JUCE_FORMATS}")
 
 juce_add_plugin("${BaseTargetName}"
-        VERSION "1.0.1"
+        VERSION "1.1.0"
         ICON_BIG "../assets/ui/dexedIcon.png"
         ICON_SMALL "../assets/ui/dexedIcon.png"
         COMPANY_NAME "Digital Suburban"
@@ -27,7 +27,7 @@ juce_add_plugin("${BaseTargetName}"
         FORMATS ${DEXED_JUCE_FORMATS}
         PRODUCT_NAME "Dexed"
         DESCRIPTION "Dexed FM Synth"
-        BUNDLE_ID "com.digitalsuburban.Dexed"  # To avoid CMake Warning at libs/JUCE/extras/Build/CMake/JUCEUtils.cmake
+        BUNDLE_ID "com.digitalsuburban.Dexed"
         COPY_PLUGIN_AFTER_BUILD TRUE
 )
 
@@ -97,11 +97,13 @@ else()
     set(DEXED_ALSA TRUE)
 endif()
 
+find_package(Jack QUIET)
+
 target_compile_definitions(${BaseTargetName} PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
-    JUCE_JACK=1
+    JUCE_JACK=$<IF:$<BOOL:${Jack_FOUND}>,1,0>
     JUCE_ALSA=$<IF:$<BOOL:${DEXED_ALSA}>,1,0>
     JUCE_MODAL_LOOPS_PERMITTED=1 # needed for FileBrowser in CartManager
     JUCE_DISPLAY_SPLASH_SCREEN=0

@@ -2,6 +2,10 @@
 
 #include "parameter/DexedApvts.h"
 
+/**
+ * Component that shows the parameter name and value of the parameter
+ * currently under the mouse pointer.
+ */
 class ParameterObserver : public juce::Component, juce::ValueTree::Listener {
     const juce::String defaultMsg = "DEXED " DEXED_VERSION;
     DexedApvts &apvts;
@@ -57,9 +61,8 @@ public:
         if ( apvts.pushToParameterInProgress )
             return;
 
-//        if ( param != nullptr && property == param->paramID ) {
-            dirty.set(true);
-            repaint();
-//        }
+        dirty.set(true);
+        repaint();
+
     }
 };

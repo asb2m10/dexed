@@ -107,11 +107,11 @@ class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, pu
     void keydown(uint8_t chan, uint8_t pitch, uint8_t velo);
     void keyup(uint8_t, uint8_t pitch, uint8_t velo);
 
-	MidiMessage* nextMidi,*midiMsg;
-	bool hasMidiMessage;
-    int midiEventPos;
-	bool getNextEvent(MidiBuffer::Iterator* iter,const int samplePos);
-    
+    /**
+     * Process midi messages until the samplePos is reached.
+     */
+    void processMidiMessages(MidiBufferIterator& cur, MidiBufferIterator& end, int samplePos);
+
     void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) override;
     uint32_t engineType;
     
@@ -120,9 +120,6 @@ class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, pu
     EngineOpl engineOpl;
 
     void resolvAppDir();
-    
-    // void unpackOpSwitch(char packOpValue);
-    // void packOpSwitch();
 
     float zoomFactor = 1;
 

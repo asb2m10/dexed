@@ -41,7 +41,11 @@ public:
         g.setColour(Colours::whitesmoke);
         if ( file.exists() ) {
             g.setFont(g.getCurrentFont().withStyle(Font::underlined));
-            clickableArea = g.getCurrentFont().getStringWidthFloat(file.getFileName());
+            TextLayout layout;
+            AttributedString attributedString(file.getFileName());
+            attributedString.setFont(g.getCurrentFont());
+            layout.createLayout(attributedString, 1000.0f);
+            clickableArea = layout.getWidth();
             g.drawText(file.getFileName(), 0, 0, getWidth(), getHeight(), Justification::right);
             g.setFont(g.getCurrentFont().withStyle(Font::plain));
             g.drawText("Based on cartridge: ", 0, 0, getWidth() - (clickableArea + 2), getHeight(), Justification::right);

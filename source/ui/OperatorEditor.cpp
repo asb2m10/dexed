@@ -228,7 +228,7 @@ void OperatorEditor::paint (juce::Graphics& g)
     else
         g.setColour(DXLookNFeel::roundBackground);
 
-    g.setFont(Font (30.00f, Font::plain));
+    g.setFont(juce::Font(juce::FontOptions().withHeight(30.00f).withStyle("Regular")));
     g.drawText(opNum, 250, 14, 30, 30, Justification::centred, true);
 
     //bool state = opMode->getToggleState();

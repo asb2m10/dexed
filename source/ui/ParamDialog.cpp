@@ -384,12 +384,14 @@ ParamDialog::ParamDialog ()
 
     StringArray input;
     input.add("None");
-    input.addArray(MidiInput::getDevices());
+    // TODO: refactor this since JUCE 8
+    //input.addArray(MidiInput::getDevices());
     sysexIn->addItemList(input, 2);
 
     StringArray output;
     output.add("None");
-    output.addArray(MidiOutput::getDevices());
+    // TODO: refactor this since JUCE 8
+    //output.addArray(MidiOutput::getDevices());
     sysexOut->addItemList(output, 2);
 
     if ( JUCEApplication::isStandaloneApp() ) {
@@ -521,6 +523,8 @@ ParamDialog::~ParamDialog()
 void ParamDialog::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
+    juce::Font font(juce::FontOptions().withHeight(15.00f).withStyle("Regular"));
+
     //[/UserPrePaint]
 
     g.fillAll (juce::Colour (0xff3c322f));
@@ -532,7 +536,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -544,7 +548,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -556,7 +560,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -568,7 +572,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -598,7 +602,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -619,7 +623,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -631,7 +635,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -643,7 +647,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -655,7 +659,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -667,7 +671,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centred, true);
     }
@@ -679,7 +683,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centred, true);
     }
@@ -691,7 +695,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centred, true);
     }
@@ -712,7 +716,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -724,7 +728,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -745,7 +749,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -757,7 +761,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -769,7 +773,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -781,7 +785,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -793,7 +797,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -805,7 +809,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -817,7 +821,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -829,7 +833,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -841,7 +845,7 @@ void ParamDialog::paint (juce::Graphics& g)
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
-        g.setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+        g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
     }
@@ -849,14 +853,14 @@ void ParamDialog::paint (juce::Graphics& g)
     //[UserPaint] Add your own custom painting code here..
     if ( ! JUCEApplication::isStandaloneApp() ) {
         g.setColour (Colours::white);
-        g.setFont (Font (15.00f, Font::plain));
+        g.setFont (font);
         g.drawText (translate("DX7 In"),
                     20, 245, 131, 23,
                     Justification::centredLeft, true);
 
     }
     g.setColour (Colours::white);
-    g.setFont (Font (15.00f, Font::plain));
+    g.setFont (font);
     g.drawText (translate("DX7 Out"),
                 20, 280, 131, 23,
                 Justification::centredLeft, true);
@@ -1165,15 +1169,16 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     portamentoTm->setValue(c.portamento_cc * 100.0f / 127.0f); // Convert from 0-127 range to 0-100%
     glissando->setToggleState(c.portamento_gliss_cc, dontSendNotification);
 
-    StringArray inputs = MidiInput::getDevices();
-    int idx = inputs.indexOf(mgr.getInput());
-    idx = idx == -1 ? 0 : idx + 1;
-    sysexIn->setSelectedItemIndex(idx);
-
-    StringArray outputs = MidiOutput::getDevices();
-    idx = outputs.indexOf(mgr.getOutput());
-    idx = idx == -1 ? 0 : idx + 1;
-    sysexOut->setSelectedItemIndex(idx);
+    // TODO: fix for JUCE 8 migration
+    // StringArray inputs = MidiInput::getDevices();
+    // int idx = inputs.indexOf(mgr.getInput());
+    // idx = idx == -1 ? 0 : idx + 1;
+    // sysexIn->setSelectedItemIndex(idx);
+    //
+    // StringArray outputs = MidiOutput::getDevices();
+    // idx = outputs.indexOf(mgr.getOutput());
+    // idx = idx == -1 ? 0 : idx + 1;
+    // sysexOut->setSelectedItemIndex(idx);
 
     engineReso->setSelectedItemIndex(reso);
     showKeyboard->setToggleState(showKey, NotificationType::dontSendNotification);
