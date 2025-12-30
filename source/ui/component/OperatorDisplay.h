@@ -3,11 +3,11 @@
 #include "../util/CachedParameter.h"
 #include "parameter/DexedApvts.h"
 
-class OperatorDetails : public juce::Component {
+class OperatorDisplay : public juce::Component {
     CachedParameter<int> opFine, opCoarse, detune, opMode;
     String message;
 public:
-    OperatorDetails(DexedApvts &apvts, int opNum) {
+    OperatorDisplay(DexedApvts &apvts, int opNum) {
         opFine.referTo(apvts, IDs::frequencyFine.op(opNum).name);
         opFine.callback = [this]() {
             updateDisplay();

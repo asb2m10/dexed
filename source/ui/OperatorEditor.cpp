@@ -2,7 +2,7 @@
 
 #include "OperatorEditor.h"
 #include "PluginEditor.h"
-#include "component/OperatorDetails.h"
+#include "component/OperatorDisplay.h"
 #include "util/ContextMenuAdapter.h"
 
 #ifndef M_LN10
@@ -41,7 +41,7 @@ public:
 };
 
 //==============================================================================
-OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : processor(processor), internalOp(num) {
+OperatorEditor::OperatorEditor(DexedAudioProcessor &processor, int num) : processor(processor), internalOp(num) {
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
 
     binder = std::make_unique<AudioComponentContainer>(*this, processor.parameters);
@@ -55,119 +55,126 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     for (int i=0; i<4; i++) {
         eglevel[i] = std::make_unique<DXSlider>(IDs::egLevel.op(num).idx(i).name);
         egrate[i] = std::make_unique<DXSlider>(IDs::egRate.op(num).idx(i).name);
-        eglevel[i]->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-        eglevel[i]->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-        egrate[i]->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-        egrate[i]->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
+        eglevel[i]->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+        eglevel[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+        egrate[i]->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+        egrate[i]->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
     }
 
-    eglevel[0]->setExplicitFocusOrder (4);
-    eglevel[0]->setBounds (5, 128, 34, 34);
+    eglevel[0]->setExplicitFocusOrder(4);
+    eglevel[0]->setBounds(5, 128, 34, 34);
     binder->addAndAttach(std::move(eglevel[0]));
-    eglevel[1]->setExplicitFocusOrder (6);
-    eglevel[1]->setBounds (33, 128, 34, 34);
+    eglevel[1]->setExplicitFocusOrder(6);
+    eglevel[1]->setBounds(33, 128, 34, 34);
     binder->addAndAttach(std::move(eglevel[1]));
-    eglevel[2]->setExplicitFocusOrder (8);
-    eglevel[2]->setBounds (61, 128, 34, 34);
+    eglevel[2]->setExplicitFocusOrder(8);
+    eglevel[2]->setBounds(61, 128, 34, 34);
     binder->addAndAttach(std::move(eglevel[2]));
-    eglevel[3]->setExplicitFocusOrder (10);
-    eglevel[3]->setBounds (89, 128, 34, 34);
+    eglevel[3]->setExplicitFocusOrder(10);
+    eglevel[3]->setBounds(89, 128, 34, 34);
     binder->addAndAttach(std::move(eglevel[3]));
-    egrate[0]->setExplicitFocusOrder (5);
-    egrate[0]->setBounds (5, 169, 34, 34);
+    egrate[0]->setExplicitFocusOrder(5);
+    egrate[0]->setBounds(5, 169, 34, 34);
     binder->addAndAttach(std::move(egrate[0]));
-    egrate[1]->setExplicitFocusOrder (7);
-    egrate[1]->setBounds (33, 169, 34, 34);
+    egrate[1]->setExplicitFocusOrder(7);
+    egrate[1]->setBounds(33, 169, 34, 34);
     binder->addAndAttach(std::move(egrate[1]));
-    egrate[2]->setExplicitFocusOrder (9);
-    egrate[2]->setBounds (61, 169, 34, 34);
+    egrate[2]->setExplicitFocusOrder(9);
+    egrate[2]->setBounds(61, 169, 34, 34);
     binder->addAndAttach(std::move(egrate[2]));
-    egrate[3]->setExplicitFocusOrder (11);
-    egrate[3]->setBounds (89, 169, 34, 34);
+    egrate[3]->setExplicitFocusOrder(11);
+    egrate[3]->setBounds(89, 169, 34, 34);
     binder->addAndAttach(std::move(egrate[3]));
 
     auto opLevel = std::make_unique<DXSlider>(IDs::outputLevel.op(num).name);
-    opLevel->setExplicitFocusOrder (15);
-    opLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    opLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    opLevel->setBounds (245, 76, 34, 34);
+    opLevel->setExplicitFocusOrder(15);
+    opLevel->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    opLevel->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    opLevel->setBounds(245, 76, 34, 34);
     binder->addAndAttach(std::move(opLevel));
 
     auto opFine = std::make_unique<DXSlider>(IDs::frequencyFine.op(num).name);
-    opFine->setExplicitFocusOrder (3);
-    opFine->setSliderStyle  (juce::Slider::RotaryVerticalDrag);
-    opFine->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    opFine->setBounds (78, 24, 34, 34);
+    opFine->setExplicitFocusOrder(3);
+    opFine->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    opFine->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    opFine->setBounds(78, 24, 34, 34);
     binder->addAndAttach(std::move(opFine));
 
     auto opCoarse = std::make_unique<DXSlider>(IDs::frequencyCoarse.op(num).name);
-    opCoarse->setExplicitFocusOrder (2);
-    opCoarse->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    opCoarse->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    opCoarse->setBounds (43, 24, 34, 34);
+    opCoarse->setExplicitFocusOrder(2);
+    opCoarse->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    opCoarse->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    opCoarse->setBounds(43, 24, 34, 34);
     binder->addAndAttach(std::move(opCoarse));
 
     auto detune = std::make_unique<DXSlider>(IDs::detune.op(num).name);
-    detune->setExplicitFocusOrder (1);
-    detune->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    detune->setTextBoxStyle (juce::Slider::NoTextBox, true, 80, 20);
-    detune->setBounds (6, 24, 34, 34);
+    detune->setExplicitFocusOrder(1);
+    detune->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    detune->setTextBoxStyle(juce::Slider::NoTextBox, true, 80, 20);
+    detune->setBounds(6, 24, 34, 34);
     binder->addAndAttach(std::move(detune));
 
     auto sclLeftLevel = std::make_unique<DXSlider>(IDs::lScaleDepth.op(num).name);
-    sclLeftLevel->setTooltip (TRANS ("Keyboard Scale Level Left Depth "));
-    sclLeftLevel->setExplicitFocusOrder (16);
-    sclLeftLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sclLeftLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    sclLeftLevel->setBounds (131, 115, 34, 34);
+    sclLeftLevel->setTooltip(TRANS("Keyboard Scale Level Left Depth "));
+    sclLeftLevel->setExplicitFocusOrder(16);
+    sclLeftLevel->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    sclLeftLevel->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    sclLeftLevel->setBounds(131, 115, 34, 34);
     binder->addAndAttach(std::move(sclLeftLevel));
 
     auto sclRightLevel = std::make_unique<DXSlider>(IDs::rScaleDepth.op(num).name);
-    sclRightLevel->setTooltip (TRANS ("Keyboard Scale Level Right Depth "));
-    sclRightLevel->setExplicitFocusOrder (18);
-    sclRightLevel->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sclRightLevel->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    sclRightLevel->setBounds (241, 115, 34, 34);
+    sclRightLevel->setTooltip(TRANS("Keyboard Scale Level Right Depth "));
+    sclRightLevel->setExplicitFocusOrder(18);
+    sclRightLevel->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    sclRightLevel->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    sclRightLevel->setBounds(241, 115, 34, 34);
     binder->addAndAttach(std::move(sclRightLevel));
 
     auto sclLvlBrkPt = std::make_unique<DXSlider>(IDs::breakpoint.op(num).name);
-    sclLvlBrkPt->setTooltip (TRANS ("Scale Level Breakpoint"));
-    sclLvlBrkPt->setExplicitFocusOrder (17);
-    sclLvlBrkPt->setBounds (178, 130, 54, 24);
+    sclLvlBrkPt->setTooltip(TRANS("Scale Level Breakpoint"));
+    sclLvlBrkPt->setExplicitFocusOrder(17);
+    sclLvlBrkPt->setSliderStyle(juce::Slider::LinearHorizontal);
+    sclLvlBrkPt->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    sclLvlBrkPt->setBounds(178, 130, 54, 24);
     binder->addAndAttach(std::move(sclLvlBrkPt));
 
     auto sclRateScaling = std::make_unique<DXSlider>(IDs::rateScaling.op(num).name);
-    sclRateScaling->setTooltip (TRANS ("Keyboard Rate Scaling"));
-    sclRateScaling->setExplicitFocusOrder (20);
-    sclRateScaling->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    sclRateScaling->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    sclRateScaling->setBounds (186, 179, 34, 34);
+    sclRateScaling->setTooltip(TRANS("Keyboard Rate Scaling"));
+    sclRateScaling->setExplicitFocusOrder(20);
+    sclRateScaling->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    sclRateScaling->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    sclRateScaling->setBounds(186, 179, 34, 34);
     binder->addAndAttach(std::move(sclRateScaling));
 
     auto keyVelSens = std::make_unique<DXSlider>(IDs::keyVelocity.op(num).name);
-    keyVelSens->setExplicitFocusOrder (14);
-    keyVelSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    keyVelSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    keyVelSens->setBounds (204, 76, 34, 34);
+    keyVelSens->setExplicitFocusOrder(14);
+    keyVelSens->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    keyVelSens->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    keyVelSens->setBounds(204, 76, 34, 34);
     binder->addAndAttach(std::move(keyVelSens));
 
     auto ampModeSens = std::make_unique<DXSlider>(IDs::ampModeSens.op(num).name);
-    ampModeSens->setExplicitFocusOrder (13);
-    ampModeSens->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    ampModeSens->setTextBoxStyle (juce::Slider::NoTextBox, false, 80, 20);
-    ampModeSens->setBounds (140, 76, 34, 34);
+    ampModeSens->setExplicitFocusOrder(13);
+    ampModeSens->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    ampModeSens->setTextBoxStyle(juce::Slider::NoTextBox, false, 80, 20);
+    ampModeSens->setBounds(140, 76, 34, 34);
     binder->addAndAttach(std::move(ampModeSens));
 
-    auto opMode = std::make_unique<juce::ToggleButton>(IDs::mode.op(num).name);
-    opMode->setExplicitFocusOrder (12);
-    opMode->setButtonText (juce::String());
-    opMode->setBounds (146, 19, 48, 26);
-    binder->addAndAttach(std::move(opMode));
+    opMode = std::make_unique<juce::ToggleButton>(IDs::mode.op(num).name);
+    opMode->setExplicitFocusOrder(12);
+    opMode->setButtonText(juce::String());
+    opMode->setBounds(146, 19, 48, 26);
+    opMode->onClick = [this](){
+        repaint();
+    };
+
+    addAndMakeVisible(opMode.get());
+    binder->attach(opMode.get());
 
     auto kbdLeftCurve = std::make_unique<ComboBoxImage>();
     kbdLeftCurve->setName(IDs::lKeyScale.op(internalOp).name);
-    kbdLeftCurve->setExplicitFocusOrder (19);
-    kbdLeftCurve->setBounds (128, 170, 36, 26);
+    kbdLeftCurve->setExplicitFocusOrder(19);
+    kbdLeftCurve->setBounds(128, 170, 36, 26);
     binder->attach(kbdLeftCurve.get());
     int posLeft[] = {0,5,4,3};
     kbdLeftCurve->setImage(lookAndFeel->imageScaling, posLeft);
@@ -175,14 +182,14 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
 
     auto kbdRightCurve = std::make_unique<ComboBoxImage>();
     kbdRightCurve->setName(IDs::rKeyScale.op(internalOp).name);
-    kbdRightCurve->setExplicitFocusOrder (21);
-    kbdRightCurve->setBounds (240, 170, 36, 26);
+    kbdRightCurve->setExplicitFocusOrder(21);
+    kbdRightCurve->setBounds(240, 170, 36, 26);
     binder->attach(kbdRightCurve.get());
     int posRight[] = {3,2,1,0};
     kbdRightCurve->setImage(lookAndFeel->imageScaling, posRight);
     binder->add(std::move(kbdRightCurve));
 
-    auto operatorDetails = std::make_unique<OperatorDetails>(processor.parameters, num);
+    auto operatorDetails = std::make_unique<OperatorDisplay>(processor.parameters, num);
     operatorDetails->setBounds(15, 10, 95, 10);
     binder->add(std::move(operatorDetails));
 
@@ -193,12 +200,12 @@ OperatorEditor::OperatorEditor (DexedAudioProcessor &processor, int num) : proce
     binder->attach(opSwitch.get());
 
     envDisplay = std::make_unique<EnvDisplay>(processor.parameters, num);
-    addAndMakeVisible (envDisplay.get());
-    envDisplay->setBounds (16, 83, 94, 30);
+    addAndMakeVisible(envDisplay.get());
+    envDisplay->setBounds(16, 83, 94, 30);
 
     vu = std::make_unique<VuMeter>();
-    addAndMakeVisible (vu.get());
-    vu->setBounds (132, 52, 140, 8);
+    addAndMakeVisible(vu.get());
+    vu->setBounds(132, 52, 140, 8);
 
     light = lookAndFeel->imageLight;
     background = lookAndFeel->imageOperator;
@@ -215,13 +222,9 @@ OperatorEditor::~OperatorEditor() {
 }
 
 //==============================================================================
-void OperatorEditor::paint (juce::Graphics& g)
+void OperatorEditor::paint(juce::Graphics& g)
 {
-    //[UserPrePaint] Add your own custom painting code here..
     g.drawImage(background, 0, 0, 287, 218, 0, 0, 574, 436);
-    //[/UserPrePaint]
-
-    //[UserPaint] Add your own custom painting code here..
 
     if ( opSwitch->getToggleState() )
         g.setColour(Colours::white);
@@ -231,12 +234,12 @@ void OperatorEditor::paint (juce::Graphics& g)
     g.setFont(juce::Font(juce::FontOptions().withHeight(30.00f).withStyle("Regular")));
     g.drawText(opNum, 250, 14, 30, 30, Justification::centred, true);
 
-    //bool state = opMode->getToggleState();
+    bool state = opMode->getToggleState();
 
     // 129 x 24
-    //    g.drawImage(light, 127, 24, 14, 14, 0, state ? 0 : 28, 28, 28);
+    g.drawImage(light, 127, 24, 14, 14, 0, state ? 0 : 28, 28, 28);
     // 199 x 24
-    // g.drawImage(light, 198, 24, 14, 14, 0, !state ? 0 : 28, 28, 28);
+    g.drawImage(light, 198, 24, 14, 14, 0, !state ? 0 : 28, 28, 28);
 }
 
 void OperatorEditor::resized()
@@ -249,12 +252,6 @@ void OperatorEditor::resized()
 }
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void OperatorEditor::bind(DexedAudioProcessor *parent, int op) {
-    opNum << op + 1;
-    internalOp = 5-op;
-    setTitle("Operator " + opNum);
-    setFocusContainerType(FocusContainerType::focusContainer);
-}
 
 void OperatorEditor::updateGain(float v) {
     vu->v = v;

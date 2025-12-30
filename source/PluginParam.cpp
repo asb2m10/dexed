@@ -327,17 +327,17 @@ public:
         processor = owner;
     }
 
-    String getValueDisplay() {
-        return processor->isMonoMode() ? String("MONO") : String("POLY");
-    }
+    // String getValueDisplay() {
+    //     //return processor->isMonoMode() ? String("MONO") : String("POLY");
+    // }
 
-    float getValueHost() {
-        return processor->isMonoMode() ? 1 : 0;
-    }
+    // float getValueHost() {
+    //     //return processor->isMonoMode() ? 1 : 0;
+    // }
 
-    void setValueHost(float v) {
-        processor->setMonoMode(v == 1);
-    }
+    // void setValueHost(float v) {
+    //     //processor->setMonoMode(v == 1);
+    // }
 
     void updateComponent() {
         if (button != NULL) {

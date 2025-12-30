@@ -69,4 +69,27 @@ void DexedAudioProcessor::mapParameters() {
             refreshVoice.set(true);
         });
     }
+
+    parameters.mapTo(IDs::cutoff.name, [this](float newValue) {
+        fx.uiCutoff = newValue;
+    });
+
+    parameters.mapTo(IDs::resonance.name, [this](float newValue) {
+        fx.uiReso = newValue;
+    });
+
+    parameters.mapTo(IDs::output.name, [this](float newValue) {
+        fx.uiGain = newValue;
+    });
+
+    parameters.mapTo(IDs::masterTuneAdj.name, [this](float newValue) {
+        int32_t tune = ( (newValue/2+0.5) * 0x4000) - 0x2000;
+        controllers.masterTune = ((float) (tune << 11)) * (1.0/12);
+    });
+
+    parameters.mapTo(IDs::monoMode.name, [this](float newValue) {
+        command.push([](DexedAudioProcessor &proc) {
+            proc.resetMonoMode();
+        });
+    });
 }

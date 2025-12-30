@@ -44,11 +44,37 @@ namespace IDs {
                 DECLARE_METADX(detune, 20, 7)
 
             DECLARE_META(output)
-            DECLARE_META(tune)
             DECLARE_META(monoMode)
             DECLARE_META(masterTuneAdj)
             DECLARE_META(cutoff)
             DECLARE_META(resonance)
+            DECLARE_META(pitchBendUp)
+            DECLARE_META(pitchBendDown)
+            DECLARE_META(pitchBendStep)
+
+            DECLARE_META(modWheel)
+            DECLARE_META(modWheelPitch)
+            DECLARE_META(modWheelAmp)
+            DECLARE_META(modWheelEgBias)
+
+            DECLARE_META(modFoot)
+            DECLARE_META(modFootPitch)
+            DECLARE_META(modFootAmp)
+            DECLARE_META(modFootEgBias)
+
+            DECLARE_META(modBreath)
+            DECLARE_META(modBreathPitch)
+            DECLARE_META(modBreathAmp)
+            DECLARE_META(modBreathEgBias)
+
+            DECLARE_META(modAftertouch)
+            DECLARE_META(modAftertouchPitch)
+            DECLARE_META(modAftertouchAmp)
+            DECLARE_META(modAftertouchEgBias)
+
+        DECLARE_ID(profile)
+            DECLARE_ID(zoom)
+            DECLARE_ID(showKeyboard)
 
         // This should be public for parameter attributes
         DECLARE_ID(id)

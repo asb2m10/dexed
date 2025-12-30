@@ -20,16 +20,28 @@ struct MetaParameterID {
     }
 
     MetaParameterID idx(int idx) const {
-        return MetaParameterID(name + juce::String(idx), pos + idx, displayOffset);
+        return MetaParameterID(name + juce::String(idx+1), pos + idx, displayOffset);
     }
 
     juce::String displayName() const {
         juce::String ret;
-        for (int i = 0; i < name.length(); ++i) {
-            if (i > 0 && name[i] >= 'A' && name[i] <= 'Z') {
+        bool nextUpper = false;
+        int i = 1;
+
+        if ( name.startsWith("op") ) {
+            ret = "OP";
+            i=2;
+        } else {
+            ret += (char) toupper(name[0]);
+        }
+
+        for (; i < name.length(); ++i) {
+            if (i > 0 && ((name[i] >= 'A' && name[i] <= 'Z') || isdigit(name[i-1])) ) {
                 ret += " ";
+                ret += (char) toupper(name[i]);
+            } else {
+                ret += name[i];
             }
-            ret += name[i];
         }
         return ret;
     }

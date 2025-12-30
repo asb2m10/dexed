@@ -32,6 +32,13 @@ public:
     }
 };
 
+juce::String getBreakpointLabel(int value) {
+    juce::StringArray breakNames = {"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
+    String ret;
+    ret << breakNames[value%12] << (value+9) / 12 - 1;
+    return ret;
+}
+
 juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     juce::AudioProcessorValueTreeState::ParameterLayout params;
 
@@ -51,13 +58,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
         IDs::resonance.parameter(),
         "Resonance",
         juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f),
-        1.0f));
-
-    params.add(std::make_unique<juce::AudioParameterFloat> (
-        IDs::tune.parameter(),
-        "Tune",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f),
-        0.5f));
+        0.0f));
 
     // DX7 EMULATED PARAMETERS
     // --------------------------------------------------------------------------------------------------
@@ -70,7 +71,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     params.add(std::make_unique<ParameterDx>(IDs::lfoDelay, 99));
     params.add(std::make_unique<ParameterDx>(IDs::lfoPmDepth, 99));
     params.add(std::make_unique<ParameterDx>(IDs::lfoAmpDepth, 99));
-    params.add(std::make_unique<AudioParameterBool>(IDs::lfoKeySync.parameter(), IDs::lfoKeySync.name, false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::lfoKeySync.parameter(), IDs::lfoKeySync.displayName(), false));
     params.add(std::make_unique<AudioParameterBool>(IDs::oscKeySync.parameter(), IDs::oscKeySync.displayName(), false));
 
     juce::StringArray lfoWaveformChoices = { "TRIANGLE", "SAW DOWN", "SAW UP", "SQUARE", "SINE", "S&HOLD" };
@@ -82,8 +83,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     params.add(std::make_unique<juce::AudioParameterFloat> (
         IDs::masterTuneAdj.parameter(),
         "Master Tune Adj",
-        juce::NormalisableRange<float>(0.0f, 1.0f, 0.001f),
-        0.5f));
+        juce::NormalisableRange<float>(-1.0f, 1.0f, 0.001f),
+        0.0f));
 
     for (int i=0;i<4;i++) {
         params.add(std::make_unique<ParameterDx>(IDs::pitchEgRate.idx(i), 99));
@@ -103,11 +104,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
             group->addChild(std::make_unique<ParameterDx>(IDs::egLevel.op(i).idx(j), 99));
         }
 
-        group->addChild(std::make_unique<AudioParameterBool>(IDs::mode.op(i).parameter(), IDs::mode.op(i).name, false));
+        group->addChild(std::make_unique<AudioParameterBool>(IDs::mode.op(i).parameter(), IDs::mode.op(i).displayName(), false));
         group->addChild(std::make_unique<ParameterDx>(IDs::frequencyCoarse.op(i), 31));
         group->addChild(std::make_unique<ParameterDx>(IDs::frequencyFine.op(i), 99));
         group->addChild(std::make_unique<ParameterDx>(IDs::detune.op(i), 14));
-        group->addChild(std::make_unique<ParameterDx>(IDs::breakpoint.op(i), 99));
+        group->addChild(std::make_unique<AudioParameterInt>(IDs::breakpoint.op(i).parameter(),
+            IDs::breakpoint.op(i).displayName(), 0, 99, 0, "",
+            [](int value, int maximumStringLength) {
+                    return getBreakpointLabel(value);
+            }, nullptr));
         group->addChild(std::make_unique<ParameterDx>(IDs::lScaleDepth.op(i), 99));
         group->addChild(std::make_unique<ParameterDx>(IDs::rScaleDepth.op(i), 99));
 
@@ -118,11 +123,15 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
         group->addChild(std::make_unique<ParameterDx>(IDs::rateScaling.op(i), 7));
         group->addChild(std::make_unique<ParameterDx>(IDs::ampModeSens.op(i), 3));
         group->addChild(std::make_unique<ParameterDx>(IDs::keyVelocity.op(i), 7));
-        group->addChild(std::make_unique<AudioParameterBool>(IDs::on.op(i).parameter(), opName + "switch", true));
+        group->addChild(std::make_unique<AudioParameterBool>(IDs::on.op(i).parameter(), opName + " switch", true));
         group->addChild(std::make_unique<ParameterDx>(IDs::outputLevel.op(i), 99));
 
         params.add(std::move(group));
     }
+
+    params.add(std::make_unique<ParameterDx>(IDs::pitchBendUp, 48));
+    params.add(std::make_unique<ParameterDx>(IDs::pitchBendDown, 48));
+    params.add(std::make_unique<ParameterDx>(IDs::pitchBendStep, 12));
 
     return params;
 }

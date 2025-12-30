@@ -160,6 +160,8 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
     keyboardState.reset();
     
     lfo.reset(activeProgram.getParameters(137));
+
+    command.reset();
 }
 
 void DexedAudioProcessor::releaseResources() {
@@ -183,8 +185,10 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
 
     int numSamples = buffer.getNumSamples();
     int i;
-    
-    if ( ! refreshVoice.compareAndSetBool(false, true) ) {
+
+    command.call(*this);
+
+    if ( refreshVoice.compareAndSetBool(false, true) ) {
         for(i=0;i < MAX_ACTIVE_NOTES;i++) {
             if ( voices[i].live )
                 voices[i].dx7_note->update(activeProgram.getRawData(), voices[i].midi_note, voices[i].velocity, voices[i].channel);
@@ -485,9 +489,9 @@ void DexedAudioProcessor::setEngineType(int tp) {
     engineType = tp;
 }
 
-void DexedAudioProcessor::setMonoMode(bool mode) {
+void DexedAudioProcessor::resetMonoMode() {
     panic();
-    monoMode = mode;
+    monoMode = parameters.getParameter(IDs::monoMode.name)->getValue() > 0.5f;
 }
 
 // ====================================================================

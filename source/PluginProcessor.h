@@ -166,7 +166,7 @@ public :
     bool isMonoMode() {
         return monoMode;
     }
-    void setMonoMode(bool mode);
+    void resetMonoMode();
     
     void copyToClipboard(int srcOp);
     void pasteOpFromClipboard(int destOp);
@@ -226,7 +226,7 @@ public :
         return zoomFactor;
     }
 
-    CommandFifo<DexedAudioProcessor> commandFifo;
+    CommandFifo<DexedAudioProcessor> command;
 
     void applyProgram(const Program &program);
 

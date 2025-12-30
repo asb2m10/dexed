@@ -32,10 +32,7 @@
 #endif // IMPLEMENT_MidiMonitor
 
 
-class GlobalEditor  : public Component,
-                      public juce::Slider::Listener,
-                      public juce::Button::Listener
-{
+class GlobalEditor  : public Component {
 public:
     //==============================================================================
     GlobalEditor (DexedAudioProcessor &processor, juce::Component *parent);
@@ -56,8 +53,6 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
-    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
-    void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
     // TODO: put accessor methods here to get to buttons/sliders if needed
     std::unique_ptr<juce::TextButton> initButton;
@@ -77,18 +72,15 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<juce::Slider> transpose;
     std::unique_ptr<juce::ToggleButton> oscSync;
     std::unique_ptr<juce::ToggleButton> lfoSync;
     std::unique_ptr<PitchEnvDisplay> pitchEnvDisplay;
     std::unique_ptr<AlgoDisplay> algoDisplay;
     std::unique_ptr<VuMeterOutput> vuOutput;
     std::unique_ptr<juce::ToggleButton> monoMode;
-    std::unique_ptr<ComboBoxImage> lfoType;
     std::unique_ptr<ProgramSelector> programSelector;
     std::unique_ptr<juce::ImageButton> aboutButton;
-    std::unique_ptr<juce::Slider> tune;
-
+    std::unique_ptr<ComboBoxImage> lfoType;
     std::unique_ptr<AudioComponentContainer> binder;
 
     std::unique_ptr<juce::MouseListener> contextMenuAdapter;
