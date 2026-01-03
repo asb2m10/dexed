@@ -93,3 +93,57 @@ void DexedAudioProcessor::mapParameters() {
         });
     });
 }
+
+
+int DexedAudioProcessor::getNumPrograms() {
+    return 32;
+}
+
+int DexedAudioProcessor::getCurrentProgram() {
+    return currentProgram;
+}
+
+void DexedAudioProcessor::setCurrentProgram(int index) {
+    index = index > 31 ? 31 : index;
+    Program program = currentCart.unpackProgram(index);
+    applyProgram(program);
+    currentProgram = index;
+}
+
+const String DexedAudioProcessor::getProgramName(int index) {
+    if (index >= 32)
+        index = 31;
+    return programNames[index];
+}
+
+void DexedAudioProcessor::changeProgramName(int index, const String& newName) {
+}
+
+void DexedAudioProcessor::setDxValue(int offset, int v) {
+    if (offset < 0)
+        return;
+
+    if ( activeProgram[offset] != v ) {
+        activeProgram[offset] = v;
+    } else {
+        return;
+    }
+
+    refreshVoice.set(true);
+
+    // MIDDLE C (transpose)
+    if (offset == 144)
+        panic();
+
+    if (!sendSysexChange)
+        return;
+
+    uint8 msg[7] = { 0xF0, 0x43, 0x10, offset > 127, 0, (uint8) v, 0xF7 };
+    msg[2] = 0x10 | sysexComm.getChl();
+    msg[4] = offset & 0x7F;
+
+    if ( sysexComm.isOutputActive() ) {
+        //TRACE("SENDING SYSEX: %.2X%.2X %.2X%.2X %.2X%.2X %.2X", msg[0], msg[1], msg[2], msg[3], msg[4], msg[5], msg[6]);
+        sysexComm.send(MidiMessage(msg,7));
+    }
+}

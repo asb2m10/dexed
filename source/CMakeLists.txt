@@ -52,10 +52,10 @@ target_sources(${BaseTargetName} PRIVATE
 	msfa/tuning.cc
 	msfa/porta.cpp
 
+	PluginProcessor.cpp
+
 	PluginData.cpp
 	PluginFx.cpp
-	PluginParam.cpp
-	PluginProcessor.cpp
 	Tuning.cpp
 
 	core/Cartridge.cpp
@@ -65,12 +65,12 @@ target_sources(${BaseTargetName} PRIVATE
 	engine/EngineOpl.cpp
 
     ui/PluginEditor.cpp
-	ui/CartManager.cpp
+		ui/window/CartManager.cpp
 	ui/DXLookNFeel.cpp
     ui/GlobalEditor.cpp
 	ui/OperatorEditor.cpp
-    ui/ParamDialog.cpp
-    ui/TuningShow.cpp
+		ui/window/ParamDialog.cpp
+		ui/window/TuningShow.cpp
 	ui/component/AlgoDisplay.cpp
 	ui/component/DXComponents.cpp
 	ui/component/EnvDisplay.cpp
@@ -83,6 +83,7 @@ target_sources(${BaseTargetName} PRIVATE
 	parameter/DexedApvts.cpp
 	parameter/ParametersMapper.cpp
 	parameter/State.cpp
+    parameter/Preference.cpp
 
 	debugger/value_tree_debugger.cpp
 

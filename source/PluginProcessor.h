@@ -31,7 +31,6 @@
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
 #include "msfa/tuning.h"
-#include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
 #include "midi/SysexComm.h"
@@ -67,11 +66,12 @@ enum DexedEngineResolution {
 /// to be a practical choice.)
 const int MAX_SCL_KBM_FILE_SIZE = 16384;
 
+class MidiCCHandler;
+
 //==============================================================================
 /**
 */
-class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, public clap_juce_extensions::clap_properties,
-    juce::ValueTree::Listener
+class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, public clap_juce_extensions::clap_properties
 {
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
@@ -126,9 +126,11 @@ class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, pu
     void mapParameters();
     void setDxValue(int offset, int v);
 
+    void valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded);
 public :
     DexedApvts parameters;
     Program activeProgram;
+    std::unique_ptr<MidiCCHandler> midiCCMapper;
 
     // in MIDI units (0x4000 is neutral)
     Controllers controllers;
@@ -149,8 +151,6 @@ public :
     bool showKeyboard;
     int getEngineType();
     void setEngineType(int rs);
-    
-    HashMap<int, Ctrl*> mappedMidiCC;
 
     void loadCartridge(Cartridge &cart);
 
@@ -163,9 +163,6 @@ public :
     void releaseResources() override;
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages) override;
     void panic();
-    bool isMonoMode() {
-        return monoMode;
-    }
     void resetMonoMode();
     
     void copyToClipboard(int srcOp);
@@ -185,15 +182,10 @@ public :
     //==============================================================================
     const String getName() const override;
 
-    const String getInputChannelName (int channelIndex) const override;
-    const String getOutputChannelName (int channelIndex) const override;
-    bool isInputChannelStereoPair (int index) const override;
-    bool isOutputChannelStereoPair (int index) const override;
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
 
     bool acceptsMidi() const override;
     bool producesMidi() const override;
-    bool silenceInProducesSilenceOut() const override;
     double getTailLengthSeconds() const override;
 
     //==============================================================================
@@ -217,8 +209,6 @@ public :
     
     static File dexedAppDir;
     static File dexedCartDir;
-
-    Value lastCCUsed;
     int lastActiveVoice = 0;
 
     void setZoomFactor(float factor);

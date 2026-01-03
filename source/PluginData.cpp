@@ -22,7 +22,6 @@
 
 #include "PluginData.h"
 #include "Dexed.h"
-#include "PluginParam.h"
 #include "PluginProcessor.h"
 
 #include <fstream>

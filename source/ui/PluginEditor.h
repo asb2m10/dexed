@@ -26,7 +26,7 @@
 #include "GlobalEditor.h"
 #include "component/DXComponents.h"
 #include "DXLookNFeel.h"
-#include "CartManager.h"
+#include "window/CartManager.h"
 #include "component/ParameterObserver.h"
 
 //==============================================================================
@@ -67,7 +67,6 @@ public:
     void cartShow();
     void parmShow();
     void tuningShow();
-    void discoverMidiCC(Ctrl *ctrl);
 
     static float getLargestScaleFactor();
     void resetZoomFactor();

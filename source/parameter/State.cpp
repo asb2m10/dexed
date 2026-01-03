@@ -1,18 +1,33 @@
 #include "PluginProcessor.h"
+#include "parameter/Model.h"
 
 //==============================================================================
 void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     auto state = parameters.copyState();
-    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    juce::ValueTree storage { IDs::root };
+    storage.setProperty(IDs::version, DexedApvts::MODEL_VERSION, nullptr);
+    storage.addChild(state, -1, nullptr);
+    storage.addChild(parameters.rootVt.getChildWithName(IDs::profile).createCopy(), -1, nullptr);
+    std::unique_ptr<juce::XmlElement> xml(storage.createXml());
     copyXmlToBinary(*xml, destData);
 }
 
 void DexedAudioProcessor::setStateInformation(const void* source, int sizeInBytes) {
     std::unique_ptr<juce::XmlElement> xmlState (getXmlFromBinary (source, sizeInBytes));
     if (xmlState != nullptr) {
-        if (xmlState->hasTagName(parameters.state.getType())) {
-            // Format is 1.1
-            parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+        if (xmlState->hasTagName(parameters.rootVt.getType())) {
+            ValueTree storage = juce::ValueTree::fromXml(*xmlState);
+
+            juce::String version = storage.getProperty(IDs::version);
+            if ( version != juce::String(DexedApvts::MODEL_VERSION) ) {
+                TRACE("Incompatible state version %s (current is %s)", version.toRawUTF8(), DexedApvts::MODEL_VERSION);
+                return;
+            }
+
+            parameters.replaceState(storage.getChildWithName(IDs::parameters));
+            juce::ValueTree storageProfile = storage.getChildWithName(IDs::profile);
+            parameters.rootVt.getChildWithName(IDs::profile).getChildWithName(IDs::midiCCMappings).
+                copyPropertiesAndChildrenFrom(storageProfile.getChildWithName(IDs::midiCCMappings), nullptr);
         } else if ( xmlState->hasTagName("dexedState") ) {
             // Format is 1.0 legacy
             // implement legacy loader

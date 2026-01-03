@@ -36,6 +36,8 @@
 #include "msfa/aligned_buf.h"
 #include "msfa/fm_op_kernel.h"
 
+#include "midi/MidiCCHandler.h"
+
 #if JUCE_MSVC
     #pragma comment (lib, "kernel32.lib")
     #pragma comment (lib, "user32.lib")
@@ -68,7 +70,6 @@
 DexedAudioProcessor::DexedAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)),
       parameters (*this, nullptr) {
-    parameters.rootVt.addListener(this);
 
     mapParameters();
 
@@ -78,6 +79,8 @@ DexedAudioProcessor::DexedAudioProcessor()
 
     synthTuningState = createStandardTuning();
     synthTuningStateLast = createStandardTuning();
+
+    midiCCMapper = std::make_unique<MidiCCHandler>(parameters);
 
     currentNote = -1;
     engineType = -1;
@@ -524,22 +527,6 @@ bool DexedAudioProcessor::peekVoiceStatus() {
     return true;
 }
 
-const String DexedAudioProcessor::getInputChannelName (int channelIndex) const {
-    return String (channelIndex + 1);
-}
-
-const String DexedAudioProcessor::getOutputChannelName (int channelIndex) const {
-    return String (channelIndex + 1);
-}
-
-bool DexedAudioProcessor::isInputChannelStereoPair (int index) const {
-    return true;
-}
-
-bool DexedAudioProcessor::isOutputChannelStereoPair (int index) const {
-    return true;
-}
-
 bool DexedAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const {
     return layouts.getMainOutputChannelSet() == AudioChannelSet::mono()
                 || layouts.getMainOutputChannelSet() == AudioChannelSet::stereo();
@@ -551,10 +538,6 @@ bool DexedAudioProcessor::acceptsMidi() const {
 
 bool DexedAudioProcessor::producesMidi() const {
     return true;
-}
-
-bool DexedAudioProcessor::silenceInProducesSilenceOut() const {
-    return false;
 }
 
 double DexedAudioProcessor::getTailLengthSeconds() const {

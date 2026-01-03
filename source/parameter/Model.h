@@ -75,6 +75,10 @@ namespace IDs {
         DECLARE_ID(profile)
             DECLARE_ID(zoom)
             DECLARE_ID(showKeyboard)
+            DECLARE_ID(midiCCMappings)
+                DECLARE_ID(midiCCMapping)
+                    DECLARE_ID(midiCC)
+                    DECLARE_ID(midiParameterName)
 
         // This should be public for parameter attributes
         DECLARE_ID(id)

@@ -19,9 +19,9 @@
  */
 
 #include "PluginEditor.h"
-#include "ParamDialog.h"
+#include "window/ParamDialog.h"
 #include "midi/SysexComm.h"
-#include "TuningShow.h"
+#include "window/TuningShow.h"
 #include "Dexed.h"
 #include "math.h"
 #include <fstream>
@@ -402,37 +402,6 @@ void DexedAudioProcessorEditor::storeProgram() {
     if ( externalFile != NULL )
         delete externalFile;
     cartManager.resetActiveSysex();
-}
-
-class MidiCCListener: public AlertWindow, Value::Listener {
-    DexedAudioProcessorEditor *editor;
-    Ctrl *target;
-public :
-    MidiCCListener(DexedAudioProcessorEditor *editor, Ctrl *target) : AlertWindow("","", AlertWindow::InfoIcon, editor) {
-        this->editor = editor;
-        this->target = target;
-        setMessage("Mapping: " + String(target->label) + ", waiting for midi controller change (CC) message...");
-        addButton("CANCEL", -1);
-        editor->processor->lastCCUsed.setValue(-1);
-        editor->processor->lastCCUsed.addListener(this);
-    }
-
-    ~MidiCCListener() {
-        editor->processor->lastCCUsed.removeListener(this);
-    }
-
-    void valueChanged(Value &value) {
-        int cc = value.getValue();
-        editor->processor->mappedMidiCC.remove(cc);
-        editor->processor->mappedMidiCC.set(cc, target);
-        editor->processor->savePreference();
-        exitModalState(0);
-    }
-};
-
-void DexedAudioProcessorEditor::discoverMidiCC(Ctrl *ctrl) {
-    MidiCCListener ccListener(this, ctrl);
-    ccListener.runModalLoop();
 }
 
 float DexedAudioProcessorEditor::getLargestScaleFactor() {

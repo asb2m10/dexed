@@ -1,9 +1,10 @@
 
 #include "GlobalEditor.h"
 #include "DXLookNFeel.h"
-#include "../debugger/value_tree_debugger.h"
 #include "parameter/Model.h"
 #include "ui/util/ContextMenuAdapter.h"
+#include "window/AboutBox.h"
+#include "../debugger/value_tree_debugger.h"
 
 /**
  * Ugly but useful midi monitor to know if you are really sending/receiving something from the DX7
@@ -49,59 +50,6 @@ public:
 };
 #endif //IMPLEMENT_MidiMonitor
 
-class AboutBox : public DialogWindow {
-public:
-    Image logo_png;
-    std::unique_ptr<juce::HyperlinkButton> dexed; // changed to std::unique_ptr from juce::ScopedPointer
-    std::unique_ptr<juce::HyperlinkButton> surge; // changed to std::unique_ptr from juce::ScopedPointer
-
-    AboutBox() : DialogWindow("About", Colour(0xFF000000), true),
-        dexed(std::make_unique<juce::HyperlinkButton>("https://asb2m10.github.io/dexed/", URL("https://asb2m10.github.io/dexed/"))),
-        surge(std::make_unique<juce::HyperlinkButton>("https://surge-synthesizer.github.io/", URL("https://surge-synthesizer.github.io/")))
-    {
-        setUsingNativeTitleBar(false);
-        setAlwaysOnTop(true);
-        logo_png = ImageCache::getFromMemory(BinaryData::dexedlogo_png, BinaryData::dexedlogo_pngSize);
-        setSize(logo_png.getWidth() + 8, 500);
-        //centreAroundComponent(parent, getWidth(), getHeight());
-
-        dexed->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        dexed->setJustificationType(Justification::left);
-        dexed->setBounds(18, 433, getWidth() - 36, 30);
-
-        surge->setColour(HyperlinkButton::ColourIds::textColourId, Colour(0xFF4ea097));
-        surge->setJustificationType(Justification::left);
-        surge->setBounds(18, 458, getWidth() - 36, 30);
-
-        // create a new Component to hold ''dexed'' and ''surge'' as subcomponents
-        // and set this holder Component as the content component of the DialogWindow
-        Component* holder = new Component();
-        holder->setSize(getWidth(), getHeight());
-        holder->addAndMakeVisible((juce::Component*)dexed.get());
-        holder->addAndMakeVisible((juce::Component*)surge.get());
-        setContentOwned(holder, true);  // TODO: ''setContentComponent(holder, true, true);'' also worked; which is the better?
-    }
-
-    void closeButtonPressed() {
-        setVisible(false);
-    }
-
-    void paint(Graphics &g) {
-        g.fillAll(Colour(0xFF554F46));
-        g.drawImage(logo_png, 0, 10, logo_png.getWidth(), logo_png.getHeight(),
-                     0, 0, logo_png.getWidth(), logo_png.getHeight());
-        g.setFont(20);
-        g.setColour(Colour(0xFFFFFFFF));
-        const char *credits = "Version " DEXED_VERSION " build date: " __DATE__ "\n"
-                            "This software is released under the GPL V3\n\n"
-                            "DSP Engine: orignal project (msfa) Raph Levin, enhancements Pascal Gauthier\n"
-                            "UI Programming: Pascal Gauthier\n"
-                            "UI Design: AZur Studio\n\n"
-                            "Credits to Surge Synthesizer Team for MPE and microtuning support\n"
-                            "Credits to GitHub users: tico-tico, Sentinel77, jeremybernstein; filters based on OB-Xd";
-        g.drawMultiLineText(credits, 18, 260, logo_png.getWidth()-18);
-    }
-};
 //[/MiscUserDefs]
 
 class OperatorContextMenu : public ContextMenuAdapter {

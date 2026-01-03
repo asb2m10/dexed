@@ -142,6 +142,12 @@ DexedApvts::DexedApvts(juce::AudioProcessor& processorToConnectTo, juce::UndoMan
     rootVt = ValueTree(IDs::root);
     rootVt.addChild(state, -1, nullptr);
     rootVt.setProperty(IDs::version, "1.1.0", nullptr);
+
+    juce::ValueTree profile { IDs::profile, {} };
+    juce::ValueTree midiCCMappings { IDs::midiCCMappings, {} };
+    profile.addChild(midiCCMappings, -1, nullptr);
+
+    rootVt.addChild(profile, -1, nullptr);
 }
 
 void DexedApvts::mapTo(juce::String paramId, const std::function<void(float)> &func) {

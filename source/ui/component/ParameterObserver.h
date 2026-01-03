@@ -11,8 +11,6 @@ class ParameterObserver : public juce::Component, juce::ValueTree::Listener {
     DexedApvts &apvts;
 
     juce::RangedAudioParameter *parameter = nullptr;
-    juce::Atomic<bool> dirty { false };
-
 public:
     ParameterObserver(juce::Component *topComponent, DexedApvts &apvts) : apvts(apvts) {
         topComponent->addMouseListener(this, true);
@@ -21,10 +19,6 @@ public:
 
     ~ParameterObserver() override {
         apvts.state.removeListener(this);
-    }
-
-    void refresh() {
-        repaint();
     }
 
     void mouseEnter(const juce::MouseEvent &event) override {
@@ -36,7 +30,6 @@ public:
             juce::RangedAudioParameter *param = apvts.getParameter(name);
             if ( param != nullptr ) {
                 parameter = param;
-                dirty.set(true);
                 repaint();
             }
         }
@@ -60,8 +53,6 @@ public:
         juce::RangedAudioParameter *param = parameter;
         if ( apvts.pushToParameterInProgress )
             return;
-
-        dirty.set(true);
         repaint();
 
     }

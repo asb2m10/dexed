@@ -1,4 +1,5 @@
 #include "PluginProcessor.h"
+#include "MidiCCHandler.h"
 
 void DexedAudioProcessor::processMidiMessages(MidiBufferIterator &cur, MidiBufferIterator &end, int samplePos) {
     for(;cur != end;++cur) {
@@ -117,16 +118,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     break;
                 default:
                     TRACE("handle channel %d CC %d = %d", channel, ctrl, value);
-                    int channel_cc = (channel << 8) | ctrl;
-                    if ( mappedMidiCC.contains(channel_cc) ) {
-                        Ctrl *linkedCtrl = mappedMidiCC[channel_cc];
-
-                        // We are not publishing this in the DSP thread, moving that in the
-                        // event thread
-                        //linkedCtrl->publishValueAsync((float) value / 127);
-                    }
-                    // this is used to notify the dialog that a CC value was received.
-                    lastCCUsed.setValue(channel_cc);
+                    midiCCMapper->processControlChange(ctrl, value);
                 }
             }
             return;

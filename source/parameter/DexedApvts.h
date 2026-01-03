@@ -5,6 +5,8 @@
 class DexedApvts : public juce::AudioProcessorValueTreeState {
     std::vector<std::unique_ptr<juce::AudioProcessorParameter::Listener>> callbacks;
 public:
+    static constexpr char MODEL_VERSION[] = "1.1.0";
+
     mutable bool pushToParameterInProgress = false;
     juce::ValueTree rootVt;
 
