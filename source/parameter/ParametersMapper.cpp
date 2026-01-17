@@ -60,7 +60,7 @@ void DexedAudioProcessor::mapParameters() {
 
     // Handle operator ON switches
     for (int i=0; i<6; i++) {
-        parameters.mapTo( IDs::on.op(i).name, [this, i](float newValue) {
+        parameters.mapTo(IDs::on.op(i).name, [this, i](float newValue) {
             if ( newValue > 0.5f ) {
                 activeProgram[IDs::on.pos] |= (1U << (5-i));
             } else {
@@ -91,6 +91,78 @@ void DexedAudioProcessor::mapParameters() {
         command.push([](DexedAudioProcessor &proc) {
             proc.resetMonoMode();
         });
+    });
+
+    // Modulation parameters - Wheel
+    parameters.mapTo(IDs::modWheel.name, [this](float newValue) {
+        controllers.wheel.range = static_cast<int>(newValue);
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modWheelPitch.name, [this](float newValue) {
+        controllers.wheel.pitch = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modWheelAmp.name, [this](float newValue) {
+        controllers.wheel.amp = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modWheelEgBias.name, [this](float newValue) {
+        controllers.wheel.eg = newValue > 0.5f;
+        controllers.refresh();
+    });
+
+    // Modulation parameters - Foot
+    parameters.mapTo(IDs::modFoot.name, [this](float newValue) {
+        controllers.foot.range = static_cast<int>(newValue);
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modFootPitch.name, [this](float newValue) {
+        controllers.foot.pitch = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modFootAmp.name, [this](float newValue) {
+        controllers.foot.amp = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modFootEgBias.name, [this](float newValue) {
+        controllers.foot.eg = newValue > 0.5f;
+        controllers.refresh();
+    });
+
+    // Modulation parameters - Breath
+    parameters.mapTo(IDs::modBreath.name, [this](float newValue) {
+        controllers.breath.range = static_cast<int>(newValue);
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modBreathPitch.name, [this](float newValue) {
+        controllers.breath.pitch = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modBreathAmp.name, [this](float newValue) {
+        controllers.breath.amp = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modBreathEgBias.name, [this](float newValue) {
+        controllers.breath.eg = newValue > 0.5f;
+        controllers.refresh();
+    });
+
+    // Modulation parameters - Aftertouch
+    parameters.mapTo(IDs::modAftertouch.name, [this](float newValue) {
+        controllers.at.range = static_cast<int>(newValue);
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modAftertouchPitch.name, [this](float newValue) {
+        controllers.at.pitch = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modAftertouchAmp.name, [this](float newValue) {
+        controllers.at.amp = newValue > 0.5f;
+        controllers.refresh();
+    });
+    parameters.mapTo(IDs::modAftertouchEgBias.name, [this](float newValue) {
+        controllers.at.eg = newValue > 0.5f;
+        controllers.refresh();
     });
 }
 

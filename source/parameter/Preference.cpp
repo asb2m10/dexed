@@ -1,4 +1,5 @@
 #include "PluginProcessor.h"
+#include "Model.h"
 
 void DexedAudioProcessor::loadPreference() {
     File propFile = DexedAudioProcessor::dexedAppDir.getChildFile("Dexed.xml");

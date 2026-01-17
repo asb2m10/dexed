@@ -133,6 +133,27 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     params.add(std::make_unique<ParameterDx>(IDs::pitchBendDown, 48));
     params.add(std::make_unique<ParameterDx>(IDs::pitchBendStep, 12));
 
+    // Modulation parameters (wheel, foot, breath, aftertouch)
+    params.add(std::make_unique<ParameterDx>(IDs::modWheel, 99));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modWheelPitch.parameter(), IDs::modWheelPitch.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modWheelAmp.parameter(), IDs::modWheelAmp.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modWheelEgBias.parameter(), IDs::modWheelEgBias.displayName(), false));
+
+    params.add(std::make_unique<ParameterDx>(IDs::modFoot, 99));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modFootPitch.parameter(), IDs::modFootPitch.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modFootAmp.parameter(), IDs::modFootAmp.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modFootEgBias.parameter(), IDs::modFootEgBias.displayName(), false));
+
+    params.add(std::make_unique<ParameterDx>(IDs::modBreath, 99));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modBreathPitch.parameter(), IDs::modBreathPitch.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modBreathAmp.parameter(), IDs::modBreathAmp.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modBreathEgBias.parameter(), IDs::modBreathEgBias.displayName(), false));
+
+    params.add(std::make_unique<ParameterDx>(IDs::modAftertouch, 99));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modAftertouchPitch.parameter(), IDs::modAftertouchPitch.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modAftertouchAmp.parameter(), IDs::modAftertouchAmp.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::modAftertouchEgBias.parameter(), IDs::modAftertouchEgBias.displayName(), false));
+
     return params;
 }
 

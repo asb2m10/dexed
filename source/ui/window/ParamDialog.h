@@ -2,6 +2,8 @@
 
 #include "msfa/controllers.h"
 #include "midi/SysexComm.h"
+#include "parameter/DexedApvts.h"
+#include "../util/AudioComponentContainer.h"
 #include <functional>
 #include "../DXLookNFeel.h"
 
@@ -14,7 +16,7 @@ class ParamDialog  : public Component,
 {
 public:
     //==============================================================================
-    ParamDialog ();
+    ParamDialog (DexedApvts &apvts);
     ~ParamDialog() override;
 
     void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard, float dpiScaleFactor);
@@ -40,6 +42,8 @@ public:
     void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
 private:
+    DexedApvts &apvts_;
+    AudioComponentContainer attachments_;
     std::function<void(ParamDialog *, ParamDialog::TuningAction)> tuning_callback_ = [](ParamDialog *, ParamDialog::TuningAction i) {};
     bool is_standard_tuning_;
     std::function<void(ParamDialog *)> general_callback_ = [](ParamDialog *p) {};
@@ -51,22 +55,6 @@ private:
     std::unique_ptr<juce::Slider> sysexChl;
     std::unique_ptr<juce::ComboBox> engineReso;
     std::unique_ptr<LightedToggleButton> showKeyboard;
-    std::unique_ptr<juce::Slider> whlRange;
-    std::unique_ptr<juce::Slider> ftRange;
-    std::unique_ptr<juce::Slider> brRange;
-    std::unique_ptr<juce::Slider> atRange;
-    std::unique_ptr<LightedToggleButton> whlEg;
-    std::unique_ptr<LightedToggleButton> ftEg;
-    std::unique_ptr<LightedToggleButton> brEg;
-    std::unique_ptr<LightedToggleButton> atEg;
-    std::unique_ptr<LightedToggleButton> whlAmp;
-    std::unique_ptr<LightedToggleButton> ftAmp;
-    std::unique_ptr<LightedToggleButton> brAmp;
-    std::unique_ptr<LightedToggleButton> atAmp;
-    std::unique_ptr<LightedToggleButton> whlPitch;
-    std::unique_ptr<LightedToggleButton> ftPitch;
-    std::unique_ptr<LightedToggleButton> brPitch;
-    std::unique_ptr<LightedToggleButton> atPitch;
     std::unique_ptr<juce::TextButton> sclButton;
     std::unique_ptr<juce::TextButton> kbmButton;
     std::unique_ptr<juce::TextButton> showTunButton;

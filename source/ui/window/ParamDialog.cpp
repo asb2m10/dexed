@@ -20,6 +20,7 @@
 //[Headers] You can add your own extra header files here...
 #include "../../Dexed.h"
 #include "../component/DXComponents.h"
+#include "parameter/Model.h"
 //[/Headers]
 
 #include "../PluginEditor.h"
@@ -29,7 +30,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-ParamDialog::ParamDialog ()
+ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this, apvts)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -108,141 +109,97 @@ ParamDialog::ParamDialog ()
 
     showKeyboard->setBounds (264, 96, 56, 24);
 
-    whlRange.reset (new juce::Slider ("whlRange"));
-    addAndMakeVisible (whlRange.get());
-    whlRange->setExplicitFocusOrder (10);
-    whlRange->setRange (0, 99, 1);
+    // Wheel modulation components (owned by attachments_)
+    auto whlRange = std::make_unique<juce::Slider>(IDs::modWheel.name);
     whlRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     whlRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    whlRange->addListener (this);
-
     whlRange->setBounds (448, 16, 72, 24);
+    whlRange->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(whlRange));
 
-    ftRange.reset (new juce::Slider ("ftRange"));
-    addAndMakeVisible (ftRange.get());
-    ftRange->setExplicitFocusOrder (14);
-    ftRange->setRange (0, 99, 1);
+    auto whlPitch = std::make_unique<LightedToggleButton>(IDs::modWheelPitch.name);
+    whlPitch->setBounds (528, 16, 56, 24);
+    whlPitch->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(whlPitch));
+
+    auto whlAmp = std::make_unique<LightedToggleButton>(IDs::modWheelAmp.name);
+    whlAmp->setBounds (584, 16, 56, 24);
+    whlAmp->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(whlAmp));
+
+    auto whlEg = std::make_unique<LightedToggleButton>(IDs::modWheelEgBias.name);
+    whlEg->setBounds (640, 16, 56, 24);
+    whlEg->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(whlEg));
+
+    // Foot modulation components (owned by attachments_)
+    auto ftRange = std::make_unique<juce::Slider>(IDs::modFoot.name);
     ftRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     ftRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    ftRange->addListener (this);
-
     ftRange->setBounds (448, 56, 72, 24);
+    ftRange->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(ftRange));
 
-    brRange.reset (new juce::Slider ("brRange"));
-    addAndMakeVisible (brRange.get());
-    brRange->setExplicitFocusOrder (18);
-    brRange->setRange (0, 99, 1);
+    auto ftPitch = std::make_unique<LightedToggleButton>(IDs::modFootPitch.name);
+    ftPitch->setBounds (528, 56, 56, 24);
+    ftPitch->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(ftPitch));
+
+    auto ftAmp = std::make_unique<LightedToggleButton>(IDs::modFootAmp.name);
+    ftAmp->setBounds (584, 56, 56, 24);
+    ftAmp->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(ftAmp));
+
+    auto ftEg = std::make_unique<LightedToggleButton>(IDs::modFootEgBias.name);
+    ftEg->setBounds (640, 56, 56, 24);
+    ftEg->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(ftEg));
+
+    // Breath modulation components (owned by attachments_)
+    auto brRange = std::make_unique<juce::Slider>(IDs::modBreath.name);
     brRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     brRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    brRange->addListener (this);
-
     brRange->setBounds (448, 96, 72, 24);
+    brRange->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(brRange));
 
-    atRange.reset (new juce::Slider ("atRange"));
-    addAndMakeVisible (atRange.get());
-    atRange->setExplicitFocusOrder (22);
-    atRange->setRange (0, 99, 1);
+    auto brPitch = std::make_unique<LightedToggleButton>(IDs::modBreathPitch.name);
+    brPitch->setBounds (528, 96, 56, 24);
+    brPitch->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(brPitch));
+
+    auto brAmp = std::make_unique<LightedToggleButton>(IDs::modBreathAmp.name);
+    brAmp->setBounds (584, 96, 56, 24);
+    brAmp->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(brAmp));
+
+    auto brEg = std::make_unique<LightedToggleButton>(IDs::modBreathEgBias.name);
+    brEg->setBounds (640, 96, 56, 24);
+    brEg->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(brEg));
+
+    // Aftertouch modulation components (owned by attachments_)
+    auto atRange = std::make_unique<juce::Slider>(IDs::modAftertouch.name);
     atRange->setSliderStyle (juce::Slider::RotaryVerticalDrag);
     atRange->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    atRange->addListener (this);
-
     atRange->setBounds (448, 136, 72, 24);
+    atRange->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(atRange));
 
-    whlEg.reset (new LightedToggleButton ("whlEg"));
-    addAndMakeVisible (whlEg.get());
-    whlEg->setExplicitFocusOrder (13);
-    whlEg->setButtonText (juce::String());
-    whlEg->addListener (this);
-
-    whlEg->setBounds (640, 16, 56, 24);
-
-    ftEg.reset (new LightedToggleButton ("ftEg"));
-    addAndMakeVisible (ftEg.get());
-    ftEg->setExplicitFocusOrder (17);
-    ftEg->setButtonText (juce::String());
-    ftEg->addListener (this);
-
-    ftEg->setBounds (640, 56, 56, 24);
-
-    brEg.reset (new LightedToggleButton ("brEg"));
-    addAndMakeVisible (brEg.get());
-    brEg->setExplicitFocusOrder (21);
-    brEg->setButtonText (juce::String());
-    brEg->addListener (this);
-
-    brEg->setBounds (640, 96, 56, 24);
-
-    atEg.reset (new LightedToggleButton ("atEg"));
-    addAndMakeVisible (atEg.get());
-    atEg->setExplicitFocusOrder (25);
-    atEg->setButtonText (juce::String());
-    atEg->addListener (this);
-
-    atEg->setBounds (640, 136, 56, 24);
-
-    whlAmp.reset (new LightedToggleButton ("whlAmp"));
-    addAndMakeVisible (whlAmp.get());
-    whlAmp->setExplicitFocusOrder (12);
-    whlAmp->setButtonText (juce::String());
-    whlAmp->addListener (this);
-
-    whlAmp->setBounds (584, 16, 56, 24);
-
-    ftAmp.reset (new LightedToggleButton ("ftAmp"));
-    addAndMakeVisible (ftAmp.get());
-    ftAmp->setExplicitFocusOrder (16);
-    ftAmp->setButtonText (juce::String());
-    ftAmp->addListener (this);
-
-    ftAmp->setBounds (584, 56, 56, 24);
-
-    brAmp.reset (new LightedToggleButton ("brAmp"));
-    addAndMakeVisible (brAmp.get());
-    brAmp->setExplicitFocusOrder (20);
-    brAmp->setButtonText (juce::String());
-    brAmp->addListener (this);
-
-    brAmp->setBounds (584, 96, 56, 24);
-
-    atAmp.reset (new LightedToggleButton ("atAmp"));
-    addAndMakeVisible (atAmp.get());
-    atAmp->setExplicitFocusOrder (24);
-    atAmp->setButtonText (juce::String());
-    atAmp->addListener (this);
-
-    atAmp->setBounds (584, 136, 56, 24);
-
-    whlPitch.reset (new LightedToggleButton ("whlPitch"));
-    addAndMakeVisible (whlPitch.get());
-    whlPitch->setExplicitFocusOrder (11);
-    whlPitch->setButtonText (juce::String());
-    whlPitch->addListener (this);
-
-    whlPitch->setBounds (528, 16, 56, 24);
-
-    ftPitch.reset (new LightedToggleButton ("ftPitch"));
-    addAndMakeVisible (ftPitch.get());
-    ftPitch->setExplicitFocusOrder (15);
-    ftPitch->setButtonText (juce::String());
-    ftPitch->addListener (this);
-
-    ftPitch->setBounds (528, 56, 56, 24);
-
-    brPitch.reset (new LightedToggleButton ("brPitch"));
-    addAndMakeVisible (brPitch.get());
-    brPitch->setExplicitFocusOrder (19);
-    brPitch->setButtonText (juce::String());
-    brPitch->addListener (this);
-
-    brPitch->setBounds (528, 96, 56, 24);
-
-    atPitch.reset (new LightedToggleButton ("atPitch"));
-    addAndMakeVisible (atPitch.get());
-    atPitch->setExplicitFocusOrder (23);
-    atPitch->setButtonText (juce::String());
-    atPitch->addListener (this);
-
+    auto atPitch = std::make_unique<LightedToggleButton>(IDs::modAftertouchPitch.name);
     atPitch->setBounds (528, 136, 56, 24);
+    atPitch->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(atPitch));
+
+    auto atAmp = std::make_unique<LightedToggleButton>(IDs::modAftertouchAmp.name);
+    atAmp->setBounds (584, 136, 56, 24);
+    atAmp->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(atAmp));
+
+    auto atEg = std::make_unique<LightedToggleButton>(IDs::modAftertouchEgBias.name);
+    atEg->setBounds (640, 136, 56, 24);
+    atEg->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(atEg));
 
     sclButton.reset (new juce::TextButton ("scl button"));
     addAndMakeVisible (sclButton.get());
@@ -396,7 +353,7 @@ ParamDialog::ParamDialog ()
         sysexIn->setVisible(false);
     }
 
-    // ACCESSIBLITY
+    // ACCESSIBLITY (modulation component titles set by AudioComponentContainer::attach)
     pitchRangeUp->setTitle("Pitch Bend Range Up");
     pitchRangeDn->setTitle("Pitch Bend Range Down");
     pitchStep->setTitle("Pitch Bend Step");
@@ -405,22 +362,6 @@ ParamDialog::ParamDialog ()
     sysexChl->setTitle("Sysex Channel");
     engineReso->setTitle("Engine Resolution");
     showKeyboard->setTitle("Show Keyboard");
-    whlRange->setTitle("Wheel Range");
-    ftRange->setTitle("Foot Range");
-    brRange->setTitle("Breath Range");
-    atRange->setTitle("After Touch Range");
-    whlEg->setTitle("Wheel EG");
-    ftEg->setTitle("Foot EG");
-    brEg->setTitle("Breath EG");
-    atEg->setTitle("After Touch EG");
-    whlAmp->setTitle("Wheel Amp");
-    ftAmp->setTitle("Foot Amp");
-    brAmp->setTitle("Breath Amp");
-    atAmp->setTitle("After Touch Amp");
-    whlPitch->setTitle("Wheel Pitch");
-    ftPitch->setTitle("Foot Pitch");
-    brPitch->setTitle("Breath Pitch");
-    atPitch->setTitle("After Touch Pitch");
     sclButton->setTitle("Scale Button");
     kbmButton->setTitle("Keyboard Mapping Button");
     showTunButton->setTitle("Show Tuning Button");
@@ -439,22 +380,6 @@ ParamDialog::ParamDialog ()
     sysexChl->setWantsKeyboardFocus(true);
     engineReso->setWantsKeyboardFocus(true);
     showKeyboard->setWantsKeyboardFocus(true);
-    whlRange->setWantsKeyboardFocus(true);
-    ftRange->setWantsKeyboardFocus(true);
-    brRange->setWantsKeyboardFocus(true);
-    atRange->setWantsKeyboardFocus(true);
-    whlEg->setWantsKeyboardFocus(true);
-    ftEg->setWantsKeyboardFocus(true);
-    brEg->setWantsKeyboardFocus(true);
-    atEg->setWantsKeyboardFocus(true);
-    whlAmp->setWantsKeyboardFocus(true);
-    ftAmp->setWantsKeyboardFocus(true);
-    brAmp->setWantsKeyboardFocus(true);
-    atAmp->setWantsKeyboardFocus(true);
-    whlPitch->setWantsKeyboardFocus(true);
-    ftPitch->setWantsKeyboardFocus(true);
-    brPitch->setWantsKeyboardFocus(true);
-    atPitch->setWantsKeyboardFocus(true);
     sclButton->setWantsKeyboardFocus(true);
     kbmButton->setWantsKeyboardFocus(true);
     showTunButton->setWantsKeyboardFocus(true);
@@ -473,6 +398,7 @@ ParamDialog::ParamDialog ()
 ParamDialog::~ParamDialog()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
+    attachments_.freeAttachments();
     //[/Destructor_pre]
 
     pitchRangeDn = nullptr;
@@ -482,22 +408,6 @@ ParamDialog::~ParamDialog()
     sysexChl = nullptr;
     engineReso = nullptr;
     showKeyboard = nullptr;
-    whlRange = nullptr;
-    ftRange = nullptr;
-    brRange = nullptr;
-    atRange = nullptr;
-    whlEg = nullptr;
-    ftEg = nullptr;
-    brEg = nullptr;
-    atEg = nullptr;
-    whlAmp = nullptr;
-    ftAmp = nullptr;
-    brAmp = nullptr;
-    atAmp = nullptr;
-    whlPitch = nullptr;
-    ftPitch = nullptr;
-    brPitch = nullptr;
-    atPitch = nullptr;
     sclButton = nullptr;
     kbmButton = nullptr;
     showTunButton = nullptr;
@@ -897,26 +807,6 @@ void ParamDialog::sliderValueChanged (juce::Slider* sliderThatWasMoved)
         //[UserSliderCode_sysexChl] -- add your slider handling code here..
         //[/UserSliderCode_sysexChl]
     }
-    else if (sliderThatWasMoved == whlRange.get())
-    {
-        //[UserSliderCode_whlRange] -- add your slider handling code here..
-        //[/UserSliderCode_whlRange]
-    }
-    else if (sliderThatWasMoved == ftRange.get())
-    {
-        //[UserSliderCode_ftRange] -- add your slider handling code here..
-        //[/UserSliderCode_ftRange]
-    }
-    else if (sliderThatWasMoved == brRange.get())
-    {
-        //[UserSliderCode_brRange] -- add your slider handling code here..
-        //[/UserSliderCode_brRange]
-    }
-    else if (sliderThatWasMoved == atRange.get())
-    {
-        //[UserSliderCode_atRange] -- add your slider handling code here..
-        //[/UserSliderCode_atRange]
-    }
     else if (sliderThatWasMoved == mpePBRange.get())
     {
         //[UserSliderCode_mpePBRange] -- add your slider handling code here..
@@ -982,66 +872,6 @@ void ParamDialog::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode_showKeyboard] -- add your button handler code here..
         //[/UserButtonCode_showKeyboard]
-    }
-    else if (buttonThatWasClicked == whlEg.get())
-    {
-        //[UserButtonCode_whlEg] -- add your button handler code here..
-        //[/UserButtonCode_whlEg]
-    }
-    else if (buttonThatWasClicked == ftEg.get())
-    {
-        //[UserButtonCode_ftEg] -- add your button handler code here..
-        //[/UserButtonCode_ftEg]
-    }
-    else if (buttonThatWasClicked == brEg.get())
-    {
-        //[UserButtonCode_brEg] -- add your button handler code here..
-        //[/UserButtonCode_brEg]
-    }
-    else if (buttonThatWasClicked == atEg.get())
-    {
-        //[UserButtonCode_atEg] -- add your button handler code here..
-        //[/UserButtonCode_atEg]
-    }
-    else if (buttonThatWasClicked == whlAmp.get())
-    {
-        //[UserButtonCode_whlAmp] -- add your button handler code here..
-        //[/UserButtonCode_whlAmp]
-    }
-    else if (buttonThatWasClicked == ftAmp.get())
-    {
-        //[UserButtonCode_ftAmp] -- add your button handler code here..
-        //[/UserButtonCode_ftAmp]
-    }
-    else if (buttonThatWasClicked == brAmp.get())
-    {
-        //[UserButtonCode_brAmp] -- add your button handler code here..
-        //[/UserButtonCode_brAmp]
-    }
-    else if (buttonThatWasClicked == atAmp.get())
-    {
-        //[UserButtonCode_atAmp] -- add your button handler code here..
-        //[/UserButtonCode_atAmp]
-    }
-    else if (buttonThatWasClicked == whlPitch.get())
-    {
-        //[UserButtonCode_whlPitch] -- add your button handler code here..
-        //[/UserButtonCode_whlPitch]
-    }
-    else if (buttonThatWasClicked == ftPitch.get())
-    {
-        //[UserButtonCode_ftPitch] -- add your button handler code here..
-        //[/UserButtonCode_ftPitch]
-    }
-    else if (buttonThatWasClicked == brPitch.get())
-    {
-        //[UserButtonCode_brPitch] -- add your button handler code here..
-        //[/UserButtonCode_brPitch]
-    }
-    else if (buttonThatWasClicked == atPitch.get())
-    {
-        //[UserButtonCode_atPitch] -- add your button handler code here..
-        //[/UserButtonCode_atPitch]
     }
     else if (buttonThatWasClicked == sclButton.get())
     {
@@ -1138,26 +968,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     pitchStep->setValue(c.values_[kControllerPitchStep]);
     sysexChl->setValue(mgr.getChl() + 1);
 
-    whlRange->setValue(c.wheel.range);
-    whlPitch->setToggleState(c.wheel.pitch, dontSendNotification);
-    whlPitch->setToggleState(c.wheel.pitch, dontSendNotification);
-    whlAmp->setToggleState(c.wheel.amp, dontSendNotification);
-    whlEg->setToggleState(c.wheel.eg, dontSendNotification);
-
-    ftRange->setValue(c.foot.range);
-    ftPitch->setToggleState(c.foot.pitch, dontSendNotification);
-    ftAmp->setToggleState(c.foot.amp, dontSendNotification);
-    ftEg->setToggleState(c.foot.eg, dontSendNotification);
-
-    brRange->setValue(c.breath.range);
-    brPitch->setToggleState(c.breath.pitch, dontSendNotification);
-    brAmp->setToggleState(c.breath.amp, dontSendNotification);
-    brEg->setToggleState(c.breath.eg, dontSendNotification);
-
-    atRange->setValue(c.at.range);
-    atPitch->setToggleState(c.at.pitch, dontSendNotification);
-    atAmp->setToggleState(c.at.amp, dontSendNotification);
-    atEg->setToggleState(c.at.eg, dontSendNotification);
+    // Modulation components (whl, ft, br, at) are synced via parameter attachments
 
     transposeScale->setToggleState(c.transpose12AsScale ? 1 : 0, dontSendNotification );
 
@@ -1206,25 +1017,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     c.values_[kControllerPitchRangeDn] = pitchRangeDn->getValue();
     c.values_[kControllerPitchStep] = pitchStep->getValue();
 
-    c.wheel.range = whlRange->getValue();
-    c.wheel.pitch = whlPitch->getToggleState();
-    c.wheel.amp = whlAmp->getToggleState();
-    c.wheel.eg = whlEg->getToggleState();
-
-    c.foot.range = ftRange->getValue();
-    c.foot.pitch = ftPitch->getToggleState();
-    c.foot.amp = ftAmp->getToggleState();
-    c.foot.eg = ftEg->getToggleState();
-
-    c.breath.range = brRange->getValue();
-    c.breath.pitch = brPitch->getToggleState();
-    c.breath.amp = brAmp->getToggleState();
-    c.breath.eg = brEg->getToggleState();
-
-    c.at.range = atRange->getValue();
-    c.at.pitch = atPitch->getToggleState();
-    c.at.amp = atAmp->getToggleState();
-    c.at.eg = atEg->getToggleState();
+    // Modulation components (whl, ft, br, at) are synced via parameter attachments
 
     c.transpose12AsScale = transposeScale->getToggleState();
 

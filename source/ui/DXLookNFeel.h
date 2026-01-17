@@ -25,7 +25,7 @@
 
 class LightedToggleButton : public ToggleButton {
 public:
-    LightedToggleButton(const char*l) : ToggleButton(l) { }
+    LightedToggleButton(juce::String name) : ToggleButton(name) { }
 };
 
 

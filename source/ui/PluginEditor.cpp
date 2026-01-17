@@ -185,7 +185,7 @@ public:
 
 void DexedAudioProcessorEditor::parmShow() {
     int tp = processor->getEngineType();
-    auto param = new ParamDialog();
+    auto param = new ParamDialog(processor->parameters);
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
     param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getZoomFactor());
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
