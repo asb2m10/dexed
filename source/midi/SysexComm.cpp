@@ -19,7 +19,6 @@
  */
 
 #include "SysexComm.h"
-#include "Dexed.h"
 
 SysexComm::SysexComm() {
     sysexChl = 0;
