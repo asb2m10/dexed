@@ -240,6 +240,107 @@ void DexedAudioProcessor::resetToInitVoice() {
     triggerAsyncUpdate();
 }
 
+void DexedAudioProcessor::randomizeVoice() {
+    auto& rng = juce::Random::getSystemRandom();
+
+    // Musically useful coarse frequency ratios (harmonics and common sub-ratios)
+    // These produce tonal results rather than dissonant noise
+    const int usefulCoarse[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 16 };
+    const int numUsefulCoarse = 12;
+
+    // Per-operator parameters (6 operators, 21 bytes each)
+    for (int op = 0; op < 6; op++) {
+        int off = op * 21;
+
+        // EG rates 1-4 (0-99) — slower overall for more pad-like sounds
+        data[off + 0] = 20 + rng.nextInt(60);       // R1 (attack): varied, some slow
+        data[off + 1] = 10 + rng.nextInt(35);        // R2 (decay): slow-moderate
+        data[off + 2] = 5 + rng.nextInt(25);         // R3 (sustain): slow
+        data[off + 3] = 10 + rng.nextInt(40);        // R4 (release): slow-moderate
+
+        // EG levels 1-4 (0-99) — high sustain for pad-like tails
+        data[off + 4] = 90 + rng.nextInt(10);        // L1: near max (attack peak)
+        data[off + 5] = 70 + rng.nextInt(29);        // L2: high
+        data[off + 6] = 60 + rng.nextInt(35);        // L3: sustain level — high for pads
+        data[off + 7] = 0;                            // L4: zero (silence at release end)
+
+        // Keyboard level scaling break point (0-99) — center around middle C
+        data[off + 8] = 27 + rng.nextInt(30);
+        // Left/right depth (0-99) — keep subtle
+        data[off + 9] = rng.nextInt(40);
+        data[off + 10] = rng.nextInt(40);
+        // Left/right curve (0-3)
+        data[off + 11] = rng.nextInt(4);
+        data[off + 12] = rng.nextInt(4);
+        // Keyboard rate scaling (0-7) — keep low
+        data[off + 13] = rng.nextInt(4);
+        // Amp mod sensitivity (0-3)
+        data[off + 14] = rng.nextInt(4);
+        // Key velocity sensitivity (0-7)
+        data[off + 15] = 2 + rng.nextInt(5);
+        // Output level (0-99) — bias toward audible
+        data[off + 16] = 60 + rng.nextInt(40);
+        // Osc mode: almost always ratio (0), rarely fixed (1)
+        data[off + 17] = rng.nextInt(20) < 1 ? 1 : 0;
+        // Freq coarse — use musically useful ratios
+        data[off + 18] = usefulCoarse[rng.nextInt(numUsefulCoarse)];
+        // Freq fine (0-99) — keep low for more tonal results
+        data[off + 19] = rng.nextInt(30);
+        // Detune (0-14, center=7) — subtle detune around center
+        data[off + 20] = 5 + rng.nextInt(5);
+    }
+
+    // Ensure carriers have good output levels and modulators are varied
+    // Op6 (index 5) is a carrier in most algorithms
+    data[5 * 21 + 16] = 80 + rng.nextInt(20);
+    // Some modulators can be quieter for subtlety
+    for (int op = 0; op < 4; op++) {
+        if (rng.nextInt(3) == 0)
+            data[op * 21 + 16] = 30 + rng.nextInt(50);
+    }
+
+    // Pitch EG rates (0-99) — fast so pitch settles quickly
+    for (int i = 126; i < 130; i++)
+        data[i] = 70 + rng.nextInt(25);
+    // Pitch EG levels (0-99) — flat at 50 = no pitch shift
+    for (int i = 130; i < 134; i++)
+        data[i] = 50;
+
+    // Algorithm (0-31)
+    data[134] = rng.nextInt(32);
+    // Feedback (0-7) — keep moderate to avoid harsh distortion
+    data[135] = rng.nextInt(5);
+    // Oscillator sync (0-1)
+    data[136] = rng.nextInt(2);
+    // LFO speed (0-99) — slow for gentle movement
+    data[137] = rng.nextInt(35);
+    // LFO delay (0-99) — some delay before LFO kicks in
+    data[138] = 20 + rng.nextInt(60);
+    // LFO pitch mod depth (0-99) — very subtle, no heavy vibrato
+    data[139] = rng.nextInt(10);
+    // LFO amp mod depth (0-99) — subtle tremolo
+    data[140] = rng.nextInt(20);
+    // LFO sync (0-1)
+    data[141] = rng.nextInt(2);
+    // LFO waveform (0-5) — favor sine(4) and triangle(0) for smooth movement
+    data[142] = rng.nextInt(3) == 0 ? rng.nextInt(6) : (rng.nextInt(2) == 0 ? 0 : 4);
+    // Pitch mod sensitivity (0-7) — very low to minimize vibrato
+    data[143] = rng.nextInt(2);
+    // Transpose (0-48, center=24 is C3)
+    data[144] = 24;
+
+    // Voice name: "RND-" + 6 random chars
+    const char* nameChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    data[145] = 'R'; data[146] = 'N'; data[147] = 'D'; data[148] = '-';
+    for (int i = 0; i < 6; i++)
+        data[149 + i] = nameChars[rng.nextInt(36)];
+
+    unpackOpSwitch(0x3F);
+    panic();
+    lfo.reset(data + 137);
+    triggerAsyncUpdate();
+}
+
 void DexedAudioProcessor::copyToClipboard(int srcOp) {
     DexedClipboard clipboard(data + (srcOp *21), 21);
     clipboard.write(String("Program: '") + getProgramName(getCurrentProgram()) + "' operator: " + String(6-srcOp));

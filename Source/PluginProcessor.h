@@ -235,6 +235,7 @@ public :
     const String getProgramName (int index) override;
     void changeProgramName(int index, const String& newName) override;
     void resetToInitVoice() ;
+    void randomizeVoice() ;
     
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;

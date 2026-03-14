@@ -395,6 +395,14 @@ GlobalEditor::GlobalEditor ()
 
     storeButton->setBounds (270, 109, 50, 30);
 
+    randomButton.reset (new juce::TextButton ("randomButton"));
+    addAndMakeVisible (randomButton.get());
+    randomButton->setExplicitFocusOrder (5);
+    randomButton->setButtonText (TRANS ("RND"));
+    randomButton->addListener (this);
+
+    randomButton->setBounds (319, 109, 50, 30);
+
     monoMode.reset (new juce::ToggleButton ("monoMode"));
     addAndMakeVisible (monoMode.get());
     monoMode->setExplicitFocusOrder (10);
@@ -499,6 +507,7 @@ GlobalEditor::~GlobalEditor()
     parmButton = nullptr;
     cartButton = nullptr;
     storeButton = nullptr;
+    randomButton = nullptr;
     monoMode = nullptr;
     lfoType = nullptr;
     programSelector = nullptr;
@@ -692,6 +701,11 @@ void GlobalEditor::buttonClicked (juce::Button* buttonThatWasClicked)
         //[UserButtonCode_storeButton] -- add your button handler code here..
         editor->storeProgram();
         //[/UserButtonCode_storeButton]
+    }
+    else if (buttonThatWasClicked == randomButton.get())
+    {
+        processor->randomizeVoice();
+        editor->updateUI();
     }
     else if (buttonThatWasClicked == monoMode.get())
     {
