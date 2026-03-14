@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#pragma once
+
 class Sin {
  public:
   Sin();

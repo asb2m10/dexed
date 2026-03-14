@@ -221,22 +221,23 @@ void EngineMkI::compute_fb2(int32_t *output, FmOpParams *parms, int32_t gain01, 
     gain[1] = parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out;
 
     dgain[0] = (gain02 - gain01 + (N >> 1)) >> LG_N;
-    dgain[1] = (parms[1].gain_out - (parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out));
-    
+    int32_t newgain1 = parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out;
+    dgain[1] = (newgain1 - gain[1] + (N >> 1)) >> LG_N;
+
     for (int i = 0; i < N; i++) {
         int32_t scaled_fb = (y0 + y) >> (fb_shift + 1);
-        
+
         // op 0
         gain[0] += dgain[0];
         y0 = y;
         y = mkiSin(phase[0]+scaled_fb, gain[0]);
         phase[0] += parms[0].freq;
-        
+
         // op 1
         gain[1] += dgain[1];
         y = mkiSin(phase[1]+y, gain[1]);
         phase[1] += parms[1].freq;
-        
+
         output[i] = y;
     }
     fb_buf[0] = y0;
@@ -263,8 +264,10 @@ void EngineMkI::compute_fb3(int32_t *output, FmOpParams *parms, int32_t gain01, 
     gain[2] = parms[2].gain_out == 0 ? (ENV_MAX-1) : parms[2].gain_out;
 
     dgain[0] = (gain02 - gain01 + (N >> 1)) >> LG_N;
-    dgain[1] = (parms[1].gain_out - (parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out));
-    dgain[2] = (parms[2].gain_out - (parms[2].gain_out == 0 ? (ENV_MAX-1) : parms[2].gain_out));
+    int32_t newgain1 = parms[1].gain_out == 0 ? (ENV_MAX-1) : parms[1].gain_out;
+    int32_t newgain2 = parms[2].gain_out == 0 ? (ENV_MAX-1) : parms[2].gain_out;
+    dgain[1] = (newgain1 - gain[1] + (N >> 1)) >> LG_N;
+    dgain[2] = (newgain2 - gain[2] + (N >> 1)) >> LG_N;
     
     
     for (int i = 0; i < N; i++) {

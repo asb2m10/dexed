@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#pragma once
+
 class Exp2 {
  public:
   Exp2();

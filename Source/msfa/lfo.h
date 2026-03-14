@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#pragma once
+
 // Low frequency oscillator, compatible with DX7
 
 class Lfo {

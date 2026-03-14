@@ -27,7 +27,7 @@ jobs:
       - name: "Calculate version"
         id: vers
         run: |
-          ref=${{ github.ref }}
+          ref="${GITHUB_REF}"
 
           echo "## Creating version from '${ref}'" >> $GITHUB_STEP_SUMMARY
 
@@ -87,7 +87,7 @@ jobs:
 
     - name: Build
       run: |
-        cmake -S . -B ./build -DCMAKE_BUILD_TYPE=${{ needs.component_version.outputs.build_type }} -DBUILD_ID=${{ needs.component_version.outputs.build_version }} -DCOPY_PLUGIN_AFTER_BUILD=FALSE
+        cmake -S . -B ./build -DCMAKE_BUILD_TYPE=${{ needs.component_version.outputs.build_type }} -DBUILD_ID=${{ needs.component_version.outputs.build_version }} -DJUCE_COPY_PLUGIN_AFTER_BUILD=FALSE
         cmake --build ./build --config ${{ needs.component_version.outputs.build_type }} --target installer --parallel 3
 
     - name: Upload

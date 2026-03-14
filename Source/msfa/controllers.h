@@ -22,10 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#endif
-
 // State of MIDI controllers
 const uint8_t kControllerPitch = 128;
 const uint8_t kControllerPitchRangeUp = 129;
