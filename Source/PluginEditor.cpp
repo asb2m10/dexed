@@ -148,10 +148,12 @@ void DexedAudioProcessorEditor::paint (Graphics& g) {
 }
 
 void DexedAudioProcessorEditor::resized() {
-    float baseH = processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94;
     float factor = (float)getWidth() / (float)WINDOW_SIZE_X;
 
-    processor->setZoomFactor(factor);
+    if (std::abs(factor - processor->getZoomFactor()) > 0.001f) {
+        processor->setZoomFactor(factor);
+        processor->savePreference();
+    }
     frameComponent.setTransform(AffineTransform::scale(factor));
 
     if (resizableCorner != nullptr)
@@ -307,7 +309,6 @@ void DexedAudioProcessorEditor::timerCallback() {
     if (!titleBarConfigured) {
         if (auto* topLevel = findParentComponentOfClass<DocumentWindow>()) {
             topLevel->setResizable(true, false);
-            topLevel->setConstrainer(&constrainer);
             titleBarConfigured = true;
         }
     }
