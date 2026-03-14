@@ -51,5 +51,8 @@ int32_t Freqlut::lookup(int32_t logfreq) {
   int lowbits = logfreq & ((1 << SAMPLE_SHIFT) - 1);
   int32_t y = y0 + ((((int64_t)(y1 - y0) * (int64_t)lowbits)) >> SAMPLE_SHIFT);
   int hibits = logfreq >> 24;
-  return y >> (MAX_LOGFREQ_INT - hibits);
+  int shift = MAX_LOGFREQ_INT - hibits;
+  if (shift < 0) return y << (-shift);
+  if (shift > 31) return 0;
+  return y >> shift;
 }

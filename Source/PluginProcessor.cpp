@@ -714,7 +714,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
             return;
             }
 
-            uint8 offset = (buf[3] << 7) + buf[4];
+            int offset = (buf[3] << 7) + buf[4];
             uint8 value = buf[5];
 
             TRACE("parameter change message offset:%d value:%d", offset, value);

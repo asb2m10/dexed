@@ -41,7 +41,10 @@ int32_t Exp2::lookup(int32_t x) {
   int y0 = exp2tab[x_int + 1];
 
   int y = y0 + (((int64_t)dy * (int64_t)lowbits) >> SHIFT);
-  return y >> (6 - (x >> 24));
+  int shift = 6 - (x >> 24);
+  if (shift < 0) return y << (-shift);
+  if (shift > 31) return 0;
+  return y >> shift;
 }
 #endif
 

@@ -122,7 +122,8 @@ void Cartridge::unpackProgram(uint8_t *unpackPgm, int idx) {
             unpackPgm[op * 21 + i] = normparm(currparm, 99, i);
         }
         
-        memcpy(unpackPgm + op * 21, bulk + op * 17, 11);
+        // Note: the memcpy that was here has been removed — it was overwriting
+        // the normalized values computed by the loop above with raw unnormalized data.
         char leftrightcurves = bulk[op * 17 + 11]&0xF; // bits 4-7 don't care per sysex spec
         unpackPgm[op * 21 + 11] = leftrightcurves & 3;
         unpackPgm[op * 21 + 12] = (leftrightcurves >> 2) & 3;
@@ -211,8 +212,8 @@ void DexedAudioProcessor::setupStartupCart() {
     ZipFile *builtin_pgm = new ZipFile(mis, true);
     InputStream *is = builtin_pgm->createStreamForEntry(builtin_pgm->getIndexOfFileName(("Dexed_01.syx")));
     Cartridge init;
-    
-    if ( init.load(*is) != -1 ) {
+
+    if ( is != nullptr && init.load(*is) != -1 ) {
         loadCartridge(init);
     }
 
@@ -293,6 +294,7 @@ void DexedAudioProcessor::sendSysexCartridge(File cart) {
         AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
                                           "Error",
                                           "Unable to open: " + f);
+        return;
     }
     
     uint8 syx_data[65535];
@@ -397,6 +399,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
         strcpy(controllers.opSwitch, "111111");
     } else {
         strncpy(controllers.opSwitch, opSwitchValue.toRawUTF8(), 6);
+        controllers.opSwitch[6] = '\0';
     }
     
     controllers.wheel.parseConfig(root->getStringAttribute("wheelMod").toRawUTF8());
@@ -412,7 +415,7 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     controllers.mpePitchBendRange = ( root->getIntAttribute("mpePitchBendRange", 24) );
     controllers.mpeEnabled = ( root->getIntAttribute("mpeEnabled", 0) != 0 );
 
-    controllers.portamento_cc = ( root->getIntAttribute("portamento", 0) );
+    controllers.portamento_cc = juce::jlimit(0, 127, root->getIntAttribute("portamento", 0));
     controllers.portamento_enable_cc = controllers.portamento_cc > 1;
     controllers.portamento_gliss_cc = ( root->getIntAttribute("glissando", 0) );
     controllers.refresh();
