@@ -41,6 +41,10 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
     Component cartManagerCover;
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
+    ComponentBoundsConstrainer constrainer;
+    std::unique_ptr<ResizableCornerComponent> resizableCorner;
+    bool titleBarConfigured = false;
+    juce::Rectangle<int> preMaximiseBounds;
     std::unique_ptr<juce::DialogWindow> dexedParameterDialog;
     #ifdef DEXED_EVENT_DEBUG
         FocusLogger focusLogger;
@@ -58,6 +62,7 @@ public:
     virtual void timerCallback() override;
 
     virtual void paint (Graphics& g) override;
+    virtual void resized() override;
     virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
     void updateUI();
     void rebuildProgramCombobox();
