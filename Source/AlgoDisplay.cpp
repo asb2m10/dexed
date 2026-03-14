@@ -30,7 +30,7 @@ AlgoDisplay::AlgoDisplay() {
 void AlgoDisplay::displayOp(Graphics &g, char id, int x, int y, char link, char fb) {
     const int LINE_SZ = 3;
     String t(id);
-    bool opOn = opStatus[6-id] == '1';
+    bool opOn = opStatus != nullptr && opStatus[6-id] == '1';
     
     x *= 25;
     x += 3;

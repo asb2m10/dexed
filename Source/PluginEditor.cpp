@@ -666,6 +666,18 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
         return true;
     }
 
+    if ( keycode == 'R' && mods.isCtrlDown() ) {
+        processor->randomizeVoice();
+        updateUI();
+        return true;
+    }
+
+    if ( keycode == 'Z' && mods.isCtrlDown() ) {
+        processor->undoRandomize();
+        updateUI();
+        return true;
+    }
+
     if ( key.getKeyCode() == KeyPress::escapeKey ) {
         cartManager.hideCartridgeManager();
         return true;
