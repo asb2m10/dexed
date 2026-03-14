@@ -317,6 +317,12 @@ void DexedAudioProcessorEditor::timerCallback() {
         updateUI();
     }
 
+    // Poll for CC changes from audio thread (replaces unsafe Value::setValue on audio thread)
+    int pendingCC = processor->pendingCCValue.exchange(-1, std::memory_order_relaxed);
+    if (pendingCC >= 0) {
+        processor->lastCCUsed.setValue(pendingCC);
+    }
+
     if ( ! processor->peekVoiceStatus() )
         return;
 
@@ -545,7 +551,7 @@ bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files
 
     for( auto i = files.begin(); i != files.end(); ++i )
     {
-        if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) )
+        if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) || i->endsWithIgnoreCase( ".syx" ) )
             return true;
     }
     return false;
@@ -597,6 +603,10 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
             else {
                 processor->applyKBMMapping(File(fn));
             }
+        }
+        if (fn.endsWithIgnoreCase(".syx"))
+        {
+            loadCart(File(fn));
         }
     }
     catch (const std::ios_base::failure& ex) {

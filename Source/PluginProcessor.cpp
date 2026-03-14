@@ -294,16 +294,18 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
 
     fx.process(channelData, numSamples);
 
+    float vu = vuSignal.load(std::memory_order_relaxed);
     for(i=0; i<numSamples; i++) {
         float s = std::abs(channelData[i]);
 
-        if (s > vuSignal)
-            vuSignal = s;
-        else if (vuSignal > /*0.001f*/ 1.26E-4F) // 1.26E-4 is equivalent to -39 dB, the min amplitude associated to leftmost LED
-            vuSignal *= vuDecayFactor;
+        if (s > vu)
+            vu = s;
+        else if (vu > 1.26E-4F) // 1.26E-4 is equivalent to -39 dB, the min amplitude associated to leftmost LED
+            vu *= vuDecayFactor;
         else
-            vuSignal = 0;
+            vu = 0;
     }
+    vuSignal.store(vu, std::memory_order_relaxed);
     
     // DX7 is a mono synth, but copy it to the right channel is available
     if ( buffer.getNumChannels() > 1 )
@@ -440,8 +442,8 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                         // event thread
                         linkedCtrl->publishValueAsync((float) value / 127);
                     }
-                    // this is used to notify the dialog that a CC value was received.
-                    lastCCUsed.setValue(channel_cc);
+                    // notify the UI that a CC value was received (polled by timer)
+                    pendingCCValue.store(channel_cc, std::memory_order_relaxed);
                 }
             }
             return;
