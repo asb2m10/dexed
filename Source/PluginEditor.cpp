@@ -568,14 +568,14 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
         if (fn.endsWithIgnoreCase(".scl"))
         {
             if (filesize == 0) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' is empty."
                 );
             }
             else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit ("+std::to_string(MAX_SCL_KBM_FILE_SIZE)+")."
@@ -588,14 +588,14 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
         if (fn.endsWithIgnoreCase(".kbm"))
         {
             if (filesize == 0) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' is empty."
                 );
             }
             else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit (" + std::to_string(MAX_SCL_KBM_FILE_SIZE) + ")."

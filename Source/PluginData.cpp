@@ -335,6 +335,27 @@ void DexedAudioProcessor::randomizeVoice() {
     for (int i = 0; i < 6; i++)
         data[149 + i] = nameChars[rng.nextInt(36)];
 
+    // Save to history before applying
+    if (rndHistoryCount < RND_HISTORY_SIZE) {
+        rndHistoryPos = rndHistoryCount++;
+    } else {
+        // Shift history, drop oldest
+        for (int i = 0; i < RND_HISTORY_SIZE - 1; i++)
+            memcpy(rndHistory[i], rndHistory[i + 1], 161);
+        rndHistoryPos = RND_HISTORY_SIZE - 1;
+    }
+    memcpy(rndHistory[rndHistoryPos], data, 161);
+
+    unpackOpSwitch(0x3F);
+    panic();
+    lfo.reset(data + 137);
+    triggerAsyncUpdate();
+}
+
+void DexedAudioProcessor::undoRandomize() {
+    if (rndHistoryPos <= 0) return;
+    rndHistoryPos--;
+    memcpy(data, rndHistory[rndHistoryPos], 161);
     unpackOpSwitch(0x3F);
     panic();
     lfo.reset(data + 137);

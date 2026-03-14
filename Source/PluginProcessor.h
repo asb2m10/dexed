@@ -237,6 +237,12 @@ public :
     void changeProgramName(int index, const String& newName) override;
     void resetToInitVoice() ;
     void randomizeVoice() ;
+    void undoRandomize() ;
+
+    static const int RND_HISTORY_SIZE = 32;
+    uint8_t rndHistory[RND_HISTORY_SIZE][161];
+    int rndHistoryCount = 0;
+    int rndHistoryPos = -1;
     
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;

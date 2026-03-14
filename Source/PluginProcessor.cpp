@@ -927,7 +927,7 @@ void DexedAudioProcessor::applySCLTuning() {
         // (reason: the extension ''.scl'' is mandatory according to 
         // ''https://www.huygens-fokker.org/scala/scl_format.html''
         if (s.getFileExtension() != ".scl") {
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".scl\" extension (in lowercase!) are allowed.");
+            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".scl\" extension (in lowercase!) are allowed.");
             continue;
         }
 
@@ -935,7 +935,7 @@ void DexedAudioProcessor::applySCLTuning() {
         if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
             std::string msg;
             msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
+            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg);
             continue;
         }
 
@@ -944,7 +944,7 @@ void DexedAudioProcessor::applySCLTuning() {
         if (s.getSize() == 0) {
             std::string msg;
             msg = "File is empty.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
+            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg);
             continue;
         }
 
@@ -1003,7 +1003,7 @@ void DexedAudioProcessor::applyKBMMapping() {
         // (reason: the extension ''.kbm'' is mandatory according to 
         // ''https://www.huygens-fokker.org/scala/scl_format.html''
         if (s.getFileExtension() != ".kbm") {
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".kbm\" extension (in lowercase!) are allowed.");
+            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".kbm\" extension (in lowercase!) are allowed.");
             continue;
         }
 
@@ -1011,7 +1011,7 @@ void DexedAudioProcessor::applyKBMMapping() {
         if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
             std::string msg;
             msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
+            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg);
             continue;
         }
 
@@ -1020,7 +1020,7 @@ void DexedAudioProcessor::applyKBMMapping() {
         if (s.getSize() == 0) {
             std::string msg;
             msg = "File is empty.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
+            AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg);
             continue;
         }
 
