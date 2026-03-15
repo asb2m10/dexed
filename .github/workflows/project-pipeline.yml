@@ -16,7 +16,7 @@ defaults:
 jobs:
   component_version:
     name: "Set up version"
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-22.04
     outputs:
       build_version: ${{ steps.vers.outputs.build_version }}
       build_type : ${{ steps.vers.outputs.build_type }}
