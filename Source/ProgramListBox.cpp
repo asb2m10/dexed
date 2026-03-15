@@ -108,6 +108,11 @@ bool ProgramListBox::keyPressed(const KeyPress &key, Component *originatingCompo
         return false;
     }
 
+    activePgm = currentIdx;
+    if ( activePgm != -1 ) {
+        listener->programSelected(this, activePgm);
+    }
+
     labels[currentIdx]->grabKeyboardFocus();
 
     repaint();
