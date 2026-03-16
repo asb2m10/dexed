@@ -21,10 +21,48 @@
 #include "AlgoDisplay.h"
 #include "DXLookNFeel.h"
 #include "Dexed.h"
+#include "PluginEditor.h"
 
 AlgoDisplay::AlgoDisplay() {
     static char tmpAlgo = 0;
     algo = &tmpAlgo;
+    numOpPositions = 0;
+    editor = nullptr;
+}
+
+void AlgoDisplay::bind(DexedAudioProcessorEditor *edit) {
+    editor = edit;
+}
+
+void AlgoDisplay::storeOpPosition(char id, int x, int y) {
+    if (numOpPositions < MAX_OPERATORS) {
+        opPositions[numOpPositions].id = id;
+        opPositions[numOpPositions].x = x;
+        opPositions[numOpPositions].y = y;
+        opPositions[numOpPositions].width = OP_NUMBER_WIDTH;
+        opPositions[numOpPositions].height = OP_NUMBER_HEIGHT;
+        numOpPositions++;
+    }
+}
+
+void AlgoDisplay::mouseDown(const MouseEvent &event) {
+    if (editor == nullptr)
+        return;
+    
+    int mouseX = event.x;
+    int mouseY = event.y;
+    
+    // Check if click is on any operator number
+    for (int i = 0; i < numOpPositions; i++) {
+        if (mouseX >= opPositions[i].x && mouseX < opPositions[i].x + opPositions[i].width &&
+            mouseY >= opPositions[i].y && mouseY < opPositions[i].y + opPositions[i].height) {
+            // Toggle the operator switch
+            int opIndex = 6 - opPositions[i].id; // Convert to operator index (0-5)
+            editor->toggleOperator(opIndex);
+            repaint();
+            break;
+        }
+    }
 }
 
 void AlgoDisplay::displayOp(Graphics &g, char id, int x, int y, char link, char fb) {
@@ -36,6 +74,9 @@ void AlgoDisplay::displayOp(Graphics &g, char id, int x, int y, char link, char 
     x += 3;
     y *= 21;
     y += 5;
+    
+    // Store operator position for mouse click detection
+    storeOpPosition(id, x, y);
     
     if ( opOn )
         g.setColour(Colours::white);
@@ -115,7 +156,10 @@ void AlgoDisplay::displayOp(Graphics &g, char id, int x, int y, char link, char 
     
 }
 
-void AlgoDisplay::paint(Graphics &g) {    
+void AlgoDisplay::paint(Graphics &g) {
+    // Reset operator positions for this paint cycle
+    numOpPositions = 0;
+    
     g.setColour(DXLookNFeel::fillColour);
     g.fillRect(1, 3, 20, 15);
     String n = String(*algo +1);

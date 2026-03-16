@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+0a30a069b700acd4dc95e373e3b3f616 Source/Dexed_artefacts/JuceLibraryCode/JuceHeader.h
+2179e705e5d32695d6ef054a80739fa5 assets/juce_binarydata_DexedResources/JuceLibraryCode/BinaryData1.cpp

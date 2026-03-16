@@ -254,6 +254,13 @@ void DexedAudioProcessorEditor::initProgram() {
     processor->resetToInitVoice();
 }
 
+void DexedAudioProcessorEditor::toggleOperator(int operatorIndex) {
+    if (operatorIndex >= 0 && operatorIndex < 6) {
+        operators[operatorIndex].toggleOpSwitch();
+        processor->forceRefreshUI = true;
+    }
+}
+
 void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChanged) {
     processor->setCurrentProgram(global.programs->getSelectedId()-1);
     processor->updateHostDisplay();

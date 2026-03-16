@@ -747,6 +747,7 @@ void GlobalEditor::bind(DexedAudioProcessorEditor *edit) {
     pitchEnvDisplay->pvalues = &(processor->data[126]);
 
     algoDisplay->opStatus = processor->controllers.opSwitch;
+    algoDisplay->bind(edit);
 
     editor = edit;
 

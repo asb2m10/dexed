@@ -23,13 +23,32 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+class DexedAudioProcessorEditor;
+
 class AlgoDisplay : public Component {
+    static const int MAX_OPERATORS = 6;
+    static const int OP_NUMBER_WIDTH = 16;
+    static const int OP_NUMBER_HEIGHT = 12;
+    
+    struct OperatorPosition {
+        char id;
+        int x, y;
+        int width, height;
+    };
+    
+    OperatorPosition opPositions[MAX_OPERATORS];
+    int numOpPositions;
+    DexedAudioProcessorEditor *editor;
+    
     void displayOp(Graphics &g, char id, int x, int y, char link, char fb);
+    void storeOpPosition(char id, int x, int y);
 public:
     const char *opStatus;
     AlgoDisplay();
     char *algo;
     void paint(Graphics &g);
+    void mouseDown(const MouseEvent &event) override;
+    void bind(DexedAudioProcessorEditor *edit);
 };
 
 #endif  // ALGODISPLAY_H_INCLUDED
