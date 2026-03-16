@@ -17,22 +17,12 @@
 #ifndef __SYNTH_H
 #define __SYNTH_H
 
-// This IS not be present on MSVC.
-// See http://stackoverflow.com/questions/126279/c99-stdint-h-header-and-ms-visual-studio
 #include <stdint.h>
-#ifdef _MSC_VER
-typedef __int32 int32_t;
-typedef unsigned __int32 uint32_t;
-typedef __int16 SInt16;
-#endif
 
 const static int LG_N = 6;
 const static int N = (1 << LG_N);
 
-#if defined(__APPLE__)
-#include <libkern/OSAtomic.h>
-#define SynthMemoryBarrier() OSMemoryBarrier()
-#elif defined(__GNUC__)
+#if defined(__APPLE__) || defined(__GNUC__)
 #if (__GNUC__ > 4) || (__GNUC__ == 4 && __GNUC_MINOR__ >= 1)
 #define SynthMemoryBarrier() __sync_synchronize()
 #endif

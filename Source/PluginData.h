@@ -129,6 +129,13 @@ public:
         if ( size > 65535 )
             size = 65535;
         
+        // Check for 4-operator sysex (DX21/DX27/DX100/TX81Z)
+        // Format: F0 43 0x 04 20 00 ... (format number 0x04 = 4-op 32-voice bulk)
+        if (size >= 4104 && pos[0] == 0xF0 && pos[1] == 0x43 && pos[3] == 0x04) {
+            TRACE("detected 4-operator sysex, converting to DX7 format");
+            return load4opSysex(pos, size);
+        }
+
         // we loop until we find something that looks like a DX7 cartridge (based on size)
         while(size >= 4104) {
             // it was a sysex first, now random data; return random
@@ -137,7 +144,7 @@ public:
                 TRACE("stream was a sysex, but not anymore rc=2");
                 return 2;
             }
-            
+
             // check if this is the size of a DX7 sysex cartridge
             for(int i=0;i<size;i++) {
                 if ( pos[i] == 0xF7 ) {
@@ -253,6 +260,13 @@ public:
 
     void unpackProgram(uint8_t *unpackPgm, int idx);
     void packProgram(uint8_t *src, int idx, String name, char *opSwitch);
+
+    /**
+     * Convert a 4-operator sysex cartridge (DX21/DX27/DX100/TX81Z)
+     * into DX7-compatible 6-operator format.
+     * Returns 0 on success, non-zero on failure.
+     */
+    int load4opSysex(const uint8_t *data4op, int size);
 };
 
 class DexedClipboard {

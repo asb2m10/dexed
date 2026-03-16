@@ -46,6 +46,13 @@ const int statics[] = {
 
 Env::Env() {
     initialised_ = false;
+    staticcount_ = 0;
+    level_ = 0;
+    targetlevel_ = 0;
+    rising_ = false;
+    ix_ = 0;
+    inc_ = 0;
+    down_ = true;
 }
 
 void Env::init_sr(double sampleRate) {

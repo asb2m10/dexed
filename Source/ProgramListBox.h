@@ -36,7 +36,7 @@ public:
 
 class ProgramLabel;
 class ProgramListBox : public Component, public KeyListener {
-    ProgramListBoxListener *listener;    
+    ProgramListBoxListener *listener = nullptr;
     Cartridge cartContent;
     std::unique_ptr<ProgramLabel> labels[32];
 

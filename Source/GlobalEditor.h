@@ -118,6 +118,8 @@ private:
     std::unique_ptr<juce::TextButton> parmButton;
     std::unique_ptr<juce::TextButton> cartButton;
     std::unique_ptr<juce::TextButton> storeButton;
+    std::unique_ptr<juce::TextButton> randomButton;
+    std::unique_ptr<juce::TextButton> rndPrevButton;
     std::unique_ptr<juce::ToggleButton> monoMode;
     std::unique_ptr<ComboBoxImage> lfoType;
     std::unique_ptr<ProgramSelector> programSelector;

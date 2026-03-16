@@ -101,6 +101,8 @@ inline float PluginFx::NR(float sample, float g) {
 }
 
 void PluginFx::process(float *work, int sampleSize) {
+    if (sampleSize == 0) return;
+
     // very basic DC filter
     float t_fd = work[0];
     work[0] = work[0] - dc_id + dc_r * dc_od;
@@ -173,6 +175,9 @@ void PluginFx::process(float *work, int sampleSize) {
                 break;
             case 3:
                 mc = y1;
+                break;
+            default:
+                mc = 0;
                 break;
         }
         

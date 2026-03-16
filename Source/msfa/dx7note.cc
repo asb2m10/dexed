@@ -201,7 +201,7 @@ void Dx7Note::init(const uint8_t patch[156], int midinote, int velocity, int cha
         levels[i] = patch[130 + i];
     }
     pitchenv_.set(rates, levels);
-    algorithm_ = patch[134];
+    algorithm_ = patch[134] & 0x1f;
     int feedback = patch[135];
     fb_shift_ = feedback != 0 ? FEEDBACK_BITDEPTH - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;
@@ -239,7 +239,9 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
             else
                 pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRangeDn]) / 12.0;
         } else {
-            int stp = 12 / ctrls->values_[kControllerPitchStep];
+            int pitchStep = ctrls->values_[kControllerPitchStep];
+            int stp = (pitchStep > 0 && pitchStep <= 12) ? 12 / pitchStep : 1;
+            if (stp == 0) stp = 1;
             pb = pb * stp / 8191;
             pb = (pb * (8191 / stp)) << 11;
         }
@@ -393,7 +395,7 @@ void Dx7Note::update(const uint8_t patch[156], int midinote, int velocity, int c
         int rate_scaling = ScaleRate(midinote, patch[off + 13]);
         env_[op].update(rates, levels, outlevel, rate_scaling);
     }
-    algorithm_ = patch[134];
+    algorithm_ = patch[134] & 0x1f;
     int feedback = patch[135];
     fb_shift_ = feedback != 0 ? FEEDBACK_BITDEPTH - feedback : 16;
     pitchmoddepth_ = (patch[139] * 165) >> 6;

@@ -26,9 +26,9 @@
 class AlgoDisplay : public Component {
     void displayOp(Graphics &g, char id, int x, int y, char link, char fb);
 public:
-    const char *opStatus;
+    const char *opStatus = nullptr;
     AlgoDisplay();
-    char *algo;
+    char *algo = nullptr;
     void paint(Graphics &g);
 };
 

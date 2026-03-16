@@ -31,6 +31,7 @@
 #include "msfa/synth.h"
 #include "msfa/fm_core.h"
 #include "msfa/tuning.h"
+#include <atomic>
 #include "PluginParam.h"
 #include "PluginData.h"
 #include "PluginFx.h"
@@ -99,7 +100,7 @@ class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public 
      * This flag is used in the audio thread to know if the voice has changed
      * and needs to be updated.
      */
-    bool refreshVoice;
+    std::atomic<bool> refreshVoice;
     bool normalizeDxVelocity;
     bool sendSysexChange;
     
@@ -144,8 +145,8 @@ public :
     VoiceStatus voiceStatus;
     File activeFileCartridge;
     
-    bool forceRefreshUI;
-    float vuSignal;
+    std::atomic<bool> forceRefreshUI;
+    std::atomic<float> vuSignal;
     double vuDecayFactor = 0.999361; // (for 48 kHz sampling rate)
     bool showKeyboard;
     int getEngineType();
@@ -235,6 +236,13 @@ public :
     const String getProgramName (int index) override;
     void changeProgramName(int index, const String& newName) override;
     void resetToInitVoice() ;
+    void randomizeVoice() ;
+    void undoRandomize() ;
+
+    static const int RND_HISTORY_SIZE = 32;
+    uint8_t rndHistory[RND_HISTORY_SIZE][161];
+    int rndHistoryCount = 0;
+    int rndHistoryPos = -1;
     
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
@@ -252,6 +260,7 @@ public :
     static File dexedCartDir;
 
     Value lastCCUsed;
+    std::atomic<int> pendingCCValue{-1};  // set on audio thread, polled by UI
     int lastActiveVoice = 0;
 
     MTSClient *mtsClient;

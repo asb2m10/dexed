@@ -98,6 +98,38 @@ DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* owner
     AffineTransform scale = AffineTransform::scale(processor->getZoomFactor());
     frameComponent.setTransform(scale);
     resetSize();
+
+    // Set up resizable window with aspect ratio constraint
+    float baseH = processor->showKeyboard ? WINDOW_SIZE_Y : WINDOW_SIZE_Y - 94;
+    float aspectRatio = (float)WINDOW_SIZE_X / baseH;
+    constrainer.setFixedAspectRatio(aspectRatio);
+    constrainer.setMinimumSize(WINDOW_SIZE_X / 2, (int)(baseH / 2));
+
+    // Compute max size from screen height (the limiting dimension on wide monitors)
+    auto* display = Desktop::getInstance().getDisplays().getPrimaryDisplay();
+    if (display != nullptr) {
+        int screenH = display->userArea.getHeight();
+        int titleBarH = 28; // approximate JUCE title bar height
+        int availH = screenH - titleBarH;
+        int maxW = (int)(availH * aspectRatio);
+        // Also don't exceed screen width
+        int screenW = display->userArea.getWidth();
+        if (maxW > screenW) {
+            maxW = screenW;
+            availH = (int)(maxW / aspectRatio);
+        }
+        constrainer.setMaximumSize(maxW, availH);
+    } else {
+        constrainer.setMaximumSize(WINDOW_SIZE_X * 4, (int)(baseH * 4));
+    }
+    setConstrainer(&constrainer);
+
+    resizableCorner = std::make_unique<ResizableCornerComponent>(this, &constrainer);
+    addAndMakeVisible(resizableCorner.get());
+    resizableCorner->setAlwaysOnTop(true);
+
+    setResizable(true, false);
+
     addKeyListener(this);
     updateUI();
     startTimer(100);
@@ -113,6 +145,19 @@ DexedAudioProcessorEditor::~DexedAudioProcessorEditor() {
 void DexedAudioProcessorEditor::paint (Graphics& g) {
     g.setColour(background);
     g.fillRoundedRectangle(0.0f, 0.0f, (float) getWidth(), (float) getHeight(), 0);
+}
+
+void DexedAudioProcessorEditor::resized() {
+    float factor = (float)getWidth() / (float)WINDOW_SIZE_X;
+
+    if (std::abs(factor - processor->getZoomFactor()) > 0.001f) {
+        processor->setZoomFactor(factor);
+        processor->savePreference();
+    }
+    frameComponent.setTransform(AffineTransform::scale(factor));
+
+    if (resizableCorner != nullptr)
+        resizableCorner->setBounds(getWidth() - 16, getHeight() - 16, 16, 16);
 }
 
 void DexedAudioProcessorEditor::cartShow() {
@@ -260,9 +305,23 @@ void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChange
 }
 
 void DexedAudioProcessorEditor::timerCallback() {
+    // Configure standalone window for resizing (once, when parent is available)
+    if (!titleBarConfigured) {
+        if (auto* topLevel = findParentComponentOfClass<DocumentWindow>()) {
+            topLevel->setResizable(true, false);
+            titleBarConfigured = true;
+        }
+    }
+
     if ( processor->forceRefreshUI ) {
         processor->forceRefreshUI = false;
         updateUI();
+    }
+
+    // Poll for CC changes from audio thread (replaces unsafe Value::setValue on audio thread)
+    int pendingCC = processor->pendingCCValue.exchange(-1, std::memory_order_relaxed);
+    if (pendingCC >= 0) {
+        processor->lastCCUsed.setValue(pendingCC);
     }
 
     if ( ! processor->peekVoiceStatus() )
@@ -493,7 +552,7 @@ bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files
 
     for( auto i = files.begin(); i != files.end(); ++i )
     {
-        if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) )
+        if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) || i->endsWithIgnoreCase( ".syx" ) )
             return true;
     }
     return false;
@@ -509,14 +568,14 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
         if (fn.endsWithIgnoreCase(".scl"))
         {
             if (filesize == 0) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' is empty."
                 );
             }
             else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit ("+std::to_string(MAX_SCL_KBM_FILE_SIZE)+")."
@@ -529,14 +588,14 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
         if (fn.endsWithIgnoreCase(".kbm"))
         {
             if (filesize == 0) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' is empty."
                 );
             }
             else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit (" + std::to_string(MAX_SCL_KBM_FILE_SIZE) + ")."
@@ -545,6 +604,10 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
             else {
                 processor->applyKBMMapping(File(fn));
             }
+        }
+        if (fn.endsWithIgnoreCase(".syx"))
+        {
+            loadCart(File(fn));
         }
     }
     catch (const std::ios_base::failure& ex) {
@@ -600,6 +663,18 @@ bool DexedAudioProcessorEditor::keyPressed(const KeyPress& key, Component* origi
 
     if ( keycode == 'P' && mods.isCtrlDown() ) {
         parmShow();
+        return true;
+    }
+
+    if ( keycode == 'R' && mods.isCtrlDown() ) {
+        processor->randomizeVoice();
+        updateUI();
+        return true;
+    }
+
+    if ( keycode == 'Z' && mods.isCtrlDown() ) {
+        processor->undoRandomize();
+        updateUI();
         return true;
     }
 

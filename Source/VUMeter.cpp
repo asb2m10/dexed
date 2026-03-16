@@ -144,7 +144,8 @@ int VuMeterBase::ampToStripeIndex_be(float amp) {
 // Paints a single stripe.
 void VuMeterBase::paint(Graphics& g) {
     int index = (this->*ampToStripeIndex)(v);
-    g.drawImageAt(*(singleStripes[index]), 0, 0); // it might be more efficient than the ``drawImage()``
+    if (singleStripes[index] != nullptr)
+        g.drawImageAt(*(singleStripes[index]), 0, 0);
 }
 
 // Calculates amplitude value from the traditional decibel (based on log10),
