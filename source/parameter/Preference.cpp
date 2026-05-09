@@ -15,17 +15,17 @@ void DexedAudioProcessor::loadPreference() {
     }
 
     if ( prop.containsKey( String("pitchRange") ) ) {
-        controllers.values_[kControllerPitchRangeUp] = prop.getIntValue( String("pitchRange") );
+        controllers.pitch_range_up = prop.getIntValue( String("pitchRange") );
     }
 
     if ( prop.containsKey( String("pitchRangeDn") ) ) {
-        controllers.values_[kControllerPitchRangeDn] = prop.getIntValue( String("pitchRangeDn") );
+        controllers.pitch_range_dn = prop.getIntValue( String("pitchRangeDn") );
     } else {
-        controllers.values_[kControllerPitchRangeDn] = controllers.values_[kControllerPitchRangeUp];
+        controllers.pitch_range_dn = controllers.pitch_range_up;
     }
 
     if ( prop.containsKey( String("pitchStep") ) ) {
-        controllers.values_[kControllerPitchStep] = prop.getIntValue( String("pitchStep") );
+        controllers.pitch_step = prop.getIntValue( String("pitchStep") );
     }
 
     if ( prop.containsKey( String("sysexIn") ) ) {
@@ -77,10 +77,10 @@ void DexedAudioProcessor::savePreference() {
     PropertiesFile prop(propFile, prefOptions);
 
     prop.setValue(String("normalizeDxVelocity"), normalizeDxVelocity);
-    prop.setValue(String("pitchRange"), controllers.values_[kControllerPitchRangeUp]); // for backwards compat
-    prop.setValue(String("pitchRangeUp"), controllers.values_[kControllerPitchRangeUp]);
-    prop.setValue(String("pitchRangeDn"), controllers.values_[kControllerPitchRangeDn]);
-    prop.setValue(String("pitchStep"), controllers.values_[kControllerPitchStep]);
+    prop.setValue(String("pitchRange"), controllers.pitch_range_up); // for backwards compat
+    prop.setValue(String("pitchRangeUp"), controllers.pitch_range_up);
+    prop.setValue(String("pitchRangeDn"), controllers.pitch_range_dn);
+    prop.setValue(String("pitchStep"), controllers.pitch_step);
 
     prop.setValue(String("sysexIn"), sysexComm.getInput());
     prop.setValue(String("sysexOut"), sysexComm.getOutput());

@@ -249,7 +249,6 @@ public :
     std::string currentKBMData = "";
     // TUNING STUFF ====================================================
 private:
-    int chooseNote(uint8_t pitch);
     int32_t nextKeydownSeq;;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DexedAudioProcessor)

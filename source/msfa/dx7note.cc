@@ -231,16 +231,16 @@ void Dx7Note::compute(int32_t *buf, int32_t lfo_val, int32_t lfo_delay, const Co
     pitch_mod = pitchenv_.getsample() + (pitch_mod * (senslfo < 0 ? -1 : 1));
     
     // ---- PITCH BEND ----
-    int pitchbend = ctrls->values_[kControllerPitch];
+    int pitchbend = ctrls->pitch_cc;
     int32_t pb = (pitchbend - 0x2000);
     if (pb != 0) {
-        if (ctrls->values_[kControllerPitchStep] == 0) {
+        if (ctrls->pitch_step == 0) {
             if( pb >= 0 )
-                pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRangeUp]) / 12.0;
+                pb = ((float) (pb << 11)) * ((float) ctrls->pitch_range_up) / 12.0;
             else
-                pb = ((float) (pb << 11)) * ((float) ctrls->values_[kControllerPitchRangeDn]) / 12.0;
+                pb = ((float) (pb << 11)) * ((float) ctrls->pitch_range_dn) / 12.0;
         } else {
-            int stp = 12 / ctrls->values_[kControllerPitchStep];
+            int stp = 12 / ctrls->pitch_step;
             pb = pb * stp / 8191;
             pb = (pb * (8191 / stp)) << 11;
         }

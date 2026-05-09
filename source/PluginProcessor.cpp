@@ -98,9 +98,9 @@ DexedAudioProcessor::DexedAudioProcessor()
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
     setEngineType(DEXED_ENGINE_MARKI);
     
-    controllers.values_[kControllerPitchRangeUp] = 3;
-    controllers.values_[kControllerPitchRangeDn] = 3;
-    controllers.values_[kControllerPitchStep] = 0;
+    controllers.pitch_range_up = 3;
+    controllers.pitch_range_dn = 3;
+    controllers.pitch_step = 0;
     controllers.masterTune = 0;
     
     loadPreference();
@@ -148,7 +148,7 @@ void DexedAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) 
 
     currentNote = 0;
     nextKeydownSeq = 0;
-    controllers.values_[kControllerPitch] = 0x2000;
+    controllers.pitch_cc = 0x2000;
     controllers.modwheel_cc = 0;
     controllers.foot_cc = 0;
     controllers.breath_cc = 0;
@@ -286,6 +286,7 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     // DX7 is a mono synth, but copy it to the right channel is available
     if ( buffer.getNumChannels() > 1 )
         buffer.copyFrom(1, 0, channelData, numSamples, 1);
+    midiMessages.clear();
 }
 
 //==============================================================================
@@ -296,31 +297,6 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter() {
 
 #define ACT(v) (v.keydown ? v.midi_note : -1)
 
-int DexedAudioProcessor::chooseNote(uint8_t pitch) {
-    // order of preference:
-    // 1. a note that is not playing
-    // 2. a note with its key up, playing the same pitch
-    // 3. a note with its key up, playing a different pitch
-    // 4. a note with its key down, playing the same pitch
-    // 5. a note with its key down, playing a different pitch
-    // break ties by preferring note with least recent keydown
-    int bestNote = currentNote;
-    int bestScore = -1;
-    int note = currentNote;
-    for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
-        int score = 0;
-        if ( !voices[note].dx7_note->isPlaying() ) score += 4;
-        if ( !voices[note].keydown ) score += 2;
-        if ( voices[note].midi_note == pitch ) score += 1;
-        if ( (score > bestScore) || (score == bestScore && voices[note].keydown_seq < voices[bestNote].keydown_seq) ) {
-            bestNote = note;
-            bestScore = score;
-        }
-        note = (note + 1) % MAX_ACTIVE_NOTES;
-    }
-    return bestNote;
-}
-
 void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) {
     if ( velo == 0 ) {
         keyup(channel, pitch, velo);
@@ -328,36 +304,46 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     }
 
     pitch += tuningTranspositionShift();
-    
+
     if ( normalizeDxVelocity ) {
         velo = ((float)velo) * 0.7874015; // 100/127
     }
-  
 
-    if( controllers.mpeEnabled ) {
-        int note = currentNote;
-        for( int i=0; i<MAX_ACTIVE_NOTES; ++i ) {
-            if( voices[note].keydown && voices[note].channel == channel )
-            {
-                // If we get two keydowns on the same channel we are getting information from a non-mpe device
-                controllers.mpeEnabled = false;
-            }
-            note = (note + 1) % MAX_ACTIVE_NOTES;
-        }
-    }
-
+    // Single fused pass: voice-stealing scoring + triggerLfo (any keydown?)
+    // + MPE same-channel-keydown detection.
+    // Stealing preference (highest score wins; ties broken by least-recent keydown):
+    //   +4 not playing, +2 key up, +1 same pitch.
     bool triggerLfo = true;
-    for (int i=0; i<MAX_ACTIVE_NOTES; i++) {
-        if ( voices[i].keydown ) {
+    int bestNote   = currentNote;
+    int bestScore  = -1;
+    int note       = currentNote;
+    for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
+        const ProcessorVoice &v = voices[note];
+
+        if ( v.keydown ) {
             triggerLfo = false;
-            break;
+            // Two keydowns on the same channel => source is not MPE.
+            if ( controllers.mpeEnabled && v.channel == channel )
+                controllers.mpeEnabled = false;
         }
-    }
-    if ( triggerLfo ) {
-        lfo.keydown();
+
+        int score = 0;
+        if ( !v.dx7_note->isPlaying() ) score += 4;
+        if ( !v.keydown )               score += 2;
+        if (  v.midi_note == pitch )    score += 1;
+        if ( score > bestScore ||
+             (score == bestScore && v.keydown_seq < voices[bestNote].keydown_seq) ) {
+            bestNote  = note;
+            bestScore = score;
+        }
+
+        note = (note + 1) % MAX_ACTIVE_NOTES;
     }
 
-    int note = chooseNote(pitch);
+    if ( triggerLfo )
+        lfo.keydown();
+
+    note = bestNote;
 
     currentNote = (note + 1) % MAX_ACTIVE_NOTES;
     voices[note].channel = channel;

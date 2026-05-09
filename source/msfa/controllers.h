@@ -28,10 +28,6 @@
 #endif
 
 // State of MIDI controllers
-const uint8_t kControllerPitch = 128;
-const uint8_t kControllerPitchRangeUp = 129;
-const uint8_t kControllerPitchStep = 130;
-const uint8_t kControllerPitchRangeDn = 131;
 
 class FmCore;
 
@@ -78,8 +74,11 @@ class Controllers {
     }
     
 public:
-    int values_[132];
-    
+    int pitch_cc;
+    int pitch_range_up;
+    int pitch_range_dn;
+    int pitch_step;
+
     int amp_mod;
     int pitch_mod;
     int eg_mod;

@@ -963,9 +963,9 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey, float dpiScaleFactor) {
-    pitchRangeUp->setValue(c.values_[kControllerPitchRangeUp]);
-    pitchRangeDn->setValue(c.values_[kControllerPitchRangeDn]);
-    pitchStep->setValue(c.values_[kControllerPitchStep]);
+    pitchRangeUp->setValue(c.pitch_range_up);
+    pitchRangeDn->setValue(c.pitch_range_dn);
+    pitchStep->setValue(c.pitch_step);
     sysexChl->setValue(mgr.getChl() + 1);
 
     // Modulation components (whl, ft, br, at) are synced via parameter attachments
@@ -1013,9 +1013,9 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey, float *dpiScaleFactor) {
     bool ret = true;
 
-    c.values_[kControllerPitchRangeUp] = pitchRangeUp->getValue();
-    c.values_[kControllerPitchRangeDn] = pitchRangeDn->getValue();
-    c.values_[kControllerPitchStep] = pitchStep->getValue();
+    c.pitch_range_up = pitchRangeUp->getValue();
+    c.pitch_range_dn = pitchRangeDn->getValue();
+    c.pitch_step = pitchStep->getValue();
 
     // Modulation components (whl, ft, br, at) are synced via parameter attachments
 

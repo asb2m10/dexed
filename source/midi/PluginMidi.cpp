@@ -4,7 +4,7 @@
 void DexedAudioProcessor::processMidiMessages(MidiBufferIterator &cur, MidiBufferIterator &end, int samplePos) {
     for(;cur != end;++cur) {
         juce::MidiMessageMetadata meta = *cur;
-        if ( samplePos > meta.samplePosition )
+        if ( meta.samplePosition > samplePos )
             return;
         const MidiMessage message = meta.getMessage();
         processMidiMessage(&message);
@@ -21,7 +21,6 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
     uint8_t cmd = buf[0];
     uint8_t cf0 = cmd & 0xf0;
     auto channel = msg->getChannel();
-
 
     if( controllers.mpeEnabled && channel != 1 &&
         (
@@ -133,7 +132,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             return;
 
 		case 0xe0 :
-			controllers.values_[kControllerPitch] = buf[1] | (buf[2] << 7);
+			controllers.pitch_cc = buf[1] | (buf[2] << 7);
             return;
         }
     }
