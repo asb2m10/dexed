@@ -32,31 +32,10 @@
 class FmCore;
 
 struct FmMod {
-    int range;
-    bool pitch;
-    bool amp;
-    bool eg;
-    
-    FmMod() {
-        range = 0;
-        pitch = false;
-        amp = false;
-        eg = false;
-    }
-
-    void parseConfig(const char *cfg) {
-        int r = 0, p = 0, a = 0, e = 0;
-        sscanf(cfg, "%d %d %d %d", &r, &p, &a, &e);
-        
-        range = r < 0 || r > 127 ? 0 : r;
-        pitch = p != 0;
-        amp = a != 0;
-        eg = e != 0;
-    }
-    
-    void setConfig(char *cfg) {
-        snprintf(cfg, 13, "%d %d %d %d", range, pitch, amp, eg);
-    }
+    int range = 0;
+    bool pitch = false;
+    bool amp = false;
+    bool eg = false;
 };
 
 class Controllers {

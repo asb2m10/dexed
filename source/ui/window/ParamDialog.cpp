@@ -35,25 +35,21 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    pitchRangeDn.reset (new juce::Slider ("pitchRangeDn"));
-    addAndMakeVisible (pitchRangeDn.get());
-    pitchRangeDn->setExplicitFocusOrder (2);
-    pitchRangeDn->setRange (0, 48, 1);
-    pitchRangeDn->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchRangeDn->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    pitchRangeDn->addListener (this);
+    pitchRangeDn.reset(new juce::Slider(IDs::pitchRangeDown.name));
+    addAndMakeVisible(pitchRangeDn.get());
+    pitchRangeDn->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    pitchRangeDn->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
+    pitchRangeDn->addListener(this);
+    pitchRangeDn->setBounds(264, 16, 72, 24);
+    attachments_.attach(pitchRangeDn.get());
 
-    pitchRangeDn->setBounds (264, 16, 72, 24);
-
-    pitchStep.reset (new juce::Slider ("pitchStep"));
-    addAndMakeVisible (pitchStep.get());
-    pitchStep->setExplicitFocusOrder (3);
-    pitchStep->setRange (0, 12, 1);
-    pitchStep->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchStep->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    pitchStep->addListener (this);
-
-    pitchStep->setBounds (264, 56, 72, 24);
+    pitchStep.reset(new juce::Slider(IDs::pitchStep.name));
+    addAndMakeVisible(pitchStep.get());
+    pitchStep->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    pitchStep->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
+    pitchStep->addListener(this);
+    pitchStep->setBounds(264, 56, 72, 24);
+    attachments_.attach(pitchStep.get());
 
     sysexIn.reset (new juce::ComboBox ("sysexIn"));
     addAndMakeVisible (sysexIn.get());
@@ -233,14 +229,10 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
 
     resetTuningButton->setBounds (632, 205, 48, 30);
 
-    transposeScale.reset (new LightedToggleButton ("transposeScale"));
-    addAndMakeVisible (transposeScale.get());
-    transposeScale->setExplicitFocusOrder (30);
-    transposeScale->setButtonText (juce::String());
-    transposeScale->addListener (this);
-    transposeScale->setToggleState (true, juce::dontSendNotification);
-
-    transposeScale->setBounds (576, 240, 56, 30);
+    auto transposeScale = std::make_unique<LightedToggleButton>(IDs::transposeTuningScale.name);
+    transposeScale->setBounds(576, 240, 56, 30);
+    transposeScale->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(transposeScale));
 
     mpePBRange.reset (new juce::Slider ("mpePBRange"));
     addAndMakeVisible (mpePBRange.get());
@@ -270,15 +262,13 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
                               juce::Image(), 1.000f, juce::Colour (0x00000000));
     transposeHelp->setBounds (500, 245, 20, 20);
 
-    pitchRangeUp.reset (new juce::Slider ("pitchRangeUp"));
-    addAndMakeVisible (pitchRangeUp.get());
-    pitchRangeUp->setExplicitFocusOrder (1);
-    pitchRangeUp->setRange (0, 48, 1);
-    pitchRangeUp->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    pitchRangeUp->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    pitchRangeUp->addListener (this);
-
-    pitchRangeUp->setBounds (168, 16, 72, 24);
+    pitchRangeUp.reset(new juce::Slider(IDs::pitchRangeUp.name));
+    addAndMakeVisible(pitchRangeUp.get());
+    pitchRangeUp->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    pitchRangeUp->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
+    pitchRangeUp->addListener(this);
+    pitchRangeUp->setBounds(168, 16, 72, 24);
+    attachments_.attach(pitchRangeUp.get());
 
     scalingFactor.reset (new juce::ComboBox ("scalingFactor"));
     addAndMakeVisible (scalingFactor.get());
@@ -292,26 +282,17 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
 
     scalingFactor->setBounds (236, 136, 90, 24);
 
-    glissando.reset (new LightedToggleButton ("glissando"));
-    addAndMakeVisible (glissando.get());
-    glissando->setExplicitFocusOrder (30);
-    glissando->setButtonText (juce::String());
-    glissando->setTooltip ("Enable or disable glissando effect.");
-    glissando->addListener (this);
-    glissando->setToggleState (true, juce::dontSendNotification);
+    auto glissando = std::make_unique<LightedToggleButton>(IDs::glissando.name);
+    glissando->setBounds(576, 276, 56, 30);
+    glissando->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(glissando));
 
-    glissando->setBounds (576, 276, 56, 30);
-
-    portamentoTm.reset (new juce::Slider ("portamentoTm"));
-    addAndMakeVisible (portamentoTm.get());
-    portamentoTm->setExplicitFocusOrder (22);
-    portamentoTm->setRange (0, 99, 1);
-    portamentoTm->setSliderStyle (juce::Slider::RotaryVerticalDrag);
-    portamentoTm->setTooltip ("Adjust the portamento time.");
-    portamentoTm->setTextBoxStyle (juce::Slider::TextBoxLeft, false, 80, 20);
-    portamentoTm->addListener (this);
-
-    portamentoTm->setBounds (504, 276, 72, 24);
+    auto portamentoTm = std::make_unique<juce::Slider>(IDs::portamentoTm.name);
+    portamentoTm->setSliderStyle(juce::Slider::RotaryVerticalDrag);
+    portamentoTm->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 80, 20);
+    portamentoTm->setBounds(504, 276, 72, 24);
+    portamentoTm->setWantsKeyboardFocus(true);
+    attachments_.addAndAttach(std::move(portamentoTm));
 
 
     //[UserPreSize]
@@ -366,7 +347,6 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     kbmButton->setTitle("Keyboard Mapping Button");
     showTunButton->setTitle("Show Tuning Button");
     resetTuningButton->setTitle("Reset Tuning Button");
-    transposeScale->setTitle("Transpose Scale");
     mpePBRange->setTitle("MPE Pitch Bend Range");
     mpeEnabled->setTitle("MPE Enabled");
     transposeHelp->setTitle("Transpose Help");
@@ -384,7 +364,6 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     kbmButton->setWantsKeyboardFocus(true);
     showTunButton->setWantsKeyboardFocus(true);
     resetTuningButton->setWantsKeyboardFocus(true);
-    transposeScale->setWantsKeyboardFocus(true);
     mpePBRange->setWantsKeyboardFocus(true);
     mpeEnabled->setWantsKeyboardFocus(true);
     transposeHelp->setWantsKeyboardFocus(true);
@@ -412,14 +391,11 @@ ParamDialog::~ParamDialog()
     kbmButton = nullptr;
     showTunButton = nullptr;
     resetTuningButton = nullptr;
-    transposeScale = nullptr;
     mpePBRange = nullptr;
     mpeEnabled = nullptr;
     transposeHelp = nullptr;
     pitchRangeUp = nullptr;
     scalingFactor = nullptr;
-    glissando = nullptr;
-    portamentoTm = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -790,37 +766,12 @@ void ParamDialog::sliderValueChanged (juce::Slider* sliderThatWasMoved)
     bool handled = false;
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == pitchRangeDn.get())
-    {
-        //[UserSliderCode_pitchRangeDn] -- add your slider handling code here..
-        //[/UserSliderCode_pitchRangeDn]
-    }
-    else if (sliderThatWasMoved == pitchStep.get())
+    if (sliderThatWasMoved == pitchStep.get())
     {
         //[UserSliderCode_pitchStep] -- add your slider handling code here..
         pitchRangeUp->setEnabled(pitchStep->getValue() == 0);
         pitchRangeDn->setEnabled(pitchStep->getValue() == 0);
         //[/UserSliderCode_pitchStep]
-    }
-    else if (sliderThatWasMoved == sysexChl.get())
-    {
-        //[UserSliderCode_sysexChl] -- add your slider handling code here..
-        //[/UserSliderCode_sysexChl]
-    }
-    else if (sliderThatWasMoved == mpePBRange.get())
-    {
-        //[UserSliderCode_mpePBRange] -- add your slider handling code here..
-        //[/UserSliderCode_mpePBRange]
-    }
-    else if (sliderThatWasMoved == pitchRangeUp.get())
-    {
-        //[UserSliderCode_pitchRangeUp] -- add your slider handling code here..
-        //[/UserSliderCode_pitchRangeUp]
-    }
-    else if (sliderThatWasMoved == portamentoTm.get())
-    {
-        //[UserSliderCode_portamentoTm] -- add your slider handling code here..
-        //[/UserSliderCode_portamentoTm]
     }
 
     //[UsersliderValueChanged_Post]
@@ -901,11 +852,6 @@ void ParamDialog::buttonClicked (juce::Button* buttonThatWasClicked)
         handled = true;
         //[/UserButtonCode_resetTuningButton]
     }
-    else if (buttonThatWasClicked == transposeScale.get())
-    {
-        //[UserButtonCode_transposeScale] -- add your button handler code here..
-        //[/UserButtonCode_transposeScale]
-    }
     else if (buttonThatWasClicked == mpeEnabled.get())
     {
         //[UserButtonCode_mpeEnabled] -- add your button handler code here..
@@ -944,12 +890,6 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 
         //[/UserButtonCode_transposeHelp]
     }
-    else if (buttonThatWasClicked == glissando.get())
-    {
-        //[UserButtonCode_glissando] -- add your button handler code here..
-        //[/UserButtonCode_glissando]
-    }
-
     //[UserbuttonClicked_Post]
     if( ! handled )
     {
@@ -963,20 +903,12 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey, float dpiScaleFactor) {
-    pitchRangeUp->setValue(c.pitch_range_up);
-    pitchRangeDn->setValue(c.pitch_range_dn);
-    pitchStep->setValue(c.pitch_step);
     sysexChl->setValue(mgr.getChl() + 1);
 
     // Modulation components (whl, ft, br, at) are synced via parameter attachments
 
-    transposeScale->setToggleState(c.transpose12AsScale ? 1 : 0, dontSendNotification );
-
     mpeEnabled->setToggleState(c.mpeEnabled, dontSendNotification);
     mpePBRange->setValue(c.mpePitchBendRange, dontSendNotification);
-
-    portamentoTm->setValue(c.portamento_cc * 100.0f / 127.0f); // Convert from 0-127 range to 0-100%
-    glissando->setToggleState(c.portamento_gliss_cc, dontSendNotification);
 
     // TODO: fix for JUCE 8 migration
     // StringArray inputs = MidiInput::getDevices();
@@ -1013,20 +945,10 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
 bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey, float *dpiScaleFactor) {
     bool ret = true;
 
-    c.pitch_range_up = pitchRangeUp->getValue();
-    c.pitch_range_dn = pitchRangeDn->getValue();
-    c.pitch_step = pitchStep->getValue();
-
     // Modulation components (whl, ft, br, at) are synced via parameter attachments
-
-    c.transpose12AsScale = transposeScale->getToggleState();
 
     c.mpeEnabled = mpeEnabled->getToggleState();
     c.mpePitchBendRange = mpePBRange->getValue();
-
-    c.portamento_cc = portamentoTm->getValue() * 127.0f / 100.0f; // Convert to 0-127 range
-    c.portamento_enable_cc = c.portamento_cc > 0;
-    c.portamento_gliss_cc = glissando->getToggleState();
 
     c.refresh();
 

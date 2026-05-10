@@ -164,6 +164,31 @@ void DexedAudioProcessor::mapParameters() {
         controllers.at.eg = newValue > 0.5f;
         controllers.refresh();
     });
+
+    parameters.mapTo(IDs::transposeTuningScale.name, [this](float newValue) {
+        controllers.transpose12AsScale = newValue > 0.5f;
+    });
+
+    parameters.mapTo(IDs::glissando.name, [this](float newValue) {
+        controllers.portamento_gliss_cc = newValue > 0.5f;
+    });
+
+    parameters.mapTo(IDs::portamentoTm.name, [this](float newValue) {
+        controllers.portamento_cc = static_cast<int32_t>(newValue * 127.0f / 99.0f);
+        controllers.portamento_enable_cc = controllers.portamento_cc > 0;
+    });
+
+    parameters.mapTo(IDs::pitchRangeUp.name, [this](float newValue) {
+        controllers.pitch_range_up = static_cast<int>(newValue);
+    });
+
+    parameters.mapTo(IDs::pitchRangeDown.name, [this](float newValue) {
+        controllers.pitch_range_dn = static_cast<int>(newValue);
+    });
+
+    parameters.mapTo(IDs::pitchStep.name, [this](float newValue) {
+        controllers.pitch_step = static_cast<int>(newValue);
+    });
 }
 
 

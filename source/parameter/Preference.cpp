@@ -48,22 +48,6 @@ void DexedAudioProcessor::loadPreference() {
         showKeyboard = prop.getIntValue( String("showKeyboard") );
     }
 
-    if ( prop.containsKey( String("wheelMod") ) ) {
-        controllers.wheel.parseConfig(prop.getValue(String("wheelMod")).toRawUTF8());
-    }
-
-    if ( prop.containsKey( String("footMod") ) ) {
-        controllers.foot.parseConfig(prop.getValue(String("footMod")).toRawUTF8());
-    }
-
-    if ( prop.containsKey( String("breathMod") ) ) {
-        controllers.breath.parseConfig(prop.getValue(String("breathMod")).toRawUTF8());
-    }
-
-    if ( prop.containsKey( String("aftertouchMod") ) ) {
-        controllers.at.parseConfig(prop.getValue(String("aftertouchMod")).toRawUTF8());
-    }
-
     if ( prop.containsKey( String("zoomFactor") ) ) {
         zoomFactor = prop.getDoubleValue(String("zoomFactor"));
     }
@@ -87,16 +71,6 @@ void DexedAudioProcessor::savePreference() {
     prop.setValue(String("sysexChl"), sysexComm.getChl());
 
     prop.setValue(String("showKeyboard"), showKeyboard);
-
-    char mod_cfg[15];
-    controllers.wheel.setConfig(mod_cfg);
-    prop.setValue(String("wheelMod"), mod_cfg);
-    controllers.foot.setConfig(mod_cfg);
-    prop.setValue(String("footMod"), mod_cfg);
-    controllers.breath.setConfig(mod_cfg);
-    prop.setValue(String("breathMod"), mod_cfg);
-    controllers.at.setConfig(mod_cfg);
-    prop.setValue(String("aftertouchMod"), mod_cfg);
 
     prop.setValue(String("engineType"), (int) engineType);
     prop.setValue(String("zoomFactor"), zoomFactor);

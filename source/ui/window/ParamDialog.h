@@ -48,8 +48,10 @@ private:
     bool is_standard_tuning_;
     std::function<void(ParamDialog *)> general_callback_ = [](ParamDialog *p) {};
 
+    std::unique_ptr<juce::Slider> pitchRangeUp;
     std::unique_ptr<juce::Slider> pitchRangeDn;
     std::unique_ptr<juce::Slider> pitchStep;
+
     std::unique_ptr<juce::ComboBox> sysexIn;
     std::unique_ptr<juce::ComboBox> sysexOut;
     std::unique_ptr<juce::Slider> sysexChl;
@@ -59,14 +61,10 @@ private:
     std::unique_ptr<juce::TextButton> kbmButton;
     std::unique_ptr<juce::TextButton> showTunButton;
     std::unique_ptr<juce::TextButton> resetTuningButton;
-    std::unique_ptr<LightedToggleButton> transposeScale;
     std::unique_ptr<juce::Slider> mpePBRange;
     std::unique_ptr<LightedToggleButton> mpeEnabled;
     std::unique_ptr<juce::ImageButton> transposeHelp;
-    std::unique_ptr<juce::Slider> pitchRangeUp;
     std::unique_ptr<juce::ComboBox> scalingFactor;
-    std::unique_ptr<LightedToggleButton> glissando;
-    std::unique_ptr<juce::Slider> portamentoTm;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParamDialog)
 };

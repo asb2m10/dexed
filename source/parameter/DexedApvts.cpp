@@ -154,6 +154,14 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     params.add(std::make_unique<AudioParameterBool>(IDs::modAftertouchAmp.parameter(), IDs::modAftertouchAmp.displayName(), false));
     params.add(std::make_unique<AudioParameterBool>(IDs::modAftertouchEgBias.parameter(), IDs::modAftertouchEgBias.displayName(), false));
 
+    params.add(std::make_unique<AudioParameterBool>(IDs::transposeTuningScale.parameter(), IDs::transposeTuningScale.displayName(), false));
+    params.add(std::make_unique<AudioParameterBool>(IDs::glissando.parameter(), IDs::glissando.displayName(), false));
+    params.add(std::make_unique<ParameterDx>(IDs::portamentoTm, 99));
+
+    params.add(std::make_unique<ParameterDx>(IDs::pitchRangeUp, 48));
+    params.add(std::make_unique<ParameterDx>(IDs::pitchRangeDown, 48));
+    params.add(std::make_unique<ParameterDx>(IDs::pitchStep, 12));
+
     return params;
 }
 

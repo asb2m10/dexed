@@ -72,6 +72,14 @@ namespace IDs {
             DECLARE_META(modAftertouchAmp)
             DECLARE_META(modAftertouchEgBias)
 
+            DECLARE_META(transposeTuningScale)
+            DECLARE_META(glissando)
+            DECLARE_META(portamentoTm)
+
+            DECLARE_META(pitchRangeUp)
+            DECLARE_META(pitchRangeDown)
+            DECLARE_META(pitchStep)
+
         DECLARE_ID(profile)
             DECLARE_ID(zoom)
             DECLARE_ID(showKeyboard)
