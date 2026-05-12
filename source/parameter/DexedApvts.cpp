@@ -158,6 +158,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout() {
     params.add(std::make_unique<AudioParameterBool>(IDs::glissando.parameter(), IDs::glissando.displayName(), false));
     params.add(std::make_unique<ParameterDx>(IDs::portamentoTm, 99));
 
+    juce::StringArray engineTypeChoices = { "Modern (24-bit)", "Mark I", "OPL Series" };
+    params.add(std::make_unique<AudioParameterChoice>(IDs::engineType.parameter(), IDs::engineType.displayName(), engineTypeChoices, 0));
+
     params.add(std::make_unique<ParameterDx>(IDs::pitchRangeUp, 48));
     params.add(std::make_unique<ParameterDx>(IDs::pitchRangeDown, 48));
     params.add(std::make_unique<ParameterDx>(IDs::pitchStep, 12));

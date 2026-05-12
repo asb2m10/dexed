@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "parameter/Model.h"
+#include "StateLegacy.h"
 
 //==============================================================================
 void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
@@ -8,6 +9,12 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     storage.setProperty(IDs::version, DexedApvts::MODEL_VERSION, nullptr);
     storage.addChild(state, -1, nullptr);
     storage.addChild(parameters.rootVt.getChildWithName(IDs::profile).createCopy(), -1, nullptr);
+
+    juce::ValueTree tuningVt("tuning");
+    tuningVt.setProperty("scl", juce::String(currentSCLData), nullptr);
+    tuningVt.setProperty("kbm", juce::String(currentKBMData), nullptr);
+    storage.addChild(tuningVt, -1, nullptr);
+
     std::unique_ptr<juce::XmlElement> xml(storage.createXml());
     copyXmlToBinary(*xml, destData);
 }
@@ -28,8 +35,20 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
             juce::ValueTree storageProfile = storage.getChildWithName(IDs::profile);
             parameters.rootVt.getChildWithName(IDs::profile).getChildWithName(IDs::midiCCMappings).
                 copyPropertiesAndChildrenFrom(storageProfile.getChildWithName(IDs::midiCCMappings), nullptr);
+
+            juce::ValueTree tuningVt = storage.getChildWithName("tuning");
+            if (tuningVt.isValid()) {
+                juce::String sclData = tuningVt.getProperty("scl").toString();
+                juce::String kbmData = tuningVt.getProperty("kbm").toString();
+                retuneToStandard();
+                if (sclData.isNotEmpty())
+                    applySCLTuning(sclData.toStdString());
+                if (kbmData.isNotEmpty())
+                    applyKBMMapping(kbmData.toStdString());
+            }
         } else if ( xmlState->hasTagName("dexedState") ) {
             // Format is 1.0 legacy
+            setStateInformation10(this, xmlState.get());
             // implement legacy loader
         } else {
             TRACE("No valid state found");
@@ -99,125 +118,4 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
 //     }
 //
 //     copyXmlToBinary(dexedState, destData);
-// }
-
-// void setStateInformationLegacy(const void* source, int sizeInBytes) {
-//     // You should use this method to restore your parameters from this memory block,
-//     // whose contents will have been created by the getStateInformation() call.
-//
-//     // used to LOAD plugin state
-//     std::unique_ptr<XmlElement> root(getXmlFromBinary(source, sizeInBytes));
-//
-//     if (root == nullptr) {
-//         TRACE("unknown state format");
-//         return;
-//     }
-//
-//     fx.uiCutoff = root->getDoubleAttribute("cutoff");
-//     fx.uiReso = root->getDoubleAttribute("reso");
-//     fx.uiGain = root->getDoubleAttribute("gain");
-//     currentProgram = root->getIntAttribute("currentProgram");
-//
-//     String opSwitchValue = root->getStringAttribute("opSwitch");
-//     //TRACE("opSwitch value %s", opSwitchValue.toRawUTF8());
-//     // if ( opSwitchValue.length() != 6 ) {
-//     //     strcpy(controllers.opSwitch, "111111");
-//     // } else {
-//     //     strncpy(controllers.opSwitch, opSwitchValue.toRawUTF8(), 6);
-//     // }
-//
-//     controllers.wheel.parseConfig(root->getStringAttribute("wheelMod").toRawUTF8());
-//     controllers.foot.parseConfig(root->getStringAttribute("footMod").toRawUTF8());
-//     controllers.breath.parseConfig(root->getStringAttribute("breathMod").toRawUTF8());
-//     controllers.at.parseConfig(root->getStringAttribute("aftertouchMod").toRawUTF8());
-//
-//     setEngineType(root->getIntAttribute("engineType", 1));
-//     monoMode = root->getIntAttribute("monoMode", 0);
-//     controllers.masterTune = root->getIntAttribute("masterTune", 0);
-//     controllers.transpose12AsScale = ( root->getIntAttribute("transpose12AsScale", 1) != 0 );
-//
-//     controllers.mpePitchBendRange = ( root->getIntAttribute("mpePitchBendRange", 24) );
-//     controllers.mpeEnabled = ( root->getIntAttribute("mpeEnabled", 0) != 0 );
-//
-//     controllers.portamento_cc = ( root->getIntAttribute("portamento", 0) );
-//     controllers.portamento_enable_cc = controllers.portamento_cc > 1;
-//     controllers.portamento_gliss_cc = ( root->getIntAttribute("glissando", 0) );
-//     controllers.refresh();
-//
-//     File possibleCartridge = File(root->getStringAttribute("activeFileCartridge"));
-//     if ( possibleCartridge.exists() )
-//         activeFileCartridge = possibleCartridge;
-//
-//     auto tuningParent = root->getChildByName( "dexedTuning" );
-//     if( tuningParent )
-//     {
-//         auto sclx = tuningParent->getChildByName( "scl" );
-//         auto kbmx = tuningParent->getChildByName( "kbm" );
-//         std::string s = "";
-//         if( sclx && sclx->getFirstChildElement() && sclx->getFirstChildElement()->isTextElement() )
-//         {
-//             s = sclx->getFirstChildElement()->getText().toStdString();
-//             if( s.size() > 1 )
-//                 applySCLTuning(s);
-//         }
-//
-//         std::string k = "";
-//         if( kbmx && kbmx->getFirstChildElement() && kbmx->getFirstChildElement()->isTextElement() )
-//         {
-//             k = kbmx->getFirstChildElement()->getText().toStdString();
-//             if( k.size() > 1 )
-//                 applyKBMMapping(k);
-//         }
-//     }
-//
-//     XmlElement *dexedBlob = root->getChildByName("dexedBlob");
-//     if ( dexedBlob == NULL ) {
-//         TRACE("dexedBlob element not found");
-//         return;
-//     }
-//
-//     NamedValueSet blobSet;
-//     blobSet.setFromXmlAttributes(*dexedBlob);
-//
-//     var sysex_blob = blobSet["sysex"];
-//     var program = blobSet["program"];
-//
-//     if ( sysex_blob.isVoid() || program.isVoid() ) {
-//         TRACE("unknown serialized blob data");
-//         return;
-//     }
-//
-//     Cartridge cart;
-//     cart.load((uint8 *)sysex_blob.getBinaryData()->getData(), 4104);
-//     loadCartridge(cart);
-//     // TODO: load program data into 'data'
-//     //memcpy(activeProgram.getUnpackedData(), program.getBinaryData()->getData(), Program::PROGRAM_SIZE);
-//
-//     mappedMidiCC.clear();
-//     XmlElement *midiCC = root->getChildByName("midiCC");
-//     // if ( midiCC != nullptr ) {
-//     //     XmlElement *ccMapping = midiCC->getFirstChildElement();
-//     //     while (ccMapping != nullptr) {
-//     //         int cc = ccMapping->getIntAttribute("cc", -1);
-//     //         String target = ccMapping->getStringAttribute("target", "");
-//     //         if ( target.isNotEmpty() && cc != -1 ) {
-//     //             for(int i=0;i<ctrl.size();i++) {
-//     //                 if ((cc >> 8) == 0) {
-//     //                     // Simple migration logic lets old mappings without channel
-//     //                     // work on channel 1.
-//     //                     cc |= 1 << 8;
-//     //                 }
-//     //                 if ( ctrl[i]->label == target) {
-//     //                     TRACE("mapping CC=%d to %s", cc, target.toRawUTF8());
-//     //                     mappedMidiCC.set(cc, ctrl[i]);
-//     //                     break;
-//     //                 }
-//     //             }
-//     //         }
-//     //         ccMapping = ccMapping->getNextElement();
-//     //     }
-//     // }
-//     TRACE("setting VST STATE");
-//     panic();
-//     updateUI();
 // }

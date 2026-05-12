@@ -178,6 +178,10 @@ void DexedAudioProcessor::mapParameters() {
         controllers.portamento_enable_cc = controllers.portamento_cc > 0;
     });
 
+    parameters.mapTo(IDs::engineType.name, [this](float newValue) {
+        setEngineType(static_cast<int>(std::round(newValue)));
+    });
+
     parameters.mapTo(IDs::pitchRangeUp.name, [this](float newValue) {
         controllers.pitch_range_up = static_cast<int>(newValue);
     });
@@ -190,7 +194,6 @@ void DexedAudioProcessor::mapParameters() {
         controllers.pitch_step = static_cast<int>(newValue);
     });
 }
-
 
 int DexedAudioProcessor::getNumPrograms() {
     return 32;

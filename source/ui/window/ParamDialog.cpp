@@ -30,7 +30,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this, apvts)
+ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_(apvts), proc_(proc), attachments_(*this, apvts)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
@@ -83,19 +83,11 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
 
     sysexChl->setBounds (252, 320, 72, 24);
 
-    engineReso.reset (new juce::ComboBox ("new combo box"));
-    addAndMakeVisible (engineReso.get());
-    engineReso->setExplicitFocusOrder (6);
-    engineReso->setEditableText (false);
-    engineReso->setJustificationType (juce::Justification::centredLeft);
-    engineReso->setTextWhenNothingSelected (juce::String());
-    engineReso->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
-    engineReso->addItem (TRANS ("Modern (24-bit)"), 1);
-    engineReso->addItem (TRANS ("Mark I"), 2);
-    engineReso->addItem (TRANS ("OPL Series"), 3);
-    engineReso->addListener (this);
-
-    engineReso->setBounds (160, 188, 168, 24);
+    engineType.reset(new juce::ComboBox(IDs::engineType.name));
+    addAndMakeVisible(engineType.get());
+    engineType->setJustificationType(juce::Justification::centredLeft);
+    engineType->setBounds(160, 188, 168, 24);
+    attachments_.attach(engineType.get());
 
     showKeyboard.reset (new LightedToggleButton ("showKeyboard"));
     addAndMakeVisible (showKeyboard.get());
@@ -295,6 +287,17 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     attachments_.addAndAttach(std::move(portamentoTm));
 
 
+    profileSelector.reset(new juce::ComboBox("profileSelector"));
+    addAndMakeVisible(profileSelector.get());
+    profileSelector->addListener(this);
+    profileSelector->setBounds(100, 378, 450, 24);
+
+    storeButton.reset(new juce::TextButton("storeButton"));
+    addAndMakeVisible(storeButton.get());
+    storeButton->setButtonText("Store");
+    storeButton->addListener(this);
+    storeButton->setBounds(558, 378, 130, 24);
+
     //[UserPreSize]
     float maxScaling = DexedAudioProcessorEditor::getLargestScaleFactor();
 
@@ -311,7 +314,7 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
 
     //[/UserPreSize]
 
-    setSize (710, 370);
+    setSize (710, 414);
 
 
     //[Constructor] You can add your own custom stuff here..
@@ -341,7 +344,7 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     sysexIn->setTitle("Sysex Input");
     sysexOut->setTitle("Sysex Output");
     sysexChl->setTitle("Sysex Channel");
-    engineReso->setTitle("Engine Resolution");
+    engineType->setTitle("Engine Resolution");
     showKeyboard->setTitle("Show Keyboard");
     sclButton->setTitle("Scale Button");
     kbmButton->setTitle("Keyboard Mapping Button");
@@ -351,6 +354,8 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     mpeEnabled->setTitle("MPE Enabled");
     transposeHelp->setTitle("Transpose Help");
     scalingFactor->setTitle("Scaling Factor");
+    profileSelector->setTitle("Profile");
+    storeButton->setTitle("Store Profile");
 
     pitchRangeUp->setWantsKeyboardFocus(true);
     pitchRangeDn->setWantsKeyboardFocus(true);
@@ -358,7 +363,7 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     sysexIn->setWantsKeyboardFocus(true);
     sysexOut->setWantsKeyboardFocus(true);
     sysexChl->setWantsKeyboardFocus(true);
-    engineReso->setWantsKeyboardFocus(true);
+    engineType->setWantsKeyboardFocus(true);
     showKeyboard->setWantsKeyboardFocus(true);
     sclButton->setWantsKeyboardFocus(true);
     kbmButton->setWantsKeyboardFocus(true);
@@ -368,7 +373,10 @@ ParamDialog::ParamDialog (DexedApvts &apvts) : apvts_(apvts), attachments_(*this
     mpeEnabled->setWantsKeyboardFocus(true);
     transposeHelp->setWantsKeyboardFocus(true);
     scalingFactor->setWantsKeyboardFocus(true);
+    profileSelector->setWantsKeyboardFocus(true);
+    storeButton->setWantsKeyboardFocus(true);
 
+    refreshProfileList();
     setWantsKeyboardFocus(true);
     startTimer(100);
     //[/Constructor]
@@ -385,7 +393,7 @@ ParamDialog::~ParamDialog()
     sysexIn = nullptr;
     sysexOut = nullptr;
     sysexChl = nullptr;
-    engineReso = nullptr;
+    engineType = nullptr;
     showKeyboard = nullptr;
     sclButton = nullptr;
     kbmButton = nullptr;
@@ -396,6 +404,8 @@ ParamDialog::~ParamDialog()
     transposeHelp = nullptr;
     pitchRangeUp = nullptr;
     scalingFactor = nullptr;
+    profileSelector = nullptr;
+    storeButton = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -748,6 +758,13 @@ void ParamDialog::paint (juce::Graphics& g)
     g.drawText (translate("DX7 Out"),
                 20, 280, 131, 23,
                 Justification::centredLeft, true);
+
+    g.setColour (Colours::black);
+    g.fillRect (0, 370, 710, 1);
+
+    g.setColour (Colours::white);
+    g.setFont (font);
+    g.drawText (translate("Profile:"), 20, 378, 76, 24, Justification::centredLeft, true);
     //[/UserPaint]
 }
 
@@ -796,15 +813,25 @@ void ParamDialog::comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged)
         //[UserComboBoxCode_sysexOut] -- add your combo box handling code here..
         //[/UserComboBoxCode_sysexOut]
     }
-    else if (comboBoxThatHasChanged == engineReso.get())
-    {
-        //[UserComboBoxCode_engineReso] -- add your combo box handling code here..
-        //[/UserComboBoxCode_engineReso]
-    }
     else if (comboBoxThatHasChanged == scalingFactor.get())
     {
         //[UserComboBoxCode_scalingFactor] -- add your combo box handling code here..
         //[/UserComboBoxCode_scalingFactor]
+    }
+
+    else if (comboBoxThatHasChanged == profileSelector.get())
+    {
+        int idx = profileSelector->getSelectedItemIndex();
+        if (idx > 0) {
+            juce::File profileDir = DexedAudioProcessor::dexedAppDir.getChildFile("Profiles");
+            juce::Array<juce::File> files;
+            profileDir.findChildFiles(files, juce::File::findFiles, false, "*.xml");
+            files.sort();
+            int fileIdx = idx - 1;
+            if (fileIdx < files.size())
+                loadProfileFromFile(files[fileIdx]);
+        }
+        handled = true;
     }
 
     //[UsercomboBoxChanged_Post]
@@ -890,6 +917,22 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 
         //[/UserButtonCode_transposeHelp]
     }
+    else if (buttonThatWasClicked == storeButton.get())
+    {
+        auto* aw = new juce::AlertWindow("Save Profile", "Enter a name for this profile:", juce::MessageBoxIconType::NoIcon);
+        aw->addTextEditor("name", "", "Profile name:");
+        aw->addButton("Save", 1);
+        aw->addButton("Cancel", 0);
+        aw->enterModalState(true, juce::ModalCallbackFunction::create([this, aw](int result) {
+            if (result == 1) {
+                juce::String name = aw->getTextEditorContents("name").trim();
+                if (name.isNotEmpty())
+                    saveProfileToFile(name);
+            }
+        }), true);
+        handled = true;
+    }
+
     //[UserbuttonClicked_Post]
     if( ! handled )
     {
@@ -902,7 +945,7 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
-void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKey, float dpiScaleFactor) {
+void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, bool showKey, float dpiScaleFactor) {
     sysexChl->setValue(mgr.getChl() + 1);
 
     // Modulation components (whl, ft, br, at) are synced via parameter attachments
@@ -921,7 +964,6 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     // idx = idx == -1 ? 0 : idx + 1;
     // sysexOut->setSelectedItemIndex(idx);
 
-    engineReso->setSelectedItemIndex(reso);
     showKeyboard->setToggleState(showKey, NotificationType::dontSendNotification);
 
     if ( dpiScaleFactor == 1.25 ) {
@@ -942,7 +984,7 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     }
 }
 
-bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKey, float *dpiScaleFactor) {
+bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, bool *showKey, float *dpiScaleFactor) {
     bool ret = true;
 
     // Modulation components (whl, ft, br, at) are synced via parameter attachments
@@ -959,7 +1001,6 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, int *reso, boo
     ret &= mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
     mgr.setChl(sysexChl->getValue() - 1);
 
-    *reso = engineReso->getSelectedItemIndex();
     *showKey = showKeyboard->getToggleState();
 
     switch(scalingFactor->getSelectedItemIndex()) {
@@ -1004,6 +1045,81 @@ void ParamDialog::setIsStandardTuning( bool b )
 void ParamDialog::timerCallback() {
     stopTimer();
     grabKeyboardFocus();
+}
+
+static juce::StringArray dialogParamIds() {
+    return {
+        IDs::pitchRangeUp.name,    IDs::pitchRangeDown.name,  IDs::pitchStep.name,
+        IDs::transposeTuningScale.name, IDs::glissando.name,  IDs::portamentoTm.name,
+        IDs::modWheel.name,        IDs::modWheelPitch.name,   IDs::modWheelAmp.name,   IDs::modWheelEgBias.name,
+        IDs::modFoot.name,         IDs::modFootPitch.name,    IDs::modFootAmp.name,    IDs::modFootEgBias.name,
+        IDs::modBreath.name,       IDs::modBreathPitch.name,  IDs::modBreathAmp.name,  IDs::modBreathEgBias.name,
+        IDs::modAftertouch.name,   IDs::modAftertouchPitch.name, IDs::modAftertouchAmp.name, IDs::modAftertouchEgBias.name,
+        IDs::engineType.name
+    };
+}
+
+void ParamDialog::refreshProfileList() {
+    profileSelector->clear();
+    profileSelector->addItem("Select profile...", 1);
+
+    juce::File profileDir = DexedAudioProcessor::dexedAppDir.getChildFile("Profiles");
+    if (profileDir.exists()) {
+        juce::Array<juce::File> files;
+        profileDir.findChildFiles(files, juce::File::findFiles, false, "*.xml");
+        files.sort();
+        for (int i = 0; i < files.size(); ++i)
+            profileSelector->addItem(files[i].getFileNameWithoutExtension(), i + 2);
+    }
+    profileSelector->setSelectedItemIndex(0, juce::dontSendNotification);
+}
+
+void ParamDialog::saveProfileToFile(const juce::String& name) {
+    juce::File profileDir = DexedAudioProcessor::dexedAppDir.getChildFile("Profiles");
+    profileDir.createDirectory();
+
+    juce::ValueTree profileVt("DexedProfile");
+    for (const auto& paramId : dialogParamIds()) {
+        if (auto* param = apvts_.getParameter(paramId)) {
+            juce::ValueTree paramVt("param");
+            paramVt.setProperty(IDs::id, paramId, nullptr);
+            paramVt.setProperty(IDs::value, param->convertFrom0to1(param->getValue()), nullptr);
+            profileVt.addChild(paramVt, -1, nullptr);
+        }
+    }
+
+    juce::ValueTree tuningVt("tuning");
+    tuningVt.setProperty("scl", juce::String(proc_.currentSCLData), nullptr);
+    tuningVt.setProperty("kbm", juce::String(proc_.currentKBMData), nullptr);
+    profileVt.addChild(tuningVt, -1, nullptr);
+
+    auto xml = profileVt.createXml();
+    xml->writeTo(profileDir.getChildFile(name + ".xml"));
+    refreshProfileList();
+}
+
+void ParamDialog::loadProfileFromFile(const juce::File& file) {
+    auto xml = juce::XmlDocument::parse(file);
+    if (!xml) return;
+
+    auto profileVt = juce::ValueTree::fromXml(*xml);
+    for (int i = 0; i < profileVt.getNumChildren(); ++i) {
+        auto child = profileVt.getChild(i);
+        if (child.hasType("param")) {
+            juce::String paramId = child.getProperty(IDs::id).toString();
+            float value = static_cast<float>(child.getProperty(IDs::value));
+            if (auto* param = apvts_.getParameter(paramId))
+                param->setValueNotifyingHost(param->convertTo0to1(value));
+        } else if (child.hasType("tuning")) {
+            juce::String sclData = child.getProperty("scl").toString();
+            juce::String kbmData = child.getProperty("kbm").toString();
+            proc_.retuneToStandard();
+            if (sclData.isNotEmpty())
+                proc_.applySCLTuning(sclData.toStdString());
+            if (kbmData.isNotEmpty())
+                proc_.applyKBMMapping(kbmData.toStdString());
+        }
+    }
 }
 
 //[/MiscUserCode]

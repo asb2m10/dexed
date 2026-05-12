@@ -14,20 +14,6 @@ void DexedAudioProcessor::loadPreference() {
         normalizeDxVelocity = prop.getIntValue( String("normalizeDxVelocity") );
     }
 
-    if ( prop.containsKey( String("pitchRange") ) ) {
-        controllers.pitch_range_up = prop.getIntValue( String("pitchRange") );
-    }
-
-    if ( prop.containsKey( String("pitchRangeDn") ) ) {
-        controllers.pitch_range_dn = prop.getIntValue( String("pitchRangeDn") );
-    } else {
-        controllers.pitch_range_dn = controllers.pitch_range_up;
-    }
-
-    if ( prop.containsKey( String("pitchStep") ) ) {
-        controllers.pitch_step = prop.getIntValue( String("pitchStep") );
-    }
-
     if ( prop.containsKey( String("sysexIn") ) ) {
         sysexComm.setInput( prop.getValue("sysexIn") );
     }
@@ -72,7 +58,6 @@ void DexedAudioProcessor::savePreference() {
 
     prop.setValue(String("showKeyboard"), showKeyboard);
 
-    prop.setValue(String("engineType"), (int) engineType);
     prop.setValue(String("zoomFactor"), zoomFactor);
 
     prop.save();

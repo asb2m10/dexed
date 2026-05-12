@@ -184,10 +184,9 @@ public:
 };
 
 void DexedAudioProcessorEditor::parmShow() {
-    int tp = processor->getEngineType();
-    auto param = new ParamDialog(processor->parameters);
+    auto param = new ParamDialog(processor->parameters, *processor);
     param->setColour(AlertWindow::backgroundColourId, Colour(0xFF323E44));
-    param->setDialogValues(processor->controllers, processor->sysexComm, tp, processor->showKeyboard, processor->getZoomFactor());
+    param->setDialogValues(processor->controllers, processor->sysexComm, processor->showKeyboard, processor->getZoomFactor());
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
     param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
                                 switch(which)
@@ -211,11 +210,9 @@ void DexedAudioProcessorEditor::parmShow() {
 
     auto generalCallback = [this](ParamDialog *param)
                                {
-                                   int tpo;
                                    float scale = this->processor->getZoomFactor();
-                                   bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &tpo, &this->processor->showKeyboard, &scale);
+                                   bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &this->processor->showKeyboard, &scale);
                                    this->processor->setZoomFactor(scale);
-                                   this->processor->setEngineType(tpo);
                                    this->processor->savePreference();
 
                                    AffineTransform scaleAffine = AffineTransform::scale(this->processor->getZoomFactor());

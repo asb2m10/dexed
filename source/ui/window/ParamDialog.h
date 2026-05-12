@@ -7,6 +7,7 @@
 #include <functional>
 #include "../DXLookNFeel.h"
 
+class DexedAudioProcessor;
 
 class ParamDialog  : public Component,
                      public juce::Slider::Listener,
@@ -16,11 +17,11 @@ class ParamDialog  : public Component,
 {
 public:
     //==============================================================================
-    ParamDialog (DexedApvts &apvts);
+    ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc);
     ~ParamDialog() override;
 
-    void setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool showKeyboard, float dpiScaleFactor);
-    bool getDialogValues(Controllers &c, SysexComm &mgr, int *reso, bool *showKeyboard, float *dpiScaleFactor);
+    void setDialogValues(Controllers &c, SysexComm &mgr, bool showKeyboard, float dpiScaleFactor);
+    bool getDialogValues(Controllers &c, SysexComm &mgr, bool *showKeyboard, float *dpiScaleFactor);
 
     typedef enum {
         LOAD_SCL,
@@ -43,6 +44,7 @@ public:
 
 private:
     DexedApvts &apvts_;
+    DexedAudioProcessor &proc_;
     AudioComponentContainer attachments_;
     std::function<void(ParamDialog *, ParamDialog::TuningAction)> tuning_callback_ = [](ParamDialog *, ParamDialog::TuningAction i) {};
     bool is_standard_tuning_;
@@ -55,7 +57,7 @@ private:
     std::unique_ptr<juce::ComboBox> sysexIn;
     std::unique_ptr<juce::ComboBox> sysexOut;
     std::unique_ptr<juce::Slider> sysexChl;
-    std::unique_ptr<juce::ComboBox> engineReso;
+    std::unique_ptr<juce::ComboBox> engineType;
     std::unique_ptr<LightedToggleButton> showKeyboard;
     std::unique_ptr<juce::TextButton> sclButton;
     std::unique_ptr<juce::TextButton> kbmButton;
@@ -65,6 +67,12 @@ private:
     std::unique_ptr<LightedToggleButton> mpeEnabled;
     std::unique_ptr<juce::ImageButton> transposeHelp;
     std::unique_ptr<juce::ComboBox> scalingFactor;
+    std::unique_ptr<juce::ComboBox> profileSelector;
+    std::unique_ptr<juce::TextButton> storeButton;
+
+    void refreshProfileList();
+    void saveProfileToFile(const juce::String& name);
+    void loadProfileFromFile(const juce::File& file);
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (ParamDialog)
 };
