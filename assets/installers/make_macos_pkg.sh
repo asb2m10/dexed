@@ -128,7 +128,7 @@ fi
 cat > $TMPDIR/distribution.xml << XMLEND
 <?xml version="1.0" encoding="utf-8"?>
 <installer-gui-script minSpecVersion="1">
-    <os-version min="10.9"/>
+    <os-version min="10.10"/>
     <title>${PRODUCT} ${VERSION}</title>
     <license file="License.txt" />
     <readme file="Readme.rtf" />
