@@ -180,8 +180,8 @@
                        osxCompatibility="10.10 SDK" osxArchitecture="Native" enablePluginBinaryCopyStep="1"
                        macOSDeploymentTarget="10.10"/>
         <CONFIGURATION name="Release" isDebug="0" optimisation="3" targetName="Dexed"
-                       osxSDK="10.10 SDK" osxCompatibility="10.9 SDK" enablePluginBinaryCopyStep="1"
-                       macOSBaseSDK="10.10" macOSDeploymentTarget="10.9"/>
+                       osxSDK="10.10 SDK" osxCompatibility="10.10 SDK" enablePluginBinaryCopyStep="1"
+                       macOSBaseSDK="10.10" macOSDeploymentTarget="10.10"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_gui_extra" path="./assets/JUCE/modules"/>
