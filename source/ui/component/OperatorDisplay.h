@@ -35,6 +35,7 @@ public:
         float freq = opCoarse;
         float fine = opFine;
         String txtFreq;
+        const double m_ln10 = 2.30258509299404568402;
 
         if (opMode == 0) {
             if (freq == 0)
@@ -42,7 +43,7 @@ public:
             txtFreq << "f = " << (freq + (freq * (fine / 100)));
         } else {
             freq = pow(10, ((int) freq) & 3);
-            freq = freq * exp(M_LN10 * (fine / 100));
+            freq = freq * exp(m_ln10 * (fine / 100));
             txtFreq << freq << " Hz";
         }
 
