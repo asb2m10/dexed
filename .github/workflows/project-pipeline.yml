@@ -22,7 +22,7 @@ jobs:
       build_type : ${{ steps.vers.outputs.build_type }}
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: "Calculate version"
         id: vers
@@ -52,7 +52,7 @@ jobs:
     needs: [ component_version ]
 
     steps:
-    - uses: awalsh128/cache-apt-pkgs-action@latest
+    - uses: awalsh128/cache-apt-pkgs-action@master
       if: runner.os == 'linux'
       with:
         packages: libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev ccache xvfb libjack-dev libsndfile-dev
