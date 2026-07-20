@@ -81,7 +81,13 @@ void PluginFx::init(int sr) {
 
     pCutoff = -1;
     pReso = -1;
-    
+
+    // ~10 ms one-pole smoothing on the filter coefficients
+    smoothCoef = expf(-1.0f / (0.01f * sampleRate));
+    sCutoff = tan(19000.0f * sampleRateInv * juce::MathConstants<float>::pi);
+    sReso = 0;
+    bypassed = true;
+
     dc_r = 1.0-(126.0/sr);
     dc_id = 0;
     dc_od = 0;
@@ -118,31 +124,50 @@ void PluginFx::process(float *work, int sampleSize) {
             work[i] *= uiGain;
     }
     
-    // don't apply the LPF if the cutoff is to maximum
-    if ( uiCutoff == 1 )
-        return;
-    
     if ( uiCutoff != pCutoff || uiReso != pReso ) {
         rReso = (0.991-logsc(1-uiReso,0,0.991));
-        R24 = 3.5 * rReso;
-        
+
         float cutoffNorm = logsc(uiCutoff,60,19000);
         rCutoff = (float)tan(cutoffNorm * sampleRateInv * juce::MathConstants<float>::pi);
-            
+
         pCutoff = uiCutoff;
         pReso = uiReso;
-        
+
         R = 1 - rReso;
     }
-        
+
+    // don't apply the LPF if the cutoff is at maximum, but only once the
+    // smoothed coefficients have settled; transitions are crossfaded to
+    // avoid a discontinuity when switching the filter in/out of the path
+    bool wantBypass = uiCutoff == 1;
+    if ( wantBypass && bypassed )
+        return;
+
+    float fade = 1;
+    float fadeStep = 0;
+    if ( bypassed ) {
+        // re-engaging the filter: crossfade dry -> filtered over this block
+        bypassed = false;
+        fade = 0;
+        fadeStep = 1.0f / sampleSize;
+    } else if ( wantBypass && fabsf(sCutoff - rCutoff) < 0.01f * rCutoff ) {
+        // fully open and settled: crossfade filtered -> dry, then bypass
+        fadeStep = -1.0f / sampleSize;
+        bypassed = true;
+    }
+
     // THIS IS MY FAVORITE 4POLE OBXd filter
-        
-    // maybe smooth this value
-    float g = rCutoff;
-    float lpc = g / (1 + g);
-    
+
     for(int i=0; i < sampleSize; i++ ) {
-        float s = work[i];
+        sCutoff = rCutoff + smoothCoef * (sCutoff - rCutoff);
+        sReso = rReso + smoothCoef * (sReso - rReso);
+        R24 = 3.5 * sReso;
+
+        float g = sCutoff;
+        float lpc = g / (1 + g);
+
+        float dry = work[i];
+        float s = dry;
         s = s - 0.45*tptlpupw(c,s,15,sampleRateInv);
         s = tptpc(d,s,bright);
         
@@ -177,7 +202,9 @@ void PluginFx::process(float *work, int sampleSize) {
         }
         
         //half volume comp
-        work[i] = mc * (1 + R24 * 0.45);
+        float out = mc * (1 + R24 * 0.45);
+        work[i] = out * fade + dry * (1 - fade);
+        fade += fadeStep;
     }
 }
 

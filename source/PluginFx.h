@@ -42,6 +42,12 @@ class PluginFx {
     float rCutoff;
     float rReso;
     float rGain;
+
+    // per-sample smoothed coefficients (avoid zipper noise / bypass clicks)
+    float sCutoff;
+    float sReso;
+    float smoothCoef;
+    bool bypassed;
     
     // thread values; if these are different from the UI,
     // it needs to be recalculated.
