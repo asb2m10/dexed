@@ -29,6 +29,7 @@
 void DexedAudioProcessor::loadCartridge(Cartridge &sysex) {
     currentCart = sysex;
     currentCart.getProgramNames(programNames);
+    programChanged.set(true);
 }
 
 // void DexedAudioProcessor::packOpSwitch() {

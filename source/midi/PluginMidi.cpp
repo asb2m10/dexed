@@ -205,7 +205,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
                 return;
             }
 
-            setDxValue(offset, value);
+            setDxParameter(offset, value);
         }
         break;
         case 2: {
@@ -227,5 +227,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
         return;
     }
 
-    /** TODO: reset parameters */
+    // Voice/cartridge dumps refresh the UI via applyProgram/loadCartridge
+    // (programChanged), and parameter changes via setDxParameter -> the bound
+    // control follows automatically. Nothing else to refresh here.
 }

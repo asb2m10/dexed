@@ -242,9 +242,8 @@ void DexedAudioProcessorEditor::comboBoxChanged (ComboBox* comboBoxThatHasChange
 }
 
 void DexedAudioProcessorEditor::timerCallback() {
-    if ( processor->refreshUI.compareAndSetBool(false, true) ) {
+    if ( processor->programChanged.compareAndSetBool(false, true) ) {
         updateUI();
-        TRACE("OK\n");
     }
 
     if ( ! processor->peekVoiceStatus() )

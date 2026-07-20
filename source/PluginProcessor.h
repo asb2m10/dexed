@@ -126,6 +126,13 @@ class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, pu
     void mapParameters();
     void setDxValue(int offset, int v);
 
+    /**
+     * Apply a DX7 parameter change (by sysex offset) through the matching APVTS
+     * parameter, so the model/voice and the bound UI control stay in sync.
+     * Offsets without a dedicated parameter fall back to a direct model write.
+     */
+    void setDxParameter(int offset, uint8_t value);
+
     void valueTreeChildAdded(ValueTree& parentTree, ValueTree& childWhichHasBeenAdded);
 public :
     DexedApvts parameters;
@@ -142,9 +149,12 @@ public :
     File activeFileCartridge;
 
     /**
-     * This flag indicates the UI to refresh itself
+     * Set when the current program or cartridge changes from a non-UI source
+     * (host program change, incoming sysex dump). The editor polls this to
+     * rebuild the program combobox / active-program label, which are not APVTS
+     * parameters and therefore don't refresh through parameter attachments.
      */
-    juce::Atomic<bool> refreshUI { false };
+    juce::Atomic<bool> programChanged { false };
 
     float vuSignal;
     double vuDecayFactor = 0.999361; // (for 48 kHz sampling rate)

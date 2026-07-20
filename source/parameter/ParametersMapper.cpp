@@ -219,6 +219,26 @@ const String DexedAudioProcessor::getProgramName(int index) {
 void DexedAudioProcessor::changeProgramName(int index, const String& newName) {
 }
 
+void DexedAudioProcessor::setDxParameter(int offset, uint8_t value) {
+    // Route the change through the APVTS parameter: the mapped listener updates
+    // the model/voice (and echoes sysex out via setDxValue) while the bound UI
+    // control follows automatically. Uses the same value conversion as
+    // Program::pushToParameters(). A few offsets (e.g. osc key sync, operator
+    // on/off) have no dedicated parameter and fall back to a direct model write.
+    for (const auto &param : dxParameters) {
+        if ( param.pos == offset ) {
+            if ( juce::RangedAudioParameter *p = parameters.getParameter(param.name) ) {
+                float displayValue = static_cast<float>(value - param.displayOffset);
+                p->beginChangeGesture();
+                p->setValueNotifyingHost(p->convertTo0to1(displayValue));
+                p->endChangeGesture();
+                return;
+            }
+        }
+    }
+    setDxValue(offset, value);
+}
+
 void DexedAudioProcessor::setDxValue(int offset, int v) {
     if (offset < 0)
         return;

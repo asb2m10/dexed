@@ -553,6 +553,7 @@ void DexedAudioProcessor::applyProgram(const Program &program) {
     activeProgram = program;
     activeProgram.pushToParameters(parameters);
     lfo.reset(activeProgram.getParameters(IDs::lfoRate.pos));
+    programChanged.set(true);
 }
 
 void dexed_trace(const char *source, const char *fmt, ...) {
