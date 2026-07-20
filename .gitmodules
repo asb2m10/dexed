@@ -3,7 +3,7 @@
 	url = https://github.com/surge-synthesizer/tuning-library.git
 [submodule "libs/surgesynthteam_tuningui"]
 	path = libs/surgesynthteam_tuningui
-	url = https://github.com/surge-synthesizer/surgesynthteam_tuningui.git
+	url = https://github.com/asb2m10/surgesynthteam_tuningui
 [submodule "libs/MTS-ESP"]
 	path = libs/MTS-ESP
 	url = https://github.com/ODDSound/MTS-ESP.git

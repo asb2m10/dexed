@@ -242,6 +242,7 @@ public :
     // Prompt for a file
     void applySCLTuning();
     void applyKBMMapping();
+    std::unique_ptr<FileChooser> tuningFileChooser;
 
     // Load a file
     void applySCLTuning(File sclf);

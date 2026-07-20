@@ -37,48 +37,48 @@ void DexedAudioProcessor::retuneToStandard()
 }
 
 void DexedAudioProcessor::applySCLTuning() {
-    FileChooser fc( "Please select a scale (.scl) file.", File(), "*.scl" );
-    File s;
+    tuningFileChooser = std::make_unique<FileChooser>( "Please select a scale (.scl) file.", File(), "*.scl" );
 
-    // loop to enforce the proper selection
-    for (;;) {
-        // open file chooser dialog
-        if (!fc.browseForFileToOpen())
-            // User cancelled
-            return;
-        s = fc.getResult();
+    // on validation error, the alert callback re-opens the chooser to enforce the proper selection
+    auto retry = [this](int) { applySCLTuning(); };
 
-        // enforce file extenstion ''.scl''.
-        // (reason: the extension ''.scl'' is mandatory according to
-        // ''https://www.huygens-fokker.org/scala/scl_format.html''
-        if (s.getFileExtension() != ".scl") {
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".scl\" extension (in lowercase!) are allowed.");
-            continue;
-        }
+    tuningFileChooser->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+        [this, retry](const FileChooser& fc) {
+            if (fc.getResults().isEmpty())
+                // User cancelled
+                return;
+            File s = fc.getResult();
 
-        // enforce to select file below the max limit16KB sized files
-        if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
-            std::string msg;
-            msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
-            continue;
-        }
+            // enforce file extenstion ''.scl''.
+            // (reason: the extension ''.scl'' is mandatory according to
+            // ''https://www.huygens-fokker.org/scala/scl_format.html''
+            if (s.getFileExtension() != ".scl") {
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".scl\" extension (in lowercase!) are allowed.",
+                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                return;
+            }
 
-        // enforce to select non-empty file
-        // TODO: check, whether zero sized files may occur indeed here; if not, delete this if-statement, please
-        if (s.getSize() == 0) {
-            std::string msg;
-            msg = "File is empty.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
-            continue;
-        }
+            // enforce to select file below the max limit16KB sized files
+            if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
+                std::string msg;
+                msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
+                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                return;
+            }
 
-        // try to apply the SCL file
-        applySCLTuning(s);
+            // enforce to select non-empty file
+            if (s.getSize() == 0) {
+                std::string msg;
+                msg = "File is empty.";
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
+                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                return;
+            }
 
-        // exit the loop
-        break;
-    }
+            // try to apply the SCL file
+            applySCLTuning(s);
+        });
 }
 
 void DexedAudioProcessor::applySCLTuning(File s) {
@@ -114,47 +114,47 @@ void DexedAudioProcessor::applySCLTuning(std::string sclcontents) {
 }
 
 void DexedAudioProcessor::applyKBMMapping() {
-    FileChooser fc( "Please select a keyboard map (.kbm) file.", File(), "*.kbm" );
-    File s;
+    tuningFileChooser = std::make_unique<FileChooser>( "Please select a keyboard map (.kbm) file.", File(), "*.kbm" );
 
-    // loop to enforce the proper selection
-    for (;;) {
-        // invoke file chooser dialog
-        if (!fc.browseForFileToOpen())
-            return; // User cancelled
-        s = fc.getResult();
+    // on validation error, the alert callback re-opens the chooser to enforce the proper selection
+    auto retry = [this](int) { applyKBMMapping(); };
 
-        // enforce file extenstion ''.kbm''.
-        // (reason: the extension ''.kbm'' is mandatory according to
-        // ''https://www.huygens-fokker.org/scala/scl_format.html''
-        if (s.getFileExtension() != ".kbm") {
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".kbm\" extension (in lowercase!) are allowed.");
-            continue;
-        }
+    tuningFileChooser->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+        [this, retry](const FileChooser& fc) {
+            if (fc.getResults().isEmpty())
+                return; // User cancelled
+            File s = fc.getResult();
 
-        // enforce to select file below the max limit16KB sized files
-        if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
-            std::string msg;
-            msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
-            continue;
-        }
+            // enforce file extenstion ''.kbm''.
+            // (reason: the extension ''.kbm'' is mandatory according to
+            // ''https://www.huygens-fokker.org/scala/scl_format.html''
+            if (s.getFileExtension() != ".kbm") {
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".kbm\" extension (in lowercase!) are allowed.",
+                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                return;
+            }
 
-        // enforce to select non-empty file
-        // TODO: check, whether zero sized files may occur indeed here; if not, delete this if-statement, please
-        if (s.getSize() == 0) {
-            std::string msg;
-            msg = "File is empty.";
-            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "File size error!", msg);
-            continue;
-        }
+            // enforce to select file below the max limit16KB sized files
+            if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
+                std::string msg;
+                msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
+                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                return;
+            }
 
-        // try to apply KBM mapping
-        applyKBMMapping(s);
+            // enforce to select non-empty file
+            if (s.getSize() == 0) {
+                std::string msg;
+                msg = "File is empty.";
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
+                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                return;
+            }
 
-        // exit the loop
-        break;
-    }
+            // try to apply KBM mapping
+            applyKBMMapping(s);
+        });
 }
 
 void DexedAudioProcessor::applyKBMMapping( File s )

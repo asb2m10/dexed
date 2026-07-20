@@ -85,6 +85,8 @@ class CartManager : public Component, public Button::Listener, public DragAndDro
 
     File cartDir;
 
+    std::unique_ptr<FileChooser> fileChooser;
+
     DexedAudioProcessorEditor *mainWindow;
 
     void showSysexConfigMsg();

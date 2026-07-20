@@ -127,13 +127,20 @@ void DexedAudioProcessorEditor::loadCart(File file) {
     }
 
     if ( rc != 0 ) {
-        rc = AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Unable to find DX7 sysex cartridge in file",
-                                          "This sysex file is not for the DX7 or it is corrupted. "
-                                          "Do you still want to load this file as random data ?");
-        if ( rc == 0 )
-            return;
+        AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Unable to find DX7 sysex cartridge in file",
+                                     "This sysex file is not for the DX7 or it is corrupted. "
+                                     "Do you still want to load this file as random data ?", {}, {}, this,
+                                     ModalCallbackFunction::create([this, cart, file](int result) {
+                                         if ( result != 0 )
+                                             applyCart(cart, file);
+                                     }));
+        return;
     }
 
+    applyCart(cart, file);
+}
+
+void DexedAudioProcessorEditor::applyCart(Cartridge cart, File file) {
     processor->loadCartridge(cart);
     rebuildProgramCombobox();
     processor->setCurrentProgram(0);
@@ -144,16 +151,17 @@ void DexedAudioProcessorEditor::loadCart(File file) {
 }
 
 void DexedAudioProcessorEditor::saveCart() {
-    File startFileName = processor->activeFileCartridge.exists() ? processor->activeFileCartridge : processor->dexedCartDir;
-
-    FileChooser fc ("Export DX sysex...", processor->dexedCartDir, "*.syx;*.SYX", 1);
-    if ( fc.browseForFileToSave(true) ) {
-        if ( ! processor->currentCart.saveVoice(fc.getResults().getReference(0)) ) {
-            AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
-                                              "Error",
-                                              "Unable to write: " + fc.getResults().getReference(0).getFullPathName());
-        }
-    }
+    fileChooser = std::make_unique<FileChooser>("Export DX sysex...", processor->dexedCartDir, "*.syx;*.SYX", true);
+    fileChooser->launchAsync(FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
+                             [this](const FileChooser& fc) {
+                                 if ( fc.getResults().isEmpty() )
+                                     return;
+                                 if ( ! processor->currentCart.saveVoice(fc.getResult()) ) {
+                                     AlertWindow::showMessageBoxAsync (AlertWindow::WarningIcon,
+                                                                       "Error",
+                                                                       "Unable to write: " + fc.getResult().getFullPathName());
+                                 }
+                             });
 }
 
 void DexedAudioProcessorEditor::tuningShow() {
@@ -298,105 +306,115 @@ void DexedAudioProcessorEditor::rebuildProgramCombobox() {
 }
 
 void DexedAudioProcessorEditor::storeProgram() {
+    storeProgramShowDialog(processor->currentCart, File());
+}
+
+void DexedAudioProcessorEditor::storeProgramShowDialog(Cartridge destSysex, File externalFile) {
     String currentName = processor->activeProgram.getName();
-    Cartridge destSysex = processor->currentCart;
-    File *externalFile = NULL;
-
     bool activeCartridgeFound = processor->activeFileCartridge.exists();
+    bool hasExternalFile = externalFile.exists();
+    String msg;
 
-    while (true) {
-        String msg;
-
-        if ( externalFile == NULL ) {
-            if ( activeCartridgeFound )
-                msg = "Store program to current (" + processor->activeFileCartridge.getFileName() + ") / new cartridge";
-            else
-                msg = "Store program to current / new cartridge";
-        } else {
-            msg = "Store program to " + externalFile->getFileName();
-        }
-
-        AlertWindow dialog("Store Program", msg, AlertWindow::NoIcon, this);
-        dialog.addTextEditor("Name", currentName, String("Name"), false);
-        // TODO: fix the name length to 10
-
-        StringArray programs;
-        destSysex.getProgramNames(programs);
-        dialog.addComboBox("Dest", programs, "Program Destination");
-
-        if ( externalFile == NULL ) {
-            StringArray saveAction;
-            saveAction.add("Store program to DAW plugin song state");
-            saveAction.add("Store program and create a new copy of the .syx cartridge");
-            if ( activeCartridgeFound )
-                saveAction.add("Store program and overwrite current .syx cartridge");
-
-            dialog.addComboBox("SaveAction", saveAction, "Store Action");
-        }
-
-        dialog.addButton("OK", 0, KeyPress(KeyPress::returnKey));
-        dialog.addButton("CANCEL", 1, KeyPress(KeyPress::escapeKey));
-        dialog.addButton("EXTERNAL FILE", 2, KeyPress());
-        int response = dialog.runModalLoop();
-
-        if ( response == 2 ) {
-            FileChooser fc("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX;*.*", 1);
-
-            if ( fc.browseForFileToOpen() ) {
-                if ( externalFile != NULL ) 
-                    delete externalFile;
-
-                externalFile = new File(fc.getResults().getReference(0));
-                if ( destSysex.load(*externalFile) == 0 )
-                    continue;
-                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Read error", "Unable to read file");
-            }
-        }
-
-        if ( response == 0 ) {
-            TextEditor *name = dialog.getTextEditor("Name");
-            ComboBox *dest = dialog.getComboBoxComponent("Dest");
-
-            int programNum = dest->getSelectedItemIndex();
-            String programName(name->getText());
-            if ( programName.length() > 10 ) {
-                int toStrip = programName.length() - 10;
-                programName = programName.dropLastCharacters(toStrip);
-            }
-
-            if ( externalFile == NULL ) {
-                // TODO: build something in the processor to do this...
-                // processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
-                rebuildProgramCombobox();
-                processor->setCurrentProgram(programNum);
-                processor->updateHostDisplay();
-
-                int action = dialog.getComboBoxComponent("SaveAction")->getSelectedItemIndex();
-                if ( action > 0 ) {
-                    File destination = processor->activeFileCartridge;
-                    if ( action == 1 ) {
-                        FileChooser fc("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX", 1);
-                        if ( ! fc.browseForFileToSave(true) )
-                            break;
-                        destination = fc.getResult();
-                    }
-
-                    processor->currentCart.saveVoice(destination);
-                    processor->activeFileCartridge = destination;
-                }
-            } else {
-                // TODO: build something in the processor to do this...
-                // destSysex.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
-                if ( ! destSysex.saveVoice(*externalFile)) {
-                    AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
-                }
-            }
-        }
-        break;
+    if ( ! hasExternalFile ) {
+        if ( activeCartridgeFound )
+            msg = "Store program to current (" + processor->activeFileCartridge.getFileName() + ") / new cartridge";
+        else
+            msg = "Store program to current / new cartridge";
+    } else {
+        msg = "Store program to " + externalFile.getFileName();
     }
 
-    if ( externalFile != NULL )
-        delete externalFile;
+    auto dialog = new AlertWindow("Store Program", msg, AlertWindow::NoIcon, this);
+    dialog->addTextEditor("Name", currentName, String("Name"), false);
+    dialog->getTextEditor("Name")->setInputRestrictions(10);
+
+    StringArray programs;
+    destSysex.getProgramNames(programs);
+    dialog->addComboBox("Dest", programs, "Program Destination");
+
+    if ( ! hasExternalFile ) {
+        StringArray saveAction;
+        saveAction.add("Store program to DAW plugin song state");
+        saveAction.add("Store program and create a new copy of the .syx cartridge");
+        if ( activeCartridgeFound )
+            saveAction.add("Store program and overwrite current .syx cartridge");
+
+        dialog->addComboBox("SaveAction", saveAction, "Store Action");
+    }
+
+    dialog->addButton("OK", 0, KeyPress(KeyPress::returnKey));
+    dialog->addButton("CANCEL", 1, KeyPress(KeyPress::escapeKey));
+    dialog->addButton("EXTERNAL FILE", 2, KeyPress());
+
+    dialog->enterModalState(true, ModalCallbackFunction::create(
+        [this, dialog, destSysex, externalFile, hasExternalFile](int response) {
+            storeProgramResponse(dialog, response, destSysex, externalFile, hasExternalFile);
+        }), true);
+}
+
+void DexedAudioProcessorEditor::storeProgramResponse(AlertWindow *dialog, int response, Cartridge destSysex, File externalFile, bool hasExternalFile) {
+    if ( response == 2 ) {
+        fileChooser = std::make_unique<FileChooser>("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX;*.*", true);
+        fileChooser->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                                 [this, destSysex](const FileChooser& fc) mutable {
+                                     if ( fc.getResults().isEmpty() ) {
+                                         cartManager.resetActiveSysex();
+                                         return;
+                                     }
+                                     File chosenFile = fc.getResult();
+                                     if ( destSysex.load(chosenFile) == 0 ) {
+                                         storeProgramShowDialog(destSysex, chosenFile);
+                                         return;
+                                     }
+                                     AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Read error", "Unable to read file");
+                                     cartManager.resetActiveSysex();
+                                 });
+        return;
+    }
+
+    if ( response == 0 ) {
+        TextEditor *name = dialog->getTextEditor("Name");
+        ComboBox *dest = dialog->getComboBoxComponent("Dest");
+
+        int programNum = dest->getSelectedItemIndex();
+        String programName(name->getText());
+
+        if ( ! hasExternalFile ) {
+            // TODO: build something in the processor to do this...
+            // processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
+            rebuildProgramCombobox();
+            processor->setCurrentProgram(programNum);
+            processor->updateHostDisplay();
+
+            int action = dialog->getComboBoxComponent("SaveAction")->getSelectedItemIndex();
+            if ( action > 0 ) {
+                if ( action == 1 ) {
+                    fileChooser = std::make_unique<FileChooser>("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX", true);
+                    fileChooser->launchAsync(FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
+                                             [this](const FileChooser& fc) {
+                                                 if ( ! fc.getResults().isEmpty() ) {
+                                                     File destination = fc.getResult();
+                                                     processor->currentCart.saveVoice(destination);
+                                                     processor->activeFileCartridge = destination;
+                                                 }
+                                                 cartManager.resetActiveSysex();
+                                             });
+                    return;
+                }
+
+                File destination = processor->activeFileCartridge;
+                processor->currentCart.saveVoice(destination);
+                processor->activeFileCartridge = destination;
+            }
+        } else {
+            // TODO: build something in the processor to do this...
+            // destSysex.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
+            if ( ! destSysex.saveVoice(externalFile)) {
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
+            }
+        }
+    }
+
     cartManager.resetActiveSysex();
 }
 
@@ -456,14 +474,14 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
         if (fn.endsWithIgnoreCase(".scl"))
         {
             if (filesize == 0) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' is empty."
                 );
             }
             else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit ("+std::to_string(MAX_SCL_KBM_FILE_SIZE)+")."
@@ -476,14 +494,14 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
         if (fn.endsWithIgnoreCase(".kbm"))
         {
             if (filesize == 0) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' is empty."
                 );
             }
             else if (filesize > MAX_SCL_KBM_FILE_SIZE) {
-                AlertWindow::showMessageBox(
+                AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
                     "File size error!",
                     "File \'" + fn.toStdString() + "\' has " + std::to_string(filesize) + " bytes, exceeding the maximum limit (" + std::to_string(MAX_SCL_KBM_FILE_SIZE) + ")."
@@ -495,20 +513,20 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
         }
     }
     catch (const std::ios_base::failure& ex) {
-        AlertWindow::showMessageBox(
+        AlertWindow::showMessageBoxAsync(
             AlertWindow::WarningIcon, 
             "I/O error!", 
             "Related to file \'" + fn.toStdString() + "\', an exception (std::ios_base::failure) occured: " + ex.what()
         );
     }
     catch (std::bad_alloc& ex) {
-        AlertWindow::showMessageBox(
+        AlertWindow::showMessageBoxAsync(
             AlertWindow::WarningIcon, 
             "I/O error!", 
             "Related to file \'" + fn.toStdString() + "\', an exception (std::bad_alloc) occured: " + ex.what());
     }
     catch (...) {
-        AlertWindow::showMessageBox(
+        AlertWindow::showMessageBoxAsync(
             AlertWindow::WarningIcon, 
             "I/O error!", 
             "Related to file \'"+fn.toStdString()+"\', an unknown exception occured.");

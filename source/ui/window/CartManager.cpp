@@ -261,12 +261,15 @@ void CartManager::buttonClicked(juce::Button *buttonThatWasClicked) {
     }
 
     if ( buttonThatWasClicked == loadButton.get() ) {
-        FileChooser fc ("Import original DX sysex...", File::getSpecialLocation(File::SpecialLocationType::userDocumentsDirectory), "*.syx;*.SYX;*.*", 1);
+        fileChooser = std::make_unique<FileChooser>("Import original DX sysex...", File::getSpecialLocation(File::SpecialLocationType::userDocumentsDirectory), "*.syx;*.SYX;*.*", true);
 
-        if ( fc.browseForFileToOpen()) {
-            mainWindow->loadCart(fc.getResult());
-            updateCartFilename();
-        }
+        fileChooser->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
+                                 [this](const FileChooser& fc) {
+                                     if ( fc.getResults().isEmpty() )
+                                         return;
+                                     mainWindow->loadCart(fc.getResult());
+                                     updateCartFilename();
+                                 });
         return;
     }
 
@@ -320,17 +323,19 @@ void CartManager::fileClicked(const File& file, const MouseEvent& e) {
         menu.addSeparator();
         menu.addItem(1020, "Refresh");
 
-        switch(menu.show()) {
-        case 1000:
-            file.revealToUser();
-            break;
-        case 1010 :
-            mainWindow->processor->sendSysexCartridge(file);
-            break;
-        case 1020:
-            cartBrowserList->refresh();
-            break;
-        }
+        menu.showMenuAsync(PopupMenu::Options(), [this, file](int result) {
+            switch(result) {
+            case 1000:
+                file.revealToUser();
+                break;
+            case 1010 :
+                mainWindow->processor->sendSysexCartridge(file);
+                break;
+            case 1020:
+                cartBrowserList->refresh();
+                break;
+            }
+        });
         return;
     }
 }
@@ -380,28 +385,30 @@ void CartManager::programRightClicked(ProgramListBox *source, int pos) {
     if ( source == activeCart.get() )
         menu.addItem(1010, "Send current sysex cartridge to DX7");
 
-    switch(menu.show())  {
-        case 1000: {
-            Program program;
+    menu.showMenuAsync(PopupMenu::Options(), [this, source, pos](int result) {
+        switch(result)  {
+            case 1000: {
+                Program program;
 
-            if ( source == activeCart.get() ) {
-                program = mainWindow->processor->currentCart.unpackProgram(pos);
-            } else {
-                program = source->getCurrentCart().unpackProgram(pos);
-            }
+                if ( source == activeCart.get() ) {
+                    program = mainWindow->processor->currentCart.unpackProgram(pos);
+                } else {
+                    program = source->getCurrentCart().unpackProgram(pos);
+                }
 
-            if ( mainWindow->processor->sysexComm.isOutputActive() ) {
-                uint8_t msg[163];
-                exportSysexPgm(msg, program.getRawData());
-                msg[2] |= mainWindow->processor->sysexComm.getChl();
-                mainWindow->processor->sysexComm.send(MidiMessage(msg, 163));
+                if ( mainWindow->processor->sysexComm.isOutputActive() ) {
+                    uint8_t msg[163];
+                    exportSysexPgm(msg, program.getRawData());
+                    msg[2] |= mainWindow->processor->sysexComm.getChl();
+                    mainWindow->processor->sysexComm.send(MidiMessage(msg, 163));
+                }
+                break;
             }
-            break;
+            case 1010:
+                mainWindow->processor->sendCurrentSysexCartridge();
+                break;
         }
-        case 1010:
-            mainWindow->processor->sendCurrentSysexCartridge();
-            break;
-    }
+    });
 }
 
 void CartManager::programDragged(ProgramListBox *destListBox, int dest, char *packedPgm) {

@@ -48,7 +48,11 @@ class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox:
 
     SharedResourcePointer<DXLookNFeel> lookAndFeel;
     std::unique_ptr<juce::DialogWindow> dexedParameterDialog;
+    std::unique_ptr<FileChooser> fileChooser;
     void resetSize();
+    void applyCart(Cartridge cart, File file);
+    void storeProgramShowDialog(Cartridge destSysex, File externalFile);
+    void storeProgramResponse(AlertWindow *dialog, int response, Cartridge destSysex, File externalFile, bool hasExternalFile);
 public:
     DexedAudioProcessor *processor;
 
