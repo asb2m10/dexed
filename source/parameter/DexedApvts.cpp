@@ -6,7 +6,8 @@
 class ParameterDx : public juce::AudioParameterInt {
 public:
     ParameterDx(const MetaParameterID &paramID, int steps)
-        : juce::AudioParameterInt(paramID.parameter(), paramID.displayName(), 0, steps, 0) {
+        : juce::AudioParameterInt(paramID.parameter(), paramID.displayName(),
+                                  -paramID.displayOffset, steps - paramID.displayOffset, 0) {
     }
 };
 

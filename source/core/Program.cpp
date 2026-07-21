@@ -23,7 +23,7 @@ void Program::setName(const juce::String &name) {
 }
 
 void Program::pushToParameters(const DexedApvts &apvts) const {
-    //juce::ScopedValueSetter<bool> setter(apvts.pushToParameterInProgress, true);
+    juce::ScopedValueSetter<bool> setter(apvts.pushToParameterInProgress, true);
 
     uint8_t check[PROGRAM_SIZE];
     memcpy(check, data, PROGRAM_SIZE);

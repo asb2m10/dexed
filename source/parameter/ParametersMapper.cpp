@@ -53,7 +53,7 @@ void DexedAudioProcessor::mapParameters() {
         parameters.mapTo(param.name, [this, param](float newValue) {
             if ( parameters.pushToParameterInProgress )
                 return;
-            uint8_t value = static_cast<uint8_t>(newValue) + param.displayOffset;
+            uint8_t value = static_cast<uint8_t>(static_cast<int>(newValue) + param.displayOffset);
             setDxValue(param.pos, value);
         });
     }

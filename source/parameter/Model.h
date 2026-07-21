@@ -23,13 +23,13 @@ namespace IDs {
             DECLARE_METADX(lfoKeySync, 141, 0)
             DECLARE_METADX(lfoWaveform, 142, 0)
             DECLARE_METADX(pitchModSens, 143, 0)
-            DECLARE_METADX(transpose, 144, -24)
+            DECLARE_METADX(transpose, 144, 24)
             DECLARE_METADX(on, 155, 0)  // Packed binary flags for operators
 
                 // Parameters based on operators (1-6)
                 DECLARE_METADX(egRate, 0, 0)
                 DECLARE_METADX(egLevel, 4, 0)
-                DECLARE_METADX(breakpoint, 8, -8)
+                DECLARE_METADX(breakpoint, 8, 0)
                 DECLARE_METADX(lScaleDepth, 9, 0)
                 DECLARE_METADX(rScaleDepth, 10, 0)
                 DECLARE_METADX(lKeyScale, 11, 0)
