@@ -19,10 +19,8 @@ Pre-release builds are available with the [Nightly Releases](https://github.com/
 
 Donation
 --------
-As a maintainer of this 10-year-old project, donations are welcomed. This also applies for the Apple users 
-to cover for the notarization of this software in the coming years. Thank you!
-
-https://www.paypal.com/paypalme/asb2m10
+Donations have been discontinued (thanks to everyone who has contributed!). I'm planning to release a new Farfisa
+Organ synth for iOS — that will be the way to support Dexed going forward.
 
 Dexed Forks
 -----------
@@ -31,6 +29,20 @@ Dexed Forks
 
 Changelog
 ---------
+#### Version 1.1.0
+* Complete rewrite of event handling to support a modern plugin framework
+  - This should solve most of the pending automation issues Dexed had with other DAWs
+  - Dexed should be much more responsive now that events are handled entirely by JUCE
+  - Note that a Dexed 1.1.x DAW project can read 1.0.x ones, but not the other way around
+* Cleanup of most remaining usages of deprecated code
+* Source tree reorganized (`Source/` -> `source/`, `Documentation/` -> `doc/`) into `core/`, `engine/`,
+  `midi/`, `parameter/`, `ui/` modules; the bundled VST3 SDK submodule was removed in favor of the one
+  pulled in via `libs/vst3sdk`/CLAP
+* Fixed filter click on automation
+* Fixed possible crash on malformed cartridge data
+* New developer view that lets advanced users inspect Dexed's internal state — ALT+CLICK on the Dexed logo
+  opens the debugger. This is for internal use only and unsupported.
+
 #### Version 1.0.1
 * Let DAW scale the UI and then let the user zoom it further if needed
 * Fixed scaling issue with CLAP format
@@ -47,7 +59,7 @@ Changelog
 * Active program is now easier to see
 
 #### Version 0.9.8
-* Accessibility implementation (including [keyboard shortcuts](https://github.com/asb2m10/dexed/blob/master/Documentation/Keybindings.md))
+* Accessibility implementation (including [keyboard shortcuts](https://github.com/asb2m10/dexed/blob/master/doc/Keybindings.md))
 * UI component refresh
 * Mono/Poly parameter is now a plugin parameter
 * Copy/paste operator values are now text based (and system wide)
@@ -61,73 +73,6 @@ Changelog
 * Releases are now notarized for macOS
 * Fix for VST3 automation (again)
 * For developers: cmake is now the built system
-
-#### Version 0.9.6
-* Apple Silicon M1 builds
-* Fix VST3 automation issues
-* Fix to apply UI scaling only when applicable
-* Fix hang notes on program changes
-
-#### Version 0.9.5
-* Added support for SCL/KBM micro tuning
-* Added initial support for MPE performance
-* Upgraded build system to use JUCE 6.0 and build from locally acquired JUCE
-* A Collection of small UI changes, including higher contrast GUI assets, better sub-window management, 
-  and mouse wheel support
-* Added VST3 support
-
-#### Version 0.9.4HF1
-* Fixed sysex messages with unwanted pitch bend
-
-#### Version 0.9.4
-* Standalone application version of Dexed
-* Midi learn support for midi CC messages
-* More accurate detune for operators
-* More accurate EG envelopes. thanks @jeremybernstein
-* Pitchbend now listen to any channels
-* Fixed 'clicking' in mono mode
-* Fixed implementation for Midi CC 0x78 and 0x7B (All Sound Off / All Notes Off)
-* Windows/macOS installers
-
-#### Version 0.9.3
-* Preliminary live operator level update
-* Support for incoming parameter change messages
-* More permissive on cartridge sysex type; the validation is now done on size (4104/4096 bytes)
-* Midi 'All Note Off; 0x7B' support
-* Breakpoint values are now shown as notes. thanks @tico-tico
-* Fixed op feedback calibrated for Mark I engine
-* Fixed for breakpoint levels. thanks @Sentinel77
-* Fixed LFO delay issue issues upon large values
-* Fixed for receiving sysex cartridge. thanks @Sentinel77
-* Fixed operator switch changes are now sent via sysex
-
-#### Version 0.9.2
-* Mark I engine is now the default engine
-* Added operator mute switch
-* Added Tune (MASTER TUNE ADJ) knob
-* Correct feedback implementation for Algo 4 and 6 (engine Mk I only)
-* Single click program select
-* Fixed sysex issue with wrong machine ID
-* Fixed for parameter hosts values. thanks @Sentinel77
-
-#### Version 0.9.1
-* Mark I engine now uses 10-bit sine/exp tables. Still a work in progress but we are getting there
-* More accurate FM feedback on the Mark I and OPL Series engine
-* Wheel, Foot, Breath, Aftertouch modulation support
-* Fixed the display of some more 'complex' algorithms
-* Drop of .syx files in the cartridge manager
-* Dexed data directory can now optionally reside in the same location where the binary is installed
-* 'Send current program to DX7' in Cartridge Manager works as designed
-* Support for sysex streams (multiple sysex messages in one .syx file)
-* falkTX upstream fixes for Linux
-
-#### Version 0.9.0
-* Apple AU support
-* Cartridge Manager
-* Store action also can update the currently loaded cartridge
-* Basic theming
-* Fixed the UI corruption when more than one Dexed instance was loaded
-* Fixed wrong display value issues (coarse and fine)
 
 Credits & thanks
 ----------------
@@ -177,4 +122,4 @@ Then you crate the cmake build files that are will be created in the build direc
 
 If you get missing header compilation errors, be sure to check the [known Linux dependencies](https://github.com/asb2m10/dexed/wiki/Linux-build-dependencies) based on your distribution for Linux.
 
-Binaries will be found in `~/dexed/build/Source/Dexed_artefacts/*`
+Binaries will be found in `~/dexed/build/source/Dexed_artefacts/*`
