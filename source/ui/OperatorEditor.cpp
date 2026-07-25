@@ -222,8 +222,7 @@ OperatorEditor::~OperatorEditor() {
 }
 
 //==============================================================================
-void OperatorEditor::paint(juce::Graphics& g)
-{
+void OperatorEditor::paint(juce::Graphics& g) {
     g.drawImage(background, 0, 0, 287, 218, 0, 0, 574, 436);
 
     if ( opSwitch->getToggleState() )
@@ -242,8 +241,7 @@ void OperatorEditor::paint(juce::Graphics& g)
     g.drawImage(light, 198, 24, 14, 14, 0, !state ? 0 : 28, 28, 28);
 }
 
-void OperatorEditor::resized()
-{
+void OperatorEditor::resized() {
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 

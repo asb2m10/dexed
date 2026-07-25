@@ -407,8 +407,7 @@ void DexedAudioProcessor::keyup(uint8_t chan, uint8_t pitch, uint8_t velo) {
     for (note=0; note<MAX_ACTIVE_NOTES; ++note) {
         if ( ( ( controllers.mpeEnabled && voices[note].channel == chan ) || // MPE node - find voice by channel
                (!controllers.mpeEnabled && voices[note].midi_note == pitch ) ) && // regular mode find voice by pitch
-             voices[note].keydown ) // but still only grab the one which is keydown
-        {
+            voices[note].keydown ) { // but still only grab the one which is keydown
             voices[note].keydown = false;
 			//TRACE("deactivate %d [ %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d ]", pitch, ACT(voices[0]), ACT(voices[1]), ACT(voices[2]), ACT(voices[3]), ACT(voices[4]), ACT(voices[5]), ACT(voices[6]), ACT(voices[7]), ACT(voices[8]), ACT(voices[9]), ACT(voices[10]), ACT(voices[11]), ACT(voices[12]), ACT(voices[13]), ACT(voices[14]), ACT(voices[15]));
             break;

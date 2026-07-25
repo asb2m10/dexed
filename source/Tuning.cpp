@@ -1,16 +1,13 @@
 #include "PluginProcessor.h"
 #include "parameter/Model.h"
 
-int DexedAudioProcessor::tuningTranspositionShift()
-{
+int DexedAudioProcessor::tuningTranspositionShift() {
     int transpose = activeProgram[IDs::transpose.pos];
     if( synthTuningState->is_standard_tuning() || ! controllers.transpose12AsScale )
         return transpose - 24;
-    else
-    {
+    else {
         int d144 = transpose;
-        if( d144 % 12 == 0 )
-        {
+        if( d144 % 12 == 0 ) {
             int oct = (d144 - 24) / 12;
             int res = oct * synthTuningState->scale_length();
             return res;
@@ -20,8 +17,7 @@ int DexedAudioProcessor::tuningTranspositionShift()
     }
 }
 
-void DexedAudioProcessor::resetTuning(std::shared_ptr<TuningState> t)
-{
+void DexedAudioProcessor::resetTuning(std::shared_ptr<TuningState> t) {
     synthTuningState = t;
     synthTuningStateLast = t;
     for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
@@ -29,8 +25,7 @@ void DexedAudioProcessor::resetTuning(std::shared_ptr<TuningState> t)
             voices[i].dx7_note->tuning_state_ = synthTuningState;
 }
 
-void DexedAudioProcessor::retuneToStandard()
-{
+void DexedAudioProcessor::retuneToStandard() {
     currentSCLData = "";
     currentKBMData = "";
     resetTuning(createStandardTuning());
@@ -53,8 +48,7 @@ void DexedAudioProcessor::applySCLTuning() {
             // (reason: the extension ''.scl'' is mandatory according to
             // ''https://www.huygens-fokker.org/scala/scl_format.html''
             if (s.getFileExtension() != ".scl") {
-                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".scl\" extension (in lowercase!) are allowed.",
-                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".scl\" extension (in lowercase!) are allowed.", {}, nullptr, ModalCallbackFunction::create(retry));
                 return;
             }
 
@@ -62,8 +56,7 @@ void DexedAudioProcessor::applySCLTuning() {
             if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
                 std::string msg;
                 msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
-                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg, {}, nullptr, ModalCallbackFunction::create(retry));
                 return;
             }
 
@@ -71,8 +64,7 @@ void DexedAudioProcessor::applySCLTuning() {
             if (s.getSize() == 0) {
                 std::string msg;
                 msg = "File is empty.";
-                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
-                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg, {}, nullptr, ModalCallbackFunction::create(retry));
                 return;
             }
 
@@ -87,8 +79,7 @@ void DexedAudioProcessor::applySCLTuning(File s) {
 }
 
 void DexedAudioProcessor::applySCLTuning(std::string sclcontents) {
-    if( currentKBMData.size() < 1 )
-    {
+    if( currentKBMData.size() < 1 ) {
         auto t = createTuningFromSCLData( sclcontents );
         if (t != nullptr) {
             resetTuning(t); // update tuning
@@ -99,8 +90,7 @@ void DexedAudioProcessor::applySCLTuning(std::string sclcontents) {
             resetTuning(synthTuningStateLast); // revert to the "last good working state"
         }
     }
-    else
-    {
+    else {
         auto t = createTuningFromSCLAndKBMData( sclcontents, currentKBMData );
         if (t != nullptr) {
             resetTuning(t); // update tuning
@@ -129,8 +119,7 @@ void DexedAudioProcessor::applyKBMMapping() {
             // (reason: the extension ''.kbm'' is mandatory according to
             // ''https://www.huygens-fokker.org/scala/scl_format.html''
             if (s.getFileExtension() != ".kbm") {
-                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".kbm\" extension (in lowercase!) are allowed.",
-                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Invalid file type!", "Only files with the \".kbm\" extension (in lowercase!) are allowed.", {}, nullptr, ModalCallbackFunction::create(retry));
                 return;
             }
 
@@ -138,8 +127,7 @@ void DexedAudioProcessor::applyKBMMapping() {
             if (s.getSize() > MAX_SCL_KBM_FILE_SIZE) {
                 std::string msg;
                 msg = "File size exceeded the maximum limit of " + std::to_string(MAX_SCL_KBM_FILE_SIZE) + " bytes.";
-                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
-                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg, {}, nullptr, ModalCallbackFunction::create(retry));
                 return;
             }
 
@@ -147,8 +135,7 @@ void DexedAudioProcessor::applyKBMMapping() {
             if (s.getSize() == 0) {
                 std::string msg;
                 msg = "File is empty.";
-                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg,
-                                                 {}, nullptr, ModalCallbackFunction::create(retry));
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "File size error!", msg, {}, nullptr, ModalCallbackFunction::create(retry));
                 return;
             }
 
@@ -157,8 +144,7 @@ void DexedAudioProcessor::applyKBMMapping() {
         });
 }
 
-void DexedAudioProcessor::applyKBMMapping( File s )
-{
+void DexedAudioProcessor::applyKBMMapping( File s ) {
     std::string kbmcontents = s.loadFileAsString().toStdString();
     applyKBMMapping(kbmcontents);
 }

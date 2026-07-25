@@ -146,8 +146,7 @@ DXLookNFeel::DXLookNFeel() {
     }
 
     std::unique_ptr<XmlElement> root = XmlDocument::parse(dexedTheme);
-    if ( root == NULL )
-    {
+    if ( root == NULL ) {
         TRACE("ERROR: XmlDocument::parse(): failed");
         return;
     }
@@ -302,8 +301,7 @@ void DXLookNFeel::drawToggleButton(Graphics& g, ToggleButton& button, bool isMou
 
     // One would think there is a better way...
     auto lb = dynamic_cast<LightedToggleButton *>( &button );
-    if( lb )
-    {
+    if( lb ) {
         if( imageSwitchLighted.isNull() ) {
             LookAndFeel_V4::drawToggleButton(g, button, isMouseOverButton, isButtonDown);
             return;

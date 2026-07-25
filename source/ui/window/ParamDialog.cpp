@@ -30,8 +30,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_(apvts), proc_(proc), attachments_(*this, apvts)
-{
+ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_(apvts), proc_(proc), attachments_(*this, apvts) {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
@@ -382,8 +381,7 @@ ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_
     //[/Constructor]
 }
 
-ParamDialog::~ParamDialog()
-{
+ParamDialog::~ParamDialog() {
     //[Destructor_pre]. You can add your own custom destruction code here..
     attachments_.freeAttachments();
     //[/Destructor_pre]
@@ -414,16 +412,13 @@ ParamDialog::~ParamDialog()
 }
 
 //==============================================================================
-void ParamDialog::paint (juce::Graphics& g)
-{
+void ParamDialog::paint (juce::Graphics& g) {
     //[UserPrePaint] Add your own custom painting code here..
     juce::Font font(juce::FontOptions().withHeight(15.00f).withStyle("Regular"));
 
     //[/UserPrePaint]
 
-    g.fillAll (juce::Colour (0xff3c322f));
-
-    {
+    g.fillAll (juce::Colour (0xff3c322f)); {
         int x = 20, y = 16, width = 276, height = 23;
         juce::String text (TRANS ("Pitch Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
@@ -433,9 +428,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 20, y = 56, width = 276, height = 23;
         juce::String text (TRANS ("Pitch Bend Step"));
         juce::Colour fillColour = juce::Colours::white;
@@ -445,9 +438,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 20, y = 319, width = 245, height = 23;
         juce::String text (TRANS ("DX7 Channel"));
         juce::Colour fillColour = juce::Colours::white;
@@ -457,9 +448,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 20, y = 190, width = 276, height = 23;
         juce::String text (TRANS ("Engine Resolution"));
         juce::Colour fillColour = juce::Colours::white;
@@ -469,27 +458,21 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 22, y = 174, width = 306, height = 1;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
         g.fillRect (x, y, width, height);
-    }
-
-    {
+    } {
         int x = 22, y = 227, width = 306, height = 1;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
         g.fillRect (x, y, width, height);
-    }
-
-    {
+    } {
         int x = 20, y = 96, width = 276, height = 23;
         juce::String text (TRANS ("Show Keyboard"));
         juce::Colour fillColour = juce::Colours::white;
@@ -499,18 +482,14 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 352, y = 12, width = 1, height = 349;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
         g.fillRect (x, y, width, height);
-    }
-
-    {
+    } {
         int x = 368, y = 16, width = 276, height = 23;
         juce::String text (TRANS ("Wheel"));
         juce::Colour fillColour = juce::Colours::white;
@@ -520,9 +499,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 368, y = 96, width = 276, height = 23;
         juce::String text (TRANS ("Breath"));
         juce::Colour fillColour = juce::Colours::white;
@@ -532,9 +509,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 368, y = 56, width = 276, height = 23;
         juce::String text (TRANS ("Foot"));
         juce::Colour fillColour = juce::Colours::white;
@@ -544,9 +519,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 368, y = 136, width = 276, height = 23;
         juce::String text (TRANS ("After Touch"));
         juce::Colour fillColour = juce::Colours::white;
@@ -556,9 +529,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 528, y = 163, width = 48, height = 23;
         juce::String text (TRANS ("PITCH"));
         juce::Colour fillColour = juce::Colours::white;
@@ -568,9 +539,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centred, true);
-    }
-
-    {
+    } {
         int x = 584, y = 163, width = 48, height = 23;
         juce::String text (TRANS ("AMP"));
         juce::Colour fillColour = juce::Colours::white;
@@ -580,9 +549,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centred, true);
-    }
-
-    {
+    } {
         int x = 640, y = 163, width = 48, height = 23;
         juce::String text (TRANS ("EG BIAS"));
         juce::Colour fillColour = juce::Colours::white;
@@ -592,18 +559,14 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centred, true);
-    }
-
-    {
+    } {
         int x = 376, y = 194, width = 325, height = 1;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
         g.fillRect (x, y, width, height);
-    }
-
-    {
+    } {
         int x = 371, y = 208, width = 276, height = 25;
         juce::String text (TRANS ("Tuning"));
         juce::Colour fillColour = juce::Colours::white;
@@ -613,9 +576,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 371, y = 242, width = 157, height = 25;
         juce::String text (TRANS ("Transposition 12 as:"));
         juce::Colour fillColour = juce::Colours::white;
@@ -625,18 +586,14 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 368, y = 310, width = 328, height = 1;
         juce::Colour fillColour = juce::Colours::black;
         //[UserPaintCustomArguments] Customize the painting arguments here..
         //[/UserPaintCustomArguments]
         g.setColour (fillColour);
         g.fillRect (x, y, width, height);
-    }
-
-    {
+    } {
         int x = 368, y = 318, width = 276, height = 27;
         juce::String text (TRANS ("MPE"));
         juce::Colour fillColour = juce::Colours::white;
@@ -646,9 +603,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 528, y = 318, width = 119, height = 27;
         juce::String text (TRANS ("Bend Range"));
         juce::Colour fillColour = juce::Colours::white;
@@ -658,9 +613,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 548, y = 242, width = 37, height = 25;
         juce::String text (TRANS ("12"));
         juce::Colour fillColour = juce::Colours::white;
@@ -670,9 +623,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 628, y = 242, width = 45, height = 25;
         juce::String text (TRANS ("SCL"));
         juce::Colour fillColour = juce::Colours::white;
@@ -682,9 +633,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 147, y = 16, width = 20, height = 23;
         juce::String text (TRANS ("up"));
         juce::Colour fillColour = juce::Colours::white;
@@ -694,9 +643,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 240, y = 16, width = 20, height = 23;
         juce::String text (TRANS ("dn"));
         juce::Colour fillColour = juce::Colours::white;
@@ -706,9 +653,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 20, y = 136, width = 276, height = 23;
         juce::String text (TRANS ("UI Scaling"));
         juce::Colour fillColour = juce::Colours::white;
@@ -718,9 +663,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 371, y = 277, width = 184, height = 23;
         juce::String text (TRANS ("Portamento Rate"));
         juce::Colour fillColour = juce::Colours::white;
@@ -730,9 +673,7 @@ void ParamDialog::paint (juce::Graphics& g)
         g.setFont (font);
         g.drawText (text, x, y, width, height,
                     juce::Justification::centredLeft, true);
-    }
-
-    {
+    } {
         int x = 628, y = 274, width = 75, height = 27;
         juce::String text (TRANS ("Glissando"));
         juce::Colour fillColour = juce::Colours::white;
@@ -768,8 +709,7 @@ void ParamDialog::paint (juce::Graphics& g)
     //[/UserPaint]
 }
 
-void ParamDialog::resized()
-{
+void ParamDialog::resized() {
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
@@ -777,14 +717,12 @@ void ParamDialog::resized()
     //[/UserResized]
 }
 
-void ParamDialog::sliderValueChanged (juce::Slider* sliderThatWasMoved)
-{
+void ParamDialog::sliderValueChanged (juce::Slider* sliderThatWasMoved) {
     //[UsersliderValueChanged_Pre]
     bool handled = false;
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == pitchStep.get())
-    {
+    if (sliderThatWasMoved == pitchStep.get()) {
         //[UserSliderCode_pitchStep] -- add your slider handling code here..
         pitchRangeUp->setEnabled(pitchStep->getValue() == 0);
         pitchRangeDn->setEnabled(pitchStep->getValue() == 0);
@@ -797,30 +735,25 @@ void ParamDialog::sliderValueChanged (juce::Slider* sliderThatWasMoved)
     //[/UsersliderValueChanged_Post]
 }
 
-void ParamDialog::comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged)
-{
+void ParamDialog::comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) {
     //[UsercomboBoxChanged_Pre]
     bool handled = false;
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == sysexIn.get())
-    {
+    if (comboBoxThatHasChanged == sysexIn.get()) {
         //[UserComboBoxCode_sysexIn] -- add your combo box handling code here..
         //[/UserComboBoxCode_sysexIn]
     }
-    else if (comboBoxThatHasChanged == sysexOut.get())
-    {
+    else if (comboBoxThatHasChanged == sysexOut.get()) {
         //[UserComboBoxCode_sysexOut] -- add your combo box handling code here..
         //[/UserComboBoxCode_sysexOut]
     }
-    else if (comboBoxThatHasChanged == scalingFactor.get())
-    {
+    else if (comboBoxThatHasChanged == scalingFactor.get()) {
         //[UserComboBoxCode_scalingFactor] -- add your combo box handling code here..
         //[/UserComboBoxCode_scalingFactor]
     }
 
-    else if (comboBoxThatHasChanged == profileSelector.get())
-    {
+    else if (comboBoxThatHasChanged == profileSelector.get()) {
         int idx = profileSelector->getSelectedItemIndex();
         if (idx > 0) {
             juce::File profileDir = DexedAudioProcessor::dexedAppDir.getChildFile("Profiles");
@@ -840,52 +773,44 @@ void ParamDialog::comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged)
     //[/UsercomboBoxChanged_Post]
 }
 
-void ParamDialog::buttonClicked (juce::Button* buttonThatWasClicked)
-{
+void ParamDialog::buttonClicked (juce::Button* buttonThatWasClicked) {
     //[UserbuttonClicked_Pre]
     bool handled = false;
     //[/UserbuttonClicked_Pre]
 
-    if (buttonThatWasClicked == showKeyboard.get())
-    {
+    if (buttonThatWasClicked == showKeyboard.get()) {
         //[UserButtonCode_showKeyboard] -- add your button handler code here..
         //[/UserButtonCode_showKeyboard]
     }
-    else if (buttonThatWasClicked == sclButton.get())
-    {
+    else if (buttonThatWasClicked == sclButton.get()) {
         //[UserButtonCode_sclButton] -- add your button handler code here..
         tuning_callback_(this, TuningAction::LOAD_SCL);
         handled = true;
         //[/UserButtonCode_sclButton]
     }
-    else if (buttonThatWasClicked == kbmButton.get())
-    {
+    else if (buttonThatWasClicked == kbmButton.get()) {
         //[UserButtonCode_kbmButton] -- add your button handler code here..
         tuning_callback_(this, TuningAction::LOAD_KBM);
         handled = true;
         //[/UserButtonCode_kbmButton]
     }
-    else if (buttonThatWasClicked == showTunButton.get())
-    {
+    else if (buttonThatWasClicked == showTunButton.get()) {
         //[UserButtonCode_showTunButton] -- add your button handler code here..
         tuning_callback_(this, TuningAction::SHOW_TUNING);
         handled = true;
         //[/UserButtonCode_showTunButton]
     }
-    else if (buttonThatWasClicked == resetTuningButton.get())
-    {
+    else if (buttonThatWasClicked == resetTuningButton.get()) {
         //[UserButtonCode_resetTuningButton] -- add your button handler code here..
         tuning_callback_(this, TuningAction::RESET_TUNING);
         handled = true;
         //[/UserButtonCode_resetTuningButton]
     }
-    else if (buttonThatWasClicked == mpeEnabled.get())
-    {
+    else if (buttonThatWasClicked == mpeEnabled.get()) {
         //[UserButtonCode_mpeEnabled] -- add your button handler code here..
         //[/UserButtonCode_mpeEnabled]
     }
-    else if (buttonThatWasClicked == transposeHelp.get())
-    {
+    else if (buttonThatWasClicked == transposeHelp.get()) {
         //[UserButtonCode_transposeHelp] -- add your button handler code here..
         auto te = new TextEditor();
         te->setReadOnly(true);
@@ -917,8 +842,7 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
 
         //[/UserButtonCode_transposeHelp]
     }
-    else if (buttonThatWasClicked == storeButton.get())
-    {
+    else if (buttonThatWasClicked == storeButton.get()) {
         auto* aw = new juce::AlertWindow("Save Profile", "Enter a name for this profile:", juce::MessageBoxIconType::NoIcon);
         aw->addTextEditor("name", "", "Profile name:");
         aw->addButton("Save", 1);
@@ -934,8 +858,7 @@ With the switch in the 12 (unlighted) position, transposition stays with the key
     }
 
     //[UserbuttonClicked_Post]
-    if( ! handled )
-    {
+    if( ! handled ) {
         general_callback_(this);
     }
     //[/UserbuttonClicked_Post]
@@ -1025,8 +948,7 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, bool *showKey,
     return ret;
 }
 
-void ParamDialog::setIsStandardTuning( bool b )
-{
+void ParamDialog::setIsStandardTuning( bool b ) {
     is_standard_tuning_ = b;
 
     // Allow to see the actual tuning always.

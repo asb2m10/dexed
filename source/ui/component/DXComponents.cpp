@@ -126,16 +126,14 @@ void ProgramSelector::mouseWheelMove(const MouseEvent &event, const MouseWheelDe
     sn = -1;
 #endif    
     
-    if( up )
-    {
+    if( up ) {
         accum_wheel -= sn * wheelFactor;
         int c = getSelectedItemIndex();
         if( c == 31 ) c = 0;
         else c++;
         setSelectedItemIndex(c);
     }
-    else if( dn )
-    {
+    else if( dn ) {
         accum_wheel += sn * wheelFactor;
         int c = getSelectedItemIndex();
         if( c == 0 ) c = 31;

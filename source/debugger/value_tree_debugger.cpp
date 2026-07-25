@@ -120,8 +120,7 @@ public:
 
             String propertySummary;
 
-            for (int i = 0; i < t.getNumProperties(); ++i)
-            {
+            for (int i = 0; i < t.getNumProperties(); ++i) {
                 const Identifier name = t.getPropertyName (i).toString();
                 String propertyValue = t.getProperty (name).toString();;
 #ifdef JCF_SERIALIZER
@@ -130,8 +129,7 @@ public:
                  They allow ReferenceCountedObjects that are stored in the tree
                  to save, load and display debug information easily. You won't
                  need this but it makes my life easier to leave it here - Jim. */
-                if (t[name].isObject())
-                {
+                if (t[name].isObject()) {
                     ReferenceCountedObject* p = t[name].getObject();
 
                     if (Serializable* s = dynamic_cast<Serializable*> (p))

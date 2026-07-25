@@ -27,8 +27,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-TuningShow::TuningShow ()
-{
+TuningShow::TuningShow () {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
@@ -65,8 +64,7 @@ TuningShow::TuningShow ()
     //[/Constructor]
 }
 
-TuningShow::~TuningShow()
-{
+TuningShow::~TuningShow() {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
@@ -78,8 +76,7 @@ TuningShow::~TuningShow()
 }
 
 //==============================================================================
-void TuningShow::paint (Graphics& g)
-{
+void TuningShow::paint (Graphics& g) {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
@@ -89,8 +86,7 @@ void TuningShow::paint (Graphics& g)
     //[/UserPaint]
 }
 
-void TuningShow::resized()
-{
+void TuningShow::resized() {
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
@@ -101,8 +97,7 @@ void TuningShow::resized()
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void TuningShow::setTuning( const Tunings::Tuning &t )
-{
+void TuningShow::setTuning( const Tunings::Tuning &t ) {
     tuning = t;
     if( sclt )
         sclt->setText( tuning.scale.rawText, false );

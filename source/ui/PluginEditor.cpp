@@ -33,8 +33,7 @@
 DexedAudioProcessorEditor::DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter)
     : AudioProcessorEditor (ownerFilter),
       midiKeyboard (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard),
-      cartManager(this), global(*ownerFilter, this)
-{
+      cartManager(this), global(*ownerFilter, this) {
     processor = ownerFilter;
 
     // We have to set size at startup because the keyboard doesnt show up before being added
@@ -197,8 +196,7 @@ void DexedAudioProcessorEditor::parmShow() {
     param->setDialogValues(processor->controllers, processor->sysexComm, processor->showKeyboard, processor->getZoomFactor());
     param->setIsStandardTuning(processor->synthTuningState->is_standard_tuning() );
     param->setTuningCallback([this](ParamDialog *p, ParamDialog::TuningAction which) {
-                                switch(which)
-                                {
+                                switch(which) {
                                 case ParamDialog::LOAD_SCL:
                                     this->processor->applySCLTuning();
                                     break;
@@ -216,8 +214,7 @@ void DexedAudioProcessorEditor::parmShow() {
                                 p->setIsStandardTuning(this->processor->synthTuningState->is_standard_tuning() );
                             } );
 
-    auto generalCallback = [this](ParamDialog *param)
-                               {
+    auto generalCallback = [this](ParamDialog *param) {
                                    float scale = this->processor->getZoomFactor();
                                    bool ret = param->getDialogValues(this->processor->controllers, this->processor->sysexComm, &this->processor->showKeyboard, &scale);
                                    this->processor->setZoomFactor(scale);
@@ -452,27 +449,23 @@ void DexedAudioProcessorEditor::resetZoomFactor() {
     resetSize();
 }
 
-bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files)
-{
+bool DexedAudioProcessorEditor::isInterestedInFileDrag (const StringArray &files) {
     if( files.size() != 1 ) return false;
 
-    for( auto i = files.begin(); i != files.end(); ++i )
-    {
+    for( auto i = files.begin(); i != files.end(); ++i ) {
         if( i->endsWithIgnoreCase( ".scl" ) || i->endsWithIgnoreCase( ".kbm" ) )
             return true;
     }
     return false;
 }
 
-void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, int y )
-{
+void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, int y ) {
     if( files.size() != 1 ) return;
     auto fn = files[0];
     try {
         std::ifstream in(fn.toStdString(), std::ifstream::ate | std::ifstream::binary);
         std::ifstream::pos_type filesize = in.tellg();
-        if (fn.endsWithIgnoreCase(".scl"))
-        {
+        if (fn.endsWithIgnoreCase(".scl")) {
             if (filesize == 0) {
                 AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,
@@ -491,8 +484,7 @@ void DexedAudioProcessorEditor::filesDropped (const StringArray &files, int x, i
                 processor->applySCLTuning(File(fn));
             }
         }
-        if (fn.endsWithIgnoreCase(".kbm"))
-        {
+        if (fn.endsWithIgnoreCase(".kbm")) {
             if (filesize == 0) {
                 AlertWindow::showMessageBoxAsync(
                     AlertWindow::WarningIcon,

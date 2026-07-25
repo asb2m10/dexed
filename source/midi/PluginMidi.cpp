@@ -28,20 +28,16 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             (cf0 == 0xd0 ) || // aftertouch
             (cf0 == 0xe0 ) // pb
             )
-        )
-    {
+        ) {
         // OK so find my voice index
         int voiceIndex = -1;
-        for( int i=0; i<MAX_ACTIVE_NOTES; ++i )
-        {
-            if( voices[i].keydown && voices[i].channel == channel )
-            {
+        for( int i=0; i<MAX_ACTIVE_NOTES; ++i ) {
+            if( voices[i].keydown && voices[i].channel == channel ) {
                 voiceIndex = i;
                 break;
             }
         }
-        if( voiceIndex >= 0 )
-        {
+        if( voiceIndex >= 0 ) {
             int i = voiceIndex;
             switch(cf0) {
             // THIS IS COMMENTED SINCE mepTimbre and mpePressure is not used
@@ -60,8 +56,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
             }
         }
     }
-    else
-    {
+    else {
         switch(cmd & 0xf0) {
         case 0x80 :
             keyup(channel, buf[1], buf[2]);

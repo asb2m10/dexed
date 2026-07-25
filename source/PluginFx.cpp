@@ -229,8 +229,7 @@ void PluginFx::process(float *work, int sampleSize) {
  double mc;
  if(!bandPassSw)
  mc = (1-mm)*y2 + (mm)*v;
- else
- {
+ else {
  
  mc =2 * ( mm < 0.5 ?
  ((0.5 - mm) * y2 + (mm) * y1):
