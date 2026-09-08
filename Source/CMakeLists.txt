@@ -1,6 +1,13 @@
 set(BaseTargetName Dexed)
 
-set(DEXED_JUCE_FORMATS Standalone)
+option(DEXED_SKIP_STANDALONE "Skip building the Standalone plugin format" OFF)
+option(DEXED_SKIP_CLAP "Skip building the CLAP plugin wrapper" OFF)
+
+set(DEXED_JUCE_FORMATS "")
+
+if(NOT DEXED_SKIP_STANDALONE)
+  list(APPEND DEXED_JUCE_FORMATS Standalone)
+endif()
 
 if(NOT DEXED_SKIP_VST3)
   list(APPEND DEXED_JUCE_FORMATS VST3)
@@ -31,9 +38,11 @@ juce_add_plugin("${BaseTargetName}"
         COPY_PLUGIN_AFTER_BUILD TRUE
 )
 
-clap_juce_extensions_plugin(TARGET ${BaseTargetName}
-        CLAP_ID "com.digital-suburban.dexed"
-        CLAP_FEATURES instrument FM DX7)
+if(NOT DEXED_SKIP_CLAP)
+    clap_juce_extensions_plugin(TARGET ${BaseTargetName}
+            CLAP_ID "com.digital-suburban.dexed"
+            CLAP_FEATURES instrument FM DX7)
+endif()
 
 juce_generate_juce_header(${PROJECT_NAME})
 

@@ -20,27 +20,15 @@ function(package format)
 endfunction()
 
 package(VST3)
-package(Standalone)
-package(CLAP)
-if (APPLE)
-    package(AU)
-endif()
 
 add_dependencies(installer dist)
 
-if (APPLE)
-    set(ARCH_NAME "macOS")
-elseif (WIN32)
-    set(ARCH_NAME "win")
+set(ARCH_NAME "lnx")
+
+if(BUILD_ID)
+    set(VERSION_NAME ${PROJECT_VERSION}-${BUILD_ID})
 else()
-    set(ARCH_NAME "lnx")
-endif()
-
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(VERSION_NAME ${PROJECT_VERSION})
-else()
-    set(VERSION_NAME ${PROJECT_VERSION}-NIGHTLY-${BUILD_ID})
 endif()
 
 set(PACKAGE_NAME ${PROJECT_NAME}-${VERSION_NAME}-${ARCH_NAME})
@@ -59,53 +47,3 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/installer
         COMMAND ${CMAKE_COMMAND} -E tar cvf ${CMAKE_BINARY_DIR}/installer/${PACKAGE_NAME}.zip --format=zip .
         COMMAND ${CMAKE_COMMAND} -E echo "Artifact in: installer/${PACKAGE_NAME}.zip")
-
-if (APPLE)
-    message(STATUS "Configuring for mac installer")
-    add_custom_command(
-            TARGET installer
-            POST_BUILD
-            USES_TERMINAL
-            WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-            COMMAND ${CMAKE_COMMAND} -E make_directory installer
-            COMMAND ${CMAKE_SOURCE_DIR}/assets/installers/make_macos_pkg.sh ${PROJECT_NAME} ${DIST_DIR} ${PROJECT_VERSION} ${CMAKE_BINARY_DIR}/installer ${PACKAGE_NAME}
-    )
-elseif (WIN32)
-    message(STATUS "Configuring for windows installer")
-    find_program(INNOSETUP_COMPILER_EXECUTABLE iscc)
-
-    if(
-            NOT INNOSETUP_COMPILER_EXECUTABLE
-            OR "${INNOSETUP_COMPILER_EXECUTABLE}" MATCHES "NOTFOUND"
-            OR NOT EXISTS "${INNOSETUP_COMPILER_EXECUTABLE}"
-    )
-        message(STATUS "Inno Setup compiler not found")
-    else()
-        message(
-                STATUS
-                "Inno Setup compiler found: ${INNOSETUP_COMPILER_EXECUTABLE}"
-        )
-        add_executable(innosetup::compiler IMPORTED GLOBAL)
-
-        set_target_properties(
-                innosetup::compiler
-                PROPERTIES
-                IMPORTED_LOCATION "${INNOSETUP_COMPILER_EXECUTABLE}"
-                INSTALL_SCRIPT "${CMAKE_SOURCE_DIR}/assets/installers/windows/installer.iss"
-        )
-
-        add_custom_command(
-                TARGET installer
-                POST_BUILD
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                COMMAND ${CMAKE_COMMAND} -E make_directory installer
-                COMMAND innosetup::compiler
-                /O"${CMAKE_BINARY_DIR}/installer" /DName="${PROJECT_NAME}"
-                /DNameCondensed="${PROJECT_NAME}" /DVersion="${VERSION_NAME}"
-                /DVST3 /DSA /DCLAP
-                /DLicense="${CMAKE_SOURCE_DIR}/LICENSE"
-                /DStagedAssets="${DIST_DIR}"
-                /DData="${CMAKE_SOURCE_DIR}/assets/installers/windows" "$<TARGET_PROPERTY:innosetup::compiler,INSTALL_SCRIPT>"
-        )
-    endif()
-endif()
