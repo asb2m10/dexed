@@ -178,3 +178,28 @@ Then you crate the cmake build files that are will be created in the build direc
 If you get missing header compilation errors, be sure to check the [known Linux dependencies](https://github.com/asb2m10/dexed/wiki/Linux-build-dependencies) based on your distribution for Linux.
 
 Binaries will be found in `~/dexed/build/Source/Dexed_artefacts/*`
+
+# Continuous Integration (GitHub Actions)
+
+The CI pipeline in `.github/workflows/project-pipeline.yml` builds a Linux **VST3** plugin
+only. It runs on pushes to `master` (and on version tags) and publishes the result to a
+`latest` release. To distinguish custom builds from the official ones, set a `CUSTOM_BUILD_ID`
+repository variable (e.g. `myfork`); it is appended to the build version shown in the plugin
+GUI and to the artifact filename.
+
+## Enabling the ARM64 (e.g. Orange Pi) build
+
+The ARM64 Linux build is disabled by default. To enable it:
+
+1. Register a **self-hosted GitHub Actions runner** on your ARM64 device (Orange Pi):
+   - In your fork go to **Settings → Actions → Runners → New self-hosted runner**.
+   - Choose `Linux` and `ARM64` and follow the registration steps on the device.
+   - Install the build dependencies on the device (the same ones listed in the
+     [Linux build dependencies](https://github.com/asb2m10/dexed/wiki/Linux-build-dependencies)
+     wiki, e.g. `libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev
+     libwebkit2gtk-4.1-dev libglu1-mesa-dev ccache xvfb libjack-dev libsndfile-dev`).
+2. In your fork go to **Settings → Secrets and variables → Actions → Variables** and add
+   `BUILD_ARM64` with value `true`.
+
+The next push to `master` will then also build the ARM64 VST3 and upload it to the same
+`latest` release.
