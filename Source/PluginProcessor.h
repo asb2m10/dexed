@@ -23,7 +23,9 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 
+#if HAS_CLAP_JUCE_EXTENSIONS
 #include "clap-juce-extensions/clap-juce-extensions.h"
+#endif
 
 #include "msfa/controllers.h"
 #include "msfa/dx7note.h"
@@ -67,7 +69,11 @@ const int MAX_SCL_KBM_FILE_SIZE = 16384;
 //==============================================================================
 /**
 */
+#if HAS_CLAP_JUCE_EXTENSIONS
 class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback, public clap_juce_extensions::clap_properties
+#else
+class DexedAudioProcessor  : public AudioProcessor, public AsyncUpdater, public MidiInputCallback
+#endif
 {
     static const int MAX_ACTIVE_NOTES = 16;
     ProcessorVoice voices[MAX_ACTIVE_NOTES];
