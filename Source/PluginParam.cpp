@@ -44,6 +44,7 @@ public:
 //
 Ctrl::Ctrl(String name) {
     label << name;
+    id = String();
     slider = NULL;
     button = NULL;
     comboBox = NULL;
@@ -365,6 +366,37 @@ public:
     }
 };
 
+class CtrlEngineType : public Ctrl {
+    DexedAudioProcessor *processor;
+public:
+    CtrlEngineType(String name, DexedAudioProcessor *owner) : Ctrl(name) {
+        processor = owner;
+    }
+
+    float getValueHost() {
+        int engine = processor->getEngineType();
+        engine = jmax((int) DEXED_ENGINE_MODERN, jmin((int) DEXED_ENGINE_OPL, engine));
+        return (float) engine / (float) DEXED_ENGINE_OPL;
+    }
+
+    void setValueHost(float v) {
+        int engine = roundToInt(v * (float) DEXED_ENGINE_OPL);
+        engine = jmax((int) DEXED_ENGINE_MODERN, jmin((int) DEXED_ENGINE_OPL, engine));
+        processor->setEngineType(engine);
+    }
+
+    String getValueDisplay() {
+        switch (processor->getEngineType()) {
+            case DEXED_ENGINE_MARKI: return String("Mark I");
+            case DEXED_ENGINE_OPL:   return String("OPL Series");
+            default:                 return String("Modern (24-bit)");
+        }
+    }
+
+    void updateComponent() {
+    }
+};
+
 // ************************************************************************
 // CtrlFloat - control float values
 CtrlFloat::CtrlFloat(String name, float *storageValue) : Ctrl(name) {
@@ -661,6 +693,10 @@ void DexedAudioProcessor::initCtrl() {
         ctrl.add(opCtrl[opVal].opSwitch.get());
     }
     
+    engineTypeCtrl.reset(new CtrlEngineType("Engine Type", this));
+    engineTypeCtrl->id = "dexed_engine_type";
+    ctrl.add(engineTypeCtrl.get());
+    
     for (int i=0; i < ctrl.size(); i++) {
         ctrl[i]->idx = i;
         ctrl[i]->parent = this;
@@ -777,6 +813,8 @@ const String DexedAudioProcessor::getParameterText(int index) {
 }
 
 String DexedAudioProcessor::getParameterID(int index) {
+    if (ctrl[index]->id.isNotEmpty())
+        return ctrl[index]->id;
     return getParameterName(index);
 }
 

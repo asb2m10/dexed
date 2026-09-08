@@ -405,6 +405,8 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
     controllers.at.parseConfig(root->getStringAttribute("aftertouchMod").toRawUTF8());
 
     setEngineType(root->getIntAttribute("engineType", 1));
+    if (engineTypeCtrl != nullptr)
+        setParameterNotifyingHost(engineTypeCtrl->idx, engineTypeCtrl->getValueHost());
     monoMode = root->getIntAttribute("monoMode", 0);
     controllers.masterTune = root->getIntAttribute("masterTune", 0);
     controllers.transpose12AsScale = ( root->getIntAttribute("transpose12AsScale", 1) != 0 );

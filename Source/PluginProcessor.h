@@ -175,6 +175,7 @@ public :
     std::unique_ptr<CtrlFloat> output;
     std::unique_ptr<Ctrl> tune;
     std::unique_ptr<Ctrl> monoModeCtrl;
+    std::unique_ptr<Ctrl> engineTypeCtrl;
 
     void loadCartridge(Cartridge &cart);
     void setDxValue(int offset, int v);

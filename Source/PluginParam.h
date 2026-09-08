@@ -40,6 +40,11 @@ protected:
 public:
     String label;
 
+    /**
+     * Stable host parameter ID. When empty, getParameterID() falls back to label.
+     */
+    String id;
+
     Ctrl(String name);
     void bind(Slider *s);
     void bind(Button *b);
