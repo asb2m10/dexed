@@ -38,7 +38,7 @@ public:
             Logger::setCurrentLogger(nullptr);
     }
 
-    void logFormat(const juce::String& format, ...) {
+    void logFormat(juce::String format, ...) {
         va_list args;
         va_start(args, format);
         logMessage(juce::String::formatted(format, args));
