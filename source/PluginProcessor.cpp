@@ -103,6 +103,7 @@ DexedAudioProcessor::DexedAudioProcessor()
     sendSysexChange = true;
     normalizeDxVelocity = false;
     sysexComm.listener = this;
+    sysexComm.setCommandFifo(&command);
     showKeyboard = true;
     
     memset(&voiceStatus, 0, sizeof(VoiceStatus));
@@ -291,7 +292,16 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
     // DX7 is a mono synth, but copy it to the right channel is available
     if ( buffer.getNumChannels() > 1 )
         buffer.copyFrom(1, 0, channelData, numSamples, 1);
+
     midiMessages.clear();
+    for (const auto &msg : sysexOutputQueue) {
+        midiMessages.addEvent(msg, 0);
+    }
+    sysexOutputQueue.clear();
+}
+
+void DexedAudioProcessor::queueSysexOutput(const MidiMessage &message) {
+    sysexOutputQueue.push_back(message);
 }
 
 //==============================================================================

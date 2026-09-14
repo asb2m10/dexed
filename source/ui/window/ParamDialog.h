@@ -55,7 +55,6 @@ private:
     std::unique_ptr<juce::Slider> pitchStep;
 
     std::unique_ptr<juce::ComboBox> sysexIn;
-    std::unique_ptr<juce::ComboBox> sysexOut;
     std::unique_ptr<juce::Slider> sysexChl;
     std::unique_ptr<juce::ComboBox> engineType;
     std::unique_ptr<LightedToggleButton> showKeyboard;

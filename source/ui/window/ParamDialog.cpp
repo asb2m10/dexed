@@ -61,17 +61,6 @@ ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_
 
     sysexIn->setBounds (104, 244, 224, 24);
 
-    sysexOut.reset (new juce::ComboBox ("sysexOut"));
-    addAndMakeVisible (sysexOut.get());
-    sysexOut->setExplicitFocusOrder (8);
-    sysexOut->setEditableText (false);
-    sysexOut->setJustificationType (juce::Justification::centredLeft);
-    sysexOut->setTextWhenNothingSelected (juce::String());
-    sysexOut->setTextWhenNoChoicesAvailable (TRANS ("(no choices)"));
-    sysexOut->addListener (this);
-
-    sysexOut->setBounds (104, 280, 224, 24);
-
     sysexChl.reset (new juce::Slider ("sysexChl"));
     addAndMakeVisible (sysexChl.get());
     sysexChl->setExplicitFocusOrder (9);
@@ -326,12 +315,6 @@ ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_
     //input.addArray(MidiInput::getDevices());
     sysexIn->addItemList(input, 2);
 
-    StringArray output;
-    output.add("None");
-    // TODO: refactor this since JUCE 8
-    //output.addArray(MidiOutput::getDevices());
-    sysexOut->addItemList(output, 2);
-
     if ( JUCEApplication::isStandaloneApp() ) {
         sysexIn->setVisible(false);
     }
@@ -341,7 +324,6 @@ ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_
     pitchRangeDn->setTitle("Pitch Bend Range Down");
     pitchStep->setTitle("Pitch Bend Step");
     sysexIn->setTitle("Sysex Input");
-    sysexOut->setTitle("Sysex Output");
     sysexChl->setTitle("Sysex Channel");
     engineType->setTitle("Engine Resolution");
     showKeyboard->setTitle("Show Keyboard");
@@ -360,7 +342,6 @@ ParamDialog::ParamDialog (DexedApvts &apvts, DexedAudioProcessor &proc) : apvts_
     pitchRangeDn->setWantsKeyboardFocus(true);
     pitchStep->setWantsKeyboardFocus(true);
     sysexIn->setWantsKeyboardFocus(true);
-    sysexOut->setWantsKeyboardFocus(true);
     sysexChl->setWantsKeyboardFocus(true);
     engineType->setWantsKeyboardFocus(true);
     showKeyboard->setWantsKeyboardFocus(true);
@@ -389,7 +370,6 @@ ParamDialog::~ParamDialog() {
     pitchRangeDn = nullptr;
     pitchStep = nullptr;
     sysexIn = nullptr;
-    sysexOut = nullptr;
     sysexChl = nullptr;
     engineType = nullptr;
     showKeyboard = nullptr;
@@ -694,11 +674,6 @@ void ParamDialog::paint (juce::Graphics& g) {
                     Justification::centredLeft, true);
 
     }
-    g.setColour (Colours::white);
-    g.setFont (font);
-    g.drawText (translate("DX7 Out"),
-                20, 280, 131, 23,
-                Justification::centredLeft, true);
 
     g.setColour (Colours::black);
     g.fillRect (0, 370, 710, 1);
@@ -743,10 +718,6 @@ void ParamDialog::comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) {
     if (comboBoxThatHasChanged == sysexIn.get()) {
         //[UserComboBoxCode_sysexIn] -- add your combo box handling code here..
         //[/UserComboBoxCode_sysexIn]
-    }
-    else if (comboBoxThatHasChanged == sysexOut.get()) {
-        //[UserComboBoxCode_sysexOut] -- add your combo box handling code here..
-        //[/UserComboBoxCode_sysexOut]
     }
     else if (comboBoxThatHasChanged == scalingFactor.get()) {
         //[UserComboBoxCode_scalingFactor] -- add your combo box handling code here..
@@ -881,11 +852,6 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, bool showKey, 
     // int idx = inputs.indexOf(mgr.getInput());
     // idx = idx == -1 ? 0 : idx + 1;
     // sysexIn->setSelectedItemIndex(idx);
-    //
-    // StringArray outputs = MidiOutput::getDevices();
-    // idx = outputs.indexOf(mgr.getOutput());
-    // idx = idx == -1 ? 0 : idx + 1;
-    // sysexOut->setSelectedItemIndex(idx);
 
     showKeyboard->setToggleState(showKey, NotificationType::dontSendNotification);
 
@@ -921,7 +887,6 @@ bool ParamDialog::getDialogValues(Controllers &c, SysexComm &mgr, bool *showKey,
         ret &= mgr.setInput(sysexIn->getItemText(sysexIn->getSelectedItemIndex()));
     }
 
-    ret &= mgr.setOutput(sysexOut->getItemText(sysexOut->getSelectedItemIndex()));
     mgr.setChl(sysexChl->getValue() - 1);
 
     *showKey = showKeyboard->getToggleState();
@@ -1148,9 +1113,6 @@ BEGIN_JUCER_METADATA
           needsCallback="1"/>
   <COMBOBOX name="sysexIn" id="3750642d8b5be11" memberName="sysexIn" virtualName=""
             explicitFocusOrder="7" pos="104 244 224 24" editable="0" layout="33"
-            items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
-  <COMBOBOX name="sysexOut" id="44730115841c2214" memberName="sysexOut" virtualName=""
-            explicitFocusOrder="8" pos="104 280 224 24" editable="0" layout="33"
             items="" textWhenNonSelected="" textWhenNoItems="(no choices)"/>
   <SLIDER name="sysexChl" id="7fdc8830f90a7c86" memberName="sysexChl" virtualName=""
           explicitFocusOrder="9" pos="252 320 72 24" min="1.0" max="16.0"

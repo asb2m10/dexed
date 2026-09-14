@@ -19,6 +19,7 @@
  */
 
 #include "SysexComm.h"
+#include "../PluginProcessor.h"
 
 SysexComm::SysexComm() {
     sysexChl = 0;
@@ -30,6 +31,7 @@ SysexComm::SysexComm() {
     input = NULL;
     output = NULL;
     inputOutput = false;
+    commandFifo = NULL;
 
 #ifdef IMPLEMENT_MidiMonitor
     inActivity = false;
@@ -152,6 +154,10 @@ void SysexComm::setChl(int chl) {
     sysexChl = chl;
 }
 
+void SysexComm::setCommandFifo(CommandFifo<DexedAudioProcessor> *fifo) {
+    commandFifo = fifo;
+}
+
 int SysexComm::send(const MidiMessage &message) {
     if ( output == NULL )
         return 2;
@@ -160,7 +166,9 @@ int SysexComm::send(const MidiMessage &message) {
     outActivity = true; // indicate to MidiMonitor that a MIDI message is going to be sent
 #endif // IMPLEMENT_MidiMonitor
 
-    output->sendMessageNow(message);
+    commandFifo->push([message](DexedAudioProcessor &proc) {
+        proc.queueSysexOutput(message);
+    });
     return 0;
 }
 

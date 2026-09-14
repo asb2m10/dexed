@@ -22,6 +22,9 @@
 #define SYSEXCOMM_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "../util/CommandFifo.h"
+
+class DexedAudioProcessor;
 
  // If the macro ''IMPLEMENT_MidiMonitor'' is defined,
  // then the class ''MidiMonitor'' and its related variables 
@@ -40,8 +43,10 @@ class SysexComm {
     int sysexChl;
     
     bool inputOutput;
-    
+
     MidiBuffer noteOutput;
+
+    CommandFifo<DexedAudioProcessor> *commandFifo;
 public :
     MidiInputCallback *listener;
 #ifdef IMPLEMENT_MidiMonitor
@@ -64,6 +69,7 @@ public :
         return inputOutput;
     }
     
+    void setCommandFifo(CommandFifo<DexedAudioProcessor> *fifo);
     int send(const MidiMessage& message);
     void playBuffer(MidiBuffer &keyboardEvents, int numSamples);
 };
