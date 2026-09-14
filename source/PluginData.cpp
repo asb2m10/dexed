@@ -21,7 +21,7 @@
 #include <time.h>
 
 #include "PluginData.h"
-#include "Dexed.h"
+#include "debugger/Logger.h"
 #include "PluginProcessor.h"
 
 #include <fstream>

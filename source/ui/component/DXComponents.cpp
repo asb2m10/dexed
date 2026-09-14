@@ -22,7 +22,7 @@
  *
  */
 
-#include "Dexed.h"
+#include "../../debugger/Logger.h"
 #include "DXComponents.h"
 #include "../DXLookNFeel.h"
 #include "PluginProcessor.h"

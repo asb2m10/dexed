@@ -23,7 +23,7 @@
 
 #include "DXLookNFeel.h"
 #include "component/DXComponents.h"
-#include "Dexed.h"
+#include "../debugger/Logger.h"
 #include "PluginProcessor.h"
 
 #define REG_COLOUR(id, value) setColour(id, value); colourMap.set(#id, id)
@@ -268,8 +268,11 @@ DXLookNFeel::DXLookNFeel() {
     }
 }
 
-Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &) {
-    return Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
+Typeface::Ptr DXLookNFeel::getTypefaceForFont(const Font &font) {
+    if (font.getTypefaceName() == Font::getDefaultSansSerifFontName())
+        return Typeface::createSystemTypefaceFor(BinaryData::NotoSansRegular_ttf, BinaryData::NotoSansRegular_ttfSize);
+
+    return LookAndFeel_V4::getTypefaceForFont(font);
 }
 
 void DXLookNFeel::drawRotarySlider( Graphics &g, int x, int y, int width, int height, float sliderPosProportional,

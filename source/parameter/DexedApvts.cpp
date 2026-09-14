@@ -1,7 +1,7 @@
 
 #include "Model.h"
 #include "PluginProcessor.h"
-#include "Dexed.h"
+#include "../debugger/Logger.h"
 
 class ParameterDx : public juce::AudioParameterInt {
 public:

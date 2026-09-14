@@ -1,6 +1,6 @@
 #include "Program.h"
 #include "parameter/Model.h"
-#include "Dexed.h"
+#include "../debugger/Logger.h"
 
 Program::Program(const juce::MidiMessage message) {
 

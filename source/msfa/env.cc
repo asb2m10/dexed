@@ -20,7 +20,7 @@
 #include "synth.h"
 #include "env.h"
 
-#include "../Dexed.h"
+#include "../debugger/Logger.h"
 //using namespace std;
 
 uint32_t Env::sr_multiplier = (1<<24);

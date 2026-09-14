@@ -2,7 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "midi/MidiCCHandler.h"
-#include "Dexed.h"
+#include "../../debugger/Logger.h"
 
 class MidiCCListenerStatus: public juce::AlertWindow, juce::ModalComponentManager::Callback {
     MidiCCHandler *handler;

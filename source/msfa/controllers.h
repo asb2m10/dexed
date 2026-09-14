@@ -18,7 +18,7 @@
 #define __CONTROLLERS_H
 
 #include "synth.h"
-#include "../Dexed.h"
+#include "../debugger/Logger.h"
 #include <stdio.h>
 #include <string.h>
 #include <bitset>

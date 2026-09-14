@@ -2,7 +2,7 @@
 
 #include <juce_core/juce_core.h>
 #include "Program.h"
-#include "Dexed.h"
+#include "../debugger/Logger.h"
 
 #define SYSEX_HEADER { 0xF0, 0x43, 0x00, 0x09, 0x20, 0x00 }
 #define SYSEX_SIZE 4104

@@ -25,7 +25,7 @@
 
 #include <stdint.h>
 #include <string.h>
-#include "Dexed.h"
+#include "debugger/Logger.h"
 #include <core/Cartridge.h>
 
 class DexedClipboard {

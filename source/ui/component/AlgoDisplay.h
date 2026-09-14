@@ -25,7 +25,7 @@
 #include "parameter/Model.h"
 #include "../util/CachedParameter.h"
 
-#include "Dexed.h"
+#include "../../debugger/Logger.h"
 
 class AlgoDisplay : public juce::Component {
     CachedParameter<int> algoValue;

@@ -2,7 +2,7 @@
 
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "BinaryData.h"
-#include "Dexed.h"
+#include "../../debugger/Logger.h"
 
 class AboutBox : public juce::DialogWindow {
 public:

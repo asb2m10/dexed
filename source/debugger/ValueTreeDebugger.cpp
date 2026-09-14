@@ -17,12 +17,13 @@
  * Contact via http://www.credland.net/
  */
 
-#include "value_tree_debugger.h"
+#include "ValueTreeDebugger.h"
+#include "MemoryLogger.h"
 
 using namespace juce;
 
 /** Display a tree. */
-class ValueTreeDebuggerMain : public Component {
+class ValueTreeDebuggerMain : public Component, public Timer {
     LookAndFeel_V4 defaultLookAndFeel_V4;
 
 public:
@@ -208,27 +209,84 @@ public:
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Item);
     };
 
-    ValueTreeDebuggerMain() : layoutResizer (&layout, 1, false) {
-        layout.setItemLayout(0, -0.1, -0.9, -0.6);
-        layout.setItemLayout(1, 5, 5, 5);
-        layout.setItemLayout(2, -0.1, -0.9, -0.4);
+    class LogViewer : public juce::TextEditor {
+    public:
+        LogViewer() {
+            setMultiLine(true);
+            setReadOnly(true);
+            setScrollbarsShown(true);
+            setFont(Font(FontOptions(Font::getDefaultMonospacedFontName(), 12.0f, Font::plain)));
+        }
+
+        void addPopupMenuItems(juce::PopupMenu &menuToAddTo,
+                               const juce::MouseEvent *mouseClickEvent) override {
+            menuToAddTo.addItem(juce::StandardApplicationCommandIDs::copy, "Copy");
+            menuToAddTo.addItem(juce::StandardApplicationCommandIDs::selectAll,
+                                "Select All");
+            menuToAddTo.addSeparator();
+            menuToAddTo.addItem(juce::StandardApplicationCommandIDs::del,
+                                "Clear logs");
+        }
+
+        void performPopupMenuAction(int menuItemID) override {
+            if (menuItemID == juce::StandardApplicationCommandIDs::del)
+                MemoryLogger::getInstance()->clear();
+            else
+                juce::TextEditor::performPopupMenuAction(menuItemID);
+        }
+    };
+
+    ValueTreeDebuggerMain() :
+        vResizer (&vLayout, 1, false),
+        hResizer (&hLayout, 1, false) {
+        vLayout.setItemLayout(0, -0.2, -0.8, -0.5);
+        vLayout.setItemLayout(1, 5, 5, 5);
+        vLayout.setItemLayout(2, -0.2, -0.8, -0.5);
+
+        hLayout.setItemLayout(0, -0.2, -0.8, -0.5);
+        hLayout.setItemLayout(1, 5, 5, 5);
+        hLayout.setItemLayout(2, -0.2, -0.8, -0.5);
 
         setSize(800, 500);
         setLookAndFeel(&defaultLookAndFeel_V4);
 
-        addAndMakeVisible(treeView);
-        addAndMakeVisible(propertyEditor);
-        addAndMakeVisible(layoutResizer);
+        addAndMakeVisible(topPanel);
+        topPanel.addAndMakeVisible(treeView);
+        topPanel.addAndMakeVisible(propertyEditor);
+        topPanel.addAndMakeVisible(hResizer);
+        addAndMakeVisible(multilineEditor);
+        addAndMakeVisible(vResizer);
+
+        multilineEditor.setMultiLine (true);
+        multilineEditor.setReturnKeyStartsNewLine (true);
+        multilineEditor.setReadOnly (false);
+
+        multilineEditor.setText (MemoryLogger::getInstance()->getLog());
+        lastLogSize = MemoryLogger::getInstance()->size();
+        startTimer (300);
     }
 
     ~ValueTreeDebuggerMain() {
+        stopTimer();
         treeView.setRootItem(nullptr);
         setLookAndFeel(nullptr);
     }
 
+    void timerCallback() override {
+        const int newSize = MemoryLogger::getInstance()->size();
+
+        if (newSize != lastLogSize) {
+            lastLogSize = newSize;
+            multilineEditor.setText (MemoryLogger::getInstance()->getLog());
+        }
+    }
+
     void resized() override {
-        Component* comps[] = { &treeView, &layoutResizer, &propertyEditor };
-        layout.layOutComponents(comps, 3, 0, 0, getWidth(), getHeight(), true, true);
+        Component* vComps[] = { &topPanel, &vResizer, &multilineEditor };
+        vLayout.layOutComponents(vComps, 3, 0, 0, getWidth(), getHeight(), true, true);
+
+        Component* hComps[] = { &treeView, &hResizer, &propertyEditor };
+        hLayout.layOutComponents(hComps, 3, 0, 0, topPanel.getWidth(), topPanel.getHeight(), true, true);
     }
 
     void setTree(ValueTree newTree) {
@@ -246,10 +304,15 @@ public:
 
     std::unique_ptr<Item> rootItem;
     ValueTree tree;
+    Component topPanel;
     TreeView treeView;
     PropertyEditor propertyEditor;
-    StretchableLayoutManager layout;
-    StretchableLayoutResizerBar layoutResizer;
+    LogViewer multilineEditor;
+    StretchableLayoutManager vLayout;
+    StretchableLayoutManager hLayout;
+    StretchableLayoutResizerBar vResizer;
+    StretchableLayoutResizerBar hResizer;
+    int lastLogSize = 0;
 };
 
 

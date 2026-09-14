@@ -18,7 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "../../Dexed.h"
+#include "../../debugger/Logger.h"
 #include "../component/DXComponents.h"
 #include "parameter/Model.h"
 //[/Headers]

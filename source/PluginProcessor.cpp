@@ -25,7 +25,7 @@
 #include "ui/PluginEditor.h"
 #include "parameter/Model.h"
 
-#include "Dexed.h"
+#include "debugger/Logger.h"
 #include "msfa/synth.h"
 #include "msfa/freqlut.h"
 #include "msfa/sin.h"
@@ -37,6 +37,7 @@
 #include "msfa/fm_op_kernel.h"
 
 #include "midi/MidiCCHandler.h"
+#include "debugger/MemoryLogger.h"
 
 #if JUCE_MSVC
     #pragma comment (lib, "kernel32.lib")
@@ -70,6 +71,15 @@
 DexedAudioProcessor::DexedAudioProcessor()
     : AudioProcessor(BusesProperties().withOutput("output", AudioChannelSet::stereo(), true)),
       parameters (*this, nullptr) {
+
+    MemoryLogger::getInstance()->install();
+
+    DXLOG("     _                   _ ");
+    DXLOG("  __| | _____  _____  __| |");
+    DXLOG(" / _` |/ _ \\ \\/ / _ \\/ _` |");
+    DXLOG("| (_| |  __/>  <  __/ (_| |");
+    DXLOG(" \\__,_|\\___/_/\\_\\___|\\__,_|");
+    DXLOG("VERSION " DEXED_VERSION);
 
     mapParameters();
 
@@ -117,11 +127,6 @@ DexedAudioProcessor::DexedAudioProcessor()
 }
 
 DexedAudioProcessor::~DexedAudioProcessor() {
-    Logger *tmp = Logger::getCurrentLogger();
-	if ( tmp != NULL ) {
-		Logger::setCurrentLogger(NULL);
-		delete tmp;
-	}
     TRACE("Bye");
     if (mtsClient) MTS_DeregisterClient(mtsClient);
 }

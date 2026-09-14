@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (c) 2014 Pascal Gauthier.
+ * Copyright (c) 2014-2026 Pascal Gauthier.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef DEXED_H_INCLUDED
-#define DEXED_H_INCLUDED
+#pragma once
+#include <debugger/MemoryLogger.h>
 
 void dexed_trace(const char *source, const char *fmt, ...);
 
@@ -38,4 +38,4 @@ void dexed_trace(const char *source, const char *fmt, ...);
     #define TRACE(fmt, ...)
 #endif
 
-#endif  // DEXED_H_INCLUDED
+#define DXLOG(fmt, ...) MemoryLogger::getInstance()->logFormat(fmt,##__VA_ARGS__)

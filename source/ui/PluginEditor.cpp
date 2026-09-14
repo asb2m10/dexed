@@ -22,7 +22,7 @@
 #include "window/ParamDialog.h"
 #include "midi/SysexComm.h"
 #include "window/TuningShow.h"
-#include "Dexed.h"
+#include "../debugger/Logger.h"
 #include "math.h"
 #include <fstream>
 #include <memory>

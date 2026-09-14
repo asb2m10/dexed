@@ -4,7 +4,7 @@
 #include "parameter/Model.h"
 #include "ui/util/ContextMenuAdapter.h"
 #include "window/AboutBox.h"
-#include "../debugger/value_tree_debugger.h"
+#include "../debugger/ValueTreeDebugger.h"
 
 /**
  * Ugly but useful midi monitor to know if you are really sending/receiving something from the DX7

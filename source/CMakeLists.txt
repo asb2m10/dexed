@@ -85,7 +85,8 @@ target_sources(${BaseTargetName} PRIVATE
 	parameter/State.cpp
     parameter/Preference.cpp
 
-	debugger/value_tree_debugger.cpp
+        debugger/ValueTreeDebugger.cpp
+        debugger/MemoryLogger.h
 
     # until MTS-ESP has is own cmake project
     ../libs/MTS-ESP/Client/libMTSClient.cpp
