@@ -238,7 +238,7 @@ public:
 
     ValueTreeDebuggerMain() :
         vResizer (&vLayout, 1, false),
-        hResizer (&hLayout, 1, false) {
+        hResizer (&hLayout, 1, true) {
         vLayout.setItemLayout(0, -0.2, -0.8, -0.5);
         vLayout.setItemLayout(1, 5, 5, 5);
         vLayout.setItemLayout(2, -0.2, -0.8, -0.5);
@@ -286,7 +286,7 @@ public:
         vLayout.layOutComponents(vComps, 3, 0, 0, getWidth(), getHeight(), true, true);
 
         Component* hComps[] = { &treeView, &hResizer, &propertyEditor };
-        hLayout.layOutComponents(hComps, 3, 0, 0, topPanel.getWidth(), topPanel.getHeight(), true, true);
+        hLayout.layOutComponents(hComps, 3, 0, 0, topPanel.getWidth(), topPanel.getHeight(), false, true);
     }
 
     void setTree(ValueTree newTree) {

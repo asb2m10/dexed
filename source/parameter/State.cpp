@@ -32,6 +32,11 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
             }
 
             parameters.replaceState(storage.getChildWithName(IDs::parameters));
+            // replaceState() swaps the tree, keep rootVt pointing to the live one
+            if (parameters.state.getParent() != parameters.rootVt) {
+                parameters.rootVt.removeChild(parameters.rootVt.getChildWithName(IDs::parameters), nullptr);
+                parameters.rootVt.addChild(parameters.state, 0, nullptr);
+            }
             juce::ValueTree storageProfile = storage.getChildWithName(IDs::profile);
             parameters.rootVt.getChildWithName(IDs::profile).getChildWithName(IDs::midiCCMappings).
                 copyPropertiesAndChildrenFrom(storageProfile.getChildWithName(IDs::midiCCMappings), nullptr);
