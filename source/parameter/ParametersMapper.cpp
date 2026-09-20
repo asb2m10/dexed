@@ -15,6 +15,8 @@
     IDs::breakpoint.op(i),       \
     IDs::lScaleDepth.op(i),      \
     IDs::rScaleDepth.op(i),      \
+    IDs::lKeyScale.op(i),        \
+    IDs::rKeyScale.op(i),        \
     IDs::rateScaling.op(i),      \
     IDs::ampModeSens.op(i),      \
     IDs::keyVelocity.op(i),      \

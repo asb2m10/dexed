@@ -89,22 +89,43 @@ void DexedAudioProcessor::copyToClipboard(int srcOp) {
     clipboard.write(String("Program: '") + getProgramName(getCurrentProgram()) + "' operator: " + String(6-srcOp));
 }
 
+static void setParam(DexedApvts &apvts, const String &id, float value) {
+    if ( auto *p = apvts.getParameter(id) ) {
+        p->beginChangeGesture();
+        p->setValueNotifyingHost(p->convertTo0to1(value));
+        p->endChangeGesture();
+    }
+}
+
 void DexedAudioProcessor::pasteOpFromClipboard(int destOp) {
     DexedClipboard clipboard;
+    if ( !clipboard.isOperatorData() )
+        return;
 
-    jassert(clipboard.isOperatorData());
+    pasteEnvFromClipboard(destOp);
 
-    // memcpy(data+(destOp*21), clipboard.getRawData(), 21);
-    /** TODO: reset parameters */
+    const uint8_t *d = clipboard.getRawData();
+    String op = "op" + String(6 - destOp);
+    static const char *names[] = { "breakpoint", "lScaleDepth", "rScaleDepth", "lKeyScale", "rKeyScale",
+        "rateScaling", "ampModeSens", "keyVelocity", "outputLevel", "mode", "frequencyCoarse",
+        "frequencyFine", "detune" };
+
+    for (int k = 0; k < 13; k++)
+        setParam(parameters, op + names[k], d[8+k] - (k == 12 ? 7 : 0)); // detune display offset is 7
 }
 
 void DexedAudioProcessor::pasteEnvFromClipboard(int destOp) {
     DexedClipboard clipboard;
+    if ( !clipboard.isOperatorData() )
+        return;
 
-    jassert(clipboard.isOperatorData());
+    const uint8_t *d = clipboard.getRawData();
+    String op = "op" + String(6 - destOp);
 
-    // memcpy(data+(destOp*21), clipboard.getRawData(), 8);
-    /** TODO: reset parameters */
+    for (int j = 0; j < 4; j++) {
+        setParam(parameters, op + "egRate" + String(j+1), d[j]);
+        setParam(parameters, op + "egLevel" + String(j+1), d[4+j]);
+    }
 }
 
 void DexedAudioProcessor::sendCurrentSysexProgram() {
