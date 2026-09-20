@@ -52,16 +52,20 @@ public:
 
 //[/MiscUserDefs]
 
-class OperatorContextMenu : public ContextMenuAdapter {
+class GlobalEditorContextMenu : public ContextMenuAdapter {
 public:
-    OperatorContextMenu(DexedAudioProcessor &processor) : ContextMenuAdapter(processor) {
+    GlobalEditorContextMenu(DexedAudioProcessor &processor) : ContextMenuAdapter(processor) {
     }
 
-    void addSpecificItems(PopupMenu &menu, juce::Component *source) override {
-        menu.addItem(1, "Copy Pitch Env Values");
-        menu.addItem(2, "Paste Envelope Values", DexedClipboard().isOperatorData());
-        menu.addSeparator();
-    }
+    // For now we only support OP env, like dexed 1.0
+    //
+    // void addSpecificItems(PopupMenu &menu, juce::Component *source) override {
+    //     menu.addItem("Copy Pitch Env Values", [this] {
+    //     });
+    //     menu.addItem("Paste Envelope Values", DexedClipboard().isOperatorData(), false, [this] {
+    //     });
+    //     menu.addSeparator();
+    // }
 };
 
 //==============================================================================
@@ -333,7 +337,7 @@ GlobalEditor::GlobalEditor(DexedAudioProcessor &processor, juce::Component *pare
     midiMonitor->setBounds(110, 10, 80, 45);    //midiMonitor->setBounds(155, 21, 80, 45);
 #endif //IMPLEMENT_MidiMonitor
 
-    contextMenuAdapter = std::make_unique<OperatorContextMenu>(processor);
+    contextMenuAdapter = std::make_unique<GlobalEditorContextMenu>(processor);
     addMouseListener(contextMenuAdapter.get(), true);
 
     //[/Constructor]

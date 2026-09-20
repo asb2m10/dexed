@@ -33,9 +33,15 @@ public:
     }
 
     void addSpecificItems(PopupMenu &menu, juce::Component *source) override {
-        menu.addItem(1, "Copy Operator Values");
-        menu.addItem(2, "Paste Envelope Values", DexedClipboard().isOperatorData());
-        menu.addItem(3, "Paste Operator Values", DexedClipboard().isOperatorData());
+        menu.addItem("Copy Operator Values", [this] {
+            processor.copyToClipboard(op);
+        });
+        menu.addItem("Paste Envelope Values", DexedClipboard().isOperatorData(), false, [this] {
+            processor.pasteEnvFromClipboard(op);
+        });
+        menu.addItem("Paste Operator Values", DexedClipboard().isOperatorData(), false, [this] {
+            processor.pasteOpFromClipboard(op);
+        });
         menu.addSeparator();
     }
 };

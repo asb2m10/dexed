@@ -1,10 +1,11 @@
 #pragma once
 
-#include "PluginProcessor.h"
+#include "ui/PluginEditor.h"
 #include "midi/MidiCCHandler.h"
 #include "../window/MidiCCListenerStatus.h"
 
 class ContextMenuAdapter : public juce::MouseListener {
+protected:
     DexedAudioProcessor &processor;
 public:
     ContextMenuAdapter(DexedAudioProcessor &processor) : processor(processor) {
@@ -36,11 +37,16 @@ public:
         }
 
         addSpecificItems(popup, source);
-        popup.addItem(4, "Send current program to DX7");
+        popup.addItem("Send current program to DX7", [this] {
+            processor.sendCurrentSysexProgram();
+        });
 
         if ( processor.getZoomFactor() > 1.0f ) {
             popup.addSeparator();
-            popup.addItem(5, "Reset plugin UI scaling factor");
+            popup.addItem("Reset plugin UI scaling factor", [source] {
+                if (auto *editor = source->findParentComponentOfClass<DexedAudioProcessorEditor>())
+                    editor->resetZoomFactor();
+            });
         }
 
         auto options = juce::PopupMenu::Options();
