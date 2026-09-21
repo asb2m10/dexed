@@ -32,14 +32,14 @@ int Cartridge::load(const uint8_t *stream, int size) {
 
     if ( size < 4096 ) {
         memcpy(voiceData+6, pos, size);
-        TRACE("too small sysex rc=2");
+        DXLOG("ERROR: Cartridge too small sysex rc=2");
         return 2;
     }
 
     if ( pos[0] != 0xF0 ) {
         // it is not, just copy the first 4096 bytes
         memcpy(voiceData + 6, pos, 4096);
-        TRACE("stream is not a sysex rc=2");
+        DXLOG("ERROR: Cartridge stream is not a sysex rc=2");
         return 2;
     }
 
@@ -52,7 +52,7 @@ int Cartridge::load(const uint8_t *stream, int size) {
         // it was a sysex first, now random data; return random
         if ( pos[0] != 0xF0 ) {
             memcpy(voiceData + 6, stream, 4096);
-            TRACE("stream was a sysex, but not anymore rc=2");
+            DXLOG("ERROR: Cartridge stream was a sysex, but not anymore rc=2");
             return 2;
         }
 
@@ -62,26 +62,26 @@ int Cartridge::load(const uint8_t *stream, int size) {
                 if ( i == SYSEX_SIZE - 1 ) {
                     memcpy(voiceData, pos, SYSEX_SIZE);
                     if ( sysexChecksum(voiceData + 6, 4096) == pos[4102] ) {
-                        TRACE("valid sysex found!");
+                        DXLOG("SUCCESS: Cartridge sysex found with matching checksum");
                         return 0;
                     } else {
-                        TRACE("sysex found, but checksum doesn't match rc=1");
+                        DXLOG("WARNING: Cartridge sysex found, but checksum doesn't match rc=1");
                         return 1;
                     }
                 }
                 size -= i;
                 pos += i;
-                TRACE("end of sysex with wrong DX size... still scanning stream: size=%d", i);
+                DXLOG("ERROR: Cartridge end of sysex with wrong DX size... still scanning stream: size=%d", i);
                 break;
             }
         }
-        TRACE("sysex stream parsed without any end message, skipping...");
+        DXLOG("ERROR: Cartridge sysex stream parsed without any end message, skipping...");
         break;
     }
 
     // it is a sysex, but doesn't seems to be related to any DX series ...
     memcpy(voiceData + 6, stream, 4096);
-    TRACE("nothing in the sysex stream was DX related rc=2");
+    DXLOG("ERROR: Nothing in the sysex stream was DX related rc=2");
     return 2;
 }
 

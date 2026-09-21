@@ -262,6 +262,8 @@ public:
         multilineEditor.setReadOnly (false);
 
         multilineEditor.setText (MemoryLogger::getInstance()->getLog());
+        multilineEditor.moveCaretToEnd();
+
         lastLogSize = MemoryLogger::getInstance()->size();
         startTimer (300);
     }
@@ -277,7 +279,8 @@ public:
 
         if (newSize != lastLogSize) {
             lastLogSize = newSize;
-            multilineEditor.setText (MemoryLogger::getInstance()->getLog());
+            multilineEditor.setText(MemoryLogger::getInstance()->getLog());
+            multilineEditor.moveCaretToEnd();
         }
     }
 

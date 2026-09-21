@@ -18,6 +18,7 @@
 #include <juce_core/juce_core.h>
 
 #include <cstdarg>
+#include <cstdio>
 #include <iostream>
 
 class MemoryLogger final : public juce::Logger {
@@ -38,11 +39,13 @@ public:
             Logger::setCurrentLogger(nullptr);
     }
 
-    void logFormat(juce::String format, ...) {
+    void logFormat(const char* format, ...) {
+        char output[4096];
         va_list args;
         va_start(args, format);
-        logMessage(juce::String::formatted(format, args));
+        vsnprintf(output, sizeof(output), format, args);
         va_end(args);
+        logMessage(juce::String::fromUTF8(output));
     }
 
     void setCapacity(int newCapacity) {

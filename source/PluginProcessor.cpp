@@ -294,14 +294,14 @@ void DexedAudioProcessor::processBlock(AudioSampleBuffer& buffer, MidiBuffer& mi
         buffer.copyFrom(1, 0, channelData, numSamples, 1);
 
     midiMessages.clear();
-    for (const auto &msg : sysexOutputQueue) {
+    for (const auto &msg : outputMidiMessageQueue) {
         midiMessages.addEvent(msg, 0);
     }
-    sysexOutputQueue.clear();
+    outputMidiMessageQueue.clear();
 }
 
-void DexedAudioProcessor::queueSysexOutput(const MidiMessage &message) {
-    sysexOutputQueue.push_back(message);
+void DexedAudioProcessor::queueOutputMidiMessage(const MidiMessage &message) {
+    outputMidiMessageQueue.push_back(message);
 }
 
 //==============================================================================

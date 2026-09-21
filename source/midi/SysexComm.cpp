@@ -139,11 +139,11 @@ bool SysexComm::setOutput(String target) {
 }
 
 bool SysexComm::isInputActive() {
-    return input != NULL;
+    return true;
 }
 
 bool SysexComm::isOutputActive() {
-    return output != NULL;
+    return true;
 }
 
 int SysexComm::getChl() {
@@ -158,16 +158,66 @@ void SysexComm::setCommandFifo(CommandFifo<DexedAudioProcessor> *fifo) {
     commandFifo = fifo;
 }
 
-int SysexComm::send(const MidiMessage &message) {
-    if ( output == NULL )
-        return 2;
+// Textual description of the DX7 sysex header, as documented in doc/sysex-format.txt:
+//   F0 43 <0sssnnnn> <format/group> ...
+// where s is the sub-status and n the channel number.
+static const char *sysexSubstatusName(int substatus) {
+    switch ( substatus ) {
+        case 0  : return "BULK DATA";
+        case 1  : return "PARAMETER CHANGE";
+        default : return "UNKNOWN";
+    }
+}
 
+// For a bulk dump (sub-status 0) the 4th byte is the format number; for a
+// parameter change (sub-status 1) it carries the parameter group instead.
+static String sysexFormatName(int substatus, int formatByte) {
+    if ( substatus == 0 ) {
+        switch ( formatByte ) {
+            case 0 : return "1 VOICE (155 bytes)";
+            case 9 : return "32 VOICES (4096 bytes)";
+        }
+        return String("UNKNOWN FORMAT ") + String(formatByte);
+    }
+
+    if ( substatus == 1 ) {
+        // 0gggggpp: g = parameter group, pp = high bits of the parameter number
+        int group = formatByte >> 2;
+        switch ( group ) {
+            case 0 : return "VOICE PARAMETER";
+            case 2 : return "FUNCTION PARAMETER";
+        }
+        return String("UNKNOWN GROUP ") + String(group);
+    }
+
+    return String("UNKNOWN ") + String(formatByte);
+}
+
+int SysexComm::send(const MidiMessage &message) {
 #ifdef IMPLEMENT_MidiMonitor
     outActivity = true; // indicate to MidiMonitor that a MIDI message is going to be sent
 #endif // IMPLEMENT_MidiMonitor
 
+    if ( message.isSysEx() ) {
+        const uint8 *buf = message.getRawData();
+
+        if ( message.getRawDataSize() > 3 && buf[1] == 0x43 ) {
+            const int substatus = buf[2] >> 4;
+            const int chl = (buf[2] & 0x0f) + 1;
+            const int formatByte = buf[3];
+
+            DXLOG("Sending sysex message: CHL=%d SUBSTATUS=%d (%s) FORMAT=%d (%s)", chl,
+                  substatus, sysexSubstatusName(substatus),
+                  formatByte, sysexFormatName(substatus, formatByte).toRawUTF8());
+        } else {
+            DXLOG("Sending non-DX7 sysex message: %d bytes", message.getRawDataSize());
+        }
+    } else {
+        DXLOG("Sending midi message: CHL=%d", message.getChannel());
+    }
+
     commandFifo->push([message](DexedAudioProcessor &proc) {
-        proc.queueSysexOutput(message);
+        proc.queueOutputMidiMessage(message);
     });
     return 0;
 }

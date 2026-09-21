@@ -230,8 +230,8 @@ public :
 
     // sysex messages queued (from the command fifo, on the audio thread) to be
     // flushed to the host/DAW at the end of processBlock
-    std::vector<MidiMessage> sysexOutputQueue;
-    void queueSysexOutput(const MidiMessage &message);
+    std::vector<MidiMessage> outputMidiMessageQueue;
+    void queueOutputMidiMessage(const MidiMessage &message);
 
     void applyProgram(const Program &program);
 

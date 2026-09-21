@@ -111,7 +111,7 @@ void DexedAudioProcessor::processMidiMessage(const MidiMessage *msg) {
                     }
                     break;
                 default:
-                    TRACE("handle channel %d CC %d = %d", channel, ctrl, value);
+                    //TRACE("handle channel %d CC %d = %d", channel, ctrl, value);
                     midiCCMapper->processControlChange(ctrl, value);
                 }
             }
@@ -151,7 +151,7 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
 
     // test if it is a Yamaha Sysex
     if ( buf[1] != 0x43 ) {
-        TRACE("not a yamaha sysex %d", buf[1]);
+        DXLOG("Sysex message is not a yamaha sysex %d", buf[1]);
         return;
     }
 
@@ -161,17 +161,17 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
             // single voice dump
             if ( buf[3] == 0 ) {
                 if ( sz < 156 ) {
-                    TRACE("wrong single voice datasize %d", sz);
+                    DXLOG("wrong single voice datasize %d", sz);
                     return;
                 }
                 if ( updateProgramFromSysex(buf+6) )
-                    TRACE("bad checksum when updating program from sysex message");
+                    DXLOG("bad checksum when updating program from sysex message");
             }
 
             // 32 voice dump
             if ( buf[3] == 9 ) {
                 if ( sz < 4104 ) {
-                    TRACE("wrong 32 voice dump data size %d", sz);
+                    DXLOG("wrong 32 voice dump data size %d", sz);
                     return;
                 }
 
@@ -186,17 +186,17 @@ void DexedAudioProcessor::handleIncomingMidiMessage(MidiInput* source, const Mid
         case 1 : {
             // parameter change
             if ( sz < 7 ) {
-            TRACE("wrong single voice datasize %d", sz);
+            DXLOG("wrong single voice parameter datasize %d", sz);
             return;
             }
 
             uint8 offset = (buf[3] << 7) + buf[4];
             uint8 value = buf[5];
 
-            TRACE("parameter change message offset:%d value:%d", offset, value);
+            DXLOG("Parameter change message offset:%d value:%d", offset, value);
 
             if ( offset > 155 ) {
-                TRACE("wrong offset size");
+                DXLOG("parameter wrong offset size");
                 return;
             }
 

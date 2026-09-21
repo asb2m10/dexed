@@ -305,7 +305,7 @@ GlobalEditor::GlobalEditor(DexedAudioProcessor &processor, juce::Component *pare
     aboutButton->setButtonText(juce::String());
     aboutButton->onClick = [this]() {
         juce::ModifierKeys modifiers = juce::ModifierKeys::getCurrentModifiers();
-        if( modifiers.isAltDown() ) {
+        if( modifiers.isAltDown()  || modifiers.isShiftDown() ) {
             ValueTreeDebugger *vtd = new ValueTreeDebugger(this->processor.parameters.rootVt);
             debugger.reset(vtd);
             return;
