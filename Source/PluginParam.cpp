@@ -102,9 +102,10 @@ void Ctrl::publishValueAsync(float value) {
 }
 
 void Ctrl::publishValue(float value) {
-    parent->beginParameterChangeGesture(idx);
-    parent->setParameterNotifyingHost(idx, value);
-    parent->endParameterChangeGesture(idx);
+    auto *param = parent->getParameters()[idx];
+    param->beginChangeGesture();
+    param->setValueNotifyingHost(value);
+    param->endChangeGesture();
 }
 
 void Ctrl::sliderValueChanged(Slider* moved) {

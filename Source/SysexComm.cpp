@@ -64,8 +64,14 @@ bool SysexComm::setInput(String target) {
         return true;
     }
 
-    StringArray devices = MidiInput::getDevices();
-    int idx = devices.indexOf(target);
+    Array<MidiDeviceInfo> devices = MidiInput::getAvailableDevices();
+    int idx = -1;
+    for (int i = 0; i < devices.size(); ++i) {
+        if (devices[i].name == target) {
+            idx = i;
+            break;
+        }
+    }
 
     if ( idx == -1 ) {
         TRACE("device %s not found", target.toRawUTF8());
@@ -75,7 +81,7 @@ bool SysexComm::setInput(String target) {
         return false;
     }
 
-    input = MidiInput::openDevice(idx, listener);
+    input = MidiInput::openDevice(devices[idx].identifier, listener);
     if ( input == NULL ) {
         TRACE("unable to open %s", target.toRawUTF8());
         return false;
@@ -108,9 +114,15 @@ bool SysexComm::setOutput(String target) {
     if ( target == outputName )
         return true;
 
-    StringArray devices = MidiOutput::getDevices();
-    int idx = devices.indexOf(target);
-    
+    Array<MidiDeviceInfo> devices = MidiOutput::getAvailableDevices();
+    int idx = -1;
+    for (int i = 0; i < devices.size(); ++i) {
+        if (devices[i].name == target) {
+            idx = i;
+            break;
+        }
+    }
+
     if ( idx == -1 ) {
         TRACE("device %s not found", target.toRawUTF8());
         outputName = "";
@@ -118,8 +130,8 @@ bool SysexComm::setOutput(String target) {
             return true;
         return false;
     }
-    
-    output = MidiOutput::openDevice(idx);
+
+    output = MidiOutput::openDevice(devices[idx].identifier);
     if ( output == NULL ) {
         TRACE("unable to open %s", target.toRawUTF8());
         return false;
