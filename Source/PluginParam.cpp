@@ -26,6 +26,13 @@
 #include "PluginEditor.h"
 #include "Dexed.h"
 
+DexedParameterAdapter::DexedParameterAdapter(DexedAudioProcessor& p, int i) : processor(p), index(i) {}
+float DexedParameterAdapter::getValue() const { return processor.getParameter(index); }
+void DexedParameterAdapter::setValue(float v) { processor.setParameter(index, v); }
+String DexedParameterAdapter::getName(int) const { return processor.getParameterName(index); }
+String DexedParameterAdapter::getText(float, int) const { return processor.getParameterText(index); }
+String DexedParameterAdapter::getParameterID() const { return processor.getParameterID(index); }
+
 // Async updater
 class CtrlUpdate : public CallbackMessage {
     Ctrl *ctrl;
@@ -103,6 +110,8 @@ void Ctrl::publishValueAsync(float value) {
 
 void Ctrl::publishValue(float value) {
     auto *param = parent->getParameters()[idx];
+    jassert(param != nullptr); // every Ctrl must have a matching registered parameter — see initCtrl()
+    if (param == nullptr) return;
     param->beginChangeGesture();
     param->setValueNotifyingHost(value);
     param->endChangeGesture();
@@ -665,6 +674,7 @@ void DexedAudioProcessor::initCtrl() {
     for (int i=0; i < ctrl.size(); i++) {
         ctrl[i]->idx = i;
         ctrl[i]->parent = this;
+        addParameter(new DexedParameterAdapter(*this, i));
     }
 }
 
