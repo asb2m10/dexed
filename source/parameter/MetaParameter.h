@@ -1,0 +1,53 @@
+#pragma once
+
+#include <juce_audio_processors/juce_audio_processors.h>
+
+struct MetaParameterID {
+    juce::String name;
+    const int pos = 0;
+    const int displayOffset = 0;
+
+    MetaParameterID(juce::String name) : name(name), pos(0), displayOffset(0) {}
+    MetaParameterID(juce::String name, int pos, int displayOffset) : name(name), pos(pos), displayOffset(displayOffset) {}
+
+    juce::ParameterID parameter() const {
+        // For now it is all parameterID with 0 as the version
+        return juce::ParameterID(name, 0);
+    }
+
+    MetaParameterID op(int op) const {
+        return MetaParameterID(juce::String("op" + juce::String(op+1) + name), pos + (5-op) * 21, displayOffset);
+    }
+
+    MetaParameterID idx(int idx) const {
+        return MetaParameterID(name + juce::String(idx+1), pos + idx, displayOffset);
+    }
+
+    juce::String displayName() const {
+        juce::String ret;
+        bool nextUpper = false;
+        int i = 1;
+
+        if ( name.startsWith("op") ) {
+            ret = "OP";
+            i=2;
+        } else {
+            ret += (char) toupper(name[0]);
+        }
+
+        for (; i < name.length(); ++i) {
+            if (i > 0 && ((name[i] >= 'A' && name[i] <= 'Z') || isdigit(name[i-1])) ) {
+                ret += " ";
+                ret += (char) toupper(name[i]);
+            } else {
+                ret += name[i];
+            }
+        }
+        return ret;
+    }
+};
+
+/**
+ * This contains the list (in order) of all DX parameters. They are 1-to-1 mapped to sysex data.
+ */
+extern const std::vector<MetaParameterID> dxParameters;

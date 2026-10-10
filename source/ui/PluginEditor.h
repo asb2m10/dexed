@@ -1,0 +1,94 @@
+/**
+ *
+ * Copyright (c) 2013-2018 Pascal Gauthier.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+ */
+
+#ifndef PLUGINEDITOR_H_INCLUDED
+#define PLUGINEDITOR_H_INCLUDED
+
+#include "../JuceLibraryCode/JuceHeader.h"
+#include "PluginProcessor.h"
+#include "OperatorEditor.h"
+#include "GlobalEditor.h"
+#include "component/DXComponents.h"
+#include "DXLookNFeel.h"
+#include "window/CartManager.h"
+#include "component/ParameterObserver.h"
+
+//==============================================================================
+/**
+*/
+class DexedAudioProcessorEditor  : public AudioProcessorEditor, public ComboBox::Listener, public Timer,
+                                   public FileDragAndDropTarget, public KeyListener {
+    Component frameComponent;
+    MidiKeyboardComponent midiKeyboard;
+
+    GlobalEditor global;
+    std::unique_ptr<OperatorEditor> operators[6];
+    Colour background;
+
+    CartManager cartManager;
+
+    // This cover is used to disable main window when cart manager is shown
+    Component cartManagerCover;
+
+    SharedResourcePointer<DXLookNFeel> lookAndFeel;
+    std::unique_ptr<juce::DialogWindow> dexedParameterDialog;
+    std::unique_ptr<FileChooser> fileChooser;
+    void resetSize();
+    void applyCart(Cartridge cart, File file);
+    void storeProgramShowDialog(Cartridge destSysex, File externalFile);
+    void storeProgramResponse(AlertWindow *dialog, int response, Cartridge destSysex, File externalFile, bool hasExternalFile);
+public:
+    DexedAudioProcessor *processor;
+
+    DexedAudioProcessorEditor (DexedAudioProcessor* ownerFilter);
+    ~DexedAudioProcessorEditor();
+    virtual void timerCallback() override;
+
+    virtual void paint (Graphics& g) override;
+    virtual void comboBoxChanged (ComboBox* comboBoxThatHasChanged) override;
+    void updateUI();
+    void rebuildProgramCombobox();
+    void loadCart(File file);
+    void saveCart();
+    void initProgram();
+    void storeProgram();
+    void cartShow();
+    void parmShow();
+    void tuningShow();
+
+    static float getLargestScaleFactor();
+    void resetZoomFactor();
+
+    virtual bool isInterestedInFileDrag (const StringArray &files) override;
+    virtual void filesDropped (const StringArray &files, int x, int y ) override;
+    std::unique_ptr<ComponentTraverser> createFocusTraverser() override;
+
+    bool keyPressed(const KeyPress& key, Component* originatingComponent) override;
+
+    static const int WINDOW_SIZE_X = 866;
+    static const int WINDOW_SIZE_Y = 674;
+
+private:
+#ifdef DEXED_EVENT_DEBUG
+    FocusLogger focusLogger;
+#endif
+};
+
+
+#endif  // PLUGINEDITOR_H_INCLUDED
