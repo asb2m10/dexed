@@ -384,12 +384,14 @@ ParamDialog::ParamDialog ()
 
     StringArray input;
     input.add("None");
-    input.addArray(MidiInput::getDevices());
+    for (auto& d : MidiInput::getAvailableDevices())
+        input.add(d.name);
     sysexIn->addItemList(input, 2);
 
     StringArray output;
     output.add("None");
-    output.addArray(MidiOutput::getDevices());
+    for (auto& d : MidiOutput::getAvailableDevices())
+        output.add(d.name);
     sysexOut->addItemList(output, 2);
 
     if ( JUCEApplication::isStandaloneApp() ) {
@@ -1165,12 +1167,16 @@ void ParamDialog::setDialogValues(Controllers &c, SysexComm &mgr, int reso, bool
     portamentoTm->setValue(c.portamento_cc * 100.0f / 127.0f); // Convert from 0-127 range to 0-100%
     glissando->setToggleState(c.portamento_gliss_cc, dontSendNotification);
 
-    StringArray inputs = MidiInput::getDevices();
+    StringArray inputs;
+    for (auto& d : MidiInput::getAvailableDevices())
+        inputs.add(d.name);
     int idx = inputs.indexOf(mgr.getInput());
     idx = idx == -1 ? 0 : idx + 1;
     sysexIn->setSelectedItemIndex(idx);
 
-    StringArray outputs = MidiOutput::getDevices();
+    StringArray outputs;
+    for (auto& d : MidiOutput::getAvailableDevices())
+        outputs.add(d.name);
     idx = outputs.indexOf(mgr.getOutput());
     idx = idx == -1 ? 0 : idx + 1;
     sysexOut->setSelectedItemIndex(idx);

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(Dexed VERSION 1.0.1)
 
+enable_testing()
+
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
@@ -19,7 +21,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
 #    set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "iPhone Developer" CACHE STRING "" FORCE)
 #    set(CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "XXXXXXXXXX" CACHE STRING "" FORCE)
 else()
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Minimum OS X deployment version" FORCE)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.11" CACHE STRING "Minimum OS X deployment version" FORCE)
 endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")

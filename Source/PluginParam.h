@@ -28,6 +28,26 @@
 
 class DexedAudioProcessor;
 
+// Adapts DexedAudioProcessor's legacy index-based parameter API (getParameter/setParameter/etc.)
+// to a real AudioProcessorParameter, which JUCE 8's gesture API (beginChangeGesture/setValueNotifyingHost)
+// requires. getParameterID() forwards to the processor's existing label-based ID so that registering
+// these doesn't change the host-facing automation IDs hosts have already saved.
+class DexedParameterAdapter : public HostedAudioProcessorParameter {
+public:
+    DexedParameterAdapter(DexedAudioProcessor& processor, int index);
+    float getValue() const override;
+    void setValue(float newValue) override;
+    float getDefaultValue() const override { return 0.0f; }
+    String getName(int maximumStringLength) const override;
+    String getLabel() const override { return {}; }
+    String getText(float normalisedValue, int maximumStringLength) const override;
+    float getValueForText(const String&) const override { jassertfalse; return 0.0f; }
+    String getParameterID() const override;
+private:
+    DexedAudioProcessor& processor;
+    int index;
+};
+
 class Ctrl : public Slider::Listener, public Button::Listener, public ComboBox::Listener, public MouseListener {
 protected:
     /**
