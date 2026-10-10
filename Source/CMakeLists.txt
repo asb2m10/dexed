@@ -39,7 +39,7 @@ juce_generate_juce_header(${PROJECT_NAME})
 
 include_directories(../libs/MTS-ESP/Client)
 
-target_sources(${BaseTargetName} PRIVATE
+set(DEXED_SOURCES
 	AlgoDisplay.cpp
 	CartManager.cpp
 	DXComponents.cpp
@@ -74,6 +74,8 @@ target_sources(${BaseTargetName} PRIVATE
     ../libs/MTS-ESP/Client/libMTSClient.cpp
 )
 
+target_sources(${BaseTargetName} PRIVATE ${DEXED_SOURCES})
+
 if(DEXED_NO_ALSA)
     set(DEXED_ALSA FALSE)
     message(STATUS "Building Dexed without ALSA support")
@@ -93,7 +95,7 @@ target_compile_definitions(${BaseTargetName} PUBLIC
     # JUCE_COREGRAPHICS_RENDER_WITH_MULTIPLE_PAINT_CALLS=1     # REVERT BACK SINCE THERE IS AN ISSUE WITH JUCE 7.0.0
 )
 
-target_link_libraries(${BaseTargetName} 
+target_link_libraries(${BaseTargetName}
 PRIVATE
     juce::juce_audio_basics
     juce::juce_audio_devices
@@ -114,3 +116,48 @@ PUBLIC
     juce::juce_recommended_config_flags
     juce::juce_recommended_lto_flags
 )
+
+# Headless regression test for the parameter-registration fix in PluginParam.cpp.
+# Links the same shared sources as the plugin itself (so it exercises the real
+# DexedAudioProcessor), but with its own console main() instead of a plugin-format wrapper.
+# juce_add_console_app (rather than a plain add_executable) is required so JUCE's CMake
+# integration recognizes the target as one of its own and can generate a JuceHeader.h for it.
+juce_add_console_app(DexedTests)
+
+target_sources(DexedTests PRIVATE ${DEXED_SOURCES} Tests/ParameterRegistrationTests.cpp Tests/TestMain.cpp)
+
+juce_generate_juce_header(DexedTests)
+
+target_compile_definitions(DexedTests PRIVATE
+    JUCE_WEB_BROWSER=0
+    JUCE_USE_CURL=0
+    JUCE_VST3_CAN_REPLACE_VST2=0
+    JUCE_JACK=1
+    JUCE_ALSA=$<IF:$<BOOL:${DEXED_ALSA}>,1,0>
+    JUCE_MODAL_LOOPS_PERMITTED=1
+    JUCE_DISPLAY_SPLASH_SCREEN=0
+    JUCE_REPORT_APP_USAGE=0
+    JucePlugin_Name="DexedTests" # DexedAudioProcessor::getName() reads this; juce_add_plugin normally supplies it
+)
+
+target_link_libraries(DexedTests
+PRIVATE
+    juce::juce_audio_basics
+    juce::juce_audio_processors
+    juce::juce_audio_utils
+    juce::juce_core
+    juce::juce_data_structures
+    juce::juce_events
+    juce::juce_graphics
+    juce::juce_gui_basics
+    juce::juce_gui_extra
+    surgesynthteam_tuningui
+    tuning-library
+    DexedResources
+    clap_juce_extensions
+PUBLIC
+    juce::juce_recommended_config_flags
+    juce::juce_recommended_lto_flags
+)
+
+add_test(NAME DexedParameterTests COMMAND DexedTests)

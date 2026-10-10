@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(Dexed VERSION 1.0.1)
 
+enable_testing()
+
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
