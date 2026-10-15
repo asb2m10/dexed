@@ -379,20 +379,18 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
     }
 
     if ( monoMode ) {
-        for(int i=0; i<MAX_ACTIVE_NOTES; i++) {            
+        // last note priority: the newest note always takes over the live voice
+        for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
             if ( voices[i].live ) {
-                // all keys are up, only transfer signal
-                if ( ! voices[i].keydown ) {
-                    voices[i].live = false;
-                    voices[note].dx7_note->transferSignal(*voices[i].dx7_note);
-                    break;
-                }
-                if ( voices[i].midi_note > pitch ) {
-                    voices[i].live = false;
+                voices[i].live = false;
+                if ( voices[i].keydown ) {
+                    // legato: another key is still held, continue its envelope
                     voices[note].dx7_note->transferState(*voices[i].dx7_note);
-                    break;
+                } else {
+                    // all keys are up, only transfer signal
+                    voices[note].dx7_note->transferSignal(*voices[i].dx7_note);
                 }
-                return;
+                break;
             }
         }
     }
@@ -435,20 +433,25 @@ void DexedAudioProcessor::keyup(uint8_t chan, uint8_t pitch, uint8_t velo) {
         return;
     }
     
-    if ( monoMode ) {
-        int highNote = -1;
-        int target = 0;
-        for (int i=0; i<MAX_ACTIVE_NOTES;i++) {
-            if ( voices[i].keydown && voices[i].midi_note > highNote ) {
+    if ( monoMode && voices[note].live ) {
+        // last note priority: fall back to the most recently pressed held key
+        int target = -1;
+        for (int i = 0; i < MAX_ACTIVE_NOTES; i++) {
+            if ( voices[i].keydown &&
+                 (target == -1 || voices[i].keydown_seq > voices[target].keydown_seq) ) {
                 target = i;
-                highNote = voices[i].midi_note;
             }
         }
-        
-        if ( highNote != -1 && voices[note].live ) {
+
+        if ( target != -1 ) {
             voices[note].live = false;
             voices[target].live = true;
             voices[target].dx7_note->transferState(*voices[note].dx7_note);
+            if ( controllers.portamento_enable_cc && controllers.portamento_cc > 0 ) {
+                // glide from the released note to the one we fall back to
+                voices[target].dx7_note->initPortamento(*voices[note].dx7_note);
+            }
+            lastActiveVoice = target;
         }
     }
     
