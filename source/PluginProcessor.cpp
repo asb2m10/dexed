@@ -387,7 +387,7 @@ void DexedAudioProcessor::keydown(uint8_t channel, uint8_t pitch, uint8_t velo) 
                     voices[note].dx7_note->transferSignal(*voices[i].dx7_note);
                     break;
                 }
-                if ( voices[i].midi_note < pitch ) {
+                if ( voices[i].midi_note > pitch ) {
                     voices[i].live = false;
                     voices[note].dx7_note->transferState(*voices[i].dx7_note);
                     break;
