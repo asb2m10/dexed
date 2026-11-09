@@ -13,7 +13,7 @@ endif()
 message(STATUS "Building Dexed in formats: ${DEXED_JUCE_FORMATS}")
 
 juce_add_plugin("${BaseTargetName}"
-        VERSION "1.1.0"
+        VERSION "${PROJECT_VERSION}"
         ICON_BIG "../assets/ui/dexedIcon.png"
         ICON_SMALL "../assets/ui/dexedIcon.png"
         COMPANY_NAME "Digital Suburban"
