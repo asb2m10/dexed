@@ -15,6 +15,12 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     tuningVt.setProperty("kbm", juce::String(currentKBMData), nullptr);
     storage.addChild(tuningVt, -1, nullptr);
 
+    juce::ValueTree cartVt("cartridge");
+    cartVt.setProperty("program", currentProgram, nullptr);
+    cartVt.setProperty("voiceName", activeProgram.getName(), nullptr);
+    cartVt.setProperty("sysex", juce::Base64::toBase64(currentCart.getVoiceSysex(), 4104), nullptr);
+    storage.addChild(cartVt, -1, nullptr);
+
     std::unique_ptr<juce::XmlElement> xml(storage.createXml());
     copyXmlToBinary(*xml, destData);
 }
@@ -26,7 +32,13 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
             ValueTree storage = juce::ValueTree::fromXml(*xmlState);
 
             juce::String version = storage.getProperty(IDs::version);
-            if ( version != juce::String(DexedApvts::MODEL_VERSION) ) {
+            // Compatible when major.minor match; the patch number is ignored (1.1.2 <-> 1.1.4 ok, 1.1.0 <-> 1.2.0 not)
+            auto majorMinor = [](const juce::String &v) {
+                juce::StringArray parts = juce::StringArray::fromTokens(v, ".", "");
+                return parts.size() < 2 ? juce::String() : parts[0].trim() + "." + parts[1].trim();
+            };
+            juce::String stateMajorMinor = majorMinor(version);
+            if ( stateMajorMinor.isEmpty() || stateMajorMinor != majorMinor(DexedApvts::MODEL_VERSION) ) {
                 TRACE("Incompatible state version %s (current is %s)", version.toRawUTF8(), DexedApvts::MODEL_VERSION);
                 return;
             }
@@ -40,6 +52,22 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
             juce::ValueTree storageProfile = storage.getChildWithName(IDs::profile);
             parameters.rootVt.getChildWithName(IDs::profile).getChildWithName(IDs::midiCCMappings).
                 copyPropertiesAndChildrenFrom(storageProfile.getChildWithName(IDs::midiCCMappings), nullptr);
+
+            juce::ValueTree cartVt = storage.getChildWithName("cartridge");
+            if (cartVt.isValid()) {
+                juce::MemoryOutputStream mo;
+                if (juce::Base64::convertFromBase64(mo, cartVt.getProperty("sysex").toString()) && mo.getDataSize() == 4104) {
+                    Cartridge cart;
+                    cart.load(static_cast<const uint8_t *>(mo.getData()), 4104);
+                    loadCartridge(cart);
+                }
+                currentProgram = juce::jlimit(0, 31, static_cast<int>(cartVt.getProperty("program")));
+            }
+            // The edited voice is kept as-is (parameters were restored above); only its name
+            // lives outside the parameters. The UI shows "**" while it differs from the cart.
+            if (cartVt.isValid() && cartVt.hasProperty("voiceName"))
+                activeProgram.setName(cartVt.getProperty("voiceName").toString());
+            programChanged.set(true);
 
             juce::ValueTree tuningVt = storage.getChildWithName("tuning");
             if (tuningVt.isValid()) {
