@@ -109,7 +109,7 @@ public:
 
             String typeName = t.getType().toString();
 
-            const float nameWidth = font.getStringWidthFloat (typeName);
+            const float nameWidth = GlyphArrangement::getStringWidth (font, typeName);
             const float propertyX = padding + nameWidth;
 
             g.setColour (Colours::black);

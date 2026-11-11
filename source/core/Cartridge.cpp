@@ -190,50 +190,40 @@ Program Cartridge::unpackProgram(int idx) {
 /**
  * Pack a program into a 32 packed sysex
  */
-/*
-void Cartridge::packProgram(uint8_t *src, int idx, juce::String name, char *opSwitch) {
+void Cartridge::packProgram(const Program &program, int idx) {
+    jassert(idx >= 0 && idx < 32);
+    const uint8_t *src = program.getRawData();
     uint8_t *bulk = voiceData + 6 + (idx * 128);
+    const uint8_t opSwitch = src[155]; // operator on/off flags, operator 1 is the highest bit
 
-    for(int op = 0; op < 6; op++) {
+    for (int op = 0; op < 6; op++) {
+        int pp = op * 17;
+        int up = op * 21;
+
         // eg rate and level, brk pt, depth, scaling
-        memcpy(bulk + op * 17, src + op * 21, 11);
-        int pp = op*17;
-        int up = op*21;
-
+        memcpy(bulk + pp, src + up, 11);
         // left curves
-        bulk[pp+11] = (src[up+11]&0x03) | ((src[up+12]&0x03) << 2);
-        bulk[pp+12] = (src[up+13]&0x07) | ((src[up+20]&0x0f) << 3);
+        bulk[pp+11] = (src[up+11] & 0x03) | ((src[up+12] & 0x03) << 2);
+        bulk[pp+12] = (src[up+13] & 0x07) | ((src[up+20] & 0x0f) << 3);
         // kvs_ams
-        bulk[pp+13] = (src[up+14]&0x03) | ((src[up+15]&0x07) << 2);
+        bulk[pp+13] = (src[up+14] & 0x03) | ((src[up+15] & 0x07) << 2);
         // output lvl
-        if ( opSwitch[op] == '0' )
-            bulk[pp+14] = 0;
-        else
-            bulk[pp+14] = src[up+16];
+        bulk[pp+14] = ((opSwitch >> (5 - op)) & 1) ? src[up+16] : 0;
         // fcoarse_mode
-        bulk[pp+15] = (src[up+17]&0x01) | ((src[up+18]&0x1f) << 1);
+        bulk[pp+15] = (src[up+17] & 0x01) | ((src[up+18] & 0x1f) << 1);
         // fine freq
         bulk[pp+16] = src[up+19];
     }
+
     memcpy(bulk + 102, src + 126, 9);      // pitch env, algo
-    bulk[111] = (src[135]&0x07) | ((src[136]&0x01) << 3);
+    bulk[111] = (src[135] & 0x07) | ((src[136] & 0x01) << 3);
     memcpy(bulk + 112, src + 137, 4);      // lfo
-    bulk[116] = (src[141]&0x01) | (((src[142]&0x07) << 1) | ((src[143]&0x07) << 4));
+    bulk[116] = (src[141] & 0x01) | ((src[142] & 0x07) << 1) | ((src[143] & 0x07) << 4);
     bulk[117] = src[144];
 
-    int eos = 0;
-
-    for(int i=0; i < 10; i++) {
-        char c = (char) name[i];
-        if ( c == 0 )
-            eos = 1;
-        if ( eos ) {
-            bulk[118+i] = ' ';
-            continue;
-        }
-        c = c < 32 ? ' ' : c;
-        c = c > 127 ? ' ' : c;
-        bulk[118+i] = c;
+    // name
+    for (int i = 0; i < 10; i++) {
+        uint8_t c = src[145 + i];
+        bulk[118 + i] = (c < 32 || c > 127) ? ' ' : c;
     }
 }
-*/

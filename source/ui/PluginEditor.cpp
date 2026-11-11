@@ -353,19 +353,19 @@ void DexedAudioProcessorEditor::storeProgramResponse(AlertWindow *dialog, int re
     if ( response == 2 ) {
         fileChooser = std::make_unique<FileChooser>("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX;*.*", true);
         fileChooser->launchAsync(FileBrowserComponent::openMode | FileBrowserComponent::canSelectFiles,
-                                 [this, destSysex](const FileChooser& fc) mutable {
-                                     if ( fc.getResults().isEmpty() ) {
-                                         cartManager.resetActiveSysex();
-                                         return;
-                                     }
-                                     File chosenFile = fc.getResult();
-                                     if ( destSysex.load(chosenFile) == 0 ) {
-                                         storeProgramShowDialog(destSysex, chosenFile);
-                                         return;
-                                     }
-                                     AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Read error", "Unable to read file");
-                                     cartManager.resetActiveSysex();
-                                 });
+            [this, destSysex](const FileChooser& fc) mutable {
+                if ( fc.getResults().isEmpty() ) {
+                    cartManager.resetActiveSysex();
+                    return;
+                }
+                File chosenFile = fc.getResult();
+                if ( destSysex.load(chosenFile) == 0 ) {
+                    storeProgramShowDialog(destSysex, chosenFile);
+                    return;
+                }
+                AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Read error", "Unable to read file");
+                cartManager.resetActiveSysex();
+            });
         return;
     }
 
@@ -377,8 +377,9 @@ void DexedAudioProcessorEditor::storeProgramResponse(AlertWindow *dialog, int re
         String programName(name->getText());
 
         if ( ! hasExternalFile ) {
-            // TODO: build something in the processor to do this...
-            // processor->currentCart.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
+            // Internal file
+            processor->activeProgram.setName(programName);
+            processor->currentCart.packProgram(processor->activeProgram, programNum);
             rebuildProgramCombobox();
             processor->setCurrentProgram(programNum);
             processor->updateHostDisplay();
@@ -388,14 +389,14 @@ void DexedAudioProcessorEditor::storeProgramResponse(AlertWindow *dialog, int re
                 if ( action == 1 ) {
                     fileChooser = std::make_unique<FileChooser>("Destination Sysex", processor->dexedCartDir, "*.syx;*.SYX", true);
                     fileChooser->launchAsync(FileBrowserComponent::saveMode | FileBrowserComponent::canSelectFiles | FileBrowserComponent::warnAboutOverwriting,
-                                             [this](const FileChooser& fc) {
-                                                 if ( ! fc.getResults().isEmpty() ) {
-                                                     File destination = fc.getResult();
-                                                     processor->currentCart.saveVoice(destination);
-                                                     processor->activeFileCartridge = destination;
-                                                 }
-                                                 cartManager.resetActiveSysex();
-                                             });
+                        [this](const FileChooser& fc) {
+                            if ( ! fc.getResults().isEmpty() ) {
+                                File destination = fc.getResult();
+                                processor->currentCart.saveVoice(destination);
+                                processor->activeFileCartridge = destination;
+                            }
+                            cartManager.resetActiveSysex();
+                        });
                     return;
                 }
 
@@ -404,8 +405,10 @@ void DexedAudioProcessorEditor::storeProgramResponse(AlertWindow *dialog, int re
                 processor->activeFileCartridge = destination;
             }
         } else {
-            // TODO: build something in the processor to do this...
-            // destSysex.packProgram((uint8_t *) processor->data, programNum, programName, processor->controllers.opSwitch);
+            // External file, save a copy of program
+            Program newProgram(processor->activeProgram);
+            newProgram.setName(programName);
+            destSysex.packProgram(newProgram, programNum);
             if ( ! destSysex.saveVoice(externalFile)) {
                 AlertWindow::showMessageBoxAsync(AlertWindow::WarningIcon, "Write error", "Unable to write file");
             }

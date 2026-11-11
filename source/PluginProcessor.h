@@ -88,7 +88,7 @@ class DexedAudioProcessor  : public AudioProcessor, public MidiInputCallback, pu
     int extra_buf_size;
 
     int currentProgram;
-    
+
     /**
      * Plugin fx (the filter)
      */
