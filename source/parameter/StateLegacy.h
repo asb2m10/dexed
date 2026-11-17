@@ -172,7 +172,21 @@ void setStateInformation10(DexedAudioProcessor* proc, XmlElement* root) {
         var program = blobSet["program"];
         if (!program.isVoid() && program.getBinaryData() != nullptr) {
             const auto* data = static_cast<const uint8_t*>(program.getBinaryData()->getData());
-            proc->applyProgram(Program(data));
+            Program edited(data);
+            proc->applyProgram(edited);
+
+            // The legacy edited program is the raw voice; if it is identical to a cartridge slot (the
+            // stored index can be stale), reselect that slot so the UI doesn't show "**".
+            int match = -1;
+            int stored = proc->getCurrentProgram();
+            for (int i = 0; i < 32 && match < 0; i++) {
+                int slot = (stored + i) % 32;   // prefer the stored slot
+                Program candidate = proc->currentCart.unpackProgram(slot);
+                if (memcmp(candidate.getRawData(), edited.getRawData(), Program::PROGRAM_SIZE) == 0)
+                    match = slot;
+            }
+            if (match >= 0 && match != stored)
+                proc->setCurrentProgram(match);
         }
     }
 
