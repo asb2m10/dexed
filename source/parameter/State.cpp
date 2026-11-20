@@ -18,6 +18,8 @@ void DexedAudioProcessor::getStateInformation(MemoryBlock& destData) {
     juce::ValueTree cartVt("cartridge");
     cartVt.setProperty("program", currentProgram, nullptr);
     cartVt.setProperty("voiceName", activeProgram.getName(), nullptr);
+    if (activeFileCartridge.exists())
+        cartVt.setProperty("path", activeFileCartridge.getFullPathName(), nullptr);
     cartVt.setProperty("sysex", juce::Base64::toBase64(currentCart.getVoiceSysex(), 4104), nullptr);
     storage.addChild(cartVt, -1, nullptr);
 
@@ -62,6 +64,10 @@ void DexedAudioProcessor::setStateInformation(const void* source, int sizeInByte
                     loadCartridge(cart);
                 }
                 currentProgram = juce::jlimit(0, 31, static_cast<int>(cartVt.getProperty("program")));
+                // Only restore the cartridge file if it still exists
+                juce::File cartFile(cartVt.getProperty("path").toString());
+                if (cartFile.existsAsFile())
+                    activeFileCartridge = cartFile;
             }
             // The edited voice is kept as-is (parameters were restored above); only its name
             // lives outside the parameters. The UI shows "**" while it differs from the cart.

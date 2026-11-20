@@ -198,6 +198,14 @@ void setStateInformation10(DexedAudioProcessor* proc, XmlElement* root) {
             setApvtsParamBool(apvts, IDs::on.op(op).name, opSwitch[5 - op] == '1');
     }
 
+    // Last cartridge file used (only restored if it still exists, like the 1.0 behavior)
+    juce::String cartPath = root->getStringAttribute("activeFileCartridge");
+    if (cartPath.isNotEmpty()) {
+        juce::File cartFile(cartPath);
+        if (cartFile.existsAsFile())
+            proc->activeFileCartridge = cartFile;
+    }
+
     const XmlElement* midiCC = root->getChildByName("midiCC");
     if (midiCC != nullptr)
         setLegacyMidiCC(apvts, midiCC);
