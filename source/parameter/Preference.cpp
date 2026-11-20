@@ -14,6 +14,29 @@ void DexedAudioProcessor::loadPreference() {
         normalizeDxVelocity = prop.getIntValue( String("normalizeDxVelocity") );
     }
 
+    // Pitch bend settings are stored as 0-48 / 0-12 values; "pitchRange" is the pre-1.1 name of the up range
+    auto setPitchParam = [this](const juce::String &id, int value) {
+        if ( auto *p = parameters.getParameter(id) ) {
+            float v = p->convertFrom0to1(1.0f) < (float) value ? p->convertFrom0to1(1.0f) : (float) value;
+            p->setValueNotifyingHost(p->convertTo0to1(v));
+        }
+    };
+
+    if ( prop.containsKey( String("pitchRangeUp") ) || prop.containsKey( String("pitchRange") ) ) {
+        int up = prop.containsKey( String("pitchRangeUp") ) ? prop.getIntValue( String("pitchRangeUp") )
+                                                             : prop.getIntValue( String("pitchRange") );
+        setPitchParam(IDs::pitchRangeUp.name, up);
+        // Old versions had a single range, the down range defaults to the up one
+        int dn = prop.containsKey( String("pitchRangeDn") ) ? prop.getIntValue( String("pitchRangeDn") ) : up;
+        setPitchParam(IDs::pitchRangeDown.name, dn);
+    } else if ( prop.containsKey( String("pitchRangeDn") ) ) {
+        setPitchParam(IDs::pitchRangeDown.name, prop.getIntValue( String("pitchRangeDn") ));
+    }
+
+    if ( prop.containsKey( String("pitchStep") ) ) {
+        setPitchParam(IDs::pitchStep.name, prop.getIntValue( String("pitchStep") ));
+    }
+
     if ( prop.containsKey( String("sysexIn") ) ) {
         sysexComm.setInput( prop.getValue("sysexIn") );
     }

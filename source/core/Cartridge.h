@@ -95,4 +95,5 @@ public:
     }
 
     Program unpackProgram(int idx);
+    void packProgram(const Program &program, int idx);
 };
