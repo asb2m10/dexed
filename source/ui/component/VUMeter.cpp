@@ -12,6 +12,13 @@
 
 #include "VUMeter.h"
 
+// Creates the images used by the VU meters.
+// Since JUCE 8, the native image type on Windows is a GPU-backed Direct2D image, which gives corrupted
+// results when copied and composited here, so plain software (CPU) images are used on all platforms.
+static juce::Image createVuImage(juce::Image::PixelFormat format, int width, int height, bool clear) {
+    return juce::Image(format, width, height, clear, juce::SoftwareImageType());
+}
+
 // Constructor: sets the index calculating function
 // according to the determined endianess.
 VuMeterBase::VuMeterBase(int maxdB) {
@@ -223,6 +230,14 @@ void VuStripesSingleton::createStripes(juce::Image** array, bool tricolor) {
     // get a copy of the original image, having two bands
     juce::Image origDoubleStripe = ImageCache::getFromMemory(BinaryData::Meter_140x8_png, BinaryData::Meter_140x8_pngSize).createCopy();
 
+    // keep the working copy of the original image in CPU memory
+    if (origDoubleStripe.isValid()) {
+        juce::Image softwareCopy = createVuImage(juce::Image::ARGB, origDoubleStripe.getWidth(), origDoubleStripe.getHeight(), true);
+        juce::Graphics gsoft(softwareCopy);
+        gsoft.drawImageAt(origDoubleStripe, 0, 0, false);
+        origDoubleStripe = softwareCopy;
+    }
+
     if (origDoubleStripe.isValid()) {
         // get dimensions of the image
         int height = origDoubleStripe.getHeight();
@@ -283,7 +298,7 @@ void VuStripesSingleton::createStripes(juce::Image** array, bool tricolor) {
         // the ``iStripe``-th stripe has number of ``iStripe`` bright LEDs
         for (int iStripe = 0, xLimit = VuMeterBase::blockGap + VuMeterBase::border; iStripe <= VuMeterBase::totalBlocks; ++iStripe, xLimit += VuMeterBase::blockWidthWithGap) {
             // create an RGB-based single stripe
-            juce::Image* img = new juce::Image(juce::Image::RGB, width, height2, false);
+            juce::Image* img = new juce::Image(createVuImage(juce::Image::RGB, width, height2, false));
 
             // set the iStripe pieces of the leftmost LEDs to a bright color,
             // leave the remaining rightmost LEDs in dark color
@@ -311,7 +326,7 @@ void VuStripesSingleton::createStripes(juce::Image** array, bool tricolor) {
         // create individual stripes - via JUCE's image manipulation methods
 
         // create a single, RGB colors based, opaque, dark stripe
-        juce::Image* img = new juce::Image(juce::Image::RGB, width, height2, false);
+        juce::Image* img = new juce::Image(createVuImage(juce::Image::RGB, width, height2, false));
         juce::Graphics gimg(*img);
         juce::Rectangle upperStripeRectangle(0, 0, width, height2);
         juce::Image upperStripe = origDoubleStripe.getClippedImage(upperStripeRectangle);
