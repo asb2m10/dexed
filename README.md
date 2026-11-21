@@ -32,6 +32,8 @@ Changelog
 #### Version 1.1.1
 * Better preset import from previous (1.0.x) version
 * Fix cartridge saving from DAW settings
+* Fix Windows VU meter render
+
 #### Version 1.1.0
 * Complete rewrite of event handling to support a modern plugin framework
   - This should solve most of the pending automation issues Dexed had with other DAWs
