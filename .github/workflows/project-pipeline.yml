@@ -103,7 +103,7 @@ jobs:
           ${{github.workspace}}/build/installer/*
 
   build-macos:
-    runs-on: macos-14
+    runs-on: macos-15
     name: "macOS Build"
     environment: default
     if: ${{ vars.SKIP_MACOS != 'true' }}
@@ -128,7 +128,7 @@ jobs:
         export MAC_TEAM_ID="${{ secrets.MAC_TEAM_ID }}"
         export MAC_TEAM_PASSWORD="${{ secrets.MAC_TEAM_PASSWORD }}"
 
-        cmake -S . -B ./build -DCMAKE_BUILD_TYPE=${{ needs.component_version.outputs.build_type }} -DBUILD_ID=${{ needs.component_version.outputs.build_version }} -DJUCE_COPY_PLUGIN_AFTER_BUILD=FALSE
+        cmake -S . -B ./build -DCMAKE_BUILD_TYPE=${{ needs.component_version.outputs.build_type }} -DBUILD_ID=${{ needs.component_version.outputs.build_version }} -DJUCE_COPY_PLUGIN_AFTER_BUILD=FALSE -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13
         cmake --build ./build --config ${{ needs.component_version.outputs.build_type }} --target installer --parallel 3
 
     - name: Upload

@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
-project(Dexed VERSION 1.1.0)
+#Minimum MacOS target, must be set before project()
+set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version")
+
+project(Dexed VERSION 1.1.1)
 
 #Compile commands, useful for some IDEs like VS-Code
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -10,8 +13,6 @@ else()
     add_definitions("-DDEXED_ID=${BUILD_ID}")
 endif()
 
-#Minimum MacOS target, set globally
-# set(CMAKE_OSX_DEPLOYMENT_TARGET "10.9" CACHE STRING "Minimum OS X deployment version" FORCE)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE INTERNAL "")
