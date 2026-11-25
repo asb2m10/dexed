@@ -33,12 +33,17 @@ const std::vector<MetaParameterID> dxParameters = {
     APPLY_OP(3),
     APPLY_OP(4),
     APPLY_OP(5),
-    IDs::pitchEgRate.idx(0),            // pos: 126
+    IDs::pitchEgRate.idx(0),         // pos: 126
     IDs::pitchEgRate.idx(1),
     IDs::pitchEgRate.idx(2),
     IDs::pitchEgRate.idx(3),
+    IDs::pitchEgLevel.idx(0),        // pos: 130
+    IDs::pitchEgLevel.idx(1),
+    IDs::pitchEgLevel.idx(2),
+    IDs::pitchEgLevel.idx(3),
     IDs::algorithm,                  // pos: 134
     IDs::feedback,                   // pos: 135
+    IDs::oscKeySync,                 // pos: 136
     IDs::lfoRate,                    // pos: 137
     IDs::lfoDelay,                   // pos: 138
     IDs::lfoPmDepth,                 // pos: 139

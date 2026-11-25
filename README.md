@@ -33,6 +33,7 @@ Changelog
 * Better preset import from previous (1.0.x) version
 * Fix cartridge saving from DAW settings
 * Fix Windows VU meter render
+* Fix missing update on Pitch EG Level and oscKeySync
 
 #### Version 1.1.0
 * Complete rewrite of event handling to support a modern plugin framework
